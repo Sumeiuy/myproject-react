@@ -3,7 +3,7 @@
  * @Descripter: 活动栏目
  * @Date: 2018-11-05 14:17:20
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-15 10:18:01
+ * @Last Modified time: 2018-11-15 10:31:45
  */
 
 import React, { PureComponent } from 'react';
@@ -276,9 +276,8 @@ export default class ActivityColumn extends PureComponent {
                 url,
                 attaches,
               };
-            } else {
-              return item;
             }
+            return item;
           });
         }
         this.setState({ activityColumnList: newActivityColumnList }, this.handleSubmitConfirm);
@@ -368,9 +367,11 @@ export default class ActivityColumn extends PureComponent {
     this.setState({ activityColumnList: this.props.activityColumnList });
   }
 
+  // 假删除的回调函数
   @autobind
   handleFalseDelete() {
     const { attachmentList } = this.state;
+    // 假删除增加一个表示，isDelete属性，设置为true
     const newAttachmentList = _.map(attachmentList, item => ({
       ...item,
       isDelete: true,
