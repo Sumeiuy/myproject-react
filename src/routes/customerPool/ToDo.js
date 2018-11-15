@@ -95,11 +95,8 @@ export default class ToDo extends PureComponent {
       // 类型下拉框value
       applyType: [],
       approveType: [],
-      category: '',
-      // 发起人
-      originator: '',
       // 发起人下拉value
-      initiatorValue: [],
+      initiatorValue: '',
     };
   }
 
@@ -116,39 +113,40 @@ export default class ToDo extends PureComponent {
       startTime,
       endTime,
     } = this.state;
-    this.getApplyList({startTime, endTime, pageSize, pageNum});
-    this.getApproveList({startTime, endTime, pageSize, pageNum});
+    this.getApplyData({startTime, endTime, pageSize, pageNum});
+    this.getApproveData({startTime, endTime, pageSize, pageNum});
   }
 
   // 获取申请列表
   @autobind
-  getApplyList(query) {
+  getApplyData(item) {
     const {
       location: {
+        pathname,
         query: {
           taskType,
         }
       }
     } = this.props;
-    const { replace } = this.context;
     if(!_.isEmpty(taskType)) {
-      this.props.getApplyList(query);
+      this.props.getApplyList(item);
       this.setState({ activeKey: taskType });
     } else {
-      replace({
+      this.context.replace({
+        pathname,
         query: {
-          taskType: '1',
+          taskType: 'MY_TODO',
         },
       });
-      this.props.getApplyList(query);
-      this.setState({ activeKey: '1' });
+      this.props.getApplyList(item);
+      this.setState({ activeKey: 'MY_TODO' });
     }
   }
 
   // 获取审批列表
   @autobind
-  getApproveList(query) {
-    this.props.getApproveList(query);
+  getApproveData(item) {
+    this.props.getApproveList(item);
   }
 
   @autobind
@@ -162,8 +160,7 @@ export default class ToDo extends PureComponent {
   onSearch(value) {
     // this.props.search(value);
     const { location: { pathname, query } } = this.props;
-    const { replace } = this.context;
-    replace({
+    this.context.replace({
       pathname,
       query: {
         ...query,
@@ -185,7 +182,7 @@ export default class ToDo extends PureComponent {
   })
   handleApplySearch(value) {
     const { location: { query: { pageSize = 10, pageNum = 1 } } } = this.props;
-    this.getApplyList({pageSize, pageNum, subject: value});
+    this.getApplyData({pageSize, pageNum, subject: value});
   }
 
   // 审批搜索
@@ -199,14 +196,13 @@ export default class ToDo extends PureComponent {
   })
   handleApproveSearch(value) {
     const { location: { query: { pageSize = 10, pageNum = 1 } } } = this.props;
-    this.getApproveList({ pageSize, pageNum, subject: value });
+    this.getApproveData({ pageSize, pageNum, subject: value });
   }
 
   @autobind
   pageChange(obj) {
     const { location: { pathname, query } } = this.props;
-    const { replace } = this.context;
-    replace({
+    this.context.replace({
       pathname,
       query: {
         ...query,
@@ -218,8 +214,7 @@ export default class ToDo extends PureComponent {
   @autobind
   sizeChange(obj) {
     const { location: { pathname, query } } = this.props;
-    const { replace } = this.context;
-    replace({
+    this.context.replace({
       pathname,
       query: {
         ...query,
@@ -248,18 +243,16 @@ export default class ToDo extends PureComponent {
     switch (taskType) {
       case '2':
         this.setState({
-          category: value,
           applyType: [key, value],
         }, () => {
-          this.getApplyList({pageSize, pageNum, category: value});
+          this.getApplyData({pageSize, pageNum, category: key});
         });
         break;
       case '3':
         this.setState({
-          category: value,
           approveType: [key, value],
         }, () => {
-          this.getApproveList({pageSize, pageNum, category: value});
+          this.getApproveData({pageSize, pageNum, category: key});
         });
         break;
       default:
@@ -271,26 +264,33 @@ export default class ToDo extends PureComponent {
   @autobind
   handleInitiatorCallback(obj) {
     const {
+      location: {
+        query: {
+          pageSize = 10,
+          pageNum = 1
+        }
+      }
+    } = this.props;
+    const {
       name,
       key,
     } = obj;
     this.setState({
-      originator: name,
-      initiatorValue: [key, name]
+      initiatorValue: key
     }, () => {
-      this.getApproveList(this.state);
+      this.getApproveData({pageSize, pageNum, originator: name});
     });
   }
 
   // 标签切换
   @autobind
   handleTabsChange(obj) {
-    const { location: { query, query: { taskType } } } = this.props;
-    const { replace } = this.context;
+    const { location: { pathname, query, query: { taskType } } } = this.props;
     if (obj === taskType) {
       return;
     }
-    replace({
+    this.context.replace({
+      pathname,
       query: {
         ...query,
         taskType: obj,
@@ -329,8 +329,8 @@ export default class ToDo extends PureComponent {
     const { query: { keyword } } = location;
     return (
       <div className={styles.todo}>
-        <Tabs defaultActiveKey="1" activeKey={this.state.activeKey} type='card' onChange={this.handleTabsChange}>
-          <TabPane key='1' tab='我的待办'>
+        <Tabs defaultActiveKey="MY_TODO" activeKey={this.state.activeKey} type='card' onChange={this.handleTabsChange}>
+          <TabPane key='MY_TODO' tab='我的待办'>
             <div className="search-box">
               <Input.Search
                 className="search-input"
@@ -354,7 +354,7 @@ export default class ToDo extends PureComponent {
               clearCreateTaskData={clearCreateTaskData}
             />
           </TabPane>
-          <TabPane key='2' tab='我的申请'>
+          <TabPane key='MY_APPLY' tab='我的申请'>
             <div>
               <TodoFilter
                 filterCallback={this.handlefilterCallback}
@@ -379,7 +379,7 @@ export default class ToDo extends PureComponent {
 
             </div>
           </TabPane>
-          <TabPane key='3' tab='我的审批'>
+          <TabPane key='MY_APPROVE' tab='我的审批'>
             <div>
               <TodoFilter
                 filterCallback={this.handlefilterCallback}
@@ -405,7 +405,6 @@ export default class ToDo extends PureComponent {
                   />
                   : null
               }
-
 
             </div>
           </TabPane>
