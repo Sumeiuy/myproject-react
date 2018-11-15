@@ -119,7 +119,7 @@ export default class ToDo extends PureComponent {
 
   // 获取申请列表
   @autobind
-  getApplyData(query) {
+  getApplyData(item) {
     const {
       location: {
         query: {
@@ -129,7 +129,7 @@ export default class ToDo extends PureComponent {
     } = this.props;
     const { replace } = this.context;
     if(!_.isEmpty(taskType)) {
-      this.props.getApplyList(query);
+      this.props.getApplyList(item);
       this.setState({ activeKey: taskType });
     } else {
       replace({
@@ -137,15 +137,15 @@ export default class ToDo extends PureComponent {
           taskType: '1',
         },
       });
-      this.props.getApplyList(query);
+      this.props.getApplyList(item);
       this.setState({ activeKey: '1' });
     }
   }
 
   // 获取审批列表
   @autobind
-  getApproveData(query) {
-    this.props.getApproveList(query);
+  getApproveData(item) {
+    this.props.getApproveList(item);
   }
 
   @autobind
