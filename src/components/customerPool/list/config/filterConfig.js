@@ -1,6 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
-import { Icon, Popover} from 'antd';
+import { Icon, Tooltip} from 'antd';
 import BusinessOpenedMenu from '../../../common/htFilter/bussinessOpened/';
 
 import styles from './filterConfig.less';
@@ -37,10 +37,10 @@ function getIndicatorDescription() {
   );
   return(<div className={styles.investphFooterWrapper}>
     <div className={styles.explainContent}>
-      <Popover content={content} title="指标说明" placement="right">
+      <Tooltip title={content} placement="right" overlayStyle={{ maxWidth: 460 }} >
         <span className={styles.explainIcon}><Icon type="exclamation-circle" className={styles.icon}/></span>
         <span className={styles.explainText}>指标说明</span>
-      </Popover>
+      </Tooltip>
     </div>
   </div>);
 }
