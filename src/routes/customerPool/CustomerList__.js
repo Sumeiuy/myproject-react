@@ -80,7 +80,7 @@ function addRangeParams(filterObj) {
     'avlAmtCrdt', // 信用可用资金
     'totMktVal', // 总市值
     'outMktVal', // 外部市值
-    'ttfMktVal', // 天天发份额
+    'ttfMktVal', // 天天发市值
   ];
 
   _.each(rangeParam, (key) => {

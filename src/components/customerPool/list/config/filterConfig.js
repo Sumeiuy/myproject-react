@@ -1,6 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
-import { Icon, Tooltip} from 'antd';
+import { Icon, Tooltip } from 'antd';
 import BusinessOpenedMenu from '../../../common/htFilter/bussinessOpened/';
 
 import styles from './filterConfig.less';
@@ -35,10 +35,10 @@ function getIndicatorDescription() {
       <p>其他产品：其他产品</p>
     </div>
   );
-  return(<div className={styles.investphFooterWrapper}>
+  return (<div className={styles.investphFooterWrapper}>
     <div className={styles.explainContent}>
       <Tooltip title={content} placement="right" overlayStyle={{ maxWidth: 460 }} >
-        <span className={styles.explainIcon}><Icon type="exclamation-circle" className={styles.icon}/></span>
+        <span className={styles.explainIcon}><Icon type="exclamation-circle" className={styles.icon} /></span>
         <span className={styles.explainText}>指标说明</span>
       </Tooltip>
     </div>
@@ -474,10 +474,10 @@ const exported = {
       },
     },
     {
-      filterName: '天天发份额',
+      filterName: '天天发市值',
       filterId: 'ttfMktVal',
       type: 'range',
-      unit: '份',
+      unit: '元',
       unitStyle: {
         right: 8,
       },
@@ -522,7 +522,7 @@ const exported = {
     { value: '净转入资产', key: 'purFinAset' },
     { value: '收益', key: 'pftAmt' },
     { value: '收益率', key: 'maxCostRate' },
-    { value: '天天发份额', key: 'ttfMktVal' },
+    { value: '天天发市值', key: 'ttfMktVal' },
     { value: '投资期限', key: 'investPeriod' },
     { value: '投资偏好', key: 'investVariety' },
   ],
