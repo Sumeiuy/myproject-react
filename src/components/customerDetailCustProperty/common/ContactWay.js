@@ -14,10 +14,11 @@ import {
   DEFAULT_VALUE,
   DEFAULT_PRIVATE_VALUE,
   LINK_WAY_TYPE,
+  checkIsNeedTitle,
 } from '../config';
 import styles from './contactWay.less';
 
-const INFO_ITEM_WITDH110 = '110px';
+const INFO_ITEM_WITDH_110 = '110px';
 const INFO_ITEM_WITDH = '126px';
 const EMPTY_OBJECT = {};
 const {
@@ -96,10 +97,12 @@ export default class ContactWay extends PureComponent {
         <div className={styles.title}>联系方式</div>
         <div className={styles.infoItemBox}>
           <InfoItem
-            width={INFO_ITEM_WITDH110}
+            width={INFO_ITEM_WITDH_110}
             label="联络人"
             value={this.getLinkMan()}
             className={styles.infoItem}
+            isNeedValueTitle={checkIsNeedTitle(this.getLinkMan())}
+            isNeedOverFlowEllipsis
           />
         </div>
         <div className={styles.infoItemBox}>
@@ -108,6 +111,8 @@ export default class ContactWay extends PureComponent {
             label="联系电话"
             value={this.getPhoneNum()}
             className={styles.infoItem}
+            isNeedValueTitle={checkIsNeedTitle(this.getPhoneNum())}
+            isNeedOverFlowEllipsis
           />
         </div>
         <div className={styles.infoItemBoxHalf}>
@@ -116,14 +121,18 @@ export default class ContactWay extends PureComponent {
             label="办公地址"
             value={this.getCompanyAddress()}
             className={styles.infoItem}
+            isNeedValueTitle={checkIsNeedTitle(this.getCompanyAddress())}
+            isNeedOverFlowEllipsis
           />
         </div>
         <div className={styles.infoItemBox}>
           <InfoItem
-            width={INFO_ITEM_WITDH110}
+            width={INFO_ITEM_WITDH_110}
             label="电子邮件"
             value={this.getEmail()}
             className={styles.infoItem}
+            isNeedValueTitle={checkIsNeedTitle(this.getEmail())}
+            isNeedOverFlowEllipsis
           />
         </div>
       </div>

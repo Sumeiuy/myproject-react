@@ -15,12 +15,16 @@ import { Button } from 'antd';
 import Table from '../../../components/common/table';
 import Modal from '../../../components/common/biz/CommonModal';
 import InfoItem from '../../common/infoItem';
-import { DEFAULT_VALUE, MemberGradeColumns } from '../config';
+import {
+  DEFAULT_VALUE,
+  MemberGradeColumns,
+  checkIsNeedTitle,
+} from '../config';
 import styles from './zlMemberInfo.less';
 import moment from 'moment';
 import logable, { logPV } from '../../../decorators/logable';
 
-const INFO_ITEM_WITDH110 = '110px';
+const INFO_ITEM_WITDH_110 = '110px';
 const INFO_ITEM_WITDH = '126px';
 export default class ZLMemberInfo extends PureComponent {
   static propTypes = {
@@ -106,7 +110,7 @@ export default class ZLMemberInfo extends PureComponent {
     return (
       <div className={styles.zlMemberInfoBox}>
         <div className={`${styles.title} clearfix`}>
-          <span className={styles.colorBlock}></span>
+          <span className={styles.colorBlock} />
           <span className={styles.titleText}>涨乐U会员</span>
           <span className={styles.iconButton}>
             <Icon type='huiyuandengjibiangeng' />
@@ -144,10 +148,12 @@ export default class ZLMemberInfo extends PureComponent {
         <div className={styles.container}>
           <div className={styles.infoItemBox}>
             <InfoItem
-              width={INFO_ITEM_WITDH110}
+              width={INFO_ITEM_WITDH_110}
               label="用户号"
               value={this.getViewValue(data.custId)}
               className={styles.infoItem}
+              isNeedValueTitle={checkIsNeedTitle(this.getViewValue(data.custId))}
+              isNeedOverFlowEllipsis
             />
           </div>
           <div className={styles.infoItemBox}>
@@ -156,6 +162,8 @@ export default class ZLMemberInfo extends PureComponent {
               label="注册手机号"
               value={this.getViewValue(data.phone)}
               className={styles.infoItem}
+              isNeedValueTitle={checkIsNeedTitle(this.getViewValue(data.phone))}
+              isNeedOverFlowEllipsis
             />
           </div>
           <div className={styles.infoItemBox}>
@@ -164,6 +172,8 @@ export default class ZLMemberInfo extends PureComponent {
               label="当前会员等级"
               value={this.getViewValue(data.currentLevel)}
               className={styles.infoItem}
+              isNeedValueTitle={checkIsNeedTitle(this.getViewValue(data.currentLevel))}
+              isNeedOverFlowEllipsis
             />
           </div>
           <div className={styles.infoItemBox}>
@@ -172,14 +182,18 @@ export default class ZLMemberInfo extends PureComponent {
               label="历史最高等级"
               value={this.getViewValue(data.highestLevel)}
               className={styles.infoItem}
+              isNeedValueTitle={checkIsNeedTitle(this.getViewValue(data.highestLevel))}
+              isNeedOverFlowEllipsis
             />
           </div>
           <div className={styles.infoItemBox}>
             <InfoItem
-              width={INFO_ITEM_WITDH110}
+              width={INFO_ITEM_WITDH_110}
               label="付费会员"
               value={this.getViewValue(data.isProAccount)}
               className={styles.infoItem}
+              isNeedValueTitle={checkIsNeedTitle(this.getViewValue(data.isProAccount))}
+              isNeedOverFlowEllipsis
             />
           </div>
           <div className={styles.infoItemBox}>
@@ -188,6 +202,8 @@ export default class ZLMemberInfo extends PureComponent {
               label="首次付费日期"
               value={this.getViewValue(data.firstPayDate)}
               className={styles.infoItem}
+              isNeedValueTitle={checkIsNeedTitle(this.getViewValue(data.firstPayDate))}
+              isNeedOverFlowEllipsis
             />
           </div>
           <div className={styles.infoItemBox}>
@@ -196,6 +212,8 @@ export default class ZLMemberInfo extends PureComponent {
               label="等级有效期"
               value={this.getViewValue(data.expiryDate)}
               className={styles.infoItem}
+              isNeedValueTitle={checkIsNeedTitle(this.getViewValue(data.expiryDate))}
+              isNeedOverFlowEllipsis
             />
           </div>
         </div>

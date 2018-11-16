@@ -15,10 +15,11 @@ import {
   DEFAULT_PRIVATE_VALUE,
   LINK_WAY_TYPE,
   getViewTextByBool,
+  checkIsNeedTitle,
 } from '../config';
 import styles from './contactWay.less';
 
-const INFO_ITEM_WITDH110 = '110px';
+const INFO_ITEM_WITDH_110 = '110px';
 const INFO_ITEM_WITDH = '126px';
 const EMPTY_OBJECT = {};
 const {
@@ -118,10 +119,12 @@ export default class ContactWay extends PureComponent {
         <div className={styles.title}>联系方式</div>
         <div className={styles.infoItemBox}>
           <InfoItem
-            width={INFO_ITEM_WITDH110}
+            width={INFO_ITEM_WITDH_110}
             label="手机号码"
             value={this.getPhoneNum()}
             className={styles.infoItem}
+            isNeedValueTitle={checkIsNeedTitle(this.getPhoneNum())}
+            isNeedOverFlowEllipsis
           />
         </div>
         <div className={styles.infoItemBox}>
@@ -130,6 +133,8 @@ export default class ContactWay extends PureComponent {
             label="电子邮件"
             value={this.getEmail()}
             className={styles.infoItem}
+            isNeedValueTitle={checkIsNeedTitle(this.getEmail())}
+            isNeedOverFlowEllipsis
           />
         </div>
         <div className={styles.infoItemBox}>
@@ -138,6 +143,8 @@ export default class ContactWay extends PureComponent {
             label="微信"
             value={this.getWechat()}
             className={styles.infoItem}
+            isNeedValueTitle={checkIsNeedTitle(this.getWechat())}
+            isNeedOverFlowEllipsis
           />
         </div>
         <div className={styles.infoItemBox}>
@@ -146,14 +153,18 @@ export default class ContactWay extends PureComponent {
             label="QQ"
             value={this.getQQ()}
             className={styles.infoItem}
+            isNeedValueTitle={checkIsNeedTitle(this.getQQ())}
+            isNeedOverFlowEllipsis
           />
         </div>
         <div className={styles.infoItemBox}>
           <InfoItem
-            width={INFO_ITEM_WITDH110}
+            width={INFO_ITEM_WITDH_110}
             label="请勿发短信"
             value={getViewTextByBool(noMessage)}
             className={styles.infoItem}
+            isNeedValueTitle={checkIsNeedTitle(getViewTextByBool(noMessage))}
+            isNeedOverFlowEllipsis
           />
         </div>
         <div className={styles.infoItemBox}>
@@ -162,6 +173,8 @@ export default class ContactWay extends PureComponent {
             label="请勿打电话"
             value={getViewTextByBool(noCall)}
             className={styles.infoItem}
+            isNeedValueTitle={checkIsNeedTitle(getViewTextByBool(noCall))}
+            isNeedOverFlowEllipsis
           />
         </div>
         <div className={styles.infoItemBoxHalf}>
@@ -170,6 +183,8 @@ export default class ContactWay extends PureComponent {
             label="地址"
             value={this.getAddress()}
             className={styles.infoItem}
+            isNeedValueTitle={checkIsNeedTitle(this.getAddress())}
+            isNeedOverFlowEllipsis
           />
         </div>
       </div>
