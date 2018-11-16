@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性-会员信息-涨乐财富通会员信息
  * @Date: 2018-11-08 18:59:50
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-16 13:21:57
+ * @Last Modified time: 2018-11-16 14:31:38
  */
 
 import React, { PureComponent } from 'react';
@@ -55,7 +55,7 @@ export default class ZLMemberInfo extends PureComponent {
     payload: { name: '涨乐会员等级变更' }
  })
   handleMemberGradeModalClose(){
-    this.setState({memberGradeModalVisible: false});
+    this.setState({ memberGradeModalVisible: false });
   }
 
   @autobind

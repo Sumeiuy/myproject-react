@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-11-06 13:23:32
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-16 13:18:35
+ * @Last Modified time: 2018-11-16 14:26:47
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -33,15 +33,19 @@ export default class ServiceRelationship extends PureComponent {
     //查询账户关系下的服务历史信息
     getCustServiceHistory: PropTypes.func.isRequired,
   }
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
      // 服务历史的弹出框
      serviceHistoryModalVisible: false,
     };
   }
-  componentDidMount(){
-    const { getCustServiceTeam, getCustDevInfo, location: { query: {custId} } } = this.props;
+  componentDidMount() {
+    const {
+      getCustServiceTeam,
+      getCustDevInfo,
+      location: { query: {custId} }
+    } = this.props;
     getCustServiceTeam({
       custId: custId,
     });
@@ -56,7 +60,7 @@ export default class ServiceRelationship extends PureComponent {
     title: '服务历史的弹框',
   })
   handleServiceHistoryModalOpen(){
-    const { getCustServiceHistory, location: { query: {custId} } } = this.props;
+    const { getCustServiceHistory, location: { query: { custId } } } = this.props;
       getCustServiceHistory({ custId: custId}).then(() => {
         this.setState({ serviceHistoryModalVisible: true });
       });

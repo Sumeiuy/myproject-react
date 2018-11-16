@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-11-15 13:53:47
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-16 13:28:42
+ * @Last Modified time: 2018-11-16 14:33:06
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -60,7 +60,6 @@ export default class ZLMemeberInfoModal extends PureComponent {
           size='large'
           visible
           closeModal={onClose}
-          onCancel={onClose}
           showOkBtn={false}
           cancelText="关闭"
           modalKey="memberGrade"

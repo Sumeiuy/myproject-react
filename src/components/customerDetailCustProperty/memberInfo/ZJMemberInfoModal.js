@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-11-15 16:54:09
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-16 12:45:33
+ * @Last Modified time: 2018-11-16 14:31:39
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -29,7 +29,7 @@ export default class ZJMemeberInfoModal extends PureComponent {
 
   @autobind
   renderColumns(){
-    return _.map(integralFlowColumns,  (items) => {
+    return ( _.map(integralFlowColumns,  (items) => {
       const { dataIndex } = items;
       let newItems = {...items};
       // 处理日期格式和加上title
@@ -53,14 +53,17 @@ export default class ZJMemeberInfoModal extends PureComponent {
         };
       }
       return newItems;
-    });
+    }));
   }
 
   // 页码切换的回调
   @autobind
   @logable({ type: 'Click', payload: { name: '页码切换' } })
   handlePaginationChange(page){
-    const { queryZjPointExchangeFlow, location: { query: { custId } } } = this.props;
+    const {
+      queryZjPointExchangeFlow,
+      location: { query: { custId } }
+    } = this.props;
     this.setState({
       pageNum: page,
     });
@@ -89,12 +92,11 @@ export default class ZJMemeberInfoModal extends PureComponent {
           size='large'
           visible
           closeModal={onClose}
-          onCancel={onClose}
           showOkBtn={false}
           cancelText="关闭"
           modalKey="integralFlow"
           maskClosable={false}
-          >
+        >
           {
             _.isEmpty(tradeFlow)
             ? (

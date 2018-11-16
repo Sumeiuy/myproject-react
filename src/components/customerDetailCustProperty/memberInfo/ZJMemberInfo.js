@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性-会员信息-紫金积分会员信息
  * @Date: 2018-11-08 18:59:50
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-16 13:21:59
+ * @Last Modified time: 2018-11-16 14:27:08
  */
 
 import React, { PureComponent } from 'react';
@@ -56,7 +56,7 @@ export default class ZJMemberInfo extends PureComponent {
     payload: { name: '紫金会员兑换流水' }
  })
   handleIntegralFlowModalClose(){
-    this.setState({integralFlowModalVisible: false});
+    this.setState({ integralFlowModalVisible: false });
   }
 
   @autobind
