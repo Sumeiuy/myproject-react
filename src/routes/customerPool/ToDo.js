@@ -281,7 +281,7 @@ export default class ToDo extends PureComponent {
         case 'MY_APPLY':
           this.setState({
             startTime,
-            endTime
+            endTime,
           }, () => {
             this.getApplyData({pageSize, pageNum, startTime, endTime});
           });
@@ -289,7 +289,7 @@ export default class ToDo extends PureComponent {
         case 'MY_APPROVE':
           this.setState({
             startTime,
-            endTime
+            endTime,
           }, () => {
             this.getApproveData({pageSize, pageNum, startTime, endTime});
           });
