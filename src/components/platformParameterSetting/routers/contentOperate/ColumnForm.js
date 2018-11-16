@@ -3,12 +3,13 @@
  * @Descripter: 活动栏目表单
  * @Date: 2018-11-07 10:39:41
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-15 15:34:03
+ * @Last Modified time: 2018-11-16 13:59:00
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { autobind } from 'core-decorators';
+import _ from 'lodash';
 import { Form, Input  } from 'antd';
 import { urlRegExp, acceptType } from './config';
 import CommonUpload from '../../../common/biz/CommonUpload';
@@ -70,7 +71,7 @@ export default class ColumnForm extends PureComponent {
   // 功能描述改变
   @autobind
   handleChangeDesc(e) {
-    const descriptionCount = e.target.value.length;
+    const descriptionCount = e.target.value.trim().length;
     this.props.onChange({
       descriptionCount,
     });
@@ -79,11 +80,28 @@ export default class ColumnForm extends PureComponent {
   // 校验图片链接
   @autobind
   validateLink(rule, value, callback) {
-    if (value && !urlRegExp.test(value)) {
-      callback('图片链接格式不正确');
-    } else {
-      callback();
+    // 去掉前后空格校验图片链接，以及判断value中有没有空格
+    if (value) {
+      const trimValue = value.trim();
+      if (_.isEmpty(trimValue)) {
+        callback('请输入图片链接');
+      } else if (!urlRegExp.test(trimValue) || _.indexOf(trimValue, ' ') > -1) {
+        callback('图片链接格式不正确');
+      }
     }
+    callback();
+  }
+
+  // 校验功能描述
+  @autobind
+  validateDescription(rule, value, callback) {
+    if (!_.isEmpty(value)) {
+      const trimValue = value.trim();
+      if (trimValue.length > 1000) {
+          callback('最多1000个字');
+      }
+    }
+    callback();
   }
 
   render() {
@@ -146,7 +164,6 @@ export default class ColumnForm extends PureComponent {
                 validateTrigger: ['onBlur'],
                 rules: [
                   { required: true, message: '请输入图片链接' },
-                  { whitespace: true, message: '请输入图片链接' },
                   { validator: this.validateLink },
                 ],
                 initialValue: link,
@@ -158,23 +175,19 @@ export default class ColumnForm extends PureComponent {
           <InfoCell
             label="功能描述"
             className={styles.descCell}
-            required
           >
             <FormItem>
               <div className={styles.descBox}>
                 {getFieldDecorator('description', {
                   validateTrigger: ['onBlur'],
                   rules: [
-                    { required: true, message: '请输入功能描述' },
-                    { whitespace: true, message: '请输入功能描述' },
-                    { min: 4, message: '最少4个字' },
-                    { max: 1000, message: '最多1000个字' },
+                    { validator: this.validateDescription}
                   ],
                   initialValue: description,
                 })(
 
                     <TextArea
-                      placeholder="最少4个，最多1000个字"
+                      placeholder="最多1000个字"
                       onChange={this.handleChangeDesc}
                     />
                 )}
