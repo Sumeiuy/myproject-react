@@ -127,8 +127,10 @@ function initFspMethod({ store, history, isInReact }) {
       loadPageInTab: {
         run(url, { reactShouldRemove }) {
           const { path } = findRoute(url);
+          const searchString = url.split('?')[1];
           push({
             pathname: path,
+            search: searchString && `?${searchString}`,
             state: {
               url,
               shouldRemove: reactShouldRemove,
