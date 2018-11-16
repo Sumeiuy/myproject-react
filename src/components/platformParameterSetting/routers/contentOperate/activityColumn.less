@@ -41,11 +41,14 @@
     display: flex;
 
     .previewWrapper {
-      width: 267px;
+      flex: 1 1 auto;
+      width: 182px;
       text-align: center;
 
-      .activityColumnCarousel {
-        width: 267px;
+      .activityColumnCarouselWrapper {
+        padding: 56.5% 0 0;
+        width: 100%;
+        position: relative;
       }
 
       .previewTitle {
@@ -57,10 +60,10 @@
     }
 
     .activityColumnList {
-      flex: 1;
+      flex: 1 1 auto;
       margin-left: 20px;
       height: auto;
-      max-width: calc(~"100% - 287px");
+      width: 1078px;
     }
   }
 

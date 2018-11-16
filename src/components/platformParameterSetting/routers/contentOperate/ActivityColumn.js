@@ -3,7 +3,7 @@
  * @Descripter: 活动栏目
  * @Date: 2018-11-05 14:17:20
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-15 14:08:04
+ * @Last Modified time: 2018-11-15 15:55:49
  */
 
 import React, { PureComponent } from 'react';
@@ -409,7 +409,9 @@ export default class ActivityColumn extends PureComponent {
             <div className={styles.activityColumnBox}>
               <div className={styles.activityColumn}>
                 <div className={styles.previewWrapper}>
-                  <ActivityColumnCarousel activityColumnList={activityColumnList} className={styles.activityColumnCarousel}/>
+                  <div className={styles.activityColumnCarouselWrapper}>
+                    <ActivityColumnCarousel activityColumnList={activityColumnList}/>
+                  </div>
                   <span className={styles.previewTitle}>效果预览</span>
                 </div>
                 <div className={styles.activityColumnList}>
