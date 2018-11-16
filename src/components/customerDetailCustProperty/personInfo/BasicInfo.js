@@ -17,7 +17,8 @@ import {
 } from '../config';
 import styles from './basicInfo.less';
 
-const INFO_ITEM_WITDH = '110px';
+const INFO_ITEM_WITDH110 = '110px';
+const INFO_ITEM_WITDH = '126px';
 export default class BasicInfo extends PureComponent {
   static propTypes = {
     data: PropTypes.object.isRequired,
@@ -45,7 +46,7 @@ export default class BasicInfo extends PureComponent {
         <div className={styles.container}>
           <div className={styles.infoItemBox}>
             <InfoItem
-              width={INFO_ITEM_WITDH}
+              width={INFO_ITEM_WITDH110}
               label="出生日期"
               value={data.birthDate || DEFAULT_VALUE}
               className={styles.infoItem}
@@ -77,7 +78,7 @@ export default class BasicInfo extends PureComponent {
           </div>
           <div className={styles.infoItemBox}>
             <InfoItem
-              width={INFO_ITEM_WITDH}
+              width={INFO_ITEM_WITDH110}
               label="证件类型"
               value={this.getPrivateValue(data.certType)}
               className={styles.infoItem}
@@ -109,7 +110,7 @@ export default class BasicInfo extends PureComponent {
           </div>
           <div className={styles.infoItemBox}>
             <InfoItem
-              width={INFO_ITEM_WITDH}
+              width={INFO_ITEM_WITDH110}
               label="婚姻状况"
               value={data.maritalText || DEFAULT_VALUE}
               className={styles.infoItem}

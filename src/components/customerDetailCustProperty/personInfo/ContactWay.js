@@ -18,7 +18,8 @@ import {
 } from '../config';
 import styles from './contactWay.less';
 
-const INFO_ITEM_WITDH = '110px';
+const INFO_ITEM_WITDH110 = '110px';
+const INFO_ITEM_WITDH = '126px';
 const EMPTY_OBJECT = {};
 const {
   // 手机号码的标识
@@ -117,7 +118,7 @@ export default class ContactWay extends PureComponent {
         <div className={styles.title}>联系方式</div>
         <div className={styles.infoItemBox}>
           <InfoItem
-            width={INFO_ITEM_WITDH}
+            width={INFO_ITEM_WITDH110}
             label="手机号码"
             value={this.getPhoneNum()}
             className={styles.infoItem}
@@ -149,7 +150,7 @@ export default class ContactWay extends PureComponent {
         </div>
         <div className={styles.infoItemBox}>
           <InfoItem
-            width={INFO_ITEM_WITDH}
+            width={INFO_ITEM_WITDH110}
             label="请勿发短信"
             value={getViewTextByBool(noMessage)}
             className={styles.infoItem}
