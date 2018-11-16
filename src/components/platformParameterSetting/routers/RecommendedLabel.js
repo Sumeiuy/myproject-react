@@ -227,6 +227,7 @@ export default class RecommendedLabel extends PureComponent {
     const { hotWds } = this.props;
     this.setState({
       selectedLabels: hotWds,
+      rangeError: hotWds.length > MAX_SELECT_LABEL_SIZE || hotWds.length < MIN_SELECT_LABEL_SIZE,
     });
   }
   // 预览
