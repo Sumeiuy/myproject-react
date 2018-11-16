@@ -128,6 +128,7 @@ export default function ViewAndCombination(props, context) {
     data: newData,
     onClick,
     valueStyle: { color: '#e33c39' },
+    unit: '%',
   };
 
   // tab 点击事件
@@ -180,20 +181,24 @@ export default function ViewAndCombination(props, context) {
     let contentElement = null;
     switch (activeTab) {
       case tabArray[0].key:
-        contentElement = <div className={styles.view}>
-          <h2 className={styles.title} title={newTitle}>{newTitle}</h2>
-          <div
-            className={styles.text}
-            dangerouslySetInnerHTML={{ __html: formateAbstract }}
-          />
-          <a className={linkClass} onClick={() => handleDetailClick(firstNewsId)}>[详情]</a>
-        </div>;
+        contentElement = (
+          <div className={styles.view}>
+            <h2 className={styles.title} title={newTitle}>{newTitle}</h2>
+            <div
+              className={styles.text}
+              dangerouslySetInnerHTML={{ __html: formateAbstract }}
+            />
+            <a className={linkClass} onClick={() => handleDetailClick(firstNewsId)}>[详情]</a>
+          </div>
+        );
         break;
       case tabArray[1].key:
-        contentElement = <div className={styles.view}>
-          <h2 className={styles.combinationTitle}><span>近30天收益率</span>组合名称</h2>
-       <CommonCell {...combinationProps} />
-        </div>;
+        contentElement = (
+          <div className={styles.view}>
+            <h2 className={styles.combinationTitle}><span>近30天收益率</span>组合名称</h2>
+            <CommonCell {...combinationProps} />
+          </div>
+        );
         break;
       default:
         break;
