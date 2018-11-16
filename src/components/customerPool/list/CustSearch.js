@@ -13,19 +13,12 @@ import _ from 'lodash';
 import { isSightingScope } from '../helper';
 import { emp, permission } from '../../../../src/helper';
 import { logCommon } from '../../../decorators/logable';
+import { custListSearchTypeMapData } from './config/filterConfig';
 
 import styles from './custSearch.less';
 
 const Option = AutoComplete.Option;
 const NONE_INFO = '按回车键发起搜索';
-
-const sourceMap = {
-  'SOR_PTY_ID': 'sorPtyId',
-  'ID_NUM': 'idNum',
-  'MOBILE': 'mobile',
-  'NAME': 'name',
-  'STK_ACCTS': 'primaryKey',
-};
 
 export default class CustSearch extends PureComponent {
 
@@ -96,7 +89,7 @@ export default class CustSearch extends PureComponent {
   @autobind
   clearData() {
     this.props.onChange({
-      name: this.state.type,
+      name: this.props.type,
       value: '',
     }, true, {
       source: 'association',
@@ -137,10 +130,6 @@ export default class CustSearch extends PureComponent {
     // todo 查询客户列表
     const { value } = this.state;
 
-    this.setState({
-      type: 'searchText',
-    });
-
     logCommon({
       type: 'Click',
       payload: {
@@ -174,11 +163,7 @@ export default class CustSearch extends PureComponent {
   handleSelect(value) {
     const { hotPossibleWdsList } = this.props;
     const item = _.find(hotPossibleWdsList, item => item.primaryKey === value);
-    const name = sourceMap[item.type];
-
-    this.setState({
-      type: name,
-    });
+    const name = custListSearchTypeMapData[item.type];
 
     logCommon({
       type: 'Click',
