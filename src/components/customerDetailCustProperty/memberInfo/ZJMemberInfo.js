@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性-会员信息-紫金积分会员信息
  * @Date: 2018-11-08 18:59:50
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-15 17:15:28
+ * @Last Modified time: 2018-11-16 09:31:49
  */
 
 import React, { PureComponent } from 'react';
@@ -35,8 +35,6 @@ export default class ZJMemberInfo extends PureComponent {
     this.state = {
       // 积分兑换流水弹框
       integralFlowModalVisible: false,
-      //  当前页码
-      pageNum: 1,
     };
   }
 

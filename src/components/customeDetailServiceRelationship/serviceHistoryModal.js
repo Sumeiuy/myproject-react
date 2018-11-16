@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-11-15 17:54:43
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-15 18:17:58
+ * @Last Modified time: 2018-11-16 09:27:24
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -25,43 +25,45 @@ export default class ServiceHistoryModal extends PureComponent {
     const {
       serviceHistory,
       onClose,
-      } = this.props;
+    } = this.props;
     //  服务历史的数据长度
      const serviceHistoryDatasLength = _.size(serviceHistory);
      // 数据超过10条展示分页，反之不展示
      const showServiceHistoryPagination = serviceHistoryDatasLength > 10;
     return(
-      <div>
-        <Modal
-          className={styles.serviceHistoryModal}
-          title="服务历史"
-          size='large'
-          showOkBtn={false}
-          cancelText="关闭"
-          visible
-          closeModal={onClose}
-          onCancel={onClose}
-          modalKey="serviceHistory"
-          maskClosable={false}
-        >
-        {
-            _.isEmpty(serviceHistory)
-            ? <div className={styles.noDataContainer}>
-                <Icon type="wushujuzhanweitu-" className={styles.noDataIcon}/>
-                <div className={styles.noDataText}>没有符合条件的记录</div>
+      <Modal
+        className={styles.serviceHistoryModal}
+        title="服务历史"
+        size='large'
+        showOkBtn={false}
+        cancelText="关闭"
+        visible
+        closeModal={onClose}
+        onCancel={onClose}
+        modalKey="serviceHistory"
+        maskClosable={false}
+      >
+      {
+          _.isEmpty(serviceHistory)
+          ? (
+            <div className={styles.noDataContainer}>
+              <Icon type="wushujuzhanweitu-" className={styles.noDataIcon}/>
+              <div className={styles.noDataText}>没有符合条件的记录</div>
             </div>
-            :   <div className={styles.tabContainer}>
+            )
+          : (
+          <div className={styles.tabContainer}>
             <Table
             pagination={showServiceHistoryPagination}
             className={styles.tabPaneWrap}
             dataSource={serviceHistory}
             columns={serviceHistoryColumns}
             scroll={{ x: '1024px' }}
-          />
-        </div>
-      }
-      </Modal>
-      </div>
+            />
+          </div>
+          )
+    }
+    </Modal>
     );
   }
 }

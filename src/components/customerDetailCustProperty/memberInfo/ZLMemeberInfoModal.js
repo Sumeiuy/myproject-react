@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-11-15 13:53:47
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-15 16:52:43
+ * @Last Modified time: 2018-11-16 09:41:41
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -16,6 +16,7 @@ import styles from './zlMemberInfo.less';
 import moment from 'moment';
 import logable from '../../../decorators/logable';
 
+const PAGE_SIZE = 10;
 export default class ZLMemeberInfoModal extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -24,14 +25,13 @@ export default class ZLMemeberInfoModal extends PureComponent {
     // 获取涨乐财富通U会员等级变更记录
     queryZLUmemberLevelChangeRecords: PropTypes.func.isRequired,
   }
-  constructor(props) {
+  constructor(props){
     super(props);
     this.state = {
       // 当前页码
       pageNum: 1,
     };
   }
-
   // 页码改变的回调
   @autobind
   @logable({ type: 'Click', payload: { name: '页码切换' } })
@@ -41,7 +41,7 @@ export default class ZLMemeberInfoModal extends PureComponent {
       pageNum: page,
     });
     queryZLUmemberLevelChangeRecords({
-      pageSize: 10,
+      pageSize: PAGE_SIZE,
       pageNum: page,
       custId: query && query.custId,
     });

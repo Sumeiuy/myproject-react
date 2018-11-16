@@ -2,21 +2,22 @@
  * @Author: wangyikai
  * @Date: 2018-11-15 16:54:09
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-15 17:16:10
+ * @Last Modified time: 2018-11-16 09:41:40
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import moment from 'moment';
 import Icon from '../../common/Icon';
 import { number } from '../../../helper';
 import styles from './zjMemberInfo.less';
 import Modal from '../../../components/common/biz/CommonModal';
 import Table from '../../../components/common/table';
 import { integralFlowColumns } from '../config';
-import moment from 'moment';
 import logable from '../../../decorators/logable';
 
+const PAGE_SIZE = 10;
 export default class ZJMemeberInfoModal extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -28,11 +29,10 @@ export default class ZJMemeberInfoModal extends PureComponent {
   constructor(props){
     super(props);
     this.state = {
-      //  当前页码
+      // 当前页码
       pageNum: 1,
     };
   }
-
   @autobind
   renderColumns(){
     return _.map(integralFlowColumns,  (items) => {
@@ -71,7 +71,7 @@ export default class ZJMemeberInfoModal extends PureComponent {
       pageNum: page,
     });
     queryZjPointExchangeFlow({
-      pageSize: 10,
+      pageSize: PAGE_SIZE,
       pageNum: page,
       custId: query && query.custId,
     });
@@ -104,19 +104,23 @@ export default class ZJMemeberInfoModal extends PureComponent {
           >
           {
             _.isEmpty(tradeFlow)
-            ? <div className={styles.noDataContainer}>
-              <Icon type="wushujuzhanweitu-" className={styles.noDataIcon}/>
+            ? (
+              <div className={styles.noDataContainer}>
+                <Icon type="wushujuzhanweitu-" className={styles.noDataIcon}/>
               <div className={styles.noDataText}>没有符合条件的记录</div>
             </div>
-              : <div className={styles.tabContainer}>
-              <Table
-                pagination={showIntegralFlowPagination}
-                dataSource={tradeFlow}
-                isNeedEmptyRow
-                columns={this.renderColumns()}
-                scroll={{ x: '1024px' }}
-              />
-            </div>
+              )
+            : (
+              <div className={styles.tabContainer}>
+                <Table
+                  pagination={showIntegralFlowPagination}
+                  dataSource={tradeFlow}
+                  isNeedEmptyRow
+                  columns={this.renderColumns()}
+                  scroll={{ x: '1024px' }}
+                />
+              </div>
+              )
           }
         </Modal>
       </div>
