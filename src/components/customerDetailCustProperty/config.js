@@ -3,10 +3,11 @@
  * @Description: 客户360，客户属性tab相关配置
  * @Date: 2018-11-07 15:17:38
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-16 09:12:46
+ * @Last Modified time: 2018-11-16 13:01:00
  */
 
 import _ from 'lodash';
+import moment from 'moment';
 import { number } from '../../helper';
 import { rights } from '../customerPool/list/individualInfo/config';
 
@@ -161,4 +162,19 @@ export const {
   MemberGradeColumns,
   integralFlowColumns,
 } = config;
+
+export const newMemberGradeColumns = _.map(MemberGradeColumns, (items) => {
+  const { dataIndex } = items;
+  let newItems = {...items};
+  if( dataIndex === 'time'){
+    newItems = {
+      ...items,
+      render: text => {
+        const data =  moment(text).format('YYYY-MM-DD hh:mm:ss');
+        return data;
+      }
+    };
+  };
+  return newItems;
+});
 

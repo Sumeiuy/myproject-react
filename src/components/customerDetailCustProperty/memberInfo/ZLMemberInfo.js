@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性-会员信息-涨乐财富通会员信息
  * @Date: 2018-11-08 18:59:50
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-15 15:59:49
+ * @Last Modified time: 2018-11-16 13:21:57
  */
 
 import React, { PureComponent } from 'react';
@@ -14,6 +14,7 @@ import Icon from '../../common/Icon';
 import InfoItem from '../../common/infoItem';
 import { DEFAULT_VALUE } from '../config';
 import styles from './zlMemberInfo.less';
+import IfWrap from '../../common/biz/IfWrap';
 import logable, { logPV } from '../../../decorators/logable';
 import ZLMemeberInfoModal from './ZLMemeberInfoModal';
 
@@ -78,18 +79,14 @@ export default class ZLMemberInfo extends PureComponent {
           <span className={styles.iconButton}>
             <Icon type='huiyuandengjibiangeng' />
             <span onClick={this.handleMemberGradeModalOpen}>会员等级变更</span>
-            {
-              memberGradeModalVisible
-              ? (
-                <ZLMemeberInfoModal
-                  location={location}
-                  dataSource={dataSource}
-                  queryZLUmemberLevelChangeRecords={queryZLUmemberLevelChangeRecords}
-                  onClose={this.handleMemberGradeModalClose}
-                />
-                )
-             : null
-            }
+            <IfWrap isRender={memberGradeModalVisible}>
+              <ZLMemeberInfoModal
+                location={location}
+                dataSource={dataSource}
+                queryZLUmemberLevelChangeRecords={queryZLUmemberLevelChangeRecords}
+                onClose={this.handleMemberGradeModalClose}
+              />
+            </IfWrap>
           </span>
         </div>
         <div className={styles.container}>

@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-11-06 13:23:32
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-15 18:13:59
+ * @Last Modified time: 2018-11-16 13:18:35
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -12,6 +12,7 @@ import Icon from '../../components/common/Icon';
 import Table from '../../components/common/table';
 import styles from './serviceRelationship.less';
 import { number } from '../../helper';
+import IfWrap from '../common/biz/IfWrap';
 import logable, { logPV } from '../../decorators/logable';
 import ServiceHistoryModal from './serviceHistoryModal';
 import { serviceTeamColumns, introduceColumns } from './config';
@@ -40,12 +41,12 @@ export default class ServiceRelationship extends PureComponent {
     };
   }
   componentDidMount(){
-    const { getCustServiceTeam, getCustDevInfo, location: {query} } = this.props;
+    const { getCustServiceTeam, getCustDevInfo, location: { query: {custId} } } = this.props;
     getCustServiceTeam({
-      custId: query && query.custId,
+      custId: custId,
     });
     getCustDevInfo({
-      custId: query && query.custId,
+      custId: custId,
     });
   }
   //打开服务历史的弹框
@@ -55,8 +56,8 @@ export default class ServiceRelationship extends PureComponent {
     title: '服务历史的弹框',
   })
   handleServiceHistoryModalOpen(){
-    const { getCustServiceHistory, location: { query } } = this.props;
-      getCustServiceHistory({ custId: query && query.custId}).then(() => {
+    const { getCustServiceHistory, location: { query: {custId} } } = this.props;
+      getCustServiceHistory({ custId: custId}).then(() => {
         this.setState({ serviceHistoryModalVisible: true });
       });
   }
@@ -77,7 +78,7 @@ export default class ServiceRelationship extends PureComponent {
       introduce,
       serviceHistory,
       getCustServiceHistory,
-      } = this.props;
+    } = this.props;
     //将数据百分比化
     const newIntroduceDatas = _.map(introduce,  (items) => {
       const { weight } = items;
@@ -96,18 +97,14 @@ export default class ServiceRelationship extends PureComponent {
             <div className={styles.title}>服务团队</div>
             <Icon type="huiyuandengjibiangeng" className={styles.serviceHistoryIcon}/>
             <div className={styles.serviceHistory} onClick={this.handleServiceHistoryModalOpen}>服务历史</div>
-            {
-              serviceHistoryModalVisible
-              ? (
-                <ServiceHistoryModal
-                  location={location}
-                  serviceHistory={serviceHistory}
-                  getCustServiceHistory={getCustServiceHistory}
-                  onClose={this.handleServiceHistoryModalClose}
-                />
-              )
-              : null
-            }
+            <IfWrap isRender={serviceHistoryModalVisible}>
+              <ServiceHistoryModal
+                location={location}
+                serviceHistory={serviceHistory}
+                getCustServiceHistory={getCustServiceHistory}
+                onClose={this.handleServiceHistoryModalClose}
+              />
+            </IfWrap>
           </div>
           <div className={styles.accountTable}>
             <Table

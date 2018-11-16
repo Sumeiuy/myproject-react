@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-11-15 16:54:09
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-16 09:41:40
+ * @Last Modified time: 2018-11-16 12:45:33
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -26,13 +26,7 @@ export default class ZJMemeberInfoModal extends PureComponent {
     // 获取紫金积分会员积分兑换流水
     queryZjPointExchangeFlow: PropTypes.func.isRequired,
   }
-  constructor(props){
-    super(props);
-    this.state = {
-      // 当前页码
-      pageNum: 1,
-    };
-  }
+
   @autobind
   renderColumns(){
     return _.map(integralFlowColumns,  (items) => {
@@ -66,22 +60,21 @@ export default class ZJMemeberInfoModal extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: '页码切换' } })
   handlePaginationChange(page){
-    const { queryZjPointExchangeFlow, location: { query} } = this.props;
+    const { queryZjPointExchangeFlow, location: { query: { custId } } } = this.props;
     this.setState({
       pageNum: page,
     });
     queryZjPointExchangeFlow({
       pageSize: PAGE_SIZE,
       pageNum: page,
-      custId: query && query.custId,
+      custId: custId,
     });
   }
   render() {
-    const { pageNum } = this.state;
     const { dataSource, onClose } = this.props;
     const { tradeFlow = [], page = {} } = dataSource;
     const PaginationOption = {
-      current: pageNum || 1,
+      current: page.pageNum || 1,
       total: page.totalRecordNum || 0,
       pageSize: page.pageSize || 10,
       onChange: this.handlePaginationChange,
