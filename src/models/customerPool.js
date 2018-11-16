@@ -259,7 +259,7 @@ export default {
               });
               return;
             }
-            if (taskType === '1') {
+            if (taskType === 'MY_TODO') {
               dispatch({
                 type: 'getToDoList',
                 loading: true,

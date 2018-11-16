@@ -3,7 +3,7 @@
  * @Descripter: 报表头部筛选项
  * @Date: 2018-10-06 14:21:06
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-15 15:34:15
+ * @Last Modified time: 2018-11-16 15:17:48
  */
 
 import React, { PureComponent } from 'react';
@@ -45,6 +45,8 @@ export default class TodoFilter extends PureComponent {
     InitiatorCallback: PropTypes.func,
     // 下拉框输入
     InputChange: PropTypes.func,
+    // 时间筛选
+    onTimeChange: PropTypes.func,
   }
 
   static defaultProps = {
@@ -56,6 +58,7 @@ export default class TodoFilter extends PureComponent {
     initiator: '',
     typeData: [],
     initiatorData: [],
+    onTimeChange: _.noop,
   }
 
   // 选择任务触发时间
@@ -71,7 +74,7 @@ export default class TodoFilter extends PureComponent {
   handleDateChange(date) {
     const { value } = date;
     if (!_.isEmpty(value)) {
-      this.props.filterCallback({
+      this.props.onTimeChange({
         startTime: value[0],
         endTime: value[1],
       });

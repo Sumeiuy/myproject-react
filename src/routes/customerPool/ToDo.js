@@ -90,7 +90,7 @@ export default class ToDo extends PureComponent {
       startTime: defaultStartTime,
       // 任务结束时间
       endTime: defaultEndTime,
-      // 标签类型
+      // 头部标签类型
       activeKey: taskType,
       // 类型下拉框value
       applyType: [],
@@ -231,7 +231,7 @@ export default class ToDo extends PureComponent {
         query: {
           taskType,
           pageSize = 10,
-          pageNum = 1
+          pageNum = 1,
         }
       }
     } = this.props;
@@ -241,14 +241,14 @@ export default class ToDo extends PureComponent {
     } = obj;
     // taskType为2是我的申请 3是我的审批
     switch (taskType) {
-      case '2':
+      case 'MY_APPLY':
         this.setState({
           applyType: [key, value],
         }, () => {
           this.getApplyData({pageSize, pageNum, category: key});
         });
         break;
-      case '3':
+      case 'MY_APPROVE':
         this.setState({
           approveType: [key, value],
         }, () => {
@@ -260,6 +260,45 @@ export default class ToDo extends PureComponent {
     }
   }
 
+    // 头部时间筛选回调函数
+    @autobind
+    handleTimeChange(obj) {
+      const {
+        location: {
+          query: {
+            taskType,
+            pageSize = 10,
+            pageNum = 1,
+          }
+        }
+      } = this.props;
+      const {
+        startTime,
+        endTime,
+      } = obj;
+      // taskType为2是我的申请 3是我的审批
+      switch (taskType) {
+        case 'MY_APPLY':
+          this.setState({
+            startTime,
+            endTime,
+          }, () => {
+            this.getApplyData({pageSize, pageNum, startTime, endTime});
+          });
+          break;
+        case 'MY_APPROVE':
+          this.setState({
+            startTime,
+            endTime,
+          }, () => {
+            this.getApproveData({pageSize, pageNum, startTime, endTime});
+          });
+          break;
+        default:
+          break;
+      }
+    }
+
   // 头部发起人筛选回调函数
   @autobind
   handleInitiatorCallback(obj) {
@@ -267,7 +306,7 @@ export default class ToDo extends PureComponent {
       location: {
         query: {
           pageSize = 10,
-          pageNum = 1
+          pageNum = 1,
         }
       }
     } = this.props;
@@ -325,7 +364,7 @@ export default class ToDo extends PureComponent {
       initiator,
     } = this.props;
     const { push, replace } = this.context;
-    const { applyType, approveType, initiatorValue } = this.state;
+    const { applyType, approveType, initiatorValue, startTime, endTime } = this.state;
     const { query: { keyword } } = location;
     return (
       <div className={styles.todo}>
@@ -360,10 +399,11 @@ export default class ToDo extends PureComponent {
                 filterCallback={this.handlefilterCallback}
                 InputChange={this.handleTypeInputChange}
                 onSearch={this.handleApplySearch}
-                startTime={defaultStartTime}
-                endTime={defaultEndTime}
+                startTime={startTime}
+                endTime={endTime}
                 typeData={typeOption}
                 type={applyType}
+                onTimeChange={this.handleTimeChange}
               />
               {
                 !_.isEmpty(applyListData) ?
@@ -393,6 +433,7 @@ export default class ToDo extends PureComponent {
                 initiatorData={initiator}
                 initiator={initiatorValue}
                 isApprove
+                onTimeChange={this.handleTimeChange}
               />
               {
                 !_.isEmpty(approveListData) ?
