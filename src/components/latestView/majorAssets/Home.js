@@ -50,7 +50,7 @@ export default class MajorAssets extends PureComponent {
     this.setState({
       activeKey: key,
     });
-    // log日志 最新观点各模块详情
+    // log日志 tab切换
     logCommon({
       type: 'Click',
       payload: {
