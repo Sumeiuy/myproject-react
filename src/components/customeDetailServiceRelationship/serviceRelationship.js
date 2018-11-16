@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-11-06 13:23:32
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-16 15:57:01
+ * @Last Modified time: 2018-11-16 17:21:42
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -39,6 +39,7 @@ export default class ServiceRelationship extends PureComponent {
      serviceHistoryModalVisible: false,
     };
   }
+
   componentDidMount() {
     const {
       getCustServiceTeam,
@@ -48,28 +49,52 @@ export default class ServiceRelationship extends PureComponent {
     getCustServiceTeam({ custId });
     getCustDevInfo({ custId });
   }
+
+  componentDidUpdate(prevProps) {
+    const {
+      location: {
+        query: {
+          custId: prevCustId,
+        },
+      },
+    } = prevProps;
+    const {
+      location: {
+        query: {
+          custId,
+        },
+      },
+    } = this.props;
+    // url中custId发生变化时重新请求相关数据
+    if (prevCustId !== custId) {
+      this.getCustServiceHistory(custId);
+    }
+  }
+
   //打开服务历史的弹框
   @autobind
   @logPV ({
     pathname: '/modal/serviceHistoryModal',
     title: '服务历史的弹框',
   })
-  handleServiceHistoryModalOpen(){
+  handleServiceHistoryModalOpen() {
     const { getCustServiceHistory, location: { query: { custId } } } = this.props;
-      getCustServiceHistory({ custId: custId }).then(() => {
-        this.setState({ serviceHistoryModalVisible: true });
-      });
+    getCustServiceHistory({ custId }).then(() => {
+      this.setState({ serviceHistoryModalVisible: true });
+    });
   }
+
   // 关闭服务历史的弹出层
   @autobind
   @logable({
      type: 'ButtonClick',
-     payload: { name: '服务历史' }
+     payload: { name: '服务历史' },
   })
   handleServiceHistoryModalClose() {
     this.setState({ serviceHistoryModalVisible: false });
   }
-  render(){
+
+  render() {
     const { serviceHistoryModalVisible } = this.state;
     const {
       location,
@@ -79,7 +104,7 @@ export default class ServiceRelationship extends PureComponent {
       getCustServiceHistory,
     } = this.props;
     //将数据百分比化
-    const newIntroduceDatas = _.map(introduce,  (items) => {
+    const newIntroduceDatas = _.map(introduce, (items) => {
       const { weight } = items;
       const newWeight= `${number.toFixed(weight)}%`;
       return {
@@ -95,7 +120,12 @@ export default class ServiceRelationship extends PureComponent {
               <div className={styles.header}>
                 <div className={styles.title}>服务团队</div>
                 <Icon type="huiyuandengjibiangeng" className={styles.serviceHistoryIcon}/>
-                <div className={styles.serviceHistory} onClick={this.handleServiceHistoryModalOpen}>服务历史</div>
+                <div
+                  className={styles.serviceHistory}
+                  onClick={this.handleServiceHistoryModalOpen}
+                >
+                  服务历史
+                </div>
                 <ServiceHistoryModal
                   location={location}
                   visible={serviceHistoryModalVisible}
@@ -128,7 +158,7 @@ export default class ServiceRelationship extends PureComponent {
                 />
               </div>
             </div>
-            </div>
+          </div>
         </div>
       </div>
     );

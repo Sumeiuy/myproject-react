@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-11-15 17:54:43
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-16 15:35:44
+ * @Last Modified time: 2018-11-16 16:55:51
  */
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -60,10 +60,11 @@ export default function ServiceHistoryModal(props) {
   );
 }
 ServiceHistoryModal.propTypes = {
-  location: PropTypes.object.isRequired,
   // 账户关系下服务历史的数据
   serviceHistory: PropTypes.array.isRequired,
-  //查询账户关系下的服务历史信息
-  getCustServiceHistory: PropTypes.func.isRequired,
+  // 控制弹框是否关闭
+  onClose: PropTypes.func.isRequired,
+  // 控制显示弹框
+  visible: PropTypes.bool.isRequired,
 };
 

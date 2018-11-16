@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-11-15 16:54:09
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-16 15:53:24
+ * @Last Modified time: 2018-11-16 17:17:31
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -18,6 +18,9 @@ import { integralFlowColumns } from '../config';
 import logable from '../../../decorators/logable';
 
 const PAGE_SIZE = 10;
+const EMPTY_ARRAY = [];
+const EMPTY_OBJECT = {};
+
 export default class ZJMemeberInfoModal extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -25,11 +28,15 @@ export default class ZJMemeberInfoModal extends PureComponent {
     dataSource: PropTypes.object.isRequired,
     // 获取紫金积分会员积分兑换流水
     queryZjPointExchangeFlow: PropTypes.func.isRequired,
+    // 控制显示弹框
+    visible: PropTypes.bool.isRequired,
+    // 控制弹框是否关闭
+    onClose: PropTypes.func.isRequired,
   }
 
   @autobind
   renderColumns(){
-    return  _.map(integralFlowColumns,  (items) => {
+    return _.map(integralFlowColumns, (items) => {
       const { dataIndex } = items;
       let newItems = {...items};
       // 处理日期格式和加上title
@@ -38,7 +45,7 @@ export default class ZJMemeberInfoModal extends PureComponent {
           ...items,
           render: text => {
             const date = text && moment(text).format('YYYY-MM-DD');
-            return ( <span title={text}>{date || '--'}</span> );
+            return (<span title={text}>{date || '--'}</span>);
           },
         };
       }
@@ -59,14 +66,11 @@ export default class ZJMemeberInfoModal extends PureComponent {
   // 页码切换的回调
   @autobind
   @logable({ type: 'Click', payload: { name: '页码切换' } })
-  handlePaginationChange(page){
+  handlePaginationChange(page) {
     const {
       queryZjPointExchangeFlow,
       location: { query: { custId } },
     } = this.props;
-    this.setState({
-      pageNum: page,
-    });
     queryZjPointExchangeFlow({
       pageSize: PAGE_SIZE,
       pageNum: page,
@@ -75,7 +79,7 @@ export default class ZJMemeberInfoModal extends PureComponent {
   }
   render() {
     const { dataSource, onClose, visible } = this.props;
-    const { tradeFlow = [], page = {} } = dataSource;
+    const { tradeFlow = EMPTY_ARRAY, page = EMPTY_OBJECT } = dataSource;
     const PaginationOption = {
       current: page.pageNum || 1,
       total: page.totalRecordNum || 0,
@@ -100,21 +104,21 @@ export default class ZJMemeberInfoModal extends PureComponent {
           {
             _.isEmpty(tradeFlow)
             ? (
-              <div className={styles.noDataContainer}>
-                <Icon type="wushujuzhanweitu-" className={styles.noDataIcon}/>
-                <div className={styles.noDataText}>没有符合条件的记录</div>
-            </div>
+                <div className={styles.noDataContainer}>
+                  <Icon type="wushujuzhanweitu-" className={styles.noDataIcon}/>
+                  <div className={styles.noDataText}>没有符合条件的记录</div>
+                </div>
               )
             : (
-              <div className={styles.tabContainer}>
-                <Table
-                  pagination={showIntegralFlowPagination}
-                  dataSource={tradeFlow}
-                  isNeedEmptyRow
-                  columns={this.renderColumns()}
-                  scroll={{ x: '1024px' }}
-                />
-              </div>
+                <div className={styles.tabContainer}>
+                  <Table
+                    pagination={showIntegralFlowPagination}
+                    dataSource={tradeFlow}
+                    isNeedEmptyRow
+                    columns={this.renderColumns()}
+                    scroll={{ x: '1024px' }}
+                  />
+                </div>
               )
           }
         </Modal>

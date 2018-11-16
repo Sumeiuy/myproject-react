@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-11-15 13:53:47
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-16 15:51:00
+ * @Last Modified time: 2018-11-16 17:17:35
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -25,16 +25,17 @@ export default class ZLMemeberInfoModal extends PureComponent {
     dataSource: PropTypes.object.isRequired,
     // 获取涨乐财富通U会员等级变更记录
     queryZLUmemberLevelChangeRecords: PropTypes.func.isRequired,
+    // 控制显示弹框
+    visible: PropTypes.bool.isRequired,
+    // 控制弹框是否关闭
+    onClose: PropTypes.func.isRequired,
   }
 
   // 页码改变的回调
   @autobind
   @logable({ type: 'Click', payload: { name: '页码切换' } })
-  handlePaginationChange(page){
+  handlePaginationChange(page) {
     const { queryZLUmemberLevelChangeRecords, location: { query: { custId } } } = this.props;
-    this.setState({
-      pageNum: page,
-    });
     queryZLUmemberLevelChangeRecords({
       pageSize: PAGE_SIZE,
       pageNum: page,
@@ -69,7 +70,7 @@ export default class ZLMemeberInfoModal extends PureComponent {
             _.isEmpty(list)
             ? (
               <div className={styles.noDataContainer}>
-                <Icon type="wushujuzhanweitu-" className={styles.noDataIcon}/>
+                <Icon type="wushujuzhanweitu-" className={styles.noDataIcon} />
                 <div className={styles.noDataText}>没有符合条件的记录</div>
               </div>
               )
