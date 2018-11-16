@@ -3,7 +3,7 @@
  * @Descripter: 活动栏目表单
  * @Date: 2018-11-07 10:39:41
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-16 13:59:00
+ * @Last Modified time: 2018-11-16 14:59:33
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -81,7 +81,7 @@ export default class ColumnForm extends PureComponent {
   @autobind
   validateLink(rule, value, callback) {
     // 去掉前后空格校验图片链接，以及判断value中有没有空格
-    if (value) {
+    if (!_.isEmpty(value)) {
       const trimValue = value.trim();
       if (_.isEmpty(trimValue)) {
         callback('请输入图片链接');
