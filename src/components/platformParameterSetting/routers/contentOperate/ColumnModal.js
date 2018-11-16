@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-08 13:46:41
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-12 12:12:43
+ * @Last Modified time: 2018-11-15 15:12:17
  */
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -21,20 +21,29 @@ const ColumnModal = React.forwardRef((props, ref) => {
     attachmentList,
     isShowAttachmentStatusError,
     attachmentStatusErrorMessage,
+    action,
+    onFalseDelete,
   } = props;
+  function isCreateColumn() {
+    // action 判断当前是新建 'CREATE' 还是 修改'UPDATE'
+    return action === 'CREATE';
+  }
   // 表单数据变化
   function handleChangeFormData(obj) {
     onChangeFormData(obj);
   }
+  // 栏目弹框标题
+  const columnTitle = isCreateColumn() ? '新建内容' : '编辑内容';
   return (
     <CommonModal
-      title="新建内容"
+      title={columnTitle}
       visible={visible}
       modalKey="activityColumnModal"
       closeModal={onCloseModal}
       className={styles.activityColumnModal}
       onOk={onConfirm}
-      onCancel={onCloseModal}
+      showCancelBtn={false}
+      maskClosable={false}
     >
       {
         visible
@@ -45,6 +54,8 @@ const ColumnModal = React.forwardRef((props, ref) => {
               isShowAttachmentStatusError={isShowAttachmentStatusError}
               attachmentStatusErrorMessage={attachmentStatusErrorMessage}
               onChange={handleChangeFormData}
+              onFalseDelete={onFalseDelete}
+              action={action}
               ref={ref}
             />
           )
@@ -72,6 +83,10 @@ ColumnModal.propTypes = {
   isShowAttachmentStatusError: PropTypes.bool.isRequired,
   // 附件校验错误信息
   attachmentStatusErrorMessage: PropTypes.string.isRequired,
+  // 判断此组件用于新建页面还是修改页面，'CREATE'或者'UPDATE'
+  action: PropTypes.oneOf(['CREATE', 'UPDATE']).isRequired,
+  // 假删除方法
+  onFalseDelete: PropTypes.func.isRequired,
 };
 
 export default ColumnModal;

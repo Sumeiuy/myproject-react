@@ -3,11 +3,12 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
-
+import { logCommon } from '../../../src/decorators/logable';
 import {
   tabNotUseGlobalBreadcrumb,
   locationNeedBreadcrumb,
   findParentBreadcrumb,
+  getAllBreadcrumbItem,
 } from '../../../src/config/tabMenu';
 
 import styles from './breadcrumb.less';
@@ -23,10 +24,7 @@ function getFinalBreadcrumbRoutes(location, breadcrumbRoutes, routerHistory) {
   ];
 
   if(breadcrumbItem) {
-    newBreadcrumbRoutes = [
-      breadcrumbItem.parent,
-      breadcrumbItem,
-    ];
+    newBreadcrumbRoutes = getAllBreadcrumbItem(breadcrumbItem);
   }
 
   newBreadcrumbRoutes = _.map(newBreadcrumbRoutes, (item) => {
@@ -56,6 +54,14 @@ export default class Breadcrumb extends PureComponent {
   @autobind
   handleBreadcrumbItemClick(breadcrumbItem, canClick) {
     if(canClick) {
+      logCommon({
+        type: 'NavClick',
+        payload: {
+          name: '面包屑',
+          value: breadcrumbItem.path,
+          url: breadcrumbItem.path,
+        },
+      });
       this.props.push({
         pathname: breadcrumbItem.path,
         query: breadcrumbItem.query,

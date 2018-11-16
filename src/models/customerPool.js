@@ -190,6 +190,12 @@ export default {
     industryDetail: EMPTY_OBJECT,
     // 客户列表自定义标签
     definedLabelsInfo: EMPTY_LIST,
+    // 申请列表
+    applyList: EMPTY_OBJECT,
+    // 审批列表
+    approveList: EMPTY_OBJECT,
+    // 发起人下拉框数据
+    initiator: EMPTY_LIST,
   },
 
   subscriptions: {
@@ -244,7 +250,7 @@ export default {
             });
           },
           todo(params) {
-            const { keyword } = params;
+            const { keyword, taskType } = params;
             if (keyword) {
               dispatch({
                 type: 'search',
@@ -253,10 +259,12 @@ export default {
               });
               return;
             }
-            dispatch({
-              type: 'getToDoList',
-              loading: true,
-            });
+            if (taskType === 'MY_TODO') {
+              dispatch({
+                type: 'getToDoList',
+                loading: true,
+              });
+            }
           },
         };
         const matchRouteAndCallback = matchRouteAndexec.bind(this, pathname, query);
@@ -264,6 +272,7 @@ export default {
       });
     },
   },
+
   effects: {
     // 投顾绩效
     * getCustCount({ payload }, { call, put }) {  //eslint-disable-line
@@ -1011,6 +1020,30 @@ export default {
         payload: finalResultData,
       });
     },
+    // 获取申请列表
+    * getApplyList({ payload }, { call, put }) {
+      const resultData = yield call(api.getApplyList, payload);
+      yield put({
+        type: 'getApplyListSuccess',
+        payload: resultData,
+      });
+    },
+    // 获取审批列表
+    * getApproveList({ payload }, { call, put }) {
+      const resultData = yield call(api.getApproveList, payload);
+      yield put({
+        type: 'getApproveListSuccess',
+        payload: resultData,
+      });
+    },
+    // 获取发起人下拉框
+    * getInitiator({ payload }, { call, put }) {
+      const resultData = yield call(api.getInitiator, payload);
+      yield put({
+        type: 'getInitiatorSuccess',
+        payload: resultData,
+      });
+    },
   },
   reducers: {
     ceFileDeleteSuccess(state, action) {
@@ -1756,5 +1789,29 @@ export default {
         definedLabelsInfo: payload,
       };
     },
+    // 获取申请列表成功
+    getApplyListSuccess(state, action) {
+      const { payload: { resultData = {} } } = action;
+      return {
+        ...state,
+        applyList: resultData,
+      };
+    },
+    // 获取审批列表成功
+    getApproveListSuccess(state, action) {
+      const { payload: { resultData = {} }} = action;
+      return {
+        ...state,
+        approveList: resultData,
+      };
+    },
+    // 发起人下拉框
+    getInitiatorSuccess(state, action) {
+      const { payload: { resultData = [] }} = action;
+      return {
+        ...state,
+        initiator: resultData,
+      };
+    }
   },
 };

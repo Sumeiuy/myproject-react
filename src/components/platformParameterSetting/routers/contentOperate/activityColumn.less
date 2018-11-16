@@ -1,7 +1,6 @@
 .activityColumnWrapper {
   position: relative;
-  padding: 14px 20px;
-  margin: 10px;
+  padding: 14px 30px;
   height: 100%;
   min-height: calc(~"100vh - 198px");
   background: #fff;
@@ -11,6 +10,9 @@
   .tip {
     font-size: 14px;
     color: #666;
+    .warningTip {
+      color: #ea001c;
+    }
   }
 
   .createBox {
@@ -39,11 +41,14 @@
 
     .previewWrapper {
       width: 182px;
+      flex: 1 1 auto;
+      margin-right: 20px;
       text-align: center;
 
-      .activityColumnCarousel {
-        width: 182px;
-        height: 103px;
+      .activityColumnCarouselWrapper {
+        padding: 56.5% 0 0;
+        width: 100%;
+        position: relative;
       }
 
       .previewTitle {
@@ -55,10 +60,9 @@
     }
 
     .activityColumnList {
-      flex: 1;
-      margin-left: 20px;
       height: auto;
-      max-width: calc(~"100% - 204px");
+      width: 997px;
+      flex: 2 1 auto;
     }
   }
 

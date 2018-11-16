@@ -1,6 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
-import { Icon, Popover} from 'antd';
+import { Icon, Tooltip } from 'antd';
 import BusinessOpenedMenu from '../../../common/htFilter/bussinessOpened/';
 
 import styles from './filterConfig.less';
@@ -35,12 +35,12 @@ function getIndicatorDescription() {
       <p>其他产品：其他产品</p>
     </div>
   );
-  return(<div className={styles.investphFooterWrapper}>
+  return (<div className={styles.investphFooterWrapper}>
     <div className={styles.explainContent}>
-      <Popover content={content} title="指标说明" placement="right">
-        <span className={styles.explainIcon}><Icon type="exclamation-circle" className={styles.icon}/></span>
+      <Tooltip title={content} placement="right" overlayStyle={{ maxWidth: 460 }} >
+        <span className={styles.explainIcon}><Icon type="exclamation-circle" className={styles.icon} /></span>
         <span className={styles.explainText}>指标说明</span>
-      </Popover>
+      </Tooltip>
     </div>
   </div>);
 }
@@ -199,7 +199,7 @@ const exported = {
       dropdownStyle: {
         maxHeight: 324,
         overflowY: 'auto',
-        width: 250,
+        width: 250
       },
       menuFooter: getIndicatorDescription(),
     },
@@ -474,10 +474,10 @@ const exported = {
       },
     },
     {
-      filterName: '天天发份额',
+      filterName: '天天发市值',
       filterId: 'ttfMktVal',
       type: 'range',
-      unit: '份',
+      unit: '元',
       unitStyle: {
         right: 8,
       },
@@ -522,9 +522,9 @@ const exported = {
     { value: '净转入资产', key: 'purFinAset' },
     { value: '收益', key: 'pftAmt' },
     { value: '收益率', key: 'maxCostRate' },
-    { value: '天天发份额', key: 'ttfMktVal' },
+    { value: '天天发市值', key: 'ttfMktVal' },
     { value: '投资期限', key: 'investPeriod' },
-    { value: '投资品种', key: 'investVariety' },
+    { value: '投资偏好', key: 'investVariety' },
   ],
 
   moreFilterCategories: [
@@ -599,7 +599,21 @@ const exported = {
 };
 
 // 客户列表页面如果url里type是以下类型之一，则把值回填到搜索框
-export const custListSearchTypes = ['NAME', 'SOR_PTY_ID', 'MOBILE', 'ID_NUM', 'ALL'];
+export const custListSearchTypes = ['NAME', 'SOR_PTY_ID', 'MOBILE', 'ID_NUM', 'ALL', 'STK_ACCTS'];
+
+// 客户列表筛选部分搜索框触发的handleFilterChange里的filters以下几种类型只能保持一个
+export const custListSearchFilterTypes = ['sorPtyId', 'idNum', 'mobile', 'name', 'searchText', 'primaryKey'];
+
+// 客户列表搜索组件url里面的type对应filters里存的值的一个map
+export const custListSearchTypeMapData = {
+  'SOR_PTY_ID': 'sorPtyId',
+  'ID_NUM': 'idNum',
+  'MOBILE': 'mobile',
+  'NAME': 'name',
+  'STK_ACCTS': 'primaryKey',
+  'ALL': 'searchText',
+};
+
 
 export default exported;
 

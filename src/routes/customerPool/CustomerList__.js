@@ -23,6 +23,7 @@ import { dynamicInsertQuota } from '../../components/customerPool/list/sort/conf
 import { permission, emp, url, check, dva, env } from '../../helper';
 import withRouter from '../../decorators/withRouter';
 import { seperator, sessionStore } from '../../config';
+import { custListSearchFilterTypes } from '../../components/customerPool/list/config/filterConfig';
 
 import {
   ALL_DEPARTMENT_ID,
@@ -79,7 +80,7 @@ function addRangeParams(filterObj) {
     'avlAmtCrdt', // 信用可用资金
     'totMktVal', // 总市值
     'outMktVal', // 外部市值
-    'ttfMktVal', // 天天发份额
+    'ttfMktVal', // 天天发市值
   ];
 
   _.each(rangeParam, (key) => {
@@ -186,7 +187,7 @@ function addSingleParams(filterObj) {
   const singleParams = [
     'customType',  // 客户性质
     'custClass',  // 客户类型
-    'investVariety', // 投资品种
+    'investVariety', // 投资偏好
   ];
 
   _.each(singleParams, (key) => {
@@ -751,6 +752,11 @@ export default class CustomerList extends PureComponent {
         param.searchTypeReq = null;
         param.searchText = null;
       }
+      if (query.type === 'STK_ACCTS') {
+        // 股东账号,要求传入客户经济和和类型(SOR_PTY_ID)
+        param.searchText = query.labelMapping;
+        param.searchTypeReq = 'SOR_PTY_ID';
+      }
     }
 
     if (query.source === 'tag' || query.source === 'sightingTelescope') {
@@ -959,24 +965,50 @@ export default class CustomerList extends PureComponent {
 
   //记录是否第一次选择风险三要素（风险等级、投资期限、投资偏好）
   @autobind
-  recordPrevFilterValue(obj) {
-    if(!prevFilterValue[obj.name]){
-      const messageContent = '取自T-1日数据，仅供用于客户筛查，不能作为客户适当性判定的最终依据！';
-      message.warning(
-        `${obj.name === 'investPeriod' ? '投资期限' : (obj.name === 'investVariety' ? '投资偏好' : '风险等级')}${messageContent}`
-        ,3);
+  recordPrevFilterValue(obj, isDel) {
+    if (obj.name === 'investPeriod'
+      || obj.name === 'investVariety'
+      || obj.name === 'riskLevels' ) {
+        if (isDel || obj.fromMoreFilter) {
+          prevFilterValue[obj.name] = ''; // 关闭过滤组件时清空值。
+          return;
+        }
+        if (!prevFilterValue[obj.name]) {
+          const messageContent = '取自T-1日数据，仅供用于客户筛查，不能作为客户适当性判定的最终依据！';
+          message.warning(
+             `${obj.name === 'investPeriod' ? '投资期限' : (obj.name === 'investVariety' ? '投资偏好' : '风险等级')}${messageContent}`
+             ,4);
+        }
+        prevFilterValue[obj.name] = obj.value;
     }
-    prevFilterValue[obj.name] = obj.value;
+  }
+
+  // 将传入的filtersData里的匹配中custSerach五种类型之一的数据清除，
+  @autobind
+  getReplacedFiltersData(filtersArray, name) {
+    // 判断当前触发filterChange的类型是否是属于筛选部分搜索框里的五种类型之一
+    const flag = !_.isEmpty(
+      _.filter(custListSearchFilterTypes, item => item === name)
+    );
+    if (!flag) {
+      return filtersArray;
+    }
+    return _.filter(filtersArray,
+      item => _.isEmpty(
+          _.filter(custListSearchFilterTypes,
+          itemType => {
+            return item.indexOf(itemType) > -1;
+          }
+        )
+      )
+    );
   }
 
   // 筛选变化
   @autobind
   handleFilterChange(obj, isDeleteFilterFromLocation = false, options = {}) {
-    if(!isDeleteFilterFromLocation
-      && !obj.fromMoreFilter
-      && (obj.name === 'investPeriod' || obj.name === 'investVariety' || obj.name === 'riskLevels' )) {
-      this.recordPrevFilterValue(obj);
-    }
+    // 如果是第一次勾选风险三要素（风险等级、投资期限、投资品种）弹出提示
+    this.recordPrevFilterValue(obj, isDeleteFilterFromLocation);
     const {
       replace,
       location: { query, pathname },
@@ -989,7 +1021,9 @@ export default class CustomerList extends PureComponent {
     // type.a|category.b,c,d  形式放到url中
     const { filters = '' } = query;
     const filtersArray = filters ? filters.split(filterSeperator) : [];
-    const newFilterArray = [...filtersArray];
+    // const newFilterArray = [...filtersArray];
+    const newFilterArray = this.getReplacedFiltersData(filtersArray, obj.name);
+
 
     // 手动上传日志
     handleFilter({ name: obj.name, value: obj.value });

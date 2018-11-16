@@ -13,18 +13,12 @@ import _ from 'lodash';
 import { isSightingScope } from '../helper';
 import { emp, permission } from '../../../../src/helper';
 import { logCommon } from '../../../decorators/logable';
+import { custListSearchTypeMapData } from './config/filterConfig';
 
 import styles from './custSearch.less';
 
 const Option = AutoComplete.Option;
 const NONE_INFO = '按回车键发起搜索';
-
-const sourceMap = {
-  'SOR_PTY_ID': 'sorPtyId',
-  'ID_NUM': 'idNum',
-  'MOBILE': 'mobile',
-  'NAME': 'name',
-};
 
 export default class CustSearch extends PureComponent {
 
@@ -95,11 +89,13 @@ export default class CustSearch extends PureComponent {
   @autobind
   clearData() {
     this.props.onChange({
-      name: this.state.type,
+      name: this.props.type,
       value: '',
     }, true, {
+      source: 'association',
       q: '',
       type: '',
+      labelMapping: '',
       isSearchFromCust: true,
     });
 
@@ -134,10 +130,6 @@ export default class CustSearch extends PureComponent {
     // todo 查询客户列表
     const { value } = this.state;
 
-    this.setState({
-      type: 'searchText',
-    });
-
     logCommon({
       type: 'Click',
       payload: {
@@ -152,8 +144,10 @@ export default class CustSearch extends PureComponent {
       name: 'searchText',
       value: _.trim(value),
     }, false, {
+        source: 'association',
         q: _.trim(value),
         type: 'ALL',
+        labelMapping: '',
         isSearchFromCust: true,
     });
   }
@@ -169,11 +163,7 @@ export default class CustSearch extends PureComponent {
   handleSelect(value) {
     const { hotPossibleWdsList } = this.props;
     const item = _.find(hotPossibleWdsList, item => item.primaryKey === value);
-    const name = sourceMap[item.type];
-
-    this.setState({
-      type: name,
-    });
+    const name = custListSearchTypeMapData[item.type];
 
     logCommon({
       type: 'Click',
@@ -187,9 +177,11 @@ export default class CustSearch extends PureComponent {
 
     this.props.onChange({
       name,
-      value: item.value,
+      value,
     }, false, {
+      source: 'association',
       q: item.value,
+      labelMapping: item.primaryKey,
       type: item.type,
       isSearchFromCust: true,
     });

@@ -77,10 +77,10 @@ const matchRule = {
   ttfMktVal: {
     inset: true,
     key: [{
-      name: '天天发份额',
+      name: '天天发市值',
       id: 'ttfMktVal',
       render: 'renderTtfMktVal',
-      unit: '份',
+      unit: '元',
     }],
   },
   primaryKeyJxgrps: {
@@ -133,6 +133,14 @@ const matchRule = {
       name: '联系电话',
       id: 'telephone',
       render: 'renderDefaultVal',
+    }],
+  },
+  primaryKey: {
+    inset: true,
+    key: [{
+      name: '股东账号',
+      id: 'stkAccts',
+      render: 'renderShareholderSccountNumber',
     }],
   },
   primaryKeyPrdts: {
@@ -205,6 +213,12 @@ const matchRule = {
         id: 'telephone',
         render: 'renderTelephone',
       },
+      // 后期改造可能需要改到这边
+      // {
+      //   name: '股东账号',
+      //   id: 'stkAccts',
+      //   render: 'renderShareholderSccountNumber',
+      // },
       {
         name: '经纪客户号',
         id: 'custId',
@@ -486,7 +500,7 @@ const matchRule = {
   investVariety: {
     inset: true,
     key: [{
-      name: '投资品种',
+      name: '投资偏好',
       id: 'investVariety',
       render: 'renderInvestVariety',
       dataTurn: {
@@ -533,6 +547,7 @@ export const {
   serviceRecord,
   sorPtyId,
   mobile,
+  primaryKey,
   primaryKeyPrdts,
   rights,
   businessOpened,

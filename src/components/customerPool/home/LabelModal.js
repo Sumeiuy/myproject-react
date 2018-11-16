@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 首页-展示更多标签弹窗
  * @Date: 2018-05-23 11:10:49
- * @Last Modified by: Liujianshu-K0240007
- * @Last Modified time: 2018-11-01 14:38:00
+ * @Last Modified by: zhangmei
+ * @Last Modified time: 2018-11-12 14:03:58
  */
 
 import React, { PureComponent } from 'react';
@@ -158,9 +158,8 @@ export default class LabelModals extends PureComponent {
     });
   }
 
-  // TODO 日志查看：页面中找不到方法 未验证
   @autobind
-  @logable({ type: 'Click', payload: { name: '点击' } })
+  @logable({ type: 'Click', payload: { name: '选择标签' } })
   openClientListPage(item) {
     const options = {
       source: isSightingScope(item.source) ? 'sightingTelescope' : 'tag',
