@@ -5,7 +5,7 @@
  *  客户列表项中的匹配出来的数据
  * @author wangjunjun
  * @Last Modified by: liqianwen
- * @Last Modified time: 2018-11-13 22:38:45
+ * @Last Modified time: 2018-11-16 11:19:23
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -415,7 +415,7 @@ export default class MatchArea extends PureComponent {
         <li key={`${id}${listItem.custId}`}>
           <span>
             <i className="label">{name}：</i>
-            {listItem.ttfMktVal}份
+            {listItem.ttfMktVal}元
           </span>
         </li>
       );

@@ -80,7 +80,7 @@ const matchRule = {
       name: '天天发份额',
       id: 'ttfMktVal',
       render: 'renderTtfMktVal',
-      unit: '份',
+      unit: '元',
     }],
   },
   primaryKeyJxgrps: {

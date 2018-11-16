@@ -1,6 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
-import { Icon, Tooltip} from 'antd';
+import { Icon, Tooltip } from 'antd';
 import BusinessOpenedMenu from '../../../common/htFilter/bussinessOpened/';
 
 import styles from './filterConfig.less';
@@ -35,10 +35,10 @@ function getIndicatorDescription() {
       <p>其他产品：其他产品</p>
     </div>
   );
-  return(<div className={styles.investphFooterWrapper}>
+  return (<div className={styles.investphFooterWrapper}>
     <div className={styles.explainContent}>
       <Tooltip title={content} placement="right" overlayStyle={{ maxWidth: 460 }} >
-        <span className={styles.explainIcon}><Icon type="exclamation-circle" className={styles.icon}/></span>
+        <span className={styles.explainIcon}><Icon type="exclamation-circle" className={styles.icon} /></span>
         <span className={styles.explainText}>指标说明</span>
       </Tooltip>
     </div>
@@ -477,7 +477,7 @@ const exported = {
       filterName: '天天发份额',
       filterId: 'ttfMktVal',
       type: 'range',
-      unit: '份',
+      unit: '元',
       unitStyle: {
         right: 8,
       },
