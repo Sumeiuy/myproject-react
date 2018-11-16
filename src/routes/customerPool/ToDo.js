@@ -403,7 +403,7 @@ export default class ToDo extends PureComponent {
                 endTime={endTime}
                 typeData={typeOption}
                 type={applyType}
-                timeChange={this.handleTimeChange}
+                onTimeChange={this.handleTimeChange}
               />
               {
                 !_.isEmpty(applyListData) ?
@@ -433,7 +433,7 @@ export default class ToDo extends PureComponent {
                 initiatorData={initiator}
                 initiator={initiatorValue}
                 isApprove
-                timeChange={this.handleTimeChange}
+                onTimeChange={this.handleTimeChange}
               />
               {
                 !_.isEmpty(approveListData) ?
