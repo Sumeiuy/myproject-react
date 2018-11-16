@@ -474,7 +474,7 @@ const exported = {
       },
     },
     {
-      filterName: '天天发份额',
+      filterName: '天天发市值',
       filterId: 'ttfMktVal',
       type: 'range',
       unit: '元',
@@ -522,7 +522,7 @@ const exported = {
     { value: '净转入资产', key: 'purFinAset' },
     { value: '收益', key: 'pftAmt' },
     { value: '收益率', key: 'maxCostRate' },
-    { value: '天天发份额', key: 'ttfMktVal' },
+    { value: '天天发市值', key: 'ttfMktVal' },
     { value: '投资期限', key: 'investPeriod' },
     { value: '投资偏好', key: 'investVariety' },
   ],

@@ -372,7 +372,7 @@ export const capitalFilterList = [
   { labelName: '总市值（含信用）', filterField: 'totMktVal' },
   { labelName: '归集率', filterField: 'gjlRate' },
   { labelName: '外部市值', filterField: 'outMktVal' },
-  { labelName: '天天发份额', filterField: 'ttfMktVal' },
+  { labelName: '天天发市值', filterField: 'ttfMktVal' },
 ];
 
 // 个人对应的code码

@@ -77,7 +77,7 @@ const matchRule = {
   ttfMktVal: {
     inset: true,
     key: [{
-      name: '天天发份额',
+      name: '天天发市值',
       id: 'ttfMktVal',
       render: 'renderTtfMktVal',
       unit: '元',

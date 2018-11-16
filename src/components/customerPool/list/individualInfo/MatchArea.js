@@ -5,7 +5,7 @@
  *  客户列表项中的匹配出来的数据
  * @author wangjunjun
  * @Last Modified by: liqianwen
- * @Last Modified time: 2018-11-16 11:19:23
+ * @Last Modified time: 2018-11-16 13:22:55
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -403,19 +403,19 @@ export default class MatchArea extends PureComponent {
     return null;
   }
 
-  // 天天发份额
+  // 天天发市值
   @autobind
   renderTtfMktVal(currentItem) {
     const {
       listItem,
     } = this.props;
-    const { name, id } = currentItem;
+    const { name, id, unit } = currentItem;
     if (listItem.ttfMktVal) {
       return (
         <li key={`${id}${listItem.custId}`}>
           <span>
             <i className="label">{name}：</i>
-            {listItem.ttfMktVal}元
+            {listItem.ttfMktVal}{unit}
           </span>
         </li>
       );
