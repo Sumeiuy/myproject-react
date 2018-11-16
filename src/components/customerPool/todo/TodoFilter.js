@@ -3,7 +3,7 @@
  * @Descripter: 报表头部筛选项
  * @Date: 2018-10-06 14:21:06
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-16 15:07:03
+ * @Last Modified time: 2018-11-16 15:17:48
  */
 
 import React, { PureComponent } from 'react';
@@ -58,7 +58,7 @@ export default class TodoFilter extends PureComponent {
     initiator: '',
     typeData: [],
     initiatorData: [],
-    timeChange: _.noop,
+    onTimeChange: _.noop,
   }
 
   // 选择任务触发时间
