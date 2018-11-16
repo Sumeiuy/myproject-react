@@ -46,7 +46,7 @@ export default class MajorAssets extends PureComponent {
 
   // 切换 TAB
   @autobind
-  @logable({ type: 'Click', payload: { name: '切换Tab：每周观点/战术配置/战略配置', type: '大类资产配置分析' } })
+  @logable({ type: 'Click', payload: { name: '切换Tab：每周观点/战术配置/战略配置' } })
   handleTabsChange(key) {
     this.setState({
       activeKey: key,
