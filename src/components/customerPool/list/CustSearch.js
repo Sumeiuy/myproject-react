@@ -24,6 +24,7 @@ const sourceMap = {
   'ID_NUM': 'idNum',
   'MOBILE': 'mobile',
   'NAME': 'name',
+  'STK_ACCTS': 'primaryKey',
 };
 
 export default class CustSearch extends PureComponent {
@@ -98,8 +99,10 @@ export default class CustSearch extends PureComponent {
       name: this.state.type,
       value: '',
     }, true, {
+      source: 'association',
       q: '',
       type: '',
+      labelMapping: '',
       isSearchFromCust: true,
     });
 
@@ -152,8 +155,10 @@ export default class CustSearch extends PureComponent {
       name: 'searchText',
       value: _.trim(value),
     }, false, {
+        source: 'association',
         q: _.trim(value),
         type: 'ALL',
+        labelMapping: '',
         isSearchFromCust: true,
     });
   }
@@ -187,9 +192,11 @@ export default class CustSearch extends PureComponent {
 
     this.props.onChange({
       name,
-      value: item.value,
+      value,
     }, false, {
+      source: 'association',
       q: item.value,
+      labelMapping: item.primaryKey,
       type: item.type,
       isSearchFromCust: true,
     });

@@ -3,7 +3,7 @@
  * @Descripter: 报表头部筛选项
  * @Date: 2018-10-06 14:21:06
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-15 02:51:34
+ * @Last Modified time: 2018-11-15 15:34:15
  */
 
 import React, { PureComponent } from 'react';
@@ -40,7 +40,7 @@ export default class TodoFilter extends PureComponent {
     // 发起人数据
     initiatorData: PropTypes.array,
     // 发起人
-    initiator: PropTypes.array,
+    initiator: PropTypes.string,
     // 发起人下拉筛选
     InitiatorCallback: PropTypes.func,
     // 下拉框输入
@@ -53,7 +53,7 @@ export default class TodoFilter extends PureComponent {
     InitiatorCallback: _.noop,
     InputChange: _.noop,
     type: [],
-    initiator: [],
+    initiator: '',
     typeData: [],
     initiatorData: [],
   }
@@ -139,7 +139,7 @@ export default class TodoFilter extends PureComponent {
         key,
       }
     } = option;
-    this.handleSelectChange(name, key);
+    this.props.initiatorCallback({key, name});
   }
 
   // select改变
@@ -193,7 +193,7 @@ export default class TodoFilter extends PureComponent {
               className={styles.initiator}
               dataMap={['key', 'name']}
               data={initiatorData}
-              value=''
+              value={initiator}
               onChange={this.handleInitiatorChange}
               needItemObj
               placeholder="员工工号/员工姓名"

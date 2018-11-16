@@ -23,6 +23,7 @@ import { dynamicInsertQuota } from '../../components/customerPool/list/sort/conf
 import { permission, emp, url, check, dva, env } from '../../helper';
 import withRouter from '../../decorators/withRouter';
 import { seperator, sessionStore } from '../../config';
+import { custListSearchFilterTypes } from '../../components/customerPool/list/config/filterConfig';
 
 import {
   ALL_DEPARTMENT_ID,
@@ -79,7 +80,7 @@ function addRangeParams(filterObj) {
     'avlAmtCrdt', // 信用可用资金
     'totMktVal', // 总市值
     'outMktVal', // 外部市值
-    'ttfMktVal', // 天天发份额
+    'ttfMktVal', // 天天发市值
   ];
 
   _.each(rangeParam, (key) => {
@@ -982,6 +983,27 @@ export default class CustomerList extends PureComponent {
     }
   }
 
+  // 将传入的filtersData里的匹配中custSerach五种类型之一的数据清除，
+  @autobind
+  getReplacedFiltersData(filtersArray, name) {
+    // 判断当前触发filterChange的类型是否是属于筛选部分搜索框里的五种类型之一
+    const flag = !_.isEmpty(
+      _.filter(custListSearchFilterTypes, item => item === name)
+    );
+    if (!flag) {
+      return filtersArray;
+    }
+    return _.filter(filtersArray,
+      item => _.isEmpty(
+          _.filter(custListSearchFilterTypes,
+          itemType => {
+            return item.indexOf(itemType) > -1;
+          }
+        )
+      )
+    );
+  }
+
   // 筛选变化
   @autobind
   handleFilterChange(obj, isDeleteFilterFromLocation = false, options = {}) {
@@ -999,7 +1021,9 @@ export default class CustomerList extends PureComponent {
     // type.a|category.b,c,d  形式放到url中
     const { filters = '' } = query;
     const filtersArray = filters ? filters.split(filterSeperator) : [];
-    const newFilterArray = [...filtersArray];
+    // const newFilterArray = [...filtersArray];
+    const newFilterArray = this.getReplacedFiltersData(filtersArray, obj.name);
+
 
     // 手动上传日志
     handleFilter({ name: obj.name, value: obj.value });
