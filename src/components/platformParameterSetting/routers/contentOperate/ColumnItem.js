@@ -3,7 +3,7 @@
  * @Descripter: 栏目Item
  * @Date: 2018-11-05 15:16:43
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-12 15:37:07
+ * @Last Modified time: 2018-11-16 14:53:12
  */
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -11,6 +11,8 @@ import InfoCell from './InfoCell';
 import Icon from '../../../common/Icon';
 
 import styles from './columnItem.less';
+
+const EMPTY_INFO = '--';
 
 export default function ColumnItem(props) {
   const {
@@ -37,7 +39,7 @@ export default function ColumnItem(props) {
         <InfoCell
           label="功能描述"
         >
-          <span className={styles.itemContent} title={description}>{description}</span>
+          <span className={styles.itemContent} title={description}>{description || EMPTY_INFO}</span>
         </InfoCell>
       </div>
       <div className={styles.itemOperate}>

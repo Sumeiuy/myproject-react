@@ -3,7 +3,7 @@
  * @Descripter: 活动栏目
  * @Date: 2018-11-05 14:17:20
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-15 15:55:49
+ * @Last Modified time: 2018-11-16 11:16:40
  */
 
 import React, { PureComponent } from 'react';
@@ -247,7 +247,9 @@ export default class ActivityColumn extends PureComponent {
         if (this.checkAttachmentStatus()) {
           return;
         }
-        const { link, description } = values;
+        const { link: columnLink, description: columnDescription } = values;
+        const link = columnLink.trim();
+        const description = columnDescription.trim();
         const {
           activityColumnList,
           formData,

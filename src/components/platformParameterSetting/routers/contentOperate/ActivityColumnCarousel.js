@@ -3,7 +3,7 @@
  * @Descripter: 活动栏目跑马灯
  * @Date: 2018-11-06 13:53:39
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-15 16:18:20
+ * @Last Modified time: 2018-11-16 13:48:50
  */
 
 import React, { Component } from 'react';
@@ -19,6 +19,10 @@ import { filterData } from './helper';
 import { urlRegExp } from './config';
 import { logPV } from '../../../../decorators/logable';
 import styles from './activityColumnCarousel.less';
+
+const columnOverlayStyle = {
+  whiteSpace: 'pre',
+};
 
 export default class ActivityColumnCarousel extends Component {
   static propsTypes = {
@@ -96,7 +100,10 @@ export default class ActivityColumnCarousel extends Component {
       const { name } = attaches[0];
       return (
         <div className={styles.itemSlide} onClick={() => this.handleClick(link)} key={data.uuid()}>
-          <Tooltip title={description}>
+          <Tooltip
+            overlayStyle={columnOverlayStyle}
+            title={description}
+          >
             <img src={url} alt={name} />
           </Tooltip>
         </div>
