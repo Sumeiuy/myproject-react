@@ -77,10 +77,10 @@ const matchRule = {
   ttfMktVal: {
     inset: true,
     key: [{
-      name: '天天发份额',
+      name: '天天发市值',
       id: 'ttfMktVal',
       render: 'renderTtfMktVal',
-      unit: '份',
+      unit: '元',
     }],
   },
   primaryKeyJxgrps: {
@@ -213,11 +213,12 @@ const matchRule = {
         id: 'telephone',
         render: 'renderTelephone',
       },
-      {
-        name: '股东账号',
-        id: 'stkAccts',
-        render: 'renderShareholderSccountNumber',
-      },
+      // 后期改造可能需要改到这边
+      // {
+      //   name: '股东账号',
+      //   id: 'stkAccts',
+      //   render: 'renderShareholderSccountNumber',
+      // },
       {
         name: '经纪客户号',
         id: 'custId',

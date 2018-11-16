@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-08 13:46:41
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-14 21:37:57
+ * @Last Modified time: 2018-11-15 15:12:17
  */
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -43,6 +43,7 @@ const ColumnModal = React.forwardRef((props, ref) => {
       className={styles.activityColumnModal}
       onOk={onConfirm}
       showCancelBtn={false}
+      maskClosable={false}
     >
       {
         visible

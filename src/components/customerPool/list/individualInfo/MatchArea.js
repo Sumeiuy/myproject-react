@@ -5,7 +5,7 @@
  *  客户列表项中的匹配出来的数据
  * @author wangjunjun
  * @Last Modified by: liqianwen
- * @Last Modified time: 2018-11-13 22:38:45
+ * @Last Modified time: 2018-11-16 13:22:55
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -17,6 +17,7 @@ import Tooltip from '../../../common/Tooltip';
 import { isSightingScope, isLocalScope, handleOpenFsp360TabAction, openProductDetailPage, getDetailBtnVisible } from '../../helper';
 import { url as urlHelper, url, number } from '../../../../helper';
 import { seperator, sessionStore } from '../../../../config';
+import { custListSearchFilterTypes } from '../config/filterConfig';
 import { openRctTab } from '../../../../utils/index';
 import { RANDOM } from '../../../../config/filterContant';
 import HoldingProductDetail from '../HoldingProductDetail';
@@ -49,11 +50,26 @@ const replaceWord = ({ value, searchText, title = '', type = '' }) => {
     `<em class="marked">${searchText}${titleDom || ''}</em>${holder}`);
 };
 
+// 如果过滤组件的id是搜索框支持的6类id的任意一种，需要从本地缓存清除所有这6种
+function getfinalFilterIdArray(filterId) {
+  if (_.isArray(filterId)) {
+    return filterId;
+  }
+  if (_.includes(custListSearchFilterTypes, filterId)) {
+    return custListSearchFilterTypes;
+  }
+  return [filterId];
+}
+
 export default class MatchArea extends PureComponent {
   static setFilterOrder(id, value, hashString) {
     const filterOrder = sessionStore.get(`CUSTOMERPOOL_FILTER_ORDER_${hashString}`) || [];
     const finalId = _.isArray(id) ? id : [id];
-    let finalOrder = _.difference(filterOrder, finalId);
+    // 对于搜索框对应的搜索id，都要进行过滤
+    const finalFilterIdArray = getfinalFilterIdArray(id);
+    // 过滤掉需要过滤的本地filterId缓存
+    let finalOrder = _.difference(filterOrder, finalFilterIdArray);
+
     if (value && !_.includes(value, unlimited)) {
       finalOrder = [...finalId, ...finalOrder];
     }
@@ -249,7 +265,6 @@ export default class MatchArea extends PureComponent {
   }
 
   // 点击订购组合名称跳转到详情页面
-  // TODO 日志查看：找不到方法 未验证
   @autobind
   @logable({ type: 'Click', payload: { name: '订购组合' } })
   handleOrderCombinationClick({ name, code }) {
@@ -276,7 +291,6 @@ export default class MatchArea extends PureComponent {
     });
   }
 
-  // TODO 日志查看：找不到方法 未验证
   @autobind
   @logable({ type: 'Click', payload: { name: '收起/展开' } })
   showAllIndividual() {
@@ -389,19 +403,19 @@ export default class MatchArea extends PureComponent {
     return null;
   }
 
-  // 天天发份额
+  // 天天发市值
   @autobind
   renderTtfMktVal(currentItem) {
     const {
       listItem,
     } = this.props;
-    const { name, id } = currentItem;
+    const { name, id, unit } = currentItem;
     if (listItem.ttfMktVal) {
       return (
         <li key={`${id}${listItem.custId}`}>
           <span>
             <i className="label">{name}：</i>
-            {listItem.ttfMktVal}份
+            {listItem.ttfMktVal}{unit}
           </span>
         </li>
       );
@@ -533,7 +547,6 @@ export default class MatchArea extends PureComponent {
     } = this.props;
     const { name, id, hasCycle } = item;
     let renderValue = listItem[id];
-    if (!_.isNull(renderValue)) {
       return (
         <li key={`${renderValue}${id}${listItem.custId}`} title={renderValue}>
           <span>
@@ -546,8 +559,6 @@ export default class MatchArea extends PureComponent {
         </li>
       );
     }
-    return null;
-  }
 
   // 匹配经纪客户号
   renderCustId() {
