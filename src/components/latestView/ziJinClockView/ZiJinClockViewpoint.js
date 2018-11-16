@@ -12,7 +12,7 @@ import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 
 import Icon from '../../common/Icon';
-import logable from '../../../decorators/logable';
+import logable, { logCommon } from '../../../decorators/logable';
 import { openRctTab } from '../../../utils';
 import ViewpointListItem from './ViewpointListItem';
 import ZijinClockDetailModal from './ZijinClockDetailModal';
@@ -90,7 +90,6 @@ export default class ZiJinClockViewpoint extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '更多' } })
   toListPage() {
     const { push } = this.context;
     const param = {
@@ -103,6 +102,13 @@ export default class ZiJinClockViewpoint extends PureComponent {
       url,
       param,
       pathname: url,
+    });
+    // log日志 行业/主题调整-更多
+    logCommon({
+      type: 'Click',
+      payload: {
+        name: '紫金时钟观点-更多',
+      },
     });
   }
 
