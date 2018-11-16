@@ -84,7 +84,7 @@ export default class ChiefViewpoint extends PureComponent {
     logCommon({
       type: 'Click',
       payload: {
-        name: title + '-更多',
+        name: title + '-详情',
       },
     });
   }
