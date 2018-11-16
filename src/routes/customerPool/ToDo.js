@@ -231,7 +231,7 @@ export default class ToDo extends PureComponent {
         query: {
           taskType,
           pageSize = 10,
-          pageNum = 1
+          pageNum = 1,
         }
       }
     } = this.props;
@@ -268,7 +268,7 @@ export default class ToDo extends PureComponent {
           query: {
             taskType,
             pageSize = 10,
-            pageNum = 1
+            pageNum = 1,
           }
         }
       } = this.props;
@@ -306,7 +306,7 @@ export default class ToDo extends PureComponent {
       location: {
         query: {
           pageSize = 10,
-          pageNum = 1
+          pageNum = 1,
         }
       }
     } = this.props;
