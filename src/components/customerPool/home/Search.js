@@ -261,6 +261,7 @@ export default class Search extends PureComponent {
     this.handleOpenTab({
       source: 'search',
       q: encodeURIComponent(newValue),
+      type: 'ALL',
     });
     return true;
   }
