@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-11-06 13:23:32
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-16 14:26:47
+ * @Last Modified time: 2018-11-16 15:57:01
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -12,7 +12,6 @@ import Icon from '../../components/common/Icon';
 import Table from '../../components/common/table';
 import styles from './serviceRelationship.less';
 import { number } from '../../helper';
-import IfWrap from '../common/biz/IfWrap';
 import logable, { logPV } from '../../decorators/logable';
 import ServiceHistoryModal from './serviceHistoryModal';
 import { serviceTeamColumns, introduceColumns } from './config';
@@ -44,14 +43,10 @@ export default class ServiceRelationship extends PureComponent {
     const {
       getCustServiceTeam,
       getCustDevInfo,
-      location: { query: {custId} }
+      location: { query: { custId } },
     } = this.props;
-    getCustServiceTeam({
-      custId: custId,
-    });
-    getCustDevInfo({
-      custId: custId,
-    });
+    getCustServiceTeam({ custId });
+    getCustDevInfo({ custId });
   }
   //打开服务历史的弹框
   @autobind
@@ -61,7 +56,7 @@ export default class ServiceRelationship extends PureComponent {
   })
   handleServiceHistoryModalOpen(){
     const { getCustServiceHistory, location: { query: { custId } } } = this.props;
-      getCustServiceHistory({ custId: custId}).then(() => {
+      getCustServiceHistory({ custId: custId }).then(() => {
         this.setState({ serviceHistoryModalVisible: true });
       });
   }
@@ -72,7 +67,7 @@ export default class ServiceRelationship extends PureComponent {
      payload: { name: '服务历史' }
   })
   handleServiceHistoryModalClose() {
-    this.setState({ serviceHistoryModalVisible: false});
+    this.setState({ serviceHistoryModalVisible: false });
   }
   render(){
     const { serviceHistoryModalVisible } = this.state;
@@ -94,48 +89,47 @@ export default class ServiceRelationship extends PureComponent {
     });
     return(
       <div className={styles.tabsContainer}>
-      <div className={styles.tabPaneWrap}>
-      <div className={styles.accountDetailWrap}>
-        <div className={styles.accountBlock}>
-          <div className={styles.header}>
-            <div className={styles.title}>服务团队</div>
-            <Icon type="huiyuandengjibiangeng" className={styles.serviceHistoryIcon}/>
-            <div className={styles.serviceHistory} onClick={this.handleServiceHistoryModalOpen}>服务历史</div>
-            <IfWrap isRender={serviceHistoryModalVisible}>
-              <ServiceHistoryModal
-                location={location}
-                serviceHistory={serviceHistory}
-                getCustServiceHistory={getCustServiceHistory}
-                onClose={this.handleServiceHistoryModalClose}
-              />
-            </IfWrap>
-          </div>
-          <div className={styles.accountTable}>
-            <Table
-              pagination={false}
-              className={styles.tableBorder}
-              isNeedEmptyRow
-              dataSource={serviceTeam}
-              columns={serviceTeamColumns}
-            />
-          </div>
+        <div className={styles.tabPaneWrap}>
+          <div className={styles.accountDetailWrap}>
+            <div className={styles.accountBlock}>
+              <div className={styles.header}>
+                <div className={styles.title}>服务团队</div>
+                <Icon type="huiyuandengjibiangeng" className={styles.serviceHistoryIcon}/>
+                <div className={styles.serviceHistory} onClick={this.handleServiceHistoryModalOpen}>服务历史</div>
+                <ServiceHistoryModal
+                  location={location}
+                  visible={serviceHistoryModalVisible}
+                  serviceHistory={serviceHistory}
+                  getCustServiceHistory={getCustServiceHistory}
+                  onClose={this.handleServiceHistoryModalClose}
+                />
+              </div>
+              <div className={styles.accountTable}>
+                <Table
+                  pagination={false}
+                  className={styles.tableBorder}
+                  isNeedEmptyRow
+                  dataSource={serviceTeam}
+                  columns={serviceTeamColumns}
+                />
+              </div>
+            </div>
+            <div className={styles.accountBlock}>
+              <div className={styles.header}>
+                <div className={styles.title}>介绍信息</div>
+              </div>
+              <div className={styles.accountTable}>
+                <Table
+                  pagination={false}
+                  className={styles.tableBorder}
+                  isNeedEmptyRow
+                  dataSource={newIntroduceDatas}
+                  columns={introduceColumns}
+                />
+              </div>
+            </div>
+            </div>
         </div>
-        <div className={styles.accountBlock}>
-          <div className={styles.header}>
-            <div className={styles.title}>介绍信息</div>
-          </div>
-          <div className={styles.accountTable}>
-            <Table
-              pagination={false}
-              className={styles.tableBorder}
-              isNeedEmptyRow
-              dataSource={newIntroduceDatas}
-              columns={introduceColumns}
-            />
-          </div>
-        </div>
-        </div>
-      </div>
       </div>
     );
   }

@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-11-15 17:54:43
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-16 14:42:20
+ * @Last Modified time: 2018-11-16 15:35:44
  */
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -17,6 +17,7 @@ export default function ServiceHistoryModal(props) {
   const {
     serviceHistory,
     onClose,
+    visible,
   } = props;
   //  服务历史的数据长度
   const serviceHistoryDatasLength = _.size(serviceHistory);
@@ -28,7 +29,7 @@ export default function ServiceHistoryModal(props) {
       title="服务历史"
       size='large'
       showOkBtn={false}
-      visible
+      visible={visible}
       cancelText="关闭"
       closeModal={onClose}
       modalKey="serviceHistory"
@@ -38,8 +39,8 @@ export default function ServiceHistoryModal(props) {
         _.isEmpty(serviceHistory)
         ? (
           <div className={styles.noDataContainer}>
-            <Icon type="wushujuzhanweitu-" className={styles.noDataIcon}/>
-              <div className={styles.noDataText}>没有符合条件的记录</div>
+            <Icon type="wushujuzhanweitu-" className={styles.noDataIcon} />
+            <div className={styles.noDataText}>没有符合条件的记录</div>
           </div>
           )
         : (

@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-11-15 16:54:09
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-16 14:31:39
+ * @Last Modified time: 2018-11-16 15:53:24
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -29,7 +29,7 @@ export default class ZJMemeberInfoModal extends PureComponent {
 
   @autobind
   renderColumns(){
-    return ( _.map(integralFlowColumns,  (items) => {
+    return  _.map(integralFlowColumns,  (items) => {
       const { dataIndex } = items;
       let newItems = {...items};
       // 处理日期格式和加上title
@@ -38,7 +38,7 @@ export default class ZJMemeberInfoModal extends PureComponent {
           ...items,
           render: text => {
             const date = text && moment(text).format('YYYY-MM-DD');
-            return <span title={text}>{date || '--'}</span>;
+            return ( <span title={text}>{date || '--'}</span> );
           },
         };
       }
@@ -53,7 +53,7 @@ export default class ZJMemeberInfoModal extends PureComponent {
         };
       }
       return newItems;
-    }));
+    });
   }
 
   // 页码切换的回调
@@ -62,7 +62,7 @@ export default class ZJMemeberInfoModal extends PureComponent {
   handlePaginationChange(page){
     const {
       queryZjPointExchangeFlow,
-      location: { query: { custId } }
+      location: { query: { custId } },
     } = this.props;
     this.setState({
       pageNum: page,
@@ -70,11 +70,11 @@ export default class ZJMemeberInfoModal extends PureComponent {
     queryZjPointExchangeFlow({
       pageSize: PAGE_SIZE,
       pageNum: page,
-      custId: custId,
+      custId,
     });
   }
   render() {
-    const { dataSource, onClose } = this.props;
+    const { dataSource, onClose, visible } = this.props;
     const { tradeFlow = [], page = {} } = dataSource;
     const PaginationOption = {
       current: page.pageNum || 1,
@@ -90,7 +90,7 @@ export default class ZJMemeberInfoModal extends PureComponent {
           className={styles.integralFlowModal}
           title="积分兑换流水"
           size='large'
-          visible
+          visible={visible}
           closeModal={onClose}
           showOkBtn={false}
           cancelText="关闭"
@@ -102,7 +102,7 @@ export default class ZJMemeberInfoModal extends PureComponent {
             ? (
               <div className={styles.noDataContainer}>
                 <Icon type="wushujuzhanweitu-" className={styles.noDataIcon}/>
-              <div className={styles.noDataText}>没有符合条件的记录</div>
+                <div className={styles.noDataText}>没有符合条件的记录</div>
             </div>
               )
             : (

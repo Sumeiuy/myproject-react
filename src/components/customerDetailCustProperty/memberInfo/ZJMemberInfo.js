@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性-会员信息-紫金积分会员信息
  * @Date: 2018-11-08 18:59:50
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-16 14:27:08
+ * @Last Modified time: 2018-11-16 15:45:50
  */
 
 import React, { PureComponent } from 'react';
@@ -13,7 +13,6 @@ import _ from 'lodash';
 import Icon from '../../common/Icon';
 import InfoItem from '../../common/infoItem';
 import { DEFAULT_VALUE } from '../config';
-import IfWrap from '../../common/biz/IfWrap';
 import { number } from '../../../helper';
 import styles from './zjMemberInfo.less';
 import logable, { logPV } from '../../../decorators/logable';
@@ -46,7 +45,7 @@ export default class ZJMemberInfo extends PureComponent {
     title: '积分兑换流水弹框',
   })
   handleIntegralFlowModalOpen(){
-    this.setState({integralFlowModalVisible: true});
+    this.setState({ integralFlowModalVisible: true });
   }
 
   // 关闭积分兑换流水弹框
@@ -86,14 +85,13 @@ export default class ZJMemberInfo extends PureComponent {
           <span className={styles.iconButton}>
             <Icon type='jifenduihuanliushui' />
             <span onClick={this.handleIntegralFlowModalOpen}>积分兑换流水</span>
-            <IfWrap isRender={integralFlowModalVisible}>
-              <ZJMemeberInfoModal
-                location={location}
-                dataSource={dataSource}
-                queryZjPointExchangeFlow={queryZjPointExchangeFlow}
-                onClose={this.handleIntegralFlowModalClose}
-              />
-            </IfWrap>
+            <ZJMemeberInfoModal
+              location={location}
+              visible={integralFlowModalVisible}
+              dataSource={dataSource}
+              queryZjPointExchangeFlow={queryZjPointExchangeFlow}
+              onClose={this.handleIntegralFlowModalClose}
+            />
           </span>
         </div>
         <div className={styles.container}>

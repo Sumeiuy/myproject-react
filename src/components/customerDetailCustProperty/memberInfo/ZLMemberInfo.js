@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性-会员信息-涨乐财富通会员信息
  * @Date: 2018-11-08 18:59:50
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-16 14:31:38
+ * @Last Modified time: 2018-11-16 15:50:19
  */
 
 import React, { PureComponent } from 'react';
@@ -14,7 +14,6 @@ import Icon from '../../common/Icon';
 import InfoItem from '../../common/infoItem';
 import { DEFAULT_VALUE } from '../config';
 import styles from './zlMemberInfo.less';
-import IfWrap from '../../common/biz/IfWrap';
 import logable, { logPV } from '../../../decorators/logable';
 import ZLMemeberInfoModal from './ZLMemeberInfoModal';
 
@@ -30,7 +29,7 @@ export default class ZLMemberInfo extends PureComponent {
     // 获取涨乐财富通U会员等级变更记录
     queryZLUmemberLevelChangeRecords: PropTypes.func.isRequired,
   }
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
       // 会员等级变更弹框
@@ -44,8 +43,8 @@ export default class ZLMemberInfo extends PureComponent {
     pathname: '/modal/memberGradeModal',
     title: '涨乐会员变更弹框',
   })
-  handleMemberGradeModalOpen(){
-    this.setState({memberGradeModalVisible: true});
+  handleMemberGradeModalOpen() {
+    this.setState({ memberGradeModalVisible: true });
   }
 
   // 关闭会员变更弹出框
@@ -54,7 +53,7 @@ export default class ZLMemberInfo extends PureComponent {
     type: 'ButtonClick',
     payload: { name: '涨乐会员等级变更' }
  })
-  handleMemberGradeModalClose(){
+  handleMemberGradeModalClose() {
     this.setState({ memberGradeModalVisible: false });
   }
 
@@ -79,14 +78,13 @@ export default class ZLMemberInfo extends PureComponent {
           <span className={styles.iconButton}>
             <Icon type='huiyuandengjibiangeng' />
             <span onClick={this.handleMemberGradeModalOpen}>会员等级变更</span>
-            <IfWrap isRender={memberGradeModalVisible}>
-              <ZLMemeberInfoModal
-                location={location}
-                dataSource={dataSource}
-                queryZLUmemberLevelChangeRecords={queryZLUmemberLevelChangeRecords}
-                onClose={this.handleMemberGradeModalClose}
-              />
-            </IfWrap>
+            <ZLMemeberInfoModal
+              location={location}
+              visible={memberGradeModalVisible}
+              dataSource={dataSource}
+              queryZLUmemberLevelChangeRecords={queryZLUmemberLevelChangeRecords}
+              onClose={this.handleMemberGradeModalClose}
+            />
           </span>
         </div>
         <div className={styles.container}>

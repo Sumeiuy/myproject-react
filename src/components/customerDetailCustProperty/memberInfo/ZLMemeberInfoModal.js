@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-11-15 13:53:47
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-16 14:33:06
+ * @Last Modified time: 2018-11-16 15:51:00
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -31,18 +31,18 @@ export default class ZLMemeberInfoModal extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: '页码切换' } })
   handlePaginationChange(page){
-    const { queryZLUmemberLevelChangeRecords, location: { query } } = this.props;
+    const { queryZLUmemberLevelChangeRecords, location: { query: { custId } } } = this.props;
     this.setState({
       pageNum: page,
     });
     queryZLUmemberLevelChangeRecords({
       pageSize: PAGE_SIZE,
       pageNum: page,
-      custId: query && query.custId,
+      custId,
     });
   }
   render() {
-    const { dataSource, onClose } = this.props;
+    const { dataSource, onClose, visible } = this.props;
     const { list = EMPTY_ARRAY, page = EMPTY_OBJECT } = dataSource;
     const PaginationOption = {
       current: page.pageNum || 1,
@@ -58,7 +58,7 @@ export default class ZLMemeberInfoModal extends PureComponent {
           className={styles.memberGradeModal}
           title="会员等级变更"
           size='large'
-          visible
+          visible={visible}
           closeModal={onClose}
           showOkBtn={false}
           cancelText="关闭"
