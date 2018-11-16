@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性-会员信息-涨乐财富通会员信息
  * @Date: 2018-11-08 18:59:50
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-13 16:35:20
+ * @Last Modified time: 2018-11-16 15:50:19
  */
 
 import React, { PureComponent } from 'react';
@@ -11,14 +11,11 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import Icon from '../../common/Icon';
-import { Button } from 'antd';
-import Table from '../../../components/common/table';
-import Modal from '../../../components/common/biz/CommonModal';
 import InfoItem from '../../common/infoItem';
-import { DEFAULT_VALUE, MemberGradeColumns } from '../config';
+import { DEFAULT_VALUE } from '../config';
 import styles from './zlMemberInfo.less';
-import moment from 'moment';
 import logable, { logPV } from '../../../decorators/logable';
+import ZLMemeberInfoModal from './ZLMemeberInfoModal';
 
 const INFO_ITEM_WITDH110 = '110px';
 const INFO_ITEM_WITDH = '126px';
@@ -32,13 +29,11 @@ export default class ZLMemberInfo extends PureComponent {
     // 获取涨乐财富通U会员等级变更记录
     queryZLUmemberLevelChangeRecords: PropTypes.func.isRequired,
   }
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
       // 会员等级变更弹框
       memberGradeModalVisible: false,
-      // 当前页码
-      pageNum: 1,
     };
   }
 
@@ -48,8 +43,8 @@ export default class ZLMemberInfo extends PureComponent {
     pathname: '/modal/memberGradeModal',
     title: '涨乐会员变更弹框',
   })
-  handleMemberGradeModalOpen(){
-    this.setState({memberGradeModalVisible: true});
+  handleMemberGradeModalOpen() {
+    this.setState({ memberGradeModalVisible: true });
   }
 
   // 关闭会员变更弹出框
@@ -58,23 +53,8 @@ export default class ZLMemberInfo extends PureComponent {
     type: 'ButtonClick',
     payload: { name: '涨乐会员等级变更' }
  })
-  handleMemberGradeModalClose(){
-    this.setState({memberGradeModalVisible: false});
-  }
-
-  // 页码改变的回调
-  @autobind
-  @logable({ type: 'Click', payload: { name: '页码切换' } })
-  handlePaginationChange(page){
-    const { queryZLUmemberLevelChangeRecords, location: { query} } = this.props;
-    this.setState({
-      pageNum: page,
-    });
-    queryZLUmemberLevelChangeRecords({
-      pageSize: 10,
-      pageNum: page,
-      custId: query && query.custId,
-    });
+  handleMemberGradeModalClose() {
+    this.setState({ memberGradeModalVisible: false });
   }
 
   @autobind
@@ -83,26 +63,13 @@ export default class ZLMemberInfo extends PureComponent {
   }
 
   render() {
-    const { memberGradeModalVisible, pageNum } = this.state;
-    const { data, dataSource} = this.props;
-    const { list = [], page = {} } = dataSource;
-    const PaginationOption = {
-      current: pageNum || 1,
-      total: page.totalRecordNum || 0,
-      pageSize: page.pageSize || 10,
-      onChange: this.handlePaginationChange,
-    };
-    // 数据长达大于10显示分页
-    const showMemberGradePagination =  page.totalPageNum !== 1 ? PaginationOption : false;
-    //  处理日期
-     const newmemberGradeDatas = _.map(list,  (items) => {
-      const { time } = items;
-      const newTime = moment(time).format('YYYY-MM-DD hh:mm:ss');
-      return {
-        ...items,
-        time: newTime,
-      };
-    });
+    const { memberGradeModalVisible } = this.state;
+    const {
+      data,
+      location,
+      dataSource,
+      queryZLUmemberLevelChangeRecords,
+     } = this.props;
     return (
       <div className={styles.zlMemberInfoBox}>
         <div className={`${styles.title} clearfix`}>
@@ -111,34 +78,13 @@ export default class ZLMemberInfo extends PureComponent {
           <span className={styles.iconButton}>
             <Icon type='huiyuandengjibiangeng' />
             <span onClick={this.handleMemberGradeModalOpen}>会员等级变更</span>
-            <Modal
-                className={styles.memberGradeModal}
-                title="会员等级变更"
-                size='large'
-                showOkBtn={false}
-                visible={memberGradeModalVisible}
-                closeModal={this.handleMemberGradeModalClose}
-                onCancel={this.handleMemberGradeModalClose}
-                selfBtnGroup={[(<Button onClick={this.handleMemberGradeModalClose}>关闭</Button>)]}
-                modalKey="memberGrade"
-                maskClosable={false}
-            >
-            {
-              _.isEmpty(list)
-              ? <div className={styles.noDataContainer}>
-                  <Icon type="wushujuzhanweitu-" className={styles.noDataIcon}/>
-                  <div className={styles.noDataText}>没有符合条件的记录</div>
-              </div>
-              : <div className={styles.tabContainer}>
-             <Table
-                pagination={showMemberGradePagination}
-                dataSource={newmemberGradeDatas}
-                columns={MemberGradeColumns}
-                scroll={{ x: '1024px' }}
+            <ZLMemeberInfoModal
+              location={location}
+              visible={memberGradeModalVisible}
+              dataSource={dataSource}
+              queryZLUmemberLevelChangeRecords={queryZLUmemberLevelChangeRecords}
+              onClose={this.handleMemberGradeModalClose}
             />
-          </div>
-        }
-          </Modal>
           </span>
         </div>
         <div className={styles.container}>
