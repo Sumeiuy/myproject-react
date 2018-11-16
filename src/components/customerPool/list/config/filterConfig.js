@@ -604,6 +604,17 @@ export const custListSearchTypes = ['NAME', 'SOR_PTY_ID', 'MOBILE', 'ID_NUM', 'A
 // 客户列表筛选部分搜索框触发的handleFilterChange里的filters以下几种类型只能保持一个
 export const custListSearchFilterTypes = ['sorPtyId', 'idNum', 'mobile', 'name', 'searchText', 'primaryKey'];
 
+// 客户列表搜索组件url里面的type对应filters里存的值的一个map
+export const custListSearchTypeMapData = {
+  'SOR_PTY_ID': 'sorPtyId',
+  'ID_NUM': 'idNum',
+  'MOBILE': 'mobile',
+  'NAME': 'name',
+  'STK_ACCTS': 'primaryKey',
+  'ALL': 'searchText',
+};
+
+
 export default exported;
 
 export const {
