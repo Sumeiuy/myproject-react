@@ -3,10 +3,11 @@
  * @Description: 客户360，客户属性tab相关配置
  * @Date: 2018-11-07 15:17:38
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-12 10:24:08
+ * @Last Modified time: 2018-11-16 13:01:00
  */
 
 import _ from 'lodash';
+import moment from 'moment';
 import { number } from '../../helper';
 
 export const CUST_TYPE = {
@@ -119,7 +120,8 @@ const config = {
       title: '产品数量',
       dataIndex: 'productQuantity',
       key: 'productQuantity',
-      className: 'publicStyle',
+      align: 'right',
+      className: 'lastStyle',
     },
     {
       title: '基本点数',
@@ -163,4 +165,19 @@ export const {
   MemberGradeColumns,
   integralFlowColumns,
 } = config;
+
+export const newMemberGradeColumns = _.map(MemberGradeColumns, (items) => {
+  const { dataIndex } = items;
+  let newItems = {...items};
+  if( dataIndex === 'time'){
+    newItems = {
+      ...items,
+      render: text => {
+        const data =  moment(text).format('YYYY-MM-DD hh:mm:ss');
+        return data;
+      }
+    };
+  };
+  return newItems;
+});
 
