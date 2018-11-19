@@ -5,12 +5,25 @@
  */
 
 import React from 'react';
+import classnames from 'classnames';
 import PropTypes from 'prop-types';
 
 import styles from './index.less';
 
 export default function InfoItem(props) {
-  const { width, label, value, valueColor, className } = props;
+  const {
+    width,
+    label,
+    value,
+    valueColor,
+    className,
+    isNeedValueTitle,
+    isNeedOverFlowEllipsis,
+  } = props;
+  const valueClassNames = classnames({
+    [styles.value]: true,
+    [styles.textOverFlow]: isNeedOverFlowEllipsis,
+  });
   return (
     <div className={`${styles.wrap} ${className}`}>
       <div
@@ -23,11 +36,13 @@ export default function InfoItem(props) {
         {label}<span className={styles.colon}>:</span>
       </div>
       <div
-        className={styles.value}
+        className={valueClassNames}
         style={{
           marginLeft: width,
           color: valueColor,
+          width: `calc(100% - ${width})`,
         }}
+        title={isNeedValueTitle ? value : ''}
       >{value}</div>
     </div>
   );
@@ -39,6 +54,10 @@ InfoItem.propTypes = {
   width: PropTypes.string,
   valueColor: PropTypes.string,
   className: PropTypes.string,
+  // value字段是否需要展示title
+  isNeedValueTitle: PropTypes.bool,
+  // 是否需要value字段超出宽度打点
+  isNeedOverFlowEllipsis: PropTypes.bool,
 };
 InfoItem.defaultProps = {
   label: '标题',
@@ -46,5 +65,7 @@ InfoItem.defaultProps = {
   width: '160px',
   valueColor: '#333',
   className: '',
+  isNeedValueTitle: false,
+  isNeedOverFlowEllipsis: false,
 };
 

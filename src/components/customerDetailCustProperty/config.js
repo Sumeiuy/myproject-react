@@ -9,7 +9,6 @@
 import _ from 'lodash';
 import moment from 'moment';
 import { number } from '../../helper';
-import { rights } from '../customerPool/list/individualInfo/config';
 
 export const CUST_TYPE = {
   // 个人客户类型标识
@@ -157,6 +156,10 @@ const config = {
     },
   ]
 };
+
+// 根据传入的参数判断是否需要显示title，如果值等于默认值则不显示
+export const checkIsNeedTitle = value => (value !== DEFAULT_VALUE && value !== DEFAULT_PRIVATE_VALUE);
+
 export default config;
 export const {
   MemberGradeColumns,

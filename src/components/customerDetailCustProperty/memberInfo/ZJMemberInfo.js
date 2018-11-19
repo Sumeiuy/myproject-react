@@ -15,10 +15,13 @@ import InfoItem from '../../common/infoItem';
 import { DEFAULT_VALUE } from '../config';
 import { number } from '../../../helper';
 import styles from './zjMemberInfo.less';
+import {
+  checkIsNeedTitle,
+} from '../config';
 import logable, { logPV } from '../../../decorators/logable';
 import ZJMemeberInfoModal from './ZJMemberInfoModal';
 
-const INFO_ITEM_WITDH110 = '110px';
+const INFO_ITEM_WITDH_110 = '110px';
 const INFO_ITEM_WITDH = '126px';
 export default class ZJMemberInfo extends PureComponent {
   static propTypes = {
@@ -80,7 +83,7 @@ export default class ZJMemberInfo extends PureComponent {
     return (
       <div className={styles.zjMemberInfoBox}>
         <div className={`${styles.title} clearfix`}>
-          <span className={styles.colorBlock}></span>
+          <span className={styles.colorBlock} />
           <span className={styles.titleText}>紫金积分会员</span>
           <span className={styles.iconButton}>
             <Icon type='jifenduihuanliushui' />
@@ -97,10 +100,12 @@ export default class ZJMemberInfo extends PureComponent {
         <div className={styles.container}>
           <div className={styles.infoItemBox}>
             <InfoItem
-              width={INFO_ITEM_WITDH110}
+              width={INFO_ITEM_WITDH_110}
               label="会员编号"
               value={this.getViewValue(data.memberNum)}
               className={styles.infoItem}
+              isNeedValueTitle={checkIsNeedTitle(this.getViewValue(data.memberNum))}
+              isNeedOverFlowEllipsis
             />
           </div>
           <div className={styles.infoItemBox}>
@@ -109,6 +114,8 @@ export default class ZJMemberInfo extends PureComponent {
               label="会员名称"
               value={this.getViewValue(data.memberName)}
               className={styles.infoItem}
+              isNeedValueTitle={checkIsNeedTitle(this.getViewValue(data.memberName))}
+              isNeedOverFlowEllipsis
             />
           </div>
           <div className={styles.infoItemBox}>
@@ -117,6 +124,8 @@ export default class ZJMemberInfo extends PureComponent {
               label="会员类型"
               value={this.getViewValue(data.memberType)}
               className={styles.infoItem}
+              isNeedValueTitle={checkIsNeedTitle(this.getViewValue(data.memberType))}
+              isNeedOverFlowEllipsis
             />
           </div>
           <div className={styles.infoItemBox}>
@@ -125,14 +134,18 @@ export default class ZJMemberInfo extends PureComponent {
               label="项目"
               value={this.getViewValue(data.projects)}
               className={styles.infoItem}
+              isNeedValueTitle={checkIsNeedTitle(this.getViewValue(data.projects))}
+              isNeedOverFlowEllipsis
             />
           </div>
           <div className={styles.infoItemBox}>
             <InfoItem
-              width={INFO_ITEM_WITDH110}
+              width={INFO_ITEM_WITDH_110}
               label="注册日期"
               value={this.getViewValue(data.registerDate)}
               className={styles.infoItem}
+              isNeedValueTitle={checkIsNeedTitle(this.getViewValue(data.registerDate))}
+              isNeedOverFlowEllipsis
             />
           </div>
           <div className={styles.infoItemBox}>
@@ -141,6 +154,8 @@ export default class ZJMemberInfo extends PureComponent {
               label="状态"
               value={this.getViewValue(data.states)}
               className={styles.infoItem}
+              isNeedValueTitle={checkIsNeedTitle(this.getViewValue(data.states))}
+              isNeedOverFlowEllipsis
             />
           </div>
           <div className={styles.infoItemBox}>
@@ -149,6 +164,8 @@ export default class ZJMemberInfo extends PureComponent {
               label="紫金币可用积分"
               value={this.getViewTextByNum(data.zjAvailablePoints)}
               className={styles.infoItem}
+              isNeedValueTitle={checkIsNeedTitle(this.getViewTextByNum(data.zjAvailablePoints))}
+              isNeedOverFlowEllipsis
             />
           </div>
           <div className={styles.infoItemBox}>
@@ -157,14 +174,18 @@ export default class ZJMemberInfo extends PureComponent {
               label="紫金币累计积分"
               value={this.getViewTextByNum(data.zjSumPoints)}
               className={styles.infoItem}
+              isNeedValueTitle={checkIsNeedTitle(this.getViewTextByNum(data.zjSumPoints))}
+              isNeedOverFlowEllipsis
             />
           </div>
           <div className={styles.infoItemBox}>
             <InfoItem
-              width={INFO_ITEM_WITDH110}
+              width={INFO_ITEM_WITDH_110}
               label="涨乐豆可用积分"
               value={this.getViewTextByNum(data.zlAvailablePoints)}
               className={styles.infoItem}
+              isNeedValueTitle={checkIsNeedTitle(this.getViewTextByNum(data.zlAvailablePoints))}
+              isNeedOverFlowEllipsis
             />
           </div>
           <div className={styles.infoItemBox}>
@@ -173,6 +194,8 @@ export default class ZJMemberInfo extends PureComponent {
               label="涨乐豆累计积分"
               value={this.getViewTextByNum(data.zlSumPoints)}
               className={styles.infoItem}
+              isNeedValueTitle={checkIsNeedTitle(this.getViewTextByNum(data.zlSumPoints))}
+              isNeedOverFlowEllipsis
             />
           </div>
           <div className={styles.infoItemBox}>
@@ -181,6 +204,8 @@ export default class ZJMemberInfo extends PureComponent {
               label="资金积分"
               value={this.getViewTextByNum(data.fundPoints)}
               className={styles.infoItem}
+              isNeedValueTitle={checkIsNeedTitle(this.getViewTextByNum(data.fundPoints))}
+              isNeedOverFlowEllipsis
             />
           </div>
           <div className={styles.infoItemBox}>
@@ -189,6 +214,8 @@ export default class ZJMemberInfo extends PureComponent {
               label="贡献度积分"
               value={this.getViewTextByNum(data.devotePoints)}
               className={styles.infoItem}
+              isNeedValueTitle={checkIsNeedTitle(this.getViewTextByNum(data.devotePoints))}
+              isNeedOverFlowEllipsis
             />
           </div>
         </div>
