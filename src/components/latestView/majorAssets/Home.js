@@ -14,7 +14,7 @@ import { Tabs } from 'antd';
 import { openRctTab } from '../../../utils';
 import { url as urlHelper } from '../../../helper';
 import Icon from '../../common/Icon';
-import { logCommon } from '../../../decorators/logable';
+import logable, { logCommon } from '../../../decorators/logable';
 import Item from './Item';
 import Modal from './Modal';
 import config from '../config';
@@ -46,18 +46,10 @@ export default class MajorAssets extends PureComponent {
 
   // 切换 TAB
   @autobind
+  @logable({ type: 'Click', payload: { name: '切换Tab：每周观点/战术配置/战略配置', type: '大类资产配置分析', subtype: '$args[0]' } })
   handleTabsChange(key) {
     this.setState({
       activeKey: key,
-    });
-    // log日志 tab切换
-    logCommon({
-      type: 'Click',
-      payload: {
-        name: '切换Tab：每周观点/战术配置/战略配置',
-        type: '大类资产配置分析',
-        subtype: key,
-      },
     });
   }
 
