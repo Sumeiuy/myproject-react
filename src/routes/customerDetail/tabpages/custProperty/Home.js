@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 客户360-客户属性
  * @Date: 2018-11-06 16:17:28
- * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-13 10:53:07
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-11-20 15:44:43
  */
 
 import React, { PureComponent } from 'react';
@@ -197,23 +197,19 @@ export default class CustProperty extends PureComponent {
   // 根据不同的客户类型渲染不同的客户信息组件
   @autobind
   renderCustInfo() {
-    const {
-      custInfo: {
-        custNature,
-      },
-    } = this.props;
+    const { custInfo: { custNature } } = this.props;
     let component = null;
     switch (custNature) {
-      // 如果客户类型是个人客户
       case PERSON_CUST_TYPE:
+        // 如果客户类型是个人客户
         component = this.renderPersonInfo();
         break;
-      // 如果客户类型是普通机构客户
       case ORGANIZATION_CUST_TYPE:
+        // 如果客户类型是普通机构客户
         component = this.renderOrganizationInfo();
         break;
-      // 如果客户类型是产品机构客户
       case PRODUCT_CUST_TYPE:
+        // 如果客户类型是产品机构客户
         component = this.renderProductInfo();
         break;
       default:
