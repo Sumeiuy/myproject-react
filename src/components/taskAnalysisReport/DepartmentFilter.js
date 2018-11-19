@@ -12,8 +12,6 @@ import { autobind } from 'core-decorators';
 import mouseWheel from '../common/mouseWheel';
 import { TreeFilter } from 'lego-tree-filter/src';
 
-import Icon from '../common/Icon';
-
 import styles from './departmentFilter.less';
 
 function transformCustRangeData(list, parent = '') {
@@ -132,7 +130,7 @@ export default class DepartmentFilter extends PureComponent {
     return (
       <div className={styles.departmentFilter}>
         <span className={styles.reportTitle}>任务统计报表</span>
-        <Icon type='xiangyou1' className={styles.separator}/>
+        <span className={styles.separator}>/</span>
         <div className={styles.department}>
           <TreeFilter
             value={value}
