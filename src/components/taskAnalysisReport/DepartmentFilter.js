@@ -129,8 +129,10 @@ export default class DepartmentFilter extends PureComponent {
     const { value, formatCustRange } = this.state;
     return (
       <div className={styles.departmentFilter}>
-        <span className={styles.reportTitle}>任务统计报表</span>
-        <span className={styles.separator}>/</span>
+        <div className={styles.breadcrumbHeader}>
+          <span className={styles.reportTitle}>任务统计报表</span>
+          <span className={styles.separator}>/</span>
+        </div>
         <div className={styles.department}>
           <TreeFilter
             value={value}

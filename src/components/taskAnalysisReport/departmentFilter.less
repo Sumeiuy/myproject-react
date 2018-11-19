@@ -5,15 +5,18 @@
   box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.10);
   display: flex;
   align-items: center;
-  .reportTitle {
+  .breadcrumbHeader {
+    display: inline-block;
+    line-height: 28px; // 这里line-height设置比height小2px,是为了让文字靠上2px左右，后面可能会修正
+    height: 30px;
     font-size: 14px;
     color: #999;
-    font-weight: bold;
-  }
-  .separator {
-    font-size: 14px;
-    color: #999;
-    margin: 0 8px;
+    .reportTitle {
+      font-weight: bold;
+    }
+    .separator {
+      margin: 0 8px;
+    }
   }
   .department {
     .departmentTreeFilter {
