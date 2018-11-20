@@ -16,11 +16,8 @@
       font-size: 14px;
     }
   }
-
   .collapseBox {
     margin-top: 10px;
-    border: 1px solid #ddd;
-
     .head {
       margin: 0 auto;
       height: 38px;
@@ -213,16 +210,22 @@
       }
     }
   }
-
   .pageBox {
     float: right;
-    margin: 20px;
-    margin-right: 40px;
+    margin: 20px 0;
     :global {
       .ant-pagination-item {
         margin-bottom: 0;
       }
     }
+  }
+  .clear {
+    clear: both;
+    content: '.';
+    display: block;
+    width: 0;
+    height: 0;
+    visibility: hidden;
   }
 }
 

@@ -415,6 +415,7 @@ export default class OptionsMaintain extends PureComponent {
             onChange={this.handlePageChange}
           />
         </div>
+        <div className={styles.clear} />
       </div>
     );
   }

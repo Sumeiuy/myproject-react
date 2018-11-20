@@ -35,8 +35,8 @@ export default class FSPComponent extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { location: { pathname, state } } = props;
-    this.getRouteConfig(pathname, state);
+    const { location: { pathname, search, state } } = props;
+    this.getRouteConfig(pathname, search, state);
     this.getFspData({ isinitial: true });
     this.state = {
       loading: true,
@@ -47,10 +47,20 @@ export default class FSPComponent extends PureComponent {
   }
 
   componentDidUpdate(prevProps) {
-    const { location: { pathname, state } } = prevProps;
-    const { location } = this.props;
-    if (location.pathname !== pathname || location.state !== state) {
-      this.getRouteConfig(location.pathname, location.state);
+    const { location: prevLocation } = prevProps;
+    const { location: { pathname, search, state } } = this.props;
+    const {
+      pathname: prevPathname,
+      search: prevSearch,
+      state: prevState,
+    } = prevLocation;
+
+    if (
+      pathname !== prevPathname ||
+      search !== prevSearch ||
+      state !== prevState
+    ) {
+      this.getRouteConfig(pathname, search, state);
       this.getFspData({ isinitial: false });
       this.timeoutId = setTimeout(() => this.setState({ loading: false }), 1000);
     }
@@ -68,8 +78,11 @@ export default class FSPComponent extends PureComponent {
   }
 
   @autobind
-  getRouteConfig(pathname, state) {
+  getRouteConfig(pathname, search, state) {
     const routeConfig = findRoute(pathname);
+    if (search && _.isString(routeConfig.url)) {
+      routeConfig.url = routeConfig.url.replace(/\?.*/, search);
+    }
     const localUrl = store.get(pathname);
     this.url = !localUrl ? routeConfig.url : localUrl;
     this.action = routeConfig.action;

@@ -181,17 +181,18 @@ export default class ProgressList extends PureComponent {
               >
                 {
                   /**
-                   * 当为产品销售的时候，特殊处理一下展示单位和数值
+                   * 当为产品销售或者净创收的时候，特殊处理一下展示单位和数值
                   */
                 }
                 {
-                  type === 'productSale' ?
+                  (type === 'productSale') || (type === 'income') ?
                     <div>
                       <span title={item.value}>{item.value}</span>
                       <span title={item.unit}>{item.unit}</span>
                     </div> :
                     <span title={item.thousandsCount}>{item.thousandsCount}</span>
-                }</div>
+                }
+              </div>
             </div>
             <Progress
               percent={(item.percent < 0 ? 0 : item.percent)}
