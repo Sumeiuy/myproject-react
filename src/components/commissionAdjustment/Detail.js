@@ -14,7 +14,7 @@ import InfoItem from '../common/infoItem';
 import OtherCommission from './OtherCommission';
 import CommonTable from '../common/biz/CommonTable';
 import styles from './detail.less';
-import logable from '../../decorators/logable';
+import { logPV } from '../../decorators/logable';
 
 // 表头
 const tableHeader = [
@@ -58,12 +58,7 @@ export default class Commissiondetail extends PureComponent {
   }
 
   @autobind
-  @logable({
-    type: 'ViewItem',
-    payload: {
-      name: '客户信息表审批记录列',
-    },
-  })
+  @logPV({ pathname: '/modal/checkApprovalModal', title: '查看审批记录弹窗' })
   handleCheckApproval(record, index) {
     this.props.checkApproval(record, index);
   }

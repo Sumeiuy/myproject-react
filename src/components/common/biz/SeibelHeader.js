@@ -332,6 +332,13 @@ export default class Pageheader extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '更多',
+      value: '$args[0].id',
+    },
+  })
   moreFilterChange(obj) {
     const {
       location: {

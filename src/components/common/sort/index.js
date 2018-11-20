@@ -44,6 +44,13 @@ export default class Sort extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '其他排序',
+      value: '$args[0]'
+    },
+  })
   handleSelectChange(value) {
     const { onChange, value: { sortType }, data } = this.props;
     if (sortType !== value) {
@@ -59,13 +66,7 @@ export default class Sort extends PureComponent {
   }
 
   @autobind
-  @logable({
-    type: 'DropdownSelect',
-    payload: {
-      name: '其他排序',
-      value: '$args[0].name'
-    },
-  })
+  @logable({ type: 'Click', payload: { name: '排序', value: '$args[0].name' } })
   handleSortChange(a) {
     const { value: { sortDirection, sortType }, onChange } = this.props;
     const { sortDirections = defaultSortDirections } = this.getCurrentQuota();

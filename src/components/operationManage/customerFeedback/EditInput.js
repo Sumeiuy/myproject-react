@@ -86,7 +86,7 @@ export default class EditInput extends PureComponent {
 
   // 编辑按钮事件
   @autobind
-  @logable({ type: 'Click', payload: { name: '编辑' } })
+  @logable({ type: 'Click', payload: { name: '编辑', value: '$state.oldValue' } })
   onEdit(e) {
     e.stopPropagation();
     const { editable } = this.state;
@@ -99,7 +99,15 @@ export default class EditInput extends PureComponent {
   // 此处由于新的需求需要针对服务经理可选项还有涨乐客户可选项进行区分处理
   // 所以将原有在此处进行，值是否与以前的相等判断挪到外部有调用者来判断，
   @autobind
-  @logable({ type: 'Click', payload: { name: '确定' } })
+  @logable({
+    type: 'submit',
+    payload: {
+      name: '新增反馈类型',
+      type: '客户反馈选项维护',
+      subtype: '服务经理可选项',
+      value: '$state.value',
+    }
+  })
   onSubmit(e) {
     e.stopPropagation();
     // 此处由于新的需求需要针对服务经理可选项还有涨乐客户可选项进行区分处理

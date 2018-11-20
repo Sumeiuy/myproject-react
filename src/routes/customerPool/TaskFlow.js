@@ -417,6 +417,7 @@ export default class TaskFlow extends PureComponent {
    * 点击下一步，校验所有信息，然后下一步界面
    */
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '下一步' } })
   handleNextStep() {
     // 下一步
     const {
@@ -750,7 +751,7 @@ export default class TaskFlow extends PureComponent {
       logCommon({
         type: 'Submit',
         payload: {
-          title: '任务评估',
+          title: '任务评估1',
           type: enterType,
           subtype,
           value: JSON.stringify(values),

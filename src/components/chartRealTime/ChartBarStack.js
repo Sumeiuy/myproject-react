@@ -29,7 +29,7 @@ import report from '../../helper/page/report';
 import Icon from '../common/Icon';
 import styles from './ChartBar.less';
 import imgSrc from '../chartRealTime/noChart.png';
-import logable from '../../decorators/logable';
+import { logCommon } from '../../decorators/logable';
 
 const {
   REN,
@@ -365,13 +365,6 @@ export default class ChartBarStack extends PureComponent {
   }
 
   @autobind
-  @logable({
-    type: 'DrillDown',
-    payload: {
-      name: '图例',
-      element: '$args[0].currentTarget',
-    },
-  })
   handleLegendClick(e) {
     const current = e.currentTarget;
     const legend = Number.parseInt(current.dataset.legend, 10);
@@ -385,6 +378,13 @@ export default class ChartBarStack extends PureComponent {
       // 点亮Legend
       this.lightenLegend(legend);
     }
+    logCommon({
+      type: 'Click',
+      payload: {
+        name: '切换图例状态',
+        value: legendStateKey,
+      },
+    });
   }
 
   render() {

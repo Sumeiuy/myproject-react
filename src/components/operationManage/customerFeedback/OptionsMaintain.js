@@ -174,7 +174,7 @@ export default class OptionsMaintain extends PureComponent {
 
   // 显示添加二级反馈选项的输入框
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '+新增' } })
+  @logable({ type: 'ButtonClick', payload: { name: '+新增二级' } })
   showAddSecondFeedbackInput() {
     // 因为折叠面板的key就是反馈列表一级反馈选项的id值
     const { collapseActiveKey } = this.state;

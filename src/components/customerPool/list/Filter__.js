@@ -390,7 +390,7 @@ export default class Filter extends PureComponent {
 
   @autobind
   @logable({
-    type: 'DropdownSelect',
+      type: 'CalendarSelect',
     payload: {
       name: '$args[0].filterName',
       dateType: '$args[0].value.dateType',
@@ -462,7 +462,7 @@ export default class Filter extends PureComponent {
 
   @autobind
   @logable({
-    type: 'DropdownSelect',
+      type: 'CalendarSelect',
     payload: {
       name: '$args[0].filterName',
       min: '$args[0].value[0]',

@@ -135,7 +135,7 @@ export default class TaskPreview extends PureComponent {
   }
 
   @autobind
-  @logPV({ pathname: '/modal/choiceApproval', title: '选择审批人' })
+  @logPV({ pathname: '/modal/choiceApprovalModal', title: '选择审批人' })
   handleClick() {
     const { getApprovalList } = this.props;
     const { currentSelectRowKeys = EMPTY_LIST, currentSelectRecord = EMPTY_OBJECT } = this.state;
@@ -154,8 +154,8 @@ export default class TaskPreview extends PureComponent {
     this.setState({
       currentSelectRowKeys: originSelectRowKeys,
       currentSelectRecord: originSelectRecord,
+      isShowTable: false,
     });
-    this.handleCloseModal();
     this.props.onCancelSelectedRowKeys(originSelectRowKeys, originSelectRecord);
   }
 
@@ -190,8 +190,7 @@ export default class TaskPreview extends PureComponent {
   @logable({
     type: 'Click',
     payload: {
-      name: '选择审批人员',
-      value: '$props.inputRef.refs.input.value',
+      name: '搜索员工号/员工姓名',
     },
   })
   handleSearchApproval() {
@@ -204,6 +203,7 @@ export default class TaskPreview extends PureComponent {
     type: 'ViewItem',
     payload: {
       name: '选择审批人员',
+      value: '$args[0]',
     },
   })
   handleRowSelect(record, selected, selectedRows) {
