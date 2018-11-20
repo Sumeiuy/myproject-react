@@ -191,7 +191,7 @@ export default class Home extends PureComponent {
             <TabPane tab="投资者评估" key="investorAssessment">
             </TabPane>
             <TabPane tab="产品订单" key="productOrder">
-              <ProductOrder />
+              <ProductOrder location={location} />
             </TabPane>
           </Tabs>
         </div>
