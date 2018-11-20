@@ -40,6 +40,7 @@ import customerDetailAPI from './customerDetail';
 import detailServiceRelationAPI from './detailServiceRelationship';
 import detailAccountInfoAPI from './detailAccountInfo';
 import detailCustPropertyAPI from './detailCustProperty';
+import detailProductOrderAPI from './detailProductOrder';
 import taskAnalysisReportAPI from './taskAnalysisReport';
 
 const api = apiCreator();
@@ -161,6 +162,8 @@ const exported = {
   detailServiceRelationship: detailServiceRelationAPI(api),
   // ========== 新版客户360详情下客户属性Tab组件的API
   detailCustProperty: detailCustPropertyAPI(api),
+  // ========== 新版客户360详情下产品订单Tab组件的API
+  detailProductOrder: detailProductOrderAPI(api),
   // ========== SMART任务相关运营报表
   taskAnalysisReport: taskAnalysisReportAPI(api),
 };
@@ -209,5 +212,6 @@ export const {
   detailServiceRelationship,
   detailAccountInfo,
   detailCustProperty,
+  detailProductOrder,
   taskAnalysisReport,
 } = exported;
