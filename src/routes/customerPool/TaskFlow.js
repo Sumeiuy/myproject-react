@@ -751,7 +751,7 @@ export default class TaskFlow extends PureComponent {
       logCommon({
         type: 'Submit',
         payload: {
-          title: '任务评估1',
+          title: '任务评估',
           type: enterType,
           subtype,
           value: JSON.stringify(values),
