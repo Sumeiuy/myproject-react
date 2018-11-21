@@ -97,6 +97,10 @@ export default class ToDo extends PureComponent {
       approveType: [],
       // 发起人下拉value
       initiatorValue: '',
+      // 类型 ''为不限
+      category: '',
+      // 发起人 ''为不限
+      originator: '',
     };
   }
 
@@ -104,6 +108,7 @@ export default class ToDo extends PureComponent {
     const {
       location: {
         query: {
+          taskType,
           pageSize = 10,
           pageNum = 1,
         },
@@ -112,9 +117,20 @@ export default class ToDo extends PureComponent {
     const {
       startTime,
       endTime,
+      category,
+      originator,
     } = this.state;
-    this.getApplyData({startTime, endTime, pageSize, pageNum});
-    this.getApproveData({startTime, endTime, pageSize, pageNum});
+    // taskType为MY_APPLY是我的申请 MY_APPROVE是我的审批
+    switch (taskType) {
+      case 'MY_APPLY':
+        this.getApplyData({startTime, endTime, pageSize, pageNum, category});
+        break;
+      case 'MY_APPROVE':
+        this.getApproveData({startTime, endTime, pageSize, pageNum, category, originator });
+        break;
+      default:
+        break;
+    }
   }
 
   // 获取申请列表
@@ -239,20 +255,25 @@ export default class ToDo extends PureComponent {
       key,
       value,
     } = obj;
-    // taskType为2是我的申请 3是我的审批
+    const {
+      startTime,
+      endTime,
+      originator,
+    } = this.state;
+    // taskType为MY_APPLY是我的申请 MY_APPROVE是我的审批
     switch (taskType) {
       case 'MY_APPLY':
         this.setState({
           applyType: [key, value],
         }, () => {
-          this.getApplyData({pageSize, pageNum, category: key});
+          this.getApplyData({pageSize, pageNum, category: key, startTime, endTime});
         });
         break;
       case 'MY_APPROVE':
         this.setState({
           approveType: [key, value],
         }, () => {
-          this.getApproveData({pageSize, pageNum, category: key});
+          this.getApproveData({pageSize, pageNum, category: key, startTime, endTime, originator});
         });
         break;
       default:
@@ -276,6 +297,10 @@ export default class ToDo extends PureComponent {
         startTime,
         endTime,
       } = obj;
+      const {
+        category,
+        originator,
+      } = this.state;
       // taskType为2是我的申请 3是我的审批
       switch (taskType) {
         case 'MY_APPLY':
@@ -283,7 +308,7 @@ export default class ToDo extends PureComponent {
             startTime,
             endTime,
           }, () => {
-            this.getApplyData({pageSize, pageNum, startTime, endTime});
+            this.getApplyData({pageSize, pageNum, startTime, endTime, category});
           });
           break;
         case 'MY_APPROVE':
@@ -291,7 +316,7 @@ export default class ToDo extends PureComponent {
             startTime,
             endTime,
           }, () => {
-            this.getApproveData({pageSize, pageNum, startTime, endTime});
+            this.getApproveData({pageSize, pageNum, startTime, endTime, category, originator});
           });
           break;
         default:
@@ -312,19 +337,40 @@ export default class ToDo extends PureComponent {
     } = this.props;
     const {
       name,
-      key,
+      id,
     } = obj;
+    const {
+      startTime,
+      endTime,
+      category,
+    } = this.state;
     this.setState({
-      initiatorValue: key
+      initiatorValue: [id, name]
     }, () => {
-      this.getApproveData({pageSize, pageNum, originator: name});
+      this.getApproveData({pageSize, pageNum, originator: id, startTime, endTime, category});
     });
   }
 
   // 标签切换
   @autobind
   handleTabsChange(obj) {
-    const { location: { pathname, query, query: { taskType } } } = this.props;
+    const {
+      location: {
+        pathname,
+        query,
+        query: {
+          taskType,
+          pageSize = 10,
+          pageNum = 1,
+        }
+      }
+    } = this.props;
+    const {
+      startTime,
+      endTime,
+      category,
+      originator,
+    } = this.state;
     if (obj === taskType) {
       return;
     }
@@ -335,6 +381,16 @@ export default class ToDo extends PureComponent {
         taskType: obj,
       },
     });
+    switch (obj) {
+      case 'MY_APPLY':
+        this.getApplyData({startTime, endTime, pageSize, pageNum, category});
+        break;
+      case 'MY_APPROVE':
+        this.getApproveData({startTime, endTime, pageSize, pageNum, category, originator});
+        break;
+      default:
+        break;
+    }
     this.setState({ activeKey: obj });
   }
 
@@ -405,18 +461,13 @@ export default class ToDo extends PureComponent {
                 type={applyType}
                 onTimeChange={this.handleTimeChange}
               />
-              {
-                !_.isEmpty(applyListData) ?
-                <TaskList
-                  className="todoList"
-                  data={applyListData}
-                  location={location}
-                  listType='apply'
-                  clearCreateTaskData={clearCreateTaskData}
-                />
-                : null
-              }
-
+              <TaskList
+                className="todoList"
+                data={applyListData}
+                location={location}
+                listType='apply'
+                clearCreateTaskData={clearCreateTaskData}
+              />
             </div>
           </TabPane>
           <TabPane key='MY_APPROVE' tab='我的审批'>
@@ -435,18 +486,13 @@ export default class ToDo extends PureComponent {
                 isApprove
                 onTimeChange={this.handleTimeChange}
               />
-              {
-                !_.isEmpty(approveListData) ?
-                  <TaskList
-                    className="todoList"
-                    data={approveListData}
-                    location={location}
-                    listType='approve'
-                    clearCreateTaskData={clearCreateTaskData}
-                  />
-                  : null
-              }
-
+              <TaskList
+                className="todoList"
+                data={approveListData}
+                location={location}
+                listType='approve'
+                clearCreateTaskData={clearCreateTaskData}
+              />
             </div>
           </TabPane>
         </Tabs>

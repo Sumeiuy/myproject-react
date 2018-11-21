@@ -3,7 +3,7 @@
  * @Descripter: 报表头部筛选项
  * @Date: 2018-10-06 14:21:06
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-16 15:17:48
+ * @Last Modified time: 2018-11-21 13:49:54
  */
 
 import React, { PureComponent } from 'react';
@@ -139,10 +139,10 @@ export default class TodoFilter extends PureComponent {
     const {
       value: {
         name,
-        key,
+        id,
       }
     } = option;
-    this.props.initiatorCallback({key, name});
+    this.props.initiatorCallback({ id, name });
   }
 
   // select改变
@@ -194,7 +194,7 @@ export default class TodoFilter extends PureComponent {
               filterName="发起人"
               filterId="originator"
               className={styles.initiator}
-              dataMap={['key', 'name']}
+              dataMap={['id', 'name']}
               data={initiatorData}
               value={initiator}
               onChange={this.handleInitiatorChange}
