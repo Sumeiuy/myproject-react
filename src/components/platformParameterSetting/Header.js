@@ -42,7 +42,7 @@ function linkGenerator(menuItem, parentPath, push) {
 
 function getMenus(menu, parentPath, push, preventItem) {
   return (
-    <Menu style={{ textAlign: 'center' }}>
+    <Menu>
       {
         _.map(menu, menuItem => (
           <Menu.Item key={menuItem.path}>

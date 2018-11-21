@@ -333,6 +333,7 @@ export default class InvestmentAdvice extends PureComponent {
           }
 
         </div>
+        <div className={styles.clear} />
         {
           !showModal ? null
           : (<CommonModal

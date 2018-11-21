@@ -95,6 +95,7 @@ const mapStateToProps = state => ({
   activityColumnList: state.morningBoradcast.activityColumnList,
 });
 
+// 新版首页所有请求都要设置loading: false,
 const mapDispatchToProps = {
   push: routerRedux.push,
   // 重点关注
@@ -117,7 +118,7 @@ const mapDispatchToProps = {
   custLabelListPaging: effect(effects.custLabelListPaging, { loading: false }),
   queryNumbers: effect(effects.queryNumbers, { loading: false }),
   // 获取活动栏目
-  queryContent: effect(effects.queryContent, { loading: true }),
+  queryContent: effect(effects.queryContent, { loading: false }),
 };
 
 const EMPTY_LIST = [];
