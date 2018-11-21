@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-20 16:24:14
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-20 16:40:30
+ * @LastEditTime: 2018-11-21 15:45:52
  * @Description: 客户360-产品订单相关api
  */
 
@@ -21,6 +21,6 @@ export default function detailProductOrder(api) {
     // 获取服务订单详情 - 其他佣金
     queryOtherCommissions: query => api.post('/queryOtherCommissions', query),
     // 获取交易订单流水
-    queryTradeOrderFlow: query => api.post('/queryTradeOrderFlow', query),
+    queryTradeOrderFlow: query => api.post('/groovynoauth/fsp/cust/custDetail/queryTradeOrderFlow', query),
   };
 };
