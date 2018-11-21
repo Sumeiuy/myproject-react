@@ -48,6 +48,6 @@ export default function detailAccountInfo(api) {
     // 查询资金变动交易流水
     queryCapitalTradeFlow: query => api.post('/groovynoauth/fsp/cust/custdetail/queryCreditTradeFlow', query),
     // 查询账户变动
-    queryAccountChange: query => api.post('/groovynoauth/fsp/cust/custdetail/queryCreditTradeFlow', query),
+    queryAccountChange: query => api.post('/groovynoauth/fsp/cust/custdetail/queryOptionTradeFlow', query),
   };
 }
