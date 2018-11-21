@@ -123,10 +123,23 @@ export default class ToDo extends PureComponent {
     // taskType为MY_APPLY是我的申请 MY_APPROVE是我的审批
     switch (taskType) {
       case 'MY_APPLY':
-        this.getApplyData({startTime, endTime, pageSize, pageNum, category});
+        this.getApplyData({
+          startTime,
+          endTime,
+          pageSize,
+          pageNum,
+          category
+        });
         break;
       case 'MY_APPROVE':
-        this.getApproveData({startTime, endTime, pageSize, pageNum, category, originator });
+        this.getApproveData({
+          startTime,
+          endTime,
+          pageSize,
+          pageNum,
+          category,
+          originator
+        });
         break;
       default:
         break;
@@ -266,14 +279,27 @@ export default class ToDo extends PureComponent {
         this.setState({
           applyType: [key, value],
         }, () => {
-          this.getApplyData({pageSize, pageNum, category: key, startTime, endTime});
+          this.getApplyData({
+            pageSize,
+            pageNum,
+            category: key,
+            startTime,
+            endTime
+          });
         });
         break;
       case 'MY_APPROVE':
         this.setState({
           approveType: [key, value],
         }, () => {
-          this.getApproveData({pageSize, pageNum, category: key, startTime, endTime, originator});
+          this.getApproveData({
+            pageSize,
+            pageNum,
+            category: key,
+            startTime,
+            endTime,
+            originator
+          });
         });
         break;
       default:
@@ -308,7 +334,13 @@ export default class ToDo extends PureComponent {
             startTime,
             endTime,
           }, () => {
-            this.getApplyData({pageSize, pageNum, startTime, endTime, category});
+            this.getApplyData({
+              pageSize,
+              pageNum,
+              startTime,
+              endTime,
+              category
+            });
           });
           break;
         case 'MY_APPROVE':
@@ -316,7 +348,14 @@ export default class ToDo extends PureComponent {
             startTime,
             endTime,
           }, () => {
-            this.getApproveData({pageSize, pageNum, startTime, endTime, category, originator});
+            this.getApproveData({
+              pageSize,
+              pageNum,
+              startTime,
+              endTime,
+              category,
+              originator
+            });
           });
           break;
         default:
@@ -347,7 +386,14 @@ export default class ToDo extends PureComponent {
     this.setState({
       initiatorValue: [id, name]
     }, () => {
-      this.getApproveData({pageSize, pageNum, originator: id, startTime, endTime, category});
+      this.getApproveData({
+        pageSize,
+        pageNum,
+        originator: id,
+        startTime,
+        endTime,
+        category
+      });
     });
   }
 
@@ -383,10 +429,22 @@ export default class ToDo extends PureComponent {
     });
     switch (obj) {
       case 'MY_APPLY':
-        this.getApplyData({startTime, endTime, pageSize, pageNum, category});
+        this.getApplyData({
+          startTime,
+          endTime,
+          pageSize,
+          pageNum,
+          category
+        });
         break;
       case 'MY_APPROVE':
-        this.getApproveData({startTime, endTime, pageSize, pageNum, category, originator});
+        this.getApproveData({startTime,
+          endTime,
+          pageSize,
+          pageNum,
+          category,
+          originator
+        });
         break;
       default:
         break;

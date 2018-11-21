@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-11-12 19:25:08
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-21 13:52:00
+ * @Last Modified time: 2018-11-21 15:06:47
  */
 
 import React, { PureComponent } from 'react';
@@ -247,22 +247,15 @@ export default class TaskList extends PureComponent {
   render() {
     const { className, data } = this.props;
     // 搜索结果为空
-    if (data.length === 0) {
-      return (<div className={styles.empty}>
-        <Table
-          className={`${className} ${styles.taskListEmpty}`}
-          rowKey='id'
-          columns={this.columns}
-          dataSource={data}
-          locale={{ emptyText: '' }}
-        />
-        <div className={styles.emptyWrapper}>
-          <div className="empty-container">
-            <img src={emptyImg} alt="" />
-            <p>暂无待办流程</p>
-          </div>
+    if (_.isEmpty(data)) {
+      return (
+        <div className={styles.empty}>
+            <div className="empty-container">
+              <img src={emptyImg} alt="" />
+              <p>暂无任务</p>
+            </div>
         </div>
-      </div>);
+      );
     }
     return (
       <Table
