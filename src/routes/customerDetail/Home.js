@@ -87,26 +87,18 @@ export default class Home extends PureComponent {
   }
 
   componentDidUpdate(prevProps) {
-    const { location: { query: prevQuery } } = prevProps;
+    const { location: { query: { custId: prevCustId } } } = prevProps;
     const {
-      location: { query },
+      location: { query: { custId } },
       getCustomerBasicInfo,
       queryCustSummaryInfo,
     } = this.props;
-    if(query && query.custId) {
-      if(prevQuery && prevQuery.custId) {
-        if(query.custId !== prevQuery.custId) {
-          // 查询基本信息
-          getCustomerBasicInfo({ custId: query.custId });
-          // 查询概要信息
-          queryCustSummaryInfo({ custId: query.custId });
-        }
-      } else {
-        // 查询基本信息
-        getCustomerBasicInfo({ custId: query.custId });
-        // 查询概要信息
-        queryCustSummaryInfo({ custId: query.custId });
-      }
+
+    if(custId && custId !== prevCustId) {
+      // 查询基本信息
+      getCustomerBasicInfo({ custId });
+      // 查询概要信息
+      queryCustSummaryInfo({ custId });
     }
   }
 
