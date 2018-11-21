@@ -12,7 +12,10 @@ import { Collapse } from 'antd';
 import classnames from 'classnames';
 import moment from 'moment';
 import ServiceRecordContent from './ServiceRecordContent';
+import logable, { logCommon } from '../../../decorators/logable';
+
 import styles from './createCollapse.less';
+
 
 const EMPTY_LIST = [];
 const Panel = Collapse.Panel;
@@ -49,6 +52,7 @@ export default class CreateCollapse extends PureComponent {
   @autobind
   handleCollapseChange(currentKey) {
     const { handleCollapseClick, data, getCeFileList } = this.props;
+    const { currentActiveIndex } =this.state;
     if (!_.isEmpty(currentKey)) {
       const service = data[currentKey];
       const { uuid } = service;
@@ -57,11 +61,12 @@ export default class CreateCollapse extends PureComponent {
         getCeFileList({ attachment });
       }
     }
-    // 手动上报日志
     handleCollapseClick({ currentKey });
     this.setState({
       currentActiveIndex: currentKey,
     });
+    // 手动上报日志
+    logCommon({ type: 'Click', payload: { name: '展开最近服务记录', value: data[currentActiveIndex] } });
   }
 
   /**

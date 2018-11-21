@@ -233,7 +233,6 @@ export default class CustomerRow extends PureComponent {
   }
 
   @autobind
-  @logPV({ pathname: '/modal/createContact', title: '电话联系' })
   createModal(listItem) {
     const { pOrO, custId, name } = listItem;
     const { createContact } = this.props;

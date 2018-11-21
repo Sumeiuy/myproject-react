@@ -10,6 +10,8 @@ import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import { Popover } from 'antd';
 import { fspContainer } from '../../../config';
+import logable from '../../../decorators/logable';
+
 
 import styles from './holdingProductDetail.less';
 
@@ -42,6 +44,13 @@ export default class HoldingProductDetail extends PureComponent {
     );
   }
 
+  @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '持仓详情',
+    },
+  })
   getPopupContainer() {
     return document.querySelector(fspContainer.container) || document.body;
   }

@@ -148,19 +148,19 @@ export default class TaskPreview extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '取消' } })
+  @logable({ type: 'ButtonClick', payload: { name: '选择审批人员-取消' } })
   handleCancel() {
     const { originSelectRowKeys, originSelectRecord } = this.state;
     this.setState({
       currentSelectRowKeys: originSelectRowKeys,
       currentSelectRecord: originSelectRecord,
-      isShowTable: false,
     });
+    this.handleCloseModal();
     this.props.onCancelSelectedRowKeys(originSelectRowKeys, originSelectRecord);
   }
 
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '确定' } })
+  @logable({ type: 'ButtonClick', payload: { name: '选择审批人员-确定' } })
   handleCloseModal() {
     const { onCancel } = this.props;
     this.setState({

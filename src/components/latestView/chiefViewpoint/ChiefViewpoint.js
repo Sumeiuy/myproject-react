@@ -12,7 +12,7 @@ import { openRctTab } from '../../../utils';
 import { url as urlHelper, time } from '../../../helper';
 import config from '../config';
 import Icon from '../../common/Icon';
-import { logCommon } from '../../../decorators/logable';
+import logable from '../../../decorators/logable';
 import styles from './chiefViewpoint.less';
 
 // 内容最大长度
@@ -31,10 +31,15 @@ export default class ChiefViewpoint extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: instance => instance.props.title + '-更多'
+    },
+  })
   toListPage() {
     const {
       type,
-      title,
     } = this.props;
     const { push } = this.context;
     const param = {
@@ -52,19 +57,18 @@ export default class ChiefViewpoint extends PureComponent {
       query,
       pathname: '/latestView/viewpointList',
     });
-    // log日志 最新观点各模块更多
-     logCommon({
-       type: 'Click',
-       payload: {
-         name: title + '-更多',
-       },
-     });
   }
 
   // 当前页跳转到详情页
   @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: instance => instance.props.title + '-详情'
+      },
+    })
   toDetailPage() {
-    const { type, title, data: { id }, location: { query } } = this.props;
+    const { type, data: { id }, location: { query } } = this.props;
     const { push } = this.context;
     const param = {
       id: 'RTC_TAB_VIEWPOINT',
@@ -80,13 +84,6 @@ export default class ChiefViewpoint extends PureComponent {
       query: newQuery,
       name: '资讯详情',
     });
-     // log日志 最新观点各模块详情
-     logCommon({
-       type: 'Click',
-       payload: {
-         name: title + '-详情',
-       },
-     });
   }
 
   render() {

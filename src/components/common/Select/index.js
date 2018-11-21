@@ -9,7 +9,6 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
-import logable from '../../../decorators/logable';
 import { Select } from 'antd';
 import styles from './index.less';
 
@@ -62,7 +61,6 @@ export default class CommonSelect extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'DropdownSelect', payload: { name: '下拉选项' } })
   handSelectChange(key) {
     const { name, data } = this.props;
     const option = _.find(data, item => item.value === key);

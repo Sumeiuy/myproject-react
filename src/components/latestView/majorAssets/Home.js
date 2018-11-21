@@ -14,7 +14,7 @@ import { Tabs } from 'antd';
 import { openRctTab } from '../../../utils';
 import { url as urlHelper } from '../../../helper';
 import Icon from '../../common/Icon';
-import logable, { logCommon } from '../../../decorators/logable';
+import logable from '../../../decorators/logable';
 import Item from './Item';
 import Modal from './Modal';
 import config from '../config';
@@ -46,7 +46,14 @@ export default class MajorAssets extends PureComponent {
 
   // 切换 TAB
   @autobind
-  @logable({ type: 'Click', payload: { name: '切换Tab：每周观点/战术配置/战略配置', type: '大类资产配置分析', subtype: '$args[0]' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '切换Tab：每周观点/战术配置/战略配置',
+      type: '大类资产配置分析',
+      subtype: '$args[0]',
+    },
+  })
   handleTabsChange(key) {
     this.setState({
       activeKey: key,
@@ -71,6 +78,13 @@ export default class MajorAssets extends PureComponent {
 
   // 点击更多事件
   @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '更多',
+      type: '大类资产配置分析最新观点',
+    },
+  })
   handleMoreClick() {
     const { push } = this.context;
     const { activeKey } = this.state;
@@ -91,13 +105,6 @@ export default class MajorAssets extends PureComponent {
       pathname,
       query,
     });
-    // log日志 大类资产配置分析最新观点-更多
-     logCommon({
-       type: 'Click',
-       payload: {
-         name: param.title + '-更多',
-       },
-     });
   }
 
   render() {

@@ -11,7 +11,7 @@ import _ from 'lodash';
 import { SingleFilterWithSearch } from 'lego-react-filter/src';
 import { emp } from '../../../../helper';
 import CreateLabel from './CreateLabel';
-import logable from '../../../../decorators/logable';
+import logable, { logCommon, logPV } from '../../../../decorators/logable';
 import { replaceKeyWord } from './SignCustomerLabel';
 import styles from './addCustomerLabel.less';
 
@@ -64,13 +64,6 @@ export default class SignCustomerLabel extends PureComponent {
   }
 
   @autobind
-  @logable({
-    type: 'ButtonClick',
-    payload: {
-      name: '提交',
-      value: '多客户打标签',
-    },
-  })
   handleSubmitSignLabel() {
     const {
       signBatchCustLabels,
@@ -110,9 +103,18 @@ export default class SignCustomerLabel extends PureComponent {
         errorMsg: ERROR_MSG,
       });
     }
+    // 发神策日志
+    logCommon({
+      type: 'Submit',
+      payload: {
+        name: '多客户打标签-提交',
+        value: id,
+      },
+    });
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '客户标签-取消/关闭' } })
   handleCloseModal() {
     const { onClose } = this.props;
     this.setState({
@@ -197,7 +199,7 @@ export default class SignCustomerLabel extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '关闭' } })
+  @logPV({ pathname: '/modal/CloseLabelAddLabelModal', title: '关闭客户标签打开新建标签弹窗' })
   handleCloseAddLabelModal() {
     this.setState({
       visible: false,
@@ -215,6 +217,7 @@ export default class SignCustomerLabel extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '取消/关闭-新建标签' } })
   handleCloseNewLabelModal(labelId) {
     if (labelId === '') {
       this.setState({

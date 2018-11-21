@@ -136,7 +136,7 @@ export default class CreateDeputeModal extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '提交', value: '$state' } })
+  @logable({ type: 'Submit', payload: { name: '新建委托信息-提交', value: '$state' } })
   handleModalBtnGroupClick(btn) {
     // 1. 校验输入内容的格式
     const { checkResult, valid } = validateAll(this.state);

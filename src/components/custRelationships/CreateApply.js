@@ -117,7 +117,7 @@ export default class CreateApply extends PureComponent {
     };
     // 手动上传日志
     logCommon({
-      type: 'submit',
+      type: 'Submit',
       payload: {
         name: '客户关联关系信息申请',
         value: JSON.stringify({ ...submitApplyParameter, auditors }),

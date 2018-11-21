@@ -532,7 +532,7 @@ export default class ServiceImplementation extends PureComponent {
   // 资产排序
   @autobind
   @logable({
-    type: 'click',
+    type: 'Click',
     payload: {
       name: '服务实施列表总资产排序，是否降序',
       value: '$args[0].isDesc',

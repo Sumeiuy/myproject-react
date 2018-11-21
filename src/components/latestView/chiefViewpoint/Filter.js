@@ -97,7 +97,7 @@ export default class Filter extends PureComponent {
   @logable({
     type: 'DropdownSelect',
     payload: {
-      name: '类型下拉列表',
+      name: '切换类型',
       value: '$args[0].value',
     },
   })

@@ -104,7 +104,7 @@ export default class CreateServiceRecord extends PureComponent {
 
   // 提交
   @autobind
-  @logable({ type: 'Click', payload: { name: '提交' } })
+  @logable({ type: 'Click', payload: { name: '提交服务记录', value: instance => instance.serviceRecordContentRef.getData() } })
   handleSubmit() {
     const data = this.serviceRecordContentRef.getData();
     if (_.isEmpty(data)) {
@@ -181,7 +181,7 @@ export default class CreateServiceRecord extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '取消' } })
+  @logable({ type: 'Click', payload: { name: '取消服务记录提交' } })
   handleCancel() {
     const {
       onToggleServiceRecordModal,
