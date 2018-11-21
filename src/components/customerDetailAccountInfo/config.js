@@ -121,6 +121,7 @@ export const OPTION_HISTORY_HOLDING_TABLE_SCROLL = { x: 2500 };
 export const STANDARD_TRADE_FLOW_TABLE_SCROLL = { x: 2100 };
 export const CREDIT_TRADE_FLOW_TABLE_SCROLL= { x: 1800 };
 export const OPTION_TRADE_FLOW_TABLE_SCROLL = { x: 2500 };
+export const CAPITAL_CHANGE_TABLE_SCROLL = { x: 1300 };
 
 // 证券历史持仓表格显示的columns
 export const STOCK_HISTORY_HOLDING_COLUMNS = [
@@ -701,6 +702,58 @@ export const OPTION_TRADE_FLOW_COLUMNS = [
     dataIndex: 'openStorageDirection',
     key: 'openStorageDirection',
     className: 'openStorageDirection',
+  },
+];
+// 交易流水资金变动columns
+export const CAPITAL_CHANGE_COLUMNS = [
+  {
+    title: '交易日期',
+    dataIndex: 'tradeDate',
+    key: 'tradeDate',
+    className: 'tradeDate',
+    fixed: 'left',
+  },
+  {
+    title: '资金账号',
+    dataIndex: 'accountNumber',
+    key: 'accountNumber',
+    className:'accountNumber',
+    fixed: 'left',
+  },
+  {
+    title: '币种',
+    dataIndex: 'currency',
+    key: 'currency',
+    align: 'right',
+    className:'currency'
+  },
+  {
+    title: '交易渠道',
+    dataIndex: 'tradeChannel',
+    key: 'tradeChannel',
+    align: 'right',
+    className:'tradeChannel'
+  },
+  {
+    title: '业务标志',
+    dataIndex: 'serviceIndication',
+    key: 'serviceIndication',
+    align: 'right',
+    className:'serviceIndication'
+  },
+  {
+    title: '交易金额',
+    dataIndex: 'ammount',
+    key: 'ammount',
+    align: 'right',
+    className:'ammount'
+  },
+  {
+    title: '余额',
+    dataIndex: 'balance',
+    key: 'balance',
+    align: 'right',
+    className: 'balance'
   },
 ];
 

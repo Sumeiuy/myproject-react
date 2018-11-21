@@ -30,6 +30,14 @@ export default class AccountInfoTabs extends PureComponent {
     // 查询普通账户、信用账户、期权账户
     queryAccountInfo: PropTypes.func.isRequired,
     accountInfo: PropTypes.object.isRequired,
+    // 查询业务类别
+    queryBusnTypeDict: PropTypes.func.isRequired,
+    // 查询账户变动
+    queryAccountChange: PropTypes.func.isRequired,
+    // 业务类别
+    busnTypeDict: PropTypes.object.isRequired,
+    // 账户变动
+    accountChangeRes: PropTypes.object.isRequired,
   }
 
   constructor(props) {
@@ -71,6 +79,7 @@ export default class AccountInfoTabs extends PureComponent {
     if (!_.isEmpty(custId)) {
       this.props.queryAccountInfo({ custId, accountType });
     }
+    this.props.queryBusnTypeDict({accountType: _.lowerCase(accountType), queryType: 'accountChange'});
   }
 
   // 查询接口
@@ -105,7 +114,7 @@ export default class AccountInfoTabs extends PureComponent {
   }
 
   render() {
-    const { accountSummary, accountInfo } = this.props;
+    const { accountSummary, accountInfo, busnTypeDict, queryAccountChange, accountChangeRes, location: { query: { custId } }} = this.props;
     const { activeTabKey } = this.state;
 
     // 普通账户下的资金账户，证券账户
@@ -130,8 +139,12 @@ export default class AccountInfoTabs extends PureComponent {
             <div className={styles.tabPaneWrap}>
               <AccountDetail
                 type="Normal"
+                custId={custId}
                 fundAccount={normalFundAccount}
                 stockAccount={normalStockAccount}
+                busnTypeDict={busnTypeDict}
+                accountChangeRes={accountChangeRes}
+                queryAccountChange={queryAccountChange}
               />
             </div>
           </TabPane>
@@ -139,8 +152,12 @@ export default class AccountInfoTabs extends PureComponent {
             <div className={styles.tabPaneWrap}>
               <AccountDetail
                 type="Credit"
+                custId={custId}
                 fundAccount={creditFundAccount}
                 stockAccount={creditStockAccount}
+                busnTypeDict={busnTypeDict}
+                accountChangeRes={accountChangeRes}
+                queryAccountChange={queryAccountChange}
               />
             </div>
           </TabPane>
@@ -148,8 +165,12 @@ export default class AccountInfoTabs extends PureComponent {
             <div className={styles.tabPaneWrap}>
               <AccountDetail
                 type="Option"
+                custId={custId}
                 fundAccount={optionFundAccount}
                 stockAccount={optionStockAccount}
+                busnTypeDict={busnTypeDict}
+                accountChangeRes={accountChangeRes}
+                queryAccountChange={queryAccountChange}
               />
             </div>
           </TabPane>

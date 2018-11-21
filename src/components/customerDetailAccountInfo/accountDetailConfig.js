@@ -94,3 +94,42 @@ export const STOCK_ACCOUNT_TABLE_COLUMNS = [
     key: 'tradeMarket',
   },
 ];
+
+// 账户变动表格Columns
+export const ACCOUNT_CHANGE_TABLE_COLUMNS = [
+  {
+    title: '日期',
+    dataIndex: 'date',
+    key: 'date',
+  },
+  {
+    title: '资金账户',
+    dataIndex: 'assetAccount',
+    key: 'assetAccount',
+  },
+  {
+    title: '股东账户',
+    dataIndex: 'shareholderAccount',
+    key: 'shareholderAccount',
+  },
+  {
+    title: '业务类别',
+    dataIndex: 'bussinessType',
+    key: 'bussinessType',
+  },
+  {
+    title: '办理机构',
+    dataIndex: 'agency',
+    key: 'agency',
+  },
+  {
+    title: '办理时间',
+    dataIndex: 'handleTime',
+    key: 'handleTime',
+  },
+  {
+    title: '单费收入',
+    dataIndex: 'singleFeeIncome',
+    key: 'singleFeeIncome',
+  },
+];
