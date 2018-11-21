@@ -41,6 +41,7 @@ import detailServiceRelationAPI from './detailServiceRelationship';
 import detailAccountInfoAPI from './detailAccountInfo';
 import detailCustPropertyAPI from './detailCustProperty';
 import taskAnalysisReportAPI from './taskAnalysisReport';
+import detailInvestmentAbilityAnalysisAPI from './detailInvestmentAbilityAnalysis';
 
 const api = apiCreator();
 
@@ -163,6 +164,8 @@ const exported = {
   detailCustProperty: detailCustPropertyAPI(api),
   // ========== SMART任务相关运营报表
   taskAnalysisReport: taskAnalysisReportAPI(api),
+  // ========== 客户360-投资能力分析相关api
+  detailInvestmentAbilityAnalysis: detailInvestmentAbilityAnalysisAPI(api),
 };
 
 export default exported;
@@ -210,4 +213,5 @@ export const {
   detailAccountInfo,
   detailCustProperty,
   taskAnalysisReport,
+  detailInvestmentAbilityAnalysis,
 } = exported;
