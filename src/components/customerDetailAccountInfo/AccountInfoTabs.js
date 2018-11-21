@@ -66,9 +66,9 @@ export default class AccountInfoTabs extends PureComponent {
   // 查询账户概览
   @autobind
   querySummary() {
-    const { location: { query: { custId } } } = this.props;
+    const { location: { query: { custId } }, queryAccountSummary } = this.props;
     if (!_.isEmpty(custId)) {
-      this.props.queryAccountSummary({ custId });
+      queryAccountSummary({ custId });
     }
   }
 
@@ -114,7 +114,14 @@ export default class AccountInfoTabs extends PureComponent {
   }
 
   render() {
-    const { accountSummary, accountInfo, busnTypeDict, queryAccountChange, accountChangeRes, location: { query: { custId } }} = this.props;
+    const {
+      accountSummary,
+      accountInfo,
+      busnTypeDict,
+      queryAccountChange,
+      accountChangeRes,
+      location: { query: { custId } },
+    } = this.props;
     const { activeTabKey } = this.state;
 
     // 普通账户下的资金账户，证券账户

@@ -74,14 +74,18 @@ export default class AccountDetail extends PureComponent {
   // 获取账户变动数据
   @autobind
   getAccountChange(params) {
-    const { type, custId } = this.props;
+    const {
+      type,
+      custId,
+      queryAccountChange,
+    } = this.props;
     const {
       bussinessType,
       startDate,
       endDate,
       pageNum,
     } = this.state;
-    this.props.queryAccountChange ({
+    queryAccountChange ({
        custId,
        startDate,
        endDate,
@@ -122,14 +126,15 @@ export default class AccountDetail extends PureComponent {
       value: '$args[0].value',
     },
   })
-  handleChangeDate(date) {
+  handleDateChange(date) {
+    const [startDate, endDate] = date.value;
     this.setState({
-      startDate: date.value[0],
-      endDate: date.value[1],
+      startDate: startDate,
+      endDate: endDate,
     });
     this.getAccountChange({
-      startDate: date.value[0],
-      endDate: date.value[1],
+      startDate: startDate,
+      endDate: endDate,
     });
   }
 
@@ -144,9 +149,9 @@ export default class AccountDetail extends PureComponent {
   })
   handleFilterBussinessType(current) {
     this.setState({ bussinessType: current.value });
-      this.getAccountChange({
-        bussinessType: current.value,
-      });
+    this.getAccountChange({
+      bussinessType: current.value,
+    });
   }
 
   // 切换账户变动页码刷新表格数据
@@ -170,8 +175,17 @@ export default class AccountDetail extends PureComponent {
    }
 
   render() {
-    const { fundAccount, stockAccount, busnTypeDict, accountChangeRes } = this.props;
-    const { startDate, endDate, bussinessType } = this.state;
+    const {
+      fundAccount,
+      stockAccount,
+      busnTypeDict,
+      accountChangeRes
+    } = this.props;
+    const {
+      startDate,
+      endDate,
+      bussinessType,
+    } = this.state;
     // 获取分页的页数
     const page = this.getPage(accountChangeRes.page);
     // 补足空白行后的资金账户数据
@@ -219,7 +233,7 @@ export default class AccountDetail extends PureComponent {
                 filterName="查询日期"
                 initialStartDate={DEFAULT_START_DATE}
                 value={[startDate, endDate]}
-                onChange={this.handleChangeDate}
+                onChange={this.handleDateChange}
                 disabledCurrentEnd={false}
               />
             </div>

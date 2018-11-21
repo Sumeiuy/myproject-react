@@ -261,18 +261,22 @@ export default class TradeFlowModal extends PureComponent {
         value: TRADE_FLOW_TABS[activeTabKey],
       },
     });
-    // 切换tab页时调用方法刷数据
+    // 切换tab页时调用方法刷数据，tab不同，对应的accountType也不同，切换tab的时候分别获取对应的业务类别数据和当前tab下的交易流水列表
     if (activeTabKey === 'standardAccountTrade') {
+      // 普通账户历史交易
       this.queryBusnTypeDict({ accountType: 'normal' });
       this.queryStandardTradeFlow();
     } else if (activeTabKey === 'creditAccountTrade') {
+      // 信用账户历史交易
       this.queryBusnTypeDict({ accountType: 'credit' });
       this.queryCreditTradeFlow();
     } else if(activeTabKey === 'capitalChange') {
+      // 资金变动
       this.queryBusnTypeDict({ accountType: this.state.accountTypeRadio , queryType: 'moneyChange' });
       this.queryCapitalTradeFlow();
     }
     else {
+      // 期权账户历史交易
       this.queryOptionTradeFlow();
     }
   }
@@ -383,13 +387,14 @@ export default class TradeFlowModal extends PureComponent {
     },
   })
   handleChangeCapitalDate(date) {
+    const [startDate, endDate] = date.value;
     this.setState({
-      capitalStartDate: date.value[0],
-      capitalEndDate: date.value[1],
+      capitalStartDate: startDate,
+      capitalEndDate: endDate,
     });
     this.queryCapitalTradeFlow({
-      startDate: date.value[0],
-      endDate: date.value[1],
+      startDate: startDate,
+      endDate: endDate,
     });
   }
 
