@@ -14,6 +14,7 @@ export default class CommonTable extends PureComponent {
   static propTypes = {
     // 分页器class
     paginationClass: PropTypes.string,
+    // 是否需要填充空行，只在后端分页的情形下，有效
     isNeedEmptyRow: PropTypes.bool,
   };
 
