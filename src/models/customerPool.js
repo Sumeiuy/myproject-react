@@ -1807,10 +1807,10 @@ export default {
     },
     // 发起人下拉框
     getInitiatorSuccess(state, action) {
-      const { payload: { resultData = [] }} = action;
+      const { payload: { resultData: { empInfo = [] } }} = action;
       return {
         ...state,
-        initiator: resultData,
+        initiator: empInfo,
       };
     }
   },

@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-11-12 19:25:08
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-15 11:19:19
+ * @Last Modified time: 2018-11-21 15:06:47
  */
 
 import React, { PureComponent } from 'react';
@@ -19,6 +19,7 @@ import {
 import { env } from '../../../helper';
 
 import styles from './taskList.less';
+import emptyImg from './img/empty.png';
 
 const systemCode = '102330';  // 系统代码（理财服务平台为102330）
 const USER_INFO_APPROVE = '投顾信息维护审核流程'; // 用户基本信息审核标识;
@@ -26,12 +27,16 @@ const USER_INFO_APPROVE = '投顾信息维护审核流程'; // 用户基本信�
 export default class TaskList extends PureComponent {
 
   static propTypes = {
-    data: PropTypes.array.isRequired,
+    data: PropTypes.array,
     className: PropTypes.string.isRequired,
     location: PropTypes.object.isRequired,
     // 数据类型
     listType: PropTypes.string.isRequired,
     clearCreateTaskData: PropTypes.func.isRequired,
+  }
+
+  static defaultProps = {
+    data: [],
   }
 
   static contextTypes = {
@@ -241,6 +246,17 @@ export default class TaskList extends PureComponent {
   }
   render() {
     const { className, data } = this.props;
+    // 搜索结果为空
+    if (_.isEmpty(data)) {
+      return (
+        <div className={styles.empty}>
+            <div className="empty-container">
+              <img src={emptyImg} alt="" />
+              <p>暂无任务</p>
+            </div>
+        </div>
+      );
+    }
     return (
       <Table
         className={className}
