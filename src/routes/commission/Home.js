@@ -476,10 +476,10 @@ export default class CommissionHome extends PureComponent {
   @logable({
     type: 'ViewItem',
     payload: {
-      name: '佣金调整左侧列表项',
+      name: '佣金调整左侧列表项1',
       type: '批量佣金调整',
       subType: '$props.location.query.currentId',
-      value: '$args'
+      value: '$args[0]'
     },
   })
   handleListRowClick(record, index) {
