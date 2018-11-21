@@ -132,7 +132,7 @@ export default class BoardSelect extends PureComponent {
 
   // 鼠标进入
   @autobind
-  // @logable({ type: 'Click', payload: { name: '鼠标进入' } })
+  @logable({ type: 'Click', payload: { name: '鼠标进入' } })
   mouseEnter() {
     // 清除定时器
     if (this.timer) {
