@@ -476,7 +476,7 @@ export default class CommissionHome extends PureComponent {
   @logable({
     type: 'ViewItem',
     payload: {
-      name: '佣金调整左侧列表项1',
+      name: '佣金调整左侧列表项',
       type: '批量佣金调整',
       subType: '$props.location.query.currentId',
       value: '$args[0]'
