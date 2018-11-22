@@ -182,6 +182,9 @@ export default class ServiceLog extends PureComponent {
   })
   handleDateChange(startDate, endDate) {
     const { location: { query, pathname }, replace } = this.props;
+    this.setState({
+      pageNum: PAGE_NUM,
+    });
     if (startDate !== null && endDate !== null) {
       replace({
         pathname,
@@ -222,6 +225,9 @@ export default class ServiceLog extends PureComponent {
   @autobind
   handleSearchServiceRecord(value) {
     const { location: { query, pathname }, replace } = this.props;
+    this.setState({
+      pageNum: PAGE_NUM,
+    });
     replace({
       pathname,
       query: {
@@ -269,6 +275,10 @@ export default class ServiceLog extends PureComponent {
     if (_.isEmpty(value)) {
       return;
     }
+    this.setState({
+      serveSource: value,
+      pageNum: PAGE_NUM,
+    });
     const { location: { query, pathname }, replace } = this.props;
     replace({
       pathname,
@@ -278,9 +288,6 @@ export default class ServiceLog extends PureComponent {
         serveDateToPaged: null,
         pageNum: PAGE_NUM,
       },
-    });
-    this.setState({
-      serveSource: value,
     });
   }
 
@@ -352,6 +359,10 @@ export default class ServiceLog extends PureComponent {
     } else {
       type = value;
     }
+    this.setState({
+      serveType: value,
+      pageNum: PAGE_NUM,
+    });
     replace({
       pathname,
       query: {
@@ -360,9 +371,6 @@ export default class ServiceLog extends PureComponent {
         serveDateToPaged: null,
         pageNum: PAGE_NUM,
       },
-    });
-    this.setState({
-      serveType: value,
     });
   }
 
