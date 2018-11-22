@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-20 16:01:36
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-20 17:02:09
+ * @Last Modified time: 2018-11-22 09:36:50
  * @description 新版客户360详情下的账户信息Tab页面的model
  */
 import { detailInvestmentAbilityAnalysis as api } from '../../api';
@@ -21,7 +21,7 @@ export default {
       const { payload } = action;
       return {
         ...state,
-        profitAbility: payload,
+        profitAbility: payload || {},
       };
     },
     // 获取投资账户特征成功
@@ -29,7 +29,7 @@ export default {
       const { payload } = action;
       return {
         ...state,
-        investmentFeatureLabels: payload,
+        investmentFeatureLabels: payload || [],
       };
     }
   },
@@ -50,5 +50,7 @@ export default {
         payload: resultData,
       });
     },
-  }
+  },
+  subscriptions: {
+  },
 };

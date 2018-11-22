@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-19 15:39:12
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-21 17:19:51
+ * @Last Modified time: 2018-11-22 09:30:10
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -65,6 +65,7 @@ export default class Home extends PureComponent {
     super(props);
     const { query: { investmentAbilityTabActiveKey } } = props.location;
     this.state = {
+      // 当前激活tab面板的key, 如果query中没有，默认取账户总体情况的key
       activeTabKey: investmentAbilityTabActiveKey ? investmentAbilityTabActiveKey : 'accountTotalState',
     };
   }
@@ -79,18 +80,15 @@ export default class Home extends PureComponent {
     },
   })
   handleChangeTab(activeTabKey) {
-    this.setState({ activeTabKey }, () => {
-      this.replaceActiveTabKey();
-    });
+    this.setState({ activeTabKey }, this.replaceActiveTabKey);
   }
 
   // 替换location中activeTabKey值
   @autobind
   replaceActiveTabKey() {
-    const { replace } = this.context;
     const { location: { query } } = this.props;
     const { activeTabKey } = this.state;
-    replace({
+    this.context.replace({
       query: {
         ...query,
         investmentAbilityTabActiveKey: activeTabKey
