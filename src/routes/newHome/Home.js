@@ -289,7 +289,7 @@ export default class Home extends PureComponent {
 
   // 猜你感兴趣-更多点击事件
   @autobind
-  @logPV({ pathname: '/modal/showMoreLabelModal', title: '猜你感兴趣标签' })
+  @logPV({ pathname: '/modal/showMoreLabelModal', title: '猜你感兴趣-更多-可用客户标签弹窗' })
   handleMoreClick() {
     this.setState({
       showMoreLabelModal: true,
@@ -425,7 +425,7 @@ export default class Home extends PureComponent {
 
   // 重点关注、猜你感兴趣 跳转客户列表的点击事件
   @autobind
-  @logable({ type: 'ButtonClick', payload: {
+  @logable({ type: 'Click', payload: {
       name: '点击$args[0].name',
     }
   })
