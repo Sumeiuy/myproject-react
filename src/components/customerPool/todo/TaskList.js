@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-11-12 19:25:08
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-21 15:06:47
+ * @Last Modified time: 2018-11-22 15:15:44
  */
 
 import React, { PureComponent } from 'react';
@@ -27,16 +27,14 @@ const USER_INFO_APPROVE = '投顾信息维护审核流程'; // 用户基本信�
 export default class TaskList extends PureComponent {
 
   static propTypes = {
-    data: PropTypes.array,
+    data: PropTypes.array.isRequired,
     className: PropTypes.string.isRequired,
     location: PropTypes.object.isRequired,
     // 数据类型
     listType: PropTypes.string.isRequired,
     clearCreateTaskData: PropTypes.func.isRequired,
-  }
-
-  static defaultProps = {
-    data: [],
+    // 无任务的时候提示文字
+    emptyText: PropTypes.string.isRequired,
   }
 
   static contextTypes = {
@@ -245,25 +243,31 @@ export default class TaskList extends PureComponent {
     return taskColumns;
   }
   render() {
-    const { className, data } = this.props;
+    const {
+      className,
+      data,
+      emptyText,
+    } = this.props;
     // 搜索结果为空
     if (_.isEmpty(data)) {
       return (
         <div className={styles.empty}>
-            <div className="empty-container">
+            <div className={styles.emptyContainer}>
               <img src={emptyImg} alt="" />
-              <p>暂无任务</p>
+              <p>{emptyText}</p>
             </div>
         </div>
       );
     }
     return (
-      <Table
-        className={className}
-        rowKey='id'
-        columns={this.columns}
-        dataSource={data}
-      />
+      <div className={styles.taskList}>
+        <Table
+          className={className}
+          rowKey='id'
+          columns={this.columns}
+          dataSource={data}
+        />
+      </div>
     );
   }
 }
