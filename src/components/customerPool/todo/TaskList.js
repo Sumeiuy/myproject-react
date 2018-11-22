@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-11-12 19:25:08
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-22 13:53:02
+ * @Last Modified time: 2018-11-22 15:15:44
  */
 
 import React, { PureComponent } from 'react';
@@ -247,10 +247,7 @@ export default class TaskList extends PureComponent {
       className,
       data,
       emptyText,
-      page,
     } = this.props;
-    // 生成页码器，此页码器配置项与Antd的一致
-    const { location: { query: { curPageNum = 1, pageSize = 10 } } } = this.props;
     // 搜索结果为空
     if (_.isEmpty(data)) {
       return (

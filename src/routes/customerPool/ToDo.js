@@ -90,8 +90,6 @@ export default class ToDo extends PureComponent {
       startTime: defaultStartTime,
       // 任务结束时间
       endTime: defaultEndTime,
-      // 头部标签类型
-      activeKey: taskType,
       // 类型下拉框value
       applyType: [],
       approveType: [],
@@ -121,17 +119,13 @@ export default class ToDo extends PureComponent {
       category,
       originator,
     } = this.state;
-    // 判断taskType是否为空 为空设置默认值MY_TODO
-    if(!_.isEmpty(taskType)) {
-      this.setState({ activeKey: taskType });
-    } else {
+    if (_.isEmpty(taskType)) {
       this.context.replace({
         pathname,
         query: {
           taskType: 'MY_TODO',
         },
       });
-      this.setState({ activeKey: 'MY_TODO' });
     }
     // taskType为MY_APPLY是我的申请 MY_APPROVE是我的审批
     switch (taskType) {
@@ -431,7 +425,8 @@ export default class ToDo extends PureComponent {
         });
         break;
       case 'MY_APPROVE':
-        this.getApproveData({startTime,
+        this.getApproveData({
+          startTime,
           endTime,
           pageSize,
           pageNum,
@@ -442,7 +437,6 @@ export default class ToDo extends PureComponent {
       default:
         break;
     }
-    this.setState({ activeKey: obj });
   }
 
   // 发起人下拉框输入
@@ -472,10 +466,15 @@ export default class ToDo extends PureComponent {
     } = this.props;
     const { push, replace } = this.context;
     const { applyType, approveType, initiatorValue, startTime, endTime } = this.state;
-    const { query: { keyword } } = location;
+    const {
+      query: {
+        keyword,
+        taskType = 'MY_TODO',
+      }
+    } = location;
     return (
       <div className={styles.todo}>
-        <Tabs defaultActiveKey="MY_TODO" activeKey={this.state.activeKey} type='card' onChange={this.handleTabsChange}>
+        <Tabs defaultActiveKey="MY_TODO" activeKey={taskType} type='card' onChange={this.handleTabsChange}>
           <TabPane key='MY_TODO' tab='我的待办'>
             <div className="search-box">
               <Input.Search
