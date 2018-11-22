@@ -3,7 +3,7 @@
  * @Descripter: 报表头部筛选项
  * @Date: 2018-10-06 14:21:06
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-21 13:49:54
+ * @Last Modified time: 2018-11-22 13:46:03
  */
 
 import React, { PureComponent } from 'react';
@@ -84,15 +84,13 @@ export default class TodoFilter extends PureComponent {
   // 设置不可选择的开始时间
   @autobind
   setDisabledStartTime(start) {
-    // 最多选取过去90天的时间
-    return start < moment().subtract(91, 'days') || start >= moment().startOf('day');
+    return start > moment().startOf('day');
   }
 
   // 设置不可选择的结束时间
   @autobind
   setDisabledEndTime(start, end) {
-    // 最多选取过去90天的时间
-    return end < moment().subtract(91, 'days') || end >= moment().startOf('day');
+    return end > moment().startOf('day');
   }
 
   @autobind

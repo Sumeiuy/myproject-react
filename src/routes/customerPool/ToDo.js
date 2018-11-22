@@ -107,6 +107,7 @@ export default class ToDo extends PureComponent {
   componentDidMount() {
     const {
       location: {
+        pathname,
         query: {
           taskType,
           pageSize = 10,
@@ -120,6 +121,18 @@ export default class ToDo extends PureComponent {
       category,
       originator,
     } = this.state;
+    // 判断taskType是否为空 为空设置默认值MY_TODO
+    if(!_.isEmpty(taskType)) {
+      this.setState({ activeKey: taskType });
+    } else {
+      this.context.replace({
+        pathname,
+        query: {
+          taskType: 'MY_TODO',
+        },
+      });
+      this.setState({ activeKey: 'MY_TODO' });
+    }
     // taskType为MY_APPLY是我的申请 MY_APPROVE是我的审批
     switch (taskType) {
       case 'MY_APPLY':
@@ -128,7 +141,7 @@ export default class ToDo extends PureComponent {
           endTime,
           pageSize,
           pageNum,
-          category
+          category,
         });
         break;
       case 'MY_APPROVE':
@@ -138,7 +151,7 @@ export default class ToDo extends PureComponent {
           pageSize,
           pageNum,
           category,
-          originator
+          originator,
         });
         break;
       default:
@@ -149,27 +162,7 @@ export default class ToDo extends PureComponent {
   // 获取申请列表
   @autobind
   getApplyData(item) {
-    const {
-      location: {
-        pathname,
-        query: {
-          taskType,
-        }
-      }
-    } = this.props;
-    if(!_.isEmpty(taskType)) {
-      this.props.getApplyList(item);
-      this.setState({ activeKey: taskType });
-    } else {
-      this.context.replace({
-        pathname,
-        query: {
-          taskType: 'MY_TODO',
-        },
-      });
-      this.props.getApplyList(item);
-      this.setState({ activeKey: 'MY_TODO' });
-    }
+    this.props.getApplyList(item);
   }
 
   // 获取审批列表
@@ -284,7 +277,7 @@ export default class ToDo extends PureComponent {
             pageNum,
             category: key,
             startTime,
-            endTime
+            endTime,
           });
         });
         break;
@@ -298,7 +291,7 @@ export default class ToDo extends PureComponent {
             category: key,
             startTime,
             endTime,
-            originator
+            originator,
           });
         });
         break;
@@ -307,61 +300,61 @@ export default class ToDo extends PureComponent {
     }
   }
 
-    // 头部时间筛选回调函数
-    @autobind
-    handleTimeChange(obj) {
-      const {
-        location: {
-          query: {
-            taskType,
-            pageSize = 10,
-            pageNum = 1,
-          }
+  // 头部时间筛选回调函数
+  @autobind
+  handleTimeChange(obj) {
+    const {
+      location: {
+        query: {
+          taskType,
+          pageSize = 10,
+          pageNum = 1,
         }
-      } = this.props;
-      const {
-        startTime,
-        endTime,
-      } = obj;
-      const {
-        category,
-        originator,
-      } = this.state;
-      // taskType为2是我的申请 3是我的审批
-      switch (taskType) {
-        case 'MY_APPLY':
-          this.setState({
-            startTime,
-            endTime,
-          }, () => {
-            this.getApplyData({
-              pageSize,
-              pageNum,
-              startTime,
-              endTime,
-              category
-            });
-          });
-          break;
-        case 'MY_APPROVE':
-          this.setState({
-            startTime,
-            endTime,
-          }, () => {
-            this.getApproveData({
-              pageSize,
-              pageNum,
-              startTime,
-              endTime,
-              category,
-              originator
-            });
-          });
-          break;
-        default:
-          break;
       }
+    } = this.props;
+    const {
+      startTime,
+      endTime,
+    } = obj;
+    const {
+      category,
+      originator,
+    } = this.state;
+    // taskType为MY_APPLY是我的申请 MY_APPROVE是我的审批
+    switch (taskType) {
+      case 'MY_APPLY':
+        this.setState({
+          startTime,
+          endTime,
+        }, () => {
+          this.getApplyData({
+            pageSize,
+            pageNum,
+            startTime,
+            endTime,
+            category,
+          });
+        });
+        break;
+      case 'MY_APPROVE':
+        this.setState({
+          startTime,
+          endTime,
+        }, () => {
+          this.getApproveData({
+            pageSize,
+            pageNum,
+            startTime,
+            endTime,
+            category,
+            originator,
+          });
+        });
+        break;
+      default:
+        break;
     }
+  }
 
   // 头部发起人筛选回调函数
   @autobind
@@ -392,7 +385,7 @@ export default class ToDo extends PureComponent {
         originator: id,
         startTime,
         endTime,
-        category
+        category,
       });
     });
   }
@@ -434,7 +427,7 @@ export default class ToDo extends PureComponent {
           endTime,
           pageSize,
           pageNum,
-          category
+          category,
         });
         break;
       case 'MY_APPROVE':
@@ -443,7 +436,7 @@ export default class ToDo extends PureComponent {
           pageSize,
           pageNum,
           category,
-          originator
+          originator,
         });
         break;
       default:
@@ -525,6 +518,7 @@ export default class ToDo extends PureComponent {
                 location={location}
                 listType='apply'
                 clearCreateTaskData={clearCreateTaskData}
+                emptyText='您名下没有符合条件的申请'
               />
             </div>
           </TabPane>
@@ -550,6 +544,7 @@ export default class ToDo extends PureComponent {
                 location={location}
                 listType='approve'
                 clearCreateTaskData={clearCreateTaskData}
+                emptyText='您名下没有符合条件的审批'
               />
             </div>
           </TabPane>
