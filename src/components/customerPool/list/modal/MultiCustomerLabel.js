@@ -68,7 +68,7 @@ export default class SignCustomerLabel extends PureComponent {
     type: 'Submit',
     payload: {
       name: '客户标签-提交',
-      value: instance => instance.state.selectValue
+      value: '$state.selectValue',
     },
   })
   handleSubmitSignLabel() {

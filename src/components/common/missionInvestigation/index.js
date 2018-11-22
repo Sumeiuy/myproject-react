@@ -302,7 +302,6 @@ export default class MissionInvestigation extends PureComponent {
     payload: {
       name: '问题列表',
       value: '$args[0]',
-
     },
   })
   handleRowSelectionChange(selectedRowKeys) {
