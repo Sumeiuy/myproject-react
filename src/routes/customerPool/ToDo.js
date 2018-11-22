@@ -78,13 +78,6 @@ export default class ToDo extends PureComponent {
 
   constructor(props) {
     super(props);
-    const {
-      location: {
-        query: {
-          taskType
-        }
-      }
-    } = props;
     this.state = {
       // 任务开始时间
       startTime: defaultStartTime,
@@ -439,6 +432,49 @@ export default class ToDo extends PureComponent {
     }
   }
 
+  // 分页
+  @autobind
+  onPageChange(page) {
+    const {
+      location: {
+        query: {
+          taskType,
+          pageSize,
+        }
+      }
+    } = this.props;
+    const {
+      startTime,
+      endTime,
+      category,
+      originator,
+    } = this.state;
+    // taskType为MY_APPLY是我的申请 MY_APPROVE是我的审批
+    switch (taskType) {
+      case 'MY_APPLY':
+        this.getApplyData({
+          pageSize,
+          pageNum: page.toString(),
+          startTime,
+          endTime,
+          category,
+        });
+        break;
+      case 'MY_APPROVE':
+        this.getApproveData({
+          pageSize,
+          pageNum: page.toString(),
+          startTime,
+          endTime,
+          category,
+          originator,
+        });
+        break;
+      default:
+        break;
+    }
+  }
+
   // 发起人下拉框输入
   @autobind
   handleInitiatorInputChange(value) {
@@ -458,9 +494,11 @@ export default class ToDo extends PureComponent {
       clearCreateTaskData,
       applyList: {
         empWorkFlowList: applyListData,
+        page: applyPage,
       },
       approveList: {
         empWorkFlowList: approveListData,
+        page: approvePage,
       },
       initiator,
     } = this.props;
@@ -518,6 +556,8 @@ export default class ToDo extends PureComponent {
                 listType='apply'
                 clearCreateTaskData={clearCreateTaskData}
                 emptyText='您名下没有符合条件的申请'
+                page={applyPage}
+                onPageChange={this.onPageChange}
               />
             </div>
           </TabPane>
@@ -544,6 +584,8 @@ export default class ToDo extends PureComponent {
                 listType='approve'
                 clearCreateTaskData={clearCreateTaskData}
                 emptyText='您名下没有符合条件的审批'
+                page={approvePage}
+                onPageChange={this.onPageChange}
               />
             </div>
           </TabPane>

@@ -2,13 +2,13 @@
  * @Author: zuoguangzu
  * @Date: 2018-11-12 19:25:08
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-22 15:15:44
+ * @Last Modified time: 2018-11-22 21:42:33
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { Table, message } from 'antd';
+import { Table, message, Pagination } from 'antd';
 import _ from 'lodash';
 
 import logable from '../../../decorators/logable';
@@ -35,17 +35,23 @@ export default class TaskList extends PureComponent {
     clearCreateTaskData: PropTypes.func.isRequired,
     // 无任务的时候提示文字
     emptyText: PropTypes.string.isRequired,
+    // 分页
+    page: PropTypes.object,
+    onPageChange: PropTypes.func,
   }
 
   static contextTypes = {
     push: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
+    onPageChange: _.noop,
+    page: {},
   }
 
   constructor(props) {
     super(props);
     this.state = {
       flowId: null,
+      curPageNum: 1
     };
     this.columns = this.getColumnsByListType();
   }
@@ -156,6 +162,30 @@ export default class TaskList extends PureComponent {
     }
   }
 
+  // 切换页码
+  @autobind
+  handlePageNumberChange(nextPage, currentPageSize) {
+    const {
+      location: {
+        query,
+        pathname,
+      },
+    } = this.props;
+    const { replace } = this.context;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        pageNum: nextPage,
+        pageSize: currentPageSize,
+      },
+    });
+    this.setState({
+      curPageNum: nextPage,
+    });
+    this.props.onPageChange(nextPage);
+  }
+
   // 根据type获取列表数据
   @autobind
   getColumnsByListType() {
@@ -248,6 +278,15 @@ export default class TaskList extends PureComponent {
       data,
       emptyText,
     } = this.props;
+    // 生成页码器，此页码器配置项与Antd的一致
+    const {
+      page: {
+        pageSize,
+        curPageNum,
+        totalPageNum,
+        totalRecordNum,
+      }
+    } = this.props;
     // 搜索结果为空
     if (_.isEmpty(data)) {
       return (
@@ -266,6 +305,14 @@ export default class TaskList extends PureComponent {
           rowKey='id'
           columns={this.columns}
           dataSource={data}
+          pagination={false}
+        />
+        <Pagination
+          total={totalRecordNum}
+          pageSize={10}
+          defaultCurrent={1}
+          onChange={this.handlePageNumberChange}
+          current={this.state.curPageNum}
         />
       </div>
     );
