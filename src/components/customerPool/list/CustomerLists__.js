@@ -484,6 +484,7 @@ export default class CustomerLists extends PureComponent {
 
   // 添加客户标签 -- start
   @autobind
+  @logPV({ pathname: '/modal/queryCustSignLabelModal', title: '客户标签弹窗' })
   queryCustSignLabel(custId) {
     const { queryCustSignedLabels } = this.props;
     queryCustSignedLabels({ custId }).then(() => {

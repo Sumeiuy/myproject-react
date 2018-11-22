@@ -36,7 +36,7 @@ export default class QuickMenu extends PureComponent {
   }
 
   @autobind
-  @logPV({ pathname: '/modal/telephoneModal', title: '电话联系弹框' })
+  @logPV({ pathname: '/modal/telephoneModal', title: '联系客户弹框' })
   handleTelephoneClick(listItem) {
     this.props.createModal(listItem);
   }

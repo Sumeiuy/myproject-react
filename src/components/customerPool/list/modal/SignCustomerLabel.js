@@ -12,7 +12,7 @@ import { MultiFilterWithSearch } from 'lego-react-filter/src';
 
 import CreateLabel from './CreateLabel';
 import styles from './addCustomerLabel.less';
-import logable, { logPV, logCommon } from '../../../../decorators/logable';
+import logable, { logPV} from '../../../../decorators/logable';
 
 const EMPTY_LIST = [];
 
@@ -119,7 +119,7 @@ export default class SignCustomerLabel extends PureComponent {
     type: 'Submit',
     payload: {
       name: '客户标签-提交',
-      value: instance => instance.state.selectedLabels
+      value:' $state.selectedLabels'
     },
   })
   handleSubmitSignLabel() {
@@ -132,13 +132,6 @@ export default class SignCustomerLabel extends PureComponent {
       labelIds,
       ptyMngId,
     }).then(this.handleCloseModal);
-    logCommon({
-      type: 'Submit',
-      payload: {
-        name: '客户标签-提交',
-        value: labelIds,
-      },
-    });
   }
 
   @autobind
