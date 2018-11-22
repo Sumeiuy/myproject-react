@@ -43,12 +43,7 @@ export default class ActivityColumnCarousel extends Component {
   }
 
   @autobind
-  @logPV({
-    type: 'Click',
-    payload: {
-      name: '活动栏目',
-    },
-  })
+  @logPV({ pathname: '/modal/ActivityColumnCarouselModal', title: '首页-活动栏目' })
   handleClick(columnUrl) {
     const finalUrl = this.replaceUrl(columnUrl);
     // 获取url的信息

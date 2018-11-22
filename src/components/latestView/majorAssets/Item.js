@@ -31,7 +31,7 @@ export default class Item extends PureComponent {
   }
 
   @autobind
-  @logPV({ pathname: '/modal/detailClickLog', title: '大类资产配置分析' })
+  @logPV({ pathname: '/modal/detailClickLog', title: '大类资产配置分析详情弹框' })
   handleDetailClick() {
     const { data: { id = '' }, openModal, modalKey, getDetail } = this.props;
     getDetail({ id }).then(() => {
