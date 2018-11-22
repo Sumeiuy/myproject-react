@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-21 09:35:09
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-22 15:14:55
+ * @LastEditTime: 2018-11-22 18:49:38
  * @Description: 交易订单流水
  */
 
@@ -29,6 +29,11 @@ export default class TradeOrderFlow extends PureComponent {
     tradeOrderFlowData: PropTypes.object.isRequired,
     onTradeOrderFlowChange: PropTypes.func.isRequired,
   };
+
+  componentDidMount() {
+    // 获取初始数据
+    this.props.onTradeOrderFlowChange(1, DEFAULT_PAGE_SIZE);
+  }
 
   @autobind
   handlePageChanged(changedPage) {
