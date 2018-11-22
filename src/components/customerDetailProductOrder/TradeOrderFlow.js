@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-21 09:35:09
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-21 18:47:05
+ * @LastEditTime: 2018-11-22 15:14:55
  * @Description: 交易订单流水
  */
 
@@ -13,6 +13,7 @@ import _ from 'lodash';
 import moment from 'moment';
 import Table from '../common/table';
 import Tooltip from '../common/Tooltip';
+import IfTableWrap from '../common/IfTableWrap';
 import {
   TRADE_ORDER_FLOW_COLUMNS,
   DATE_FORMATE_STR,
@@ -20,6 +21,8 @@ import {
   DEFAULT_PAGE_SIZE,
 } from './config';
 import styles from './tradeOrderFlow.less';
+
+const NODATA_HINT = '客户暂无交易订单信息';
 
 export default class TradeOrderFlow extends PureComponent {
   static propsType = {
@@ -88,17 +91,20 @@ export default class TradeOrderFlow extends PureComponent {
       pageSize,
       total: totalCount,
     };
+    const isRender = list.length !== 0;
 
     return (
       <div className={styles.tradeOrderFlowWrap}>
-        <Table
-          pagination={pagination}
-          dataSource={list}
-          columns={this.transformColumnsData(TRADE_ORDER_FLOW_COLUMNS)}
-          className={styles.table}
-          rowClassName={styles.tableRow}
-          onChange={this.handlePageChanged}
-        />
+        <IfTableWrap isRender={isRender} text={NODATA_HINT}>
+          <Table
+            pagination={pagination}
+            dataSource={list}
+            columns={this.transformColumnsData(TRADE_ORDER_FLOW_COLUMNS)}
+            className={styles.table}
+            rowClassName={styles.tableRow}
+            onChange={this.handlePageChanged}
+          />
+        </IfTableWrap>
       </div>
     );
   }

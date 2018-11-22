@@ -1,10 +1,8 @@
-import { dateFormat } from '../../routes/taskList/config';
-
 /*
  * @Author: yuanhaojie
  * @Date: 2018-11-20 15:24:26
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-21 18:28:22
+ * @LastEditTime: 2018-11-22 15:43:40
  * @Description: 新版客户360详情的产品订单T配置项
  */
 
@@ -93,4 +91,4 @@ export const TRADE_ORDER_FLOW_COLUMNS = [
 
 export const DATE_FORMATE_STR = 'YYYY-MM-DD';
 export const DATE_FORMATE_STR_DETAIL = 'YYYY-MM-DD HH:mm:ss';
-export const DEFAULT_PAGE_SIZE = 5;
+export const DEFAULT_PAGE_SIZE = 10;

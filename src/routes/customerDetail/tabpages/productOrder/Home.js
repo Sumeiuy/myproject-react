@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-19 10:17:54
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-21 18:49:10
+ * @LastEditTime: 2018-11-22 15:57:38
  * @Description: 产品订单
  */
 
@@ -18,7 +18,7 @@ import TradeOrderFlow from '../../../../components/customerDetailProductOrder/Tr
 import styles from './home.less';
 
 const TabPane = Tabs.TabPane;
-const TRADE_ORDER_FLOW_PAGE_SIZE = 5;
+const TRADE_ORDER_FLOW_PAGE_SIZE = 10;
 
 const mapStateToProps = ({ productOrder }) => ({
   serviceOrderFlow: productOrder.serviceOrderFlow,
@@ -44,37 +44,16 @@ export default class ProductOrder extends PureComponent {
     replace: PropTypes.func.isRequired,
   }
 
-  static getDerivedStateFromProps(nextProps, prevState) {
-    const { query: { productOrderTabActiveKey } } = nextProps.location;
-    if (productOrderTabActiveKey !== prevState.activeTabKey) {
-      // 根据query中的productOrderTabActiveKey值决定显示哪个tab
-      const activeTabKey = productOrderTabActiveKey || 'serviceOrder';
-      return {
-        activeTabKey,
-      };
-    }
-    return null;
-  }
-
-  constructor(props) {
-    super(props);
-    const { query: { productOrderTabActiveKey } } = props.location;
-    const activeTabKey = productOrderTabActiveKey ? productOrderTabActiveKey : 'serviceOrder';
-    this.state ={
-      activeTabKey,
-    };
-  }
-
   componentDidMount() {
-    const { activeTabKey } = this.state;
-    this.replaceActiveTabKey(activeTabKey);
     this.getActiveTabInfo();
   }
 
   componentDidUpdate(prevProps) {
     const { location: { query: { custId : preCustId } } } = prevProps;
     const {
-      query: { custId },
+      query: {
+        custId,
+      },
     } = this.props.location;
     if (custId && custId !== preCustId) {
       this.getActiveTabInfo();
@@ -83,14 +62,17 @@ export default class ProductOrder extends PureComponent {
 
   @autobind
   handleTabChange(activeTabKey) {
-    // 不直接setState，在getDerivedStateFromProps去改变state
     this.replaceActiveTabKey(activeTabKey);
   }
 
   @autobind
   replaceActiveTabKey(tabKey) {
     const { replace } = this.context;
-    const { location: { query }} = this.props;
+    const {
+      location: {
+        query,
+      },
+    } = this.props;
     replace({
       query: {
         ...query,
@@ -101,11 +83,15 @@ export default class ProductOrder extends PureComponent {
 
   @autobind
   getActiveTabInfo() {
-    const { activeTabKey } = this.state;
+    const activeTabKey = this.getTabActiveKeyByUrl();
     const {
       // queryServiceOrderFlow,
       queryTradeOrderFlow,
-      location: { query: { custId } },
+      location: {
+        query: {
+          custId
+        },
+      },
     } = this.props;
     if (activeTabKey === 'serviceOrderFlow') {
       // TODO
@@ -119,21 +105,47 @@ export default class ProductOrder extends PureComponent {
   }
 
   @autobind
-  handleTradeOrderFlowChanged(page, pageSize) {
-    // TODO
+  handleTradeOrderFlowChanged(pageNum, pageSize) {
+    const {
+      location: {
+        query: {
+          custId,
+        },
+      },
+      queryTradeOrderFlow,
+    } = this.props;
+    queryTradeOrderFlow({
+      custId,
+      pageNum,
+      pageSize,
+    });
+  }
+
+  @autobind
+  getTabActiveKeyByUrl() {
+    const {
+      location: {
+        query: {
+          productOrderTabActiveKey = 'serviceOrder',
+        },
+      },
+    } = this.props;
+    return productOrderTabActiveKey;
   }
 
   render() {
     const {
-      activeTabKey,
-    } = this.state;
-    const {
       tradeOrderFlow,
     } = this.props;
+    const activeKey = this.getTabActiveKeyByUrl();
 
     return (
       <div className={styles.productOrderContainer}>
-        <Tabs type="card" onChange={this.handleTabChange} activeKey={activeTabKey} size="large">
+        <Tabs
+          type="card"
+          onChange={this.handleTabChange}
+          activeKey={activeKey}
+        >
           <TabPane tab="服务订购" key="serviceOrder">
             <div className={styles.tabPaneWrap}>
             </div>
