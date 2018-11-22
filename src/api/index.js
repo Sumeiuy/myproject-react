@@ -42,6 +42,7 @@ import detailAccountInfoAPI from './detailAccountInfo';
 import detailCustPropertyAPI from './detailCustProperty';
 import detailProductOrderAPI from './detailProductOrder';
 import taskAnalysisReportAPI from './taskAnalysisReport';
+import detailInvestmentAbilityAnalysisAPI from './detailInvestmentAbilityAnalysis';
 
 const api = apiCreator();
 
@@ -166,6 +167,8 @@ const exported = {
   detailProductOrder: detailProductOrderAPI(api),
   // ========== SMART任务相关运营报表
   taskAnalysisReport: taskAnalysisReportAPI(api),
+  // ========== 客户360-投资能力分析相关api
+  detailInvestmentAbilityAnalysis: detailInvestmentAbilityAnalysisAPI(api),
 };
 
 export default exported;
@@ -214,4 +217,5 @@ export const {
   detailCustProperty,
   detailProductOrder,
   taskAnalysisReport,
+  detailInvestmentAbilityAnalysis,
 } = exported;
