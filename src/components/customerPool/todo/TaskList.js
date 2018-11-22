@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-11-12 19:25:08
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-22 13:40:44
+ * @Last Modified time: 2018-11-22 13:53:02
  */
 
 import React, { PureComponent } from 'react';
@@ -154,22 +154,6 @@ export default class TaskList extends PureComponent {
         query,
       });
     }
-  }
-
-  // 切换页码
-  @autobind
-  handlePageNumberChange(nextPage, currentPageSize) {
-    const { location } = this.props;
-    const { replace } = this.context;
-    const { query, pathname } = location;
-    replace({
-      pathname,
-      query: {
-        ...query,
-        pageNum: nextPage,
-        pageSize: currentPageSize,
-      },
-    });
   }
 
   // 根据type获取列表数据
