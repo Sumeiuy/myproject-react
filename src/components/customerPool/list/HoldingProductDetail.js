@@ -12,7 +12,6 @@ import { Popover } from 'antd';
 import { fspContainer } from '../../../config';
 import logable from '../../../decorators/logable';
 
-
 import styles from './holdingProductDetail.less';
 
 // 持仓产品的类型：'stock' 股票

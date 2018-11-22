@@ -11,7 +11,7 @@ import _ from 'lodash';
 import { SingleFilterWithSearch } from 'lego-react-filter/src';
 import { emp } from '../../../../helper';
 import CreateLabel from './CreateLabel';
-import logable, { logCommon, logPV } from '../../../../decorators/logable';
+import logable, { logPV } from '../../../../decorators/logable';
 import { replaceKeyWord } from './SignCustomerLabel';
 import styles from './addCustomerLabel.less';
 
@@ -64,6 +64,13 @@ export default class SignCustomerLabel extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'Submit',
+    payload: {
+      name: '客户标签-提交',
+      value: instance => instance.state.selectValue
+    },
+  })
   handleSubmitSignLabel() {
     const {
       signBatchCustLabels,
@@ -103,14 +110,6 @@ export default class SignCustomerLabel extends PureComponent {
         errorMsg: ERROR_MSG,
       });
     }
-    // 发神策日志
-    logCommon({
-      type: 'Submit',
-      payload: {
-        name: '多客户打标签-提交',
-        value: id,
-      },
-    });
   }
 
   @autobind

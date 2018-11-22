@@ -181,7 +181,7 @@ export default class CreateServiceRecord extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '取消服务记录提交' } })
+  @logable({ type: 'Click', payload: { name: '取消服务记录' } })
   handleCancel() {
     const {
       onToggleServiceRecordModal,
