@@ -269,7 +269,13 @@ export default class MissionInvestigation extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '任务调查', value: '!$state.checked' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '任务调查',
+      value: instance => !instance.state.checked,
+      },
+    })
   handleCheckChange() {
     const {
       checked,
