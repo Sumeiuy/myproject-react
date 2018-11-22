@@ -17,6 +17,7 @@ import SummaryInfo from '../../components/customerDetail/SummaryInfo';
 import CustomerBasicInfo from '../../components/customerDetail/CustomerBasicInfo';
 import ServiceRelationship from './tabpages/serviceRelationship/Home';
 import CustProperty from './tabpages/custProperty/connectedHome';
+import ProductOrder from './tabpages/productOrder/Home';
 import InvestmentAbilityAnalysis from './tabpages/investmentAbilityAnalysis/Home';
 
 import styles from './home.less';
@@ -192,6 +193,9 @@ export default class Home extends PureComponent {
             <TabPane tab="合约管理" key="contractManagement">
             </TabPane>
             <TabPane tab="投资者评估" key="investorAssessment">
+            </TabPane>
+            <TabPane tab="产品订单" key="productOrder">
+              <ProductOrder location={location} />
             </TabPane>
           </Tabs>
         </div>
