@@ -45,7 +45,7 @@
     "lego-schedule": "^1.0.6",
     "lego-react-filter": "^1.1.21",
     "lego-soft-phone": "^1.0.5",
-    "lego-tree-filter": "^1.0.12",
+    "lego-tree-filter": "^1.0.13",
     "localforage": "^1.4.3",
     "lodash": "^4.17.4",
     "md5": "^2.2.1",

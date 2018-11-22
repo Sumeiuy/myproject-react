@@ -17,7 +17,7 @@ import SummaryInfo from '../../components/customerDetail/SummaryInfo';
 import CustomerBasicInfo from '../../components/customerDetail/CustomerBasicInfo';
 import ServiceRelationship from './tabpages/serviceRelationship/Home';
 import CustProperty from './tabpages/custProperty/connectedHome';
-
+import ServiceRecord from './tabpages/serviceRecord/Home';
 import styles from './home.less';
 
 const TabPane = Tabs.TabPane;
@@ -54,17 +54,7 @@ export default class Home extends PureComponent {
 
   static contextTypes = {
     push: PropTypes.func.isRequired,
-  }
-
-  static defaultProps = {
-  }
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      // 当前的tab页面, 默认展示 账户信息 Tab页
-      activeTabKey: 'accountInfo',
-    };
+    replace: PropTypes.func.isRequired,
   }
 
   componentDidMount() {
@@ -102,14 +92,27 @@ export default class Home extends PureComponent {
     }
   }
 
+  // 获取客户360页面当前的tabKey
+  getActiveTabKey() {
+    const { location: { query: { custDetailTabKey } } } = this.props;
+    // 默认显示客户信息tab
+    return custDetailTabKey || 'accountInfo';
+  }
+
   // 切换客户360详情页的Tab
   @autobind
   handleTabChange(activeTabKey) {
-    this.setState({ activeTabKey });
+    const { location: { query } } = this.props;
+    const newQuery = {
+      ...query,
+      custDetailTabKey: activeTabKey,
+    };
+    this.context.replace({
+      query: newQuery,
+    });
   }
 
   render() {
-    const { activeTabKey } = this.state;
     const {
       location,
       summaryInfo,
@@ -138,6 +141,9 @@ export default class Home extends PureComponent {
       addCallRecord,
       currentCommonServiceRecord,
     };
+
+    // 获取客户360页面当前active的tabpane
+    const activeTabKey = this.getActiveTabKey();
 
     return (
       <div className={styles.container}>
@@ -168,11 +174,12 @@ export default class Home extends PureComponent {
               <AccountInfo location={location} />
             </TabPane>
             <TabPane tab="客户属性" key="customerInfo">
-              <CustProperty />
+              <CustProperty location={location} />
             </TabPane>
             <TabPane tab="业务办理" key="businessProcessing">
             </TabPane>
             <TabPane tab="服务记录" key="serviceRecord">
+              <ServiceRecord location={location} />
             </TabPane>
             <TabPane tab="服务关系" key="serviceRelation">
               <ServiceRelationship location={location} />

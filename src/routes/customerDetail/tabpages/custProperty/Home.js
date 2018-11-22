@@ -10,7 +10,6 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { Tabs } from 'antd';
-import withRouter from '../../../../decorators/withRouter';
 import PersonInfo from '../../../../components/customerDetailCustProperty/personInfo';
 import OrganizationInfo from '../../../../components/customerDetailCustProperty/organizationInfo';
 import ProductInfo from '../../../../components/customerDetailCustProperty/productInfo';
@@ -47,7 +46,6 @@ const RELATION_INFO_KEY = 'relationInfo';
 // 表格每页显示数据
 const PAGE_SIZE = 10;
 
-@withRouter
 export default class CustProperty extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,

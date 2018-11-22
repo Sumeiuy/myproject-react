@@ -14,10 +14,12 @@ import {
   DEFAULT_VALUE,
   DEFAULT_PRIVATE_VALUE,
   getViewTextByBool,
+  checkIsNeedTitle,
 } from '../config';
 import styles from './basicInfo.less';
 
-const INFO_ITEM_WITDH = '110px';
+const INFO_ITEM_WITDH_110 = '110px';
+const INFO_ITEM_WITDH = '126px';
 export default class BasicInfo extends PureComponent {
   static propTypes = {
     data: PropTypes.object.isRequired,
@@ -45,10 +47,12 @@ export default class BasicInfo extends PureComponent {
         <div className={styles.container}>
           <div className={styles.infoItemBox}>
             <InfoItem
-              width={INFO_ITEM_WITDH}
+              width={INFO_ITEM_WITDH_110}
               label="出生日期"
               value={data.birthDate || DEFAULT_VALUE}
               className={styles.infoItem}
+              isNeedValueTitle={checkIsNeedTitle(data.birthDate || DEFAULT_VALUE)}
+              isNeedOverFlowEllipsis
             />
           </div>
           <div className={styles.infoItemBox}>
@@ -57,6 +61,8 @@ export default class BasicInfo extends PureComponent {
               label="职业"
               value={data.profession || DEFAULT_VALUE}
               className={styles.infoItem}
+              isNeedValueTitle={checkIsNeedTitle(data.profession || DEFAULT_VALUE)}
+              isNeedOverFlowEllipsis
             />
           </div>
           <div className={styles.infoItemBox}>
@@ -65,6 +71,8 @@ export default class BasicInfo extends PureComponent {
               label="学历"
               value={data.education || DEFAULT_VALUE}
               className={styles.infoItem}
+              isNeedValueTitle={checkIsNeedTitle(data.education || DEFAULT_VALUE)}
+              isNeedOverFlowEllipsis
             />
           </div>
           <div className={styles.infoItemBox}>
@@ -73,14 +81,18 @@ export default class BasicInfo extends PureComponent {
               label="国籍"
               value={data.nationality || DEFAULT_VALUE}
               className={styles.infoItem}
+              isNeedValueTitle={checkIsNeedTitle(data.nationality || DEFAULT_VALUE)}
+              isNeedOverFlowEllipsis
             />
           </div>
           <div className={styles.infoItemBox}>
             <InfoItem
-              width={INFO_ITEM_WITDH}
+              width={INFO_ITEM_WITDH_110}
               label="证件类型"
               value={this.getPrivateValue(data.certType)}
               className={styles.infoItem}
+              isNeedValueTitle={checkIsNeedTitle(this.getPrivateValue(data.certType))}
+              isNeedOverFlowEllipsis
             />
           </div>
           <div className={styles.infoItemBox}>
@@ -89,6 +101,8 @@ export default class BasicInfo extends PureComponent {
               label="证件号码"
               value={this.getPrivateValue(data.certId)}
               className={styles.infoItem}
+              isNeedValueTitle={checkIsNeedTitle(this.getPrivateValue(data.certId))}
+              isNeedOverFlowEllipsis
             />
           </div>
           <div className={styles.infoItemBox}>
@@ -97,6 +111,8 @@ export default class BasicInfo extends PureComponent {
               label="证件有效期"
               value={this.getPrivateValue(data.certValdate)}
               className={styles.infoItem}
+              isNeedValueTitle={checkIsNeedTitle(this.getPrivateValue(data.certValdate))}
+              isNeedOverFlowEllipsis
             />
           </div>
           <div className={styles.infoItemBox}>
@@ -105,14 +121,18 @@ export default class BasicInfo extends PureComponent {
               label="是否企业高管"
               value={getViewTextByBool(data.isCompanyLeader)}
               className={styles.infoItem}
+              isNeedValueTitle={checkIsNeedTitle(getViewTextByBool(data.isCompanyLeader))}
+              isNeedOverFlowEllipsis
             />
           </div>
           <div className={styles.infoItemBox}>
             <InfoItem
-              width={INFO_ITEM_WITDH}
+              width={INFO_ITEM_WITDH_110}
               label="婚姻状况"
               value={data.maritalText || DEFAULT_VALUE}
               className={styles.infoItem}
+              isNeedValueTitle={checkIsNeedTitle(data.maritalText || DEFAULT_VALUE)}
+              isNeedOverFlowEllipsis
             />
           </div>
           <div className={styles.infoItemBox}>
@@ -121,6 +141,8 @@ export default class BasicInfo extends PureComponent {
               label="子女数量"
               value={this.getChildNumText(data.childNum)}
               className={styles.infoItem}
+              isNeedValueTitle={checkIsNeedTitle(this.getChildNumText(data.childNum))}
+              isNeedOverFlowEllipsis
             />
           </div>
           <div className={styles.infoItemBox}>
@@ -129,6 +151,8 @@ export default class BasicInfo extends PureComponent {
               label="爱好"
               value={data.hobby || DEFAULT_VALUE}
               className={styles.infoItem}
+              isNeedValueTitle={checkIsNeedTitle(data.hobby || DEFAULT_VALUE)}
+              isNeedOverFlowEllipsis
             />
           </div>
         </div>
