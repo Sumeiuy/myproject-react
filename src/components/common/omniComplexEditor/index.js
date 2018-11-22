@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-19 11:11:19
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-22 11:00:58
+ * @Last Modified time: 2018-11-22 16:14:50
  * @description 多功能复合编辑框
  */
 
@@ -24,7 +24,7 @@ const Option = Select.Option;
 const DEFAULT_VALIDATE = { validate: true, msg: '' };
 
 @create()
-export default class SimpleEditor extends PureComponent {
+export default class OmniComplexEditor extends PureComponent {
   static propTypes = {
     form: PropTypes.object.isRequired,
     // 编辑器模式，默认default,为输入框，select为下拉框
@@ -35,17 +35,22 @@ export default class SimpleEditor extends PureComponent {
     editorName: PropTypes.string.isRequired,
     // 是否可以编辑
     editable: PropTypes.bool,
-    // 初始数据
+    // 展示用数据,因为比如在Select模式下,传递给select的值是选项的value,而不是用于展示的值，所以此处需要区分下
+    displayValue: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.number,
+    ]),
+    // 初始数据,一般与dispalyValue一起变动
     value: PropTypes.oneOfType([
       PropTypes.string,
       PropTypes.object,
       PropTypes.number,
     ]),
-    // 数据加载状态
-    loading: PropTypes.bool,
     style: PropTypes.object,
-    // 点击OK键的回调函数
+    // 点击OK键的回调函数,返回必须是一个Promise
     onEditOK: PropTypes.func,
+    // 提交编辑成功后的回调
+    onSuccess: PropTypes.func,
     // 如果mode是select的时候的option
     options: PropTypes.array,
     // option对应的value和text的key字段名映射
@@ -64,23 +69,44 @@ export default class SimpleEditor extends PureComponent {
     style: {},
     children: null,
     editorId: '',
+    displayValue: '',
     value: '',
     loading: false,
     onEditOK: _.noop,
+    onSuccess: _.noop,
     options: [],
     selectProps: {},
-    onCheck: _.noop,
+    onCheck: () => DEFAULT_VALIDATE,
     checkable: false,
     optionValueKey: 'key',
     optionTextKey: 'value',
   }
 
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const { displayValue, value } = nextProps;
+    const { prevValue } = prevState;
+    if (!_.isEqual(value, prevValue)) {
+      // 一般情况如果props中的value值变化了则需要相应的变化state
+      return {
+        prevProps: value,
+        originalValue: displayValue,
+        editorValue: value,
+        loading: false,
+        editing: false,
+      };
+    }
+    return null;
+  }
+
   constructor(props) {
     super(props);
-    const { value } = props;
+    const { value, displayValue } = props;
     this.state = {
+      loading: false,
+      // 保存原始的props
+      prevValue: value,
       // 原始值
-      originalValue: value,
+      originalValue: displayValue,
       // 用户修改的值
       editorValue: value,
       // 编辑状态
@@ -121,7 +147,7 @@ export default class SimpleEditor extends PureComponent {
 
   // 获取编辑器实际使用的表单元素
   @autobind
-  getEditorNodeByMode() {
+  renderEditroNodeByMode() {
     if (this.isSelectMode()) {
       const { selectState } = this.state;
       const { selectProps, options, optionTextKey, optionValueKey } = this.props;
@@ -155,9 +181,6 @@ export default class SimpleEditor extends PureComponent {
   // 校验数据
   @autobind
   checkData(value) {
-    if (_.isEmpty(value)) {
-      return { validate: false, msg: '数据不能为空'};
-    }
     const { checkable } = this.props;
     if (checkable) {
       return this.props.onCheck(value);
@@ -190,8 +213,7 @@ export default class SimpleEditor extends PureComponent {
     const checkResult = this.checkData(newValue);
     if (checkResult.validate) {
       // 通过校验
-      this.exitEditState();
-      this.onEditOK(newValue);
+      this.props.onEditOK(newValue).then(this.handleEditorAfterSubmit);
     } else {
       // 未通过校验
       this.setState({ validateResult: checkResult });
@@ -199,6 +221,19 @@ export default class SimpleEditor extends PureComponent {
     e.stopPropagation();
     // 阻止原生事件传播
     e.nativeEvent.stopImmediatePropagation();
+  }
+
+  // 当提交编辑后的操作
+  @autobind
+  handleEditorAfterSubmit(flag) {
+    debugger;
+    // 无论成功与否都必须将loading消失
+    this.setState({ loading: false });
+    if (flag) {
+      // 提交成功
+      this.exitEditState();
+      this.props.onSuccess();
+    }
   }
 
   @autobind
@@ -264,7 +299,14 @@ export default class SimpleEditor extends PureComponent {
   render() {
     const { editable, style, editorId, mode } = this.props;
     const { getFieldDecorator } = this.props.form;
-    const { originalValue, editing, editorValue, selectState, validateResult } = this.state;
+    const {
+      originalValue,
+      editing,
+      editorValue,
+      selectState,
+      validateResult,
+      loading,
+    } = this.state;
     // 编辑器外部包装的classname
     const editWrapperClass = cx({
       [styles.editWrapper]: true,
@@ -283,7 +325,7 @@ export default class SimpleEditor extends PureComponent {
     // 下拉框的实心箭头class
     const selectArrowCls = cx({
       [styles.selectArrow]: true,
-      [styles.selectArrowShow]: this.isSelectMode() && editing,
+      [styles.selectArrowShow]: this.isSelectMode() && editing && !loading,
       [styles.selectArrowUp]: selectState,
     });
     // 操作区域的classname
@@ -296,8 +338,13 @@ export default class SimpleEditor extends PureComponent {
       [styles.validateBox]: true,
       [styles.validate]: validateResult.validate,
     });
+    // loading的classname
+    const loadingCls = cx({
+      [styles.loading]: true,
+      [styles.showLoading]: loading,
+    });
 
-    const editorNode = this.getEditorNodeByMode(mode);
+    const editorNode = this.renderEditroNodeByMode(mode);
 
     return (
       <div className={editWrapperClass} style={style}>
@@ -314,6 +361,7 @@ export default class SimpleEditor extends PureComponent {
           </Form>
           <div className={editIconClass} onClick={this.handleEditWrapperClick}><Icon type="edit" /></div>
           <div className={selectArrowCls}><Icon type="caret-down"/></div>
+          <div className={loadingCls}><Icon type="loading" /></div>
         </div>
         <div className={operateBoxCls}>
           <div className={validateCls}>{validateResult.msg}</div>

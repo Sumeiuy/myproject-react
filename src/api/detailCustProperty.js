@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 客户360-客户属性相关api
  * @Date: 2018-11-07 10:00:46
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-11-07 15:49:10
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-11-22 13:36:14
  */
 export default function detailCustProperty(api) {
   return {
@@ -17,5 +17,7 @@ export default function detailCustProperty(api) {
     queryZjPointMemberInfo: query => api.post('/groovynoauth/fsp/cust/custdetail/queryZjPointMemberInfo', query),
     // 获取紫金积分会员积分兑换流水
     queryZjPointExchangeFlow: query => api.post('/groovynoauth/fsp/cust/custdetail/queryZjPointExchangeFlow', query),
+    // 编辑个人客户、机构客户的基本信息
+    updateCustBasicInfo: query => api.post('/groovynoauth/fsp/cust/custdetail/modifyBasicInfo', query),
   };
 }

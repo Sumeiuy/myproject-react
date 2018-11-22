@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 客户360-客户属性
  * @Date: 2018-11-06 14:59:53
- * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-12 01:17:02
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-11-22 13:43:02
  */
 import { detailCustProperty as api } from '../../api';
 
@@ -102,6 +102,13 @@ export default {
         payload: resultData,
       });
     },
+    // 编辑个人客户、机构客户的基本信息
+    * updateCustBasicInfo({ payload }, { put, call }) {
+      // 因为此处只是单纯的修改值，并且组件中需要判断修改成功与否展示loading状态
+      const { resultData } = yield call(api.updateCustBasicInfo, payload);
+      return resultData;
+    },
+
   },
   subscriptions: {
 

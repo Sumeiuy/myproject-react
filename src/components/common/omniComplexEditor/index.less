@@ -77,6 +77,24 @@
     }
   }
 
+  .loading {
+    display: none;
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    line-height: 20px;
+    z-index: 2;
+    right: 0;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    color: #108ee9;
+
+    &.showLoading {
+      display: block;
+    }
+  }
+
   .operateBox {
     display: none;
     position: absolute;

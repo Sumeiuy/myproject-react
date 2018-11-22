@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-20 16:20:07
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-21 17:34:06
+ * @Last Modified time: 2018-11-22 13:26:16
  * @description 基本信息封装的原地编辑组件
  */
 import React from 'react';
@@ -20,7 +20,7 @@ export default function BasiceEditorCell(props) {
         {label}<span className={styles.colon}>:</span>
       </div>
       <div style={{ marginLeft: width, width: `calc(100% - ${width})` }} >
-        <OmniComplexEditor {...restProps} />
+        <OmniComplexEditor {...restProps} editorName={label} />
       </div>
     </div>
   );

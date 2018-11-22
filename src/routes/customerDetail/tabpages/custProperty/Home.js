@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性
  * @Date: 2018-11-06 16:17:28
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-20 15:44:43
+ * @Last Modified time: 2018-11-22 16:11:44
  */
 
 import React, { PureComponent } from 'react';
@@ -68,6 +68,8 @@ export default class CustProperty extends PureComponent {
     // 获取紫金积分会员积分兑换流水
     queryZjPointExchangeFlow: PropTypes.func.isRequired,
     zjPointExchangeFlow: PropTypes.object.isRequired,
+    // 修改个人客户、机构客户的基本信息
+    updateCustBasicInfo: PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -154,10 +156,16 @@ export default class CustProperty extends PureComponent {
     const {
       custInfo: {
         person = EMPTY_OBJECT,
-      }
+      },
+      updateCustBasicInfo,
+      location,
+      queryCustomerProperty,
     } = this.props;
     return (
       <PersonInfo
+        queryCustomerProperty={queryCustomerProperty}
+        location={location}
+        updateCustBasicInfo={updateCustBasicInfo}
         hasDuty={this.hasDuty()}
         data={person}
       />
