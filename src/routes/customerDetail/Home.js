@@ -1,8 +1,8 @@
 /**
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
- * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-09 11:07:03
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-11-21 16:45:16
  */
 
 import React, { PureComponent } from 'react';
@@ -17,6 +17,7 @@ import SummaryInfo from '../../components/customerDetail/SummaryInfo';
 import CustomerBasicInfo from '../../components/customerDetail/CustomerBasicInfo';
 import ServiceRelationship from './tabpages/serviceRelationship/Home';
 import CustProperty from './tabpages/custProperty/connectedHome';
+import InvestmentAbilityAnalysis from './tabpages/investmentAbilityAnalysis/Home';
 
 import styles from './home.less';
 
@@ -177,6 +178,9 @@ export default class Home extends PureComponent {
             </TabPane>
             <TabPane tab="客户属性" key="customerInfo">
               <CustProperty />
+            </TabPane>
+            <TabPane tab="投资能力分析" key="investmentAbilityAnalysis">
+              <InvestmentAbilityAnalysis />
             </TabPane>
             <TabPane tab="业务办理" key="businessProcessing">
             </TabPane>

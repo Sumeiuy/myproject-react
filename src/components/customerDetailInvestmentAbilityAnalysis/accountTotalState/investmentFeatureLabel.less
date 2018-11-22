@@ -1,0 +1,39 @@
+.labelItem {
+  width: 33%;
+  display: inline-block;
+  margin-bottom: 5px;
+
+  .tag {
+    width: auto;
+    height: 20px;
+    padding: 2px;
+    background-color: #fff6ea;
+    border: 1px solid #f8d4a4;
+    border-radius: 2px;
+    font-size: 12px;
+    color: #ea8208;
+    line-height: 12px;
+  }
+}
+
+.labelPopover {
+  :global {
+    .ant-popover-inner {
+      max-width: 200px;
+      background-color: fade(#021637, 80%);
+
+      .ant-popover-title {
+        color: #fff;
+        border-bottom: 0;
+        padding: 10px;
+      }
+
+      .ant-popover-inner-content {
+        display: none;
+      }
+    }
+    .ant-popover-arrow {
+      background-color: fade(#021637, 80%);
+    }
+  }
+}
