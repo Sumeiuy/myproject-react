@@ -1,10 +1,11 @@
 /*
  * @Author: sunweibin
  * @Date: 2018-10-09 16:55:35
- * @Last Modified by: liqianwen
- * @Last Modified time: 2018-11-13 16:44:53
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-11-23 15:34:41
  * @description 新版客户360详情下的账户信息Tab页的API
  */
+
 export default function detailAccountInfo(api) {
   return {
     // 查询新版客户360详情下的账户信息Tab下的资产分布-雷达图数据
