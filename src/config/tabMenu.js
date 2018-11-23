@@ -81,6 +81,12 @@ const newOpenTabConfig = [
     pid: 'FSP_CUST_M_360',
   },
   {
+    name: '投顾签约续签向导',
+    id: 'utb-stockcontractrenew-wizard',
+    path: '/fsp/customerCenter/stockContractRenew',
+    pid: 'FSP_CUST_M_360',
+  },
+  {
     name: '投顾签约转签向导',
     id: 'utb-stockcontracttransfer-wizard',
     path: '/fsp/customerCenter/tgcontracttransfer',

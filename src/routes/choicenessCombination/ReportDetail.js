@@ -17,7 +17,7 @@ import withRouter from '../../decorators/withRouter';
 import fspPatch from '../../decorators/fspPatch';
 import logable from '../../decorators/logable';
 import Icon from '../../components/common/Icon';
-import { dva } from '../../helper';
+import { dva, env } from '../../helper';
 import styles from './reportDetail.less';
 
 const { Header, Footer, Content } = Layout;
@@ -138,7 +138,10 @@ export default class ReportDetail extends PureComponent {
             }
           </div>
           <div className={styles.right}>
-            <a onClick={this.handleGoBck}><Icon type="fanhui1" />返回上一页</a>
+            {
+              !env.isInReact ?
+                <a onClick={this.handleGoBck}><Icon type="fanhui1" />返回上一页</a> : null
+            }
           </div>
         </Footer>
       </Layout>

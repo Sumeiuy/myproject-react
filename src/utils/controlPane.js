@@ -203,6 +203,27 @@ function dispatchTabPane(options) {
     // 这个是为了针对多个fsp调用，可以使用一次react框架内调用实现时，则可以只处理fsp调用，react框架则什么都不做
     if (!routerAction) { _.noop(); }
 
+    // 处理jsp页面调用的closeTab在新版框架下的兼容问题
+    if(routerAction === 'FSPRemove') {
+      if(id) {
+        window.removeTabpane && window.removeTabpane(id);
+      }
+      return;
+    }
+
+    // 当仅需要移除当前tab时，调用
+    if(routerAction === 'remove') {
+      // 如果不传入url相关的参数，则表示关闭当前tabpane，跳转到前面的tabpane
+      // 这里之所以传递'remove'作为参数，是为了避免传递push方法，引起不必要的花销。
+      const elem = document.querySelector('#activeTabPane');
+      if (elem) {
+        elem.click();
+      } else {
+        warning(false, '请确认是在react框架下执行该操作，tabpane上的关闭按钮没有找到!');
+      }
+      return;
+    }
+
     // 兼容url的两种写法，字符串url， 以及pathname+query+state对, 这两种方式是为了支持原生push方法的两种调用。
     if (pathname) {
       routerAction({
@@ -220,19 +241,6 @@ function dispatchTabPane(options) {
       });
     } else if (url) { // 由于push方法不支持接受两个参数了，所以这里如果传url字符串，将无法携带state对象，需要注意。
       routerAction(url);
-    } else if (routerAction === 'remove') {
-      if(id) {
-        window.removeTabpane && window.removeTabpane(id);
-      } else {
-        // 如果不传入url相关的参数，则表示关闭当前tabpane，跳转到前面的tabpane
-        // 这里之所以传递'remove'作为参数，是为了避免传递push方法，引起不必要的花销。
-        const elem = document.querySelector('#activeTabPane');
-        if (elem) {
-          elem.click();
-        } else {
-          warning(false, '请确认是在react框架下执行该操作，tabpane上的关闭按钮没有找到!');
-        }
-      }
     }
   }
 }
@@ -304,6 +312,13 @@ function closeFspTab(options) {
     ...options,
     fspAction: 'closeFspTabByHref',
     routerAction: 'remove',
+  });
+}
+
+function closeTabForEB(options) {
+   dispatchTabPane({
+    ...options,
+    routerAction: 'FSPRemove',
   });
 }
 
@@ -386,6 +401,7 @@ export {
   openInTab,
   closeRctTab,
   closeFspTab,
+  closeTabForEB,
   navToTab,
   linkTo,
   navTo,
