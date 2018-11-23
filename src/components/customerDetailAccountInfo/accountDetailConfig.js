@@ -128,8 +128,9 @@ export const ACCOUNT_CHANGE_TABLE_COLUMNS = [
     key: 'handleTime',
   },
   {
-    title: '单费收入',
+    title: '单费收入(元)',
     dataIndex: 'singleFeeIncome',
     key: 'singleFeeIncome',
+    align: 'right',
   },
 ];

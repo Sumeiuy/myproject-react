@@ -97,11 +97,12 @@ export default class AccountDetail extends PureComponent {
     });
   }
 
+  // 对表格中的number类型的数据进行处理
   @autobind
   getStockTableColumns(columns) {
     return _.map(columns, column => {
       const { dataIndex } = column;
-      if (dataIndex === 'accountValue') {
+      if (dataIndex === 'accountValue' || dataIndex === 'singleFeeIncome') {
         return {
           ...column,
           className: styles.moneyCell,
@@ -117,7 +118,7 @@ export default class AccountDetail extends PureComponent {
     });
   }
 
-  //选择起止日期
+  // 选择起止日期
   @autobind
   @logable({
     type: 'DropdownSelect',
@@ -194,6 +195,25 @@ export default class AccountDetail extends PureComponent {
     const newStockAccount = supplyEmptyRow(stockAccount);
     // 修改证券账户表格的columns
     const stockAccountColumns = this.getStockTableColumns(STOCK_ACCOUNT_TABLE_COLUMNS);
+    // 修改账户变动中表格columns
+    const accountChangeColumns = this.getStockTableColumns(ACCOUNT_CHANGE_TABLE_COLUMNS);
+    // 在账户变动表格内容部分
+    const accountChangeTable = (
+      <div>
+      <div className={styles.accountTable}>
+        <Table
+          pagination={false}
+          className={styles.tableBorder}
+          dataSource={accountChangeRes.list}
+          columns={accountChangeColumns}
+        />
+      </div>
+      <Pagination
+        {...page}
+        onChange={this.handlePageChange}
+      />
+    </div>
+    );
 
     return (
       <div className={styles.accountDetailWrap}>
@@ -253,18 +273,7 @@ export default class AccountDetail extends PureComponent {
               />
             </div>
           </div>
-          <div className={styles.accountTable}>
-            <Table
-              pagination={false}
-              className={styles.tableBorder}
-              dataSource={accountChangeRes.list}
-              columns={ACCOUNT_CHANGE_TABLE_COLUMNS}
-            />
-          </div>
-          <Pagination
-            {...page}
-            onChange={this.handlePageChange}
-          />
+          {accountChangeRes.list.length < 1 || !accountChangeRes.list ? null : accountChangeTable}
         </div>
       </div>
     );

@@ -408,15 +408,15 @@ export default {
     * queryCapitalTradeFlow({ payload }, { put, call }) {
       const response = yield call(api.queryCapitalTradeFlow, payload);
       yield put({
-        type: ' queryCapitalTradeFlowSuccess',
+        type: 'queryCapitalTradeFlowSuccess',
         payload: response,
       });
     },
-     // 查询账户变动
+    // 查询账户变动
     * queryAccountChange({ payload }, { put, call }) {
       const response = yield call(api.queryAccountChange, payload);
       yield put({
-        type: ' queryAccountChangeSuccess',
+        type: 'queryAccountChangeSuccess',
         payload: response,
       });
    },

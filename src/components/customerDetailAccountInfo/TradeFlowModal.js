@@ -604,14 +604,33 @@ export default class TradeFlowModal extends PureComponent {
     const optionData = data.padEmptyDataForList(optionTradeFlowRes.list);
     const optionTradeColumns = this.transformColumnsData(OPTION_TRADE_FLOW_COLUMNS);
     const optionPage = this.getPage(optionTradeFlowRes.page);
-    // 资金变动表格分页器信息
-    const capitalData = data.padEmptyDataForList(capitalChangeFlowRes.list);
+    // 资金变动表格信息 ,没有数据时展示占位图标，有数据但少于十条，用空白行补全；
+    const capitalData = capitalChangeFlowRes.list.length < 1 || !capitalChangeFlowRes.list ? [] : data.padEmptyDataForList(capitalChangeFlowRes.list);
     const capitalChangeColumns = this.transformColumnsData(CAPITAL_CHANGE_COLUMNS);
     const capitalPage = this.getPage(capitalChangeFlowRes.page);
     // 弹出层的自定义关闭按钮
     const closeBtn = [(
       <Button onClick={this.handleModalClose}>关闭</Button>
     )];
+    // 资金变动表格内容
+    const capitalChangeTable = (
+      <div>
+        <div className={styles.body}>
+          <Table
+            pagination={false}
+            dataSource={capitalData}
+            columns={capitalChangeColumns}
+            className={styles.tradeFlowTable}
+            scroll={CAPITAL_CHANGE_TABLE_SCROLL}
+          />
+        </div>
+        <Pagination
+          {...capitalPage}
+          onChange={this.handleCapitalPageChange}
+        />
+      </div>
+    );
+
     return (
       <Modal
         visible
@@ -845,19 +864,7 @@ export default class TradeFlowModal extends PureComponent {
                     />
                   </div>
                 </div>
-                <div className={styles.body}>
-                  <Table
-                    pagination={false}
-                    dataSource={capitalData}
-                    columns={capitalChangeColumns}
-                    className={styles.tradeFlowTable}
-                    scroll={CAPITAL_CHANGE_TABLE_SCROLL}
-                  />
-                </div>
-                <Pagination
-                  {...capitalPage}
-                  onChange={this.handleCapitalPageChange}
-                />
+                {capitalData.length < 1 ? null : capitalChangeTable}
               </div>
             </TabPane>
           </Tabs>
