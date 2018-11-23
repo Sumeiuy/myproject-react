@@ -198,7 +198,7 @@ export default class SignCustomerLabel extends PureComponent {
   }
 
   @autobind
-  @logPV({ pathname: '/modal/CloseLabelAddLabelModal', title: '关闭客户标签打开新建标签弹窗' })
+  @logPV({ pathname: '/modal/closeLabelAddLabelModal', title: '关闭客户标签打开新建标签弹窗' })
   handleCloseAddLabelModal() {
     this.setState({
       visible: false,
