@@ -1,0 +1,216 @@
+.container {
+  width: 100%;
+  height: 100%;
+
+  .header {
+    padding: 14px 0;
+    height: 48px;
+    box-sizing: border-box;
+
+    .title {
+      font-size: 14px;
+      font-weight: bold;
+      line-height: 20px;
+      color: #333;
+    }
+
+    .checkbox {
+      margin-left: 10px;
+      font-size: 12px;
+      color: #666;
+      line-height: 20px;
+    }
+  }
+
+  .body {
+    position: relative;
+    width: 100%;
+    height: 260px;
+    display: flex;
+    align-items: flex-start;
+
+    .radarArea, .indexDetailArea {
+      flex: 1 1 auto;
+      height: 260px;
+    }
+
+    .radarArea {
+      width: 40%;
+      .radarChart {
+        height: 220px;
+      }
+      .summary {
+        height: 20px;
+        margin-bottom: 20px;
+
+        .summaryInfo {
+          margin-right: 10px;
+          line-height: 20px;
+
+          .label, .unit {
+            font-size: 12px;
+            color: #666;
+          }
+          .unit {
+            margin-left: 4px;
+          }
+          .value {
+            font-size: 16px;
+            color: #333;
+          }
+
+          .infoIco {
+            margin-left: 4px;
+            font-size: 12px;
+            color: #108ee9;
+            cursor: pointer;
+          }
+        }
+      }
+    }
+
+    .indexDetailArea {
+      position: relative;
+      width: 60%;
+      .indexDetailTable {
+        .holdValueCls, .profitCls {
+          text-align: right;
+        }
+        .profitCls {
+          padding-right: 5px !important;
+        }
+
+        :global {
+          .ant-table-body {
+            overflow: auto !important;
+          }
+          .ant-table-header {
+            margin-bottom: 0 !important;
+            overflow: hidden !important;
+          }
+          .ant-table-thead > tr > th:first-child {
+            padding-left: 28px;
+          }
+          .ant-table-thead > tr > th,
+          .ant-table-tbody > tr > td {
+            padding: 6px 0;
+            font-size: 12px;
+            color: #666;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+        }
+
+        .indexHoldValueCell {
+          display: flex;
+          font-size: 12px;
+          color: #666;
+
+          .value {
+            width: 60%;
+            flex: 0 0 auto;
+            text-align: right;
+          }
+
+          .percent {
+            width: 40%;
+            flex: 0 0 auto;
+            text-align: right;
+          }
+
+          .profit {
+            width: 60%;
+            flex: 1 1 auto;
+            text-align: right;
+          }
+
+          .profitRate {
+            width: 40%;
+            flex: 0 0 auto;
+            text-align: right;
+            color: #59ae85;
+
+            &.isAsc {
+              color: #f8505b;
+            }
+          }
+        }
+
+        .zichanCell {
+          display: inline-block;
+          min-width: 100px;
+          vertical-align: middle;
+
+          .zichanText {
+            display: flex;
+            max-width: 140px;
+            font-size: 12px;
+            color: #666;
+            align-items: center;
+
+            .value {
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+            }
+
+            .icon {
+              margin-left: 4px;
+              width: 14px;
+              height: 16px;
+              line-height: 13px;
+              text-align: center;
+              background-color: #e75806;
+              font-size: 12px;
+              color: #fff;
+            }
+          }
+        }
+      }
+    }
+
+    .noRadarData {
+      width: 120px;
+      height: 60px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate3d(-50%, -50%, 0);
+
+      .noDataHead {
+        height: 30px;
+        line-height: 30px;
+        text-align: center;
+        color: #108ee9;
+      }
+      .noDataIcon {
+        font-size: 30px;
+        color: #108ee9;
+      }
+      .noDataTip {
+        height: 30px;
+        font-size: 14px;
+        line-height: 30px;
+        text-align: center;
+        color: #666;
+      }
+    }
+  }
+}
+
+.labelPopover {
+  :global {
+    .ant-popover-inner {
+      background-color: fade(#021637, 80%);
+
+      .ant-popover-title,
+      .ant-popover-inner-content {
+        color: #fff;
+      }
+    }
+    .ant-popover-arrow {
+      background-color: fade(#021637, 80%);
+    }
+  }
+}

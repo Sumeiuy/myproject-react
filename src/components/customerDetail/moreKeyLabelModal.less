@@ -1,0 +1,27 @@
+.wrap {
+  padding: 20px 20px 0;
+
+  :global {
+    .ant-tabs-bar .ant-tabs-nav-wrap .ant-tabs-nav {
+      .ant-tabs-ink-bar {
+        display: none !important;
+      }
+      .ant-tabs-tab {
+        width: 96px;
+        height: 36px;
+        background-color: #f0f0f0;
+        border: 1px solid #eee;
+        font-size: 14px;
+        padding: 8px 0;
+        text-align: center;
+        line-height: 20px;
+        border-radius: 2px;
+        color: #4a4a4a;
+
+        &.ant-tabs-tab-active {
+          background-color: #fff;
+        }
+      }
+    }
+  }
+}

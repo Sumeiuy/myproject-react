@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2018-01-03 14:00:18
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-16 14:13:30
+ * @Last Modified by: wangyikai
+ * @Last Modified time: 2018-11-09 15:37:33
  * 公用的Table,继承antd的Table组件，重写Pagination组件引用
  */
 
@@ -28,7 +28,6 @@ export default class ExtendedTable extends Table {
 
     const position = pagination.position || 'bottom';
     const total = pagination.total || this.getLocalData().length;
-
     return (total > 0 && (position === paginationPosition || position === 'both')) ? (
       <Pagination
         key={`pagination-${paginationPosition}`}

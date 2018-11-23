@@ -190,7 +190,7 @@ export default class CustomerRow extends PureComponent {
     const { push } = this.props;
     const {
       listItem: {
-        pOrO,
+      pOrO,
       custId,
       rowId,
       ptyId,
@@ -215,11 +215,11 @@ export default class CustomerRow extends PureComponent {
     openFspTab({
       routerAction: push,
       url,
-      pathname: '/fsp/customerCenter/customer360',
-      param,
-      state: {
-        url,
+      pathname: '/customerPool/list/detail',
+      query: {
+        custId,
       },
+      param,
     });
   }
 

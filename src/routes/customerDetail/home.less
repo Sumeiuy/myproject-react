@@ -1,0 +1,41 @@
+.container {
+  .breadCrumb {
+    background: #fff;
+    height: 40px;
+    padding-left: 30px;
+  }
+  .custInfo {
+    background: #f7faff;
+    height: 255px;
+    .custBasicInfo {
+      height: 53px;
+      border-bottom: 1px solid #dedede;
+    }
+    .custDetailInfo {
+      display: block;
+    }
+  }
+  .tabContainer {
+    background: #fff;
+    .tab {
+      overflow: visible !important;
+      :global {
+        .ant-tabs-bar {
+          padding-left: 30px;
+          margin-bottom: 0;
+          border-bottom: 1px solid transparent;
+        }
+        .ant-tabs-nav .ant-tabs-tab {
+          height: 40px;
+          padding: 11px 0;
+          line-height: 18px;
+          font-size: 14px;
+          color: #333;
+        }
+        .ant-tabs-tab-active.ant-tabs-tab {
+          font-weight: bold;
+        }
+      }
+    }
+  }
+}

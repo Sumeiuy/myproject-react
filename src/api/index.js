@@ -36,7 +36,13 @@ import labelManagementAPI from './labelManagement';
 import tempDeputeAPI from './tempDepute';
 import newHomeAPI from './newHome';
 import advisorSpaceAPI from './advisorSpace';
+import customerDetailAPI from './customerDetail';
+import detailServiceRelationAPI from './detailServiceRelationship';
+import detailAccountInfoAPI from './detailAccountInfo';
+import detailCustPropertyAPI from './detailCustProperty';
+import detailProductOrderAPI from './detailProductOrder';
 import taskAnalysisReportAPI from './taskAnalysisReport';
+import detailInvestmentAbilityAnalysisAPI from './detailInvestmentAbilityAnalysis';
 
 const api = apiCreator();
 
@@ -149,8 +155,20 @@ const exported = {
   newHome: newHomeAPI(api),
   // ========== 投顾空间申请
   advisorSpace: advisorSpaceAPI(api),
+  // ========== 新版客户360详情API
+  customerDetail: customerDetailAPI(api),
+  // ========== 新版客户360详情下账户信息Tab组件的API
+  detailAccountInfo: detailAccountInfoAPI(api),
+  // ========== 新版客户360详情下服务关系的API
+  detailServiceRelationship: detailServiceRelationAPI(api),
+  // ========== 新版客户360详情下客户属性Tab组件的API
+  detailCustProperty: detailCustPropertyAPI(api),
+  // ========== 新版客户360详情下产品订单Tab组件的API
+  detailProductOrder: detailProductOrderAPI(api),
   // ========== SMART任务相关运营报表
   taskAnalysisReport: taskAnalysisReportAPI(api),
+  // ========== 客户360-投资能力分析相关api
+  detailInvestmentAbilityAnalysis: detailInvestmentAbilityAnalysisAPI(api),
 };
 
 export default exported;
@@ -193,5 +211,11 @@ export const {
   tempDepute,
   newHome,
   advisorSpace,
+  customerDetail,
+  detailServiceRelationship,
+  detailAccountInfo,
+  detailCustProperty,
+  detailProductOrder,
   taskAnalysisReport,
+  detailInvestmentAbilityAnalysis,
 } = exported;

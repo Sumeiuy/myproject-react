@@ -212,6 +212,23 @@ export const getRouterData = (app) => {
       component: dynamicWrapper(app, ['customerPool', 'customerLabel'], () =>
         import('../routes/customerPool/CustomerList__' /* webpackChunkName: "customerPool_list" */ )),
     },
+    // 从其他地方跳转到新版客户360详情页面，
+    '/customerPool/list/detail': {
+      component: dynamicWrapper(
+        app,
+        [
+          'customerPool',
+          'customerLabel',
+          'customerDetail',
+          'customer360Detail/accountInfo',
+          'customer360Detail/custProperty',
+          'customer360Detail/serviceRelationship',
+          'customer360Detail/productOrder',
+          'customer360Detail/investmentAbilityAnalysis'
+        ],
+        () => import('../routes/customerDetail/connectHome' /* webpackChunkName: "customerPool_customerDetail" */),
+      ),
+    },
     // customerPool/customerGroup 直接进入，所需数据未知
     '/customerPool/customerGroup': {
       component: dynamicWrapper(app, ['customerPool'], () =>

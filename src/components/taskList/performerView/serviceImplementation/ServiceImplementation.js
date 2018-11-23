@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-18 14:53:58
+ * @Last Modified time: 2018-10-29 10:03:45
  */
 
 import React, { PureComponent } from 'react';
@@ -205,8 +205,6 @@ export default class ServiceImplementation extends PureComponent {
     const { isFold, getPageSize } = this.props;
     const isFoldFspLeftMenu = fsp.isFSPLeftMenuFold();
     const newPageSize = getPageSize(isFoldFspLeftMenu, isFold);
-    // 首次进入，请求服务实施列表
-    // this.getTaskFlowData(newPageSize);
     // 给FSP折叠菜单按钮注册点击事件
     window.onFspSidebarbtn(this.handleFspLeftMenuClick);
     const { location: { query: { custId } }, queryCustomer } = this.props;
