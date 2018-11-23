@@ -18,12 +18,15 @@ export default class CommonTable extends PureComponent {
     isNeedEmptyRow: PropTypes.bool,
     // table数据一页显示的行数，配合 isNeedEmptyRow 实现数据不满该设定行数时用空行填充
     rowNumber: PropTypes.number,
+    // 是否显示无数据占位图
+    isNeedNoDataStyle: PropTypes.bool,
   };
 
   static defaultProps = {
     paginationClass: '',
     isNeedEmptyRow: false,
     rowNumber: 5,
+    isNeedNoDataStyle: false,
   };
 
  // 获取填充过的数据，判断当前传进来的dataSource是否能在table里显示满（包括前端分页的情况下）
@@ -36,7 +39,7 @@ export default class CommonTable extends PureComponent {
    } = this.props;
    // 需要往原始数据里面填充空数据的条数
    const fillNum = rowNumber - (_.size(dataSource) % rowNumber);
-   if (fillNum > 0) {
+   if (fillNum > 0 && fillNum !== rowNumber) {
      let emptyItemArr = [];
      for (let i = 0; i < fillNum; i++) {
       emptyItemArr.push({
@@ -54,16 +57,25 @@ export default class CommonTable extends PureComponent {
       paginationClass,
       isNeedEmptyRow,
       dataSource,
+      isNeedNoDataStyle,
       ...restProps
     } = this.props;
     let newDataSource = isNeedEmptyRow ? this.getFilledData() : dataSource;
     return (
       <div className={styles.groupTable}>
-        <Table
-          {...restProps}
-          dataSource={newDataSource}
-          paginationClass={`${styles.pagination} ${paginationClass}`}
-        />
+        {
+          isNeedNoDataStyle && _.isEmpty(dataSource)
+            ? (
+              <div>noData</div>
+            )
+            : (
+              <Table
+                {...restProps}
+                dataSource={newDataSource}
+                paginationClass={`${styles.pagination} ${paginationClass}`}
+              />
+            )
+        }
       </div>
     );
   }

@@ -108,6 +108,30 @@ export default {
       const { resultData } = yield call(api.updateCustBasicInfo, payload);
       return resultData;
     },
+    // 查询个人客户、机构客户的财务信息
+    * queryFinanceDetail({ payload }, { put, call }) {
+      const { resultData } = yield call(api.queryFinanceDetail, payload);
+      yield put({
+        type: 'queryFinanceDetailSuccess',
+        payload: resultData,
+      });
+    },
+    // 编辑个人客户的财务信息
+    * updatePerFinaceData({ payload }, { put, call }) {
+      const { resultData } = yield call(api.updatePerFinaceData, payload);
+      yield put({
+        type: 'updatePerFinaceDataSuccess',
+        payload: resultData,
+      });
+    },
+    // 编辑机构客户的财务信息
+    * updateOrgFinaceData({ payload }, { put, call }) {
+      const { resultData } = yield call(api.updateOrgFinaceData, payload);
+      yield put({
+        type: 'updateOrgFinaceDataSuccess',
+        payload: resultData,
+      });
+    },
 
   },
   subscriptions: {

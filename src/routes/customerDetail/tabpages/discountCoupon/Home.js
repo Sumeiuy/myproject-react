@@ -3,7 +3,7 @@
  * @Description: 客户360-理财优惠券
  * @Date: 2018-11-06 16:17:28
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-11-23 14:21:19
+ * @Last Modified time: 2018-11-23 15:00:13
  */
 
 import React, { PureComponent } from 'react';
@@ -16,7 +16,6 @@ import logable from '../../../../decorators/logable';
 import { couponTitleList } from '../../../../components/customerDetailDiscount/config';
 
 import styles from './home.less';
-import telephoneNumberManage from '../../../../models/telephoneNumberManage';
 
 
 const EMPTY_ARRAY = [];
@@ -128,13 +127,26 @@ export default class DiscountCoupon extends PureComponent {
   }
 
   @autobind
-  handleToggleModal(isShowModal) {
+  handleShowModal() {
     this.setState({
-      isShowModal,
+      isShowModal: true,
     });
   }
 
   @autobind
+  handleHideModal() {
+    this.setState({
+      isShowModal: false,
+    });
+  }
+
+  @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '$args[0].ticketId',
+    },
+  })
   handleTableItemClick(dataItem) {
     const { ticketId } = dataItem;
     const {
@@ -148,9 +160,7 @@ export default class DiscountCoupon extends PureComponent {
     queryDiscountCouponDetail({
       ticketId,
       custId,
-    }).then(() => {
-      this.handleToggleModal(true);
-    });
+    }).then(this.handleShowModal);
   }
 
   @autobind
@@ -203,6 +213,7 @@ export default class DiscountCoupon extends PureComponent {
   render() {
     const {
       isShowModal,
+      status,
     } = this.state;
     const {
       couponStatusList,
@@ -216,18 +227,19 @@ export default class DiscountCoupon extends PureComponent {
       pageSize: page.pageSize || 10,
       onChange: this.handlePaginationChange,
     };
-    const pageinationProps = page.totalPageNum > 1 ? paginationData : false;
     return (
       <div className={styles.discountCouponBox}>
         <div className={styles.discountCouponContainer}>
           <Filter
             statusList={couponStatusList}
+            status={status}
             onFilterChange={this.handleFilterChange}
           />
           <Table
-            pagination={pageinationProps}
+            pagination={paginationData}
             dataSource={list}
             isNeedEmptyRow
+            isNeedNoDataStyle
             rowNumber={10}
             columns={this.getTitleList()}
             scroll={{ x: '1024px' }}
@@ -236,7 +248,7 @@ export default class DiscountCoupon extends PureComponent {
         <DetailModal
           data={couponDetail}
           visible={isShowModal}
-          onToggleModal={this.handleToggleModal}
+          onCloseModal={this.handleHideModal}
         />
       </div>
     );

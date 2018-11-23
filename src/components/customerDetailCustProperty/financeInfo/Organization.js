@@ -112,7 +112,7 @@ export default class Organization extends PureComponent {
           />
         </div>
         <div className={styles.latestTime}>
-          近期适当性服务问卷调查日期：{data.latestSurveyTime}
+          近期风险承受能力评估问卷日期：{data.latestSurveyTime}
         </div>
       </div>
     );

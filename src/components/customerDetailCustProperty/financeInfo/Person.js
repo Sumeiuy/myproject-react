@@ -11,7 +11,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import InfoItem from '../../common/infoItem';
 import {
-  // DEFAULT_VALUE,
+  DEFAULT_VALUE,
   checkIsNeedTitle,
 } from '../config';
 import styles from './common.less';
@@ -31,13 +31,14 @@ export default class Person extends PureComponent {
   }
 
   @autobind
-  getViewData(value) {
+  getViewDataByNum(value) {
     return value;
   }
 
   render() {
     const {
       data,
+      isMainEmp,
     } = this.props;
     return (
       <div className={styles.infoContainer}>
@@ -45,9 +46,9 @@ export default class Person extends PureComponent {
           <InfoItem
             width={INFO_ITEM_WITDH_110}
             label="收入水平"
-            value={this.getViewData(data.income)}
+            value={data.income || DEFAULT_VALUE}
             className={styles.infoItem}
-            isNeedValueTitle={checkIsNeedTitle(this.getViewData(data.income))}
+            isNeedValueTitle={checkIsNeedTitle(data.income || DEFAULT_VALUE)}
             isNeedOverFlowEllipsis
           />
         </div>
@@ -55,9 +56,9 @@ export default class Person extends PureComponent {
           <InfoItem
             width={INFO_ITEM_WITDH}
             label="收入来源"
-            value={this.getViewData(data.source)}
+            value={data.source || DEFAULT_VALUE}
             className={styles.infoItem}
-            isNeedValueTitle={checkIsNeedTitle(this.getViewData(data.source))}
+            isNeedValueTitle={checkIsNeedTitle(data.source || DEFAULT_VALUE)}
             isNeedOverFlowEllipsis
           />
         </div>
@@ -65,9 +66,9 @@ export default class Person extends PureComponent {
           <InfoItem
             width={INFO_ITEM_WITDH}
             label="家庭年收入"
-            value={this.getViewData(data.householdIncome)}
+            value={data.householdIncome || DEFAULT_VALUE}
             className={styles.infoItem}
-            isNeedValueTitle={checkIsNeedTitle(this.getViewData(data.householdIncome))}
+            isNeedValueTitle={checkIsNeedTitle(data.householdIncome || DEFAULT_VALUE)}
             isNeedOverFlowEllipsis
           />
         </div>
@@ -75,9 +76,9 @@ export default class Person extends PureComponent {
           <InfoItem
             width={INFO_ITEM_WITDH}
             label="负债情况"
-            value={this.getViewData(data.liabilities)}
+            value={data.liabilities || DEFAULT_VALUE}
             className={styles.infoItem}
-            isNeedValueTitle={checkIsNeedTitle(this.getViewData(data.liabilities))}
+            isNeedValueTitle={checkIsNeedTitle(data.liabilities || DEFAULT_VALUE)}
             isNeedOverFlowEllipsis
           />
         </div>
@@ -85,9 +86,9 @@ export default class Person extends PureComponent {
           <InfoItem
             width={INFO_ITEM_WITDH_110}
             label="可投资资产"
-            value={this.getViewData(data.investableAssets)}
+            value={data.investableAssets || DEFAULT_VALUE}
             className={styles.infoItem}
-            isNeedValueTitle={checkIsNeedTitle(this.getViewData(data.investableAssets))}
+            isNeedValueTitle={checkIsNeedTitle(data.investableAssets || DEFAULT_VALUE)}
             isNeedOverFlowEllipsis
           />
         </div>
@@ -95,9 +96,9 @@ export default class Person extends PureComponent {
           <InfoItem
             width={INFO_ITEM_WITDH}
             label="可投资资产占比"
-            value={this.getViewData(data.investableAssetsCycle)}
+            value={this.getViewDataByNum(data.investableAssetsCycle)}
             className={styles.infoItem}
-            isNeedValueTitle={checkIsNeedTitle(this.getViewData(data.investableAssetsCycle))}
+            isNeedValueTitle={checkIsNeedTitle(this.getViewDataByNum(data.investableAssetsCycle))}
             isNeedOverFlowEllipsis
           />
         </div>
@@ -105,9 +106,9 @@ export default class Person extends PureComponent {
           <InfoItem
             width={INFO_ITEM_WITDH}
             label="房产规模"
-            value={this.getViewData(data.housingSize)}
+            value={data.housingSize || DEFAULT_VALUE}
             className={styles.infoItem}
-            isNeedValueTitle={checkIsNeedTitle(this.getViewData(data.housingSize))}
+            isNeedValueTitle={checkIsNeedTitle(data.housingSize || DEFAULT_VALUE)}
             isNeedOverFlowEllipsis
           />
         </div>
@@ -115,9 +116,9 @@ export default class Person extends PureComponent {
           <InfoItem
             width={INFO_ITEM_WITDH}
             label="银行理财规模"
-            value={this.getViewData(data.bankMoneyScale)}
+            value={data.bankMoneyScale || DEFAULT_VALUE}
             className={styles.infoItem}
-            isNeedValueTitle={checkIsNeedTitle(this.getViewData(data.bankMoneyScale))}
+            isNeedValueTitle={checkIsNeedTitle(data.bankMoneyScale || DEFAULT_VALUE)}
             isNeedOverFlowEllipsis
           />
         </div>
@@ -125,9 +126,9 @@ export default class Person extends PureComponent {
           <InfoItem
             width={INFO_ITEM_WITDH_110}
             label="保险类资产规模"
-            value={this.getViewData(data.insuredAssetsScale)}
+            value={data.insuredAssetsScale || DEFAULT_VALUE}
             className={styles.infoItem}
-            isNeedValueTitle={checkIsNeedTitle(this.getViewData(data.insuredAssetsScale))}
+            isNeedValueTitle={checkIsNeedTitle(data.insuredAssetsScale || DEFAULT_VALUE)}
             isNeedOverFlowEllipsis
           />
         </div>
@@ -135,9 +136,9 @@ export default class Person extends PureComponent {
           <InfoItem
             width={INFO_ITEM_WITDH}
             label="其他资产规模"
-            value={this.getViewData(data.otherAssetsScale)}
+            value={data.otherAssetsScale || DEFAULT_VALUE}
             className={styles.infoItem}
-            isNeedValueTitle={checkIsNeedTitle(this.getViewData(data.otherAssetsScale))}
+            isNeedValueTitle={checkIsNeedTitle(data.otherAssetsScale || DEFAULT_VALUE)}
             isNeedOverFlowEllipsis
           />
         </div>
@@ -145,14 +146,14 @@ export default class Person extends PureComponent {
           <InfoItem
             width={INFO_ITEM_WITDH}
             label="投入成本收益率"
-            value={this.getViewData(data.yieldRate)}
+            value={this.getViewDataByNum(data.yieldRate)}
             className={styles.infoItem}
-            isNeedValueTitle={checkIsNeedTitle(this.getViewData(data.yieldRate))}
+            isNeedValueTitle={checkIsNeedTitle(this.getViewDataByNum(data.yieldRate))}
             isNeedOverFlowEllipsis
           />
         </div>
         <div className={styles.latestTime}>
-          近期适当性服务问卷调查日期：{data.latestSurveyTime}
+          近期风险承受能力评估问卷日期：{data.latestSurveyTime}
         </div>
       </div>
     );

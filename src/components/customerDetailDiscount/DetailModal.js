@@ -8,9 +8,12 @@
 
 import React, { PureComponent } from 'react';
 import proptypes from 'prop-types';
+import { autobind } from 'core-decorators';
+import _ from 'lodash';
 import Modal from '../../components/common/biz/CommonModal';
 import InfoItem from '../common/infoItem';
 import Table from '../../components/common/table';
+import { number } from '../../helper';
 import {
   checkIsNeedTitle,
   DEFAULT_VALUE,
@@ -24,14 +27,24 @@ export default class DetailModal extends PureComponent {
   static propTypes = {
     visible: proptypes.bool.isRequired,
     data: proptypes.object.isRequired,
-    onToggleModal: proptypes.func.isRequired,
+    onCloseModal: proptypes.func.isRequired,
+  }
+
+  @autobind
+  getYield(value) {
+    return _.isNumber(value) ? value.toString() : DEFAULT_VALUE;
+  }
+
+  @autobind
+  getQuotient(value) {
+    return _.isNumber(value) ? number.thousandFormat(value) : DEFAULT_VALUE;
   }
 
   render() {
     const {
       data,
       visible,
-      onToggleModal,
+      onCloseModal,
     } = this.props;
     const paginationProps = {
       pageSize: 5,
@@ -42,7 +55,7 @@ export default class DetailModal extends PureComponent {
         title="优惠券详情"
         size='large'
         visible={visible}
-        closeModal={() => onToggleModal(false)}
+        closeModal={onCloseModal}
         showOkBtn={false}
         showCancelBtn={false}
         modalKey="discountModal"
@@ -61,7 +74,7 @@ export default class DetailModal extends PureComponent {
                   label="优惠券名称"
                   value={data.ticketName || DEFAULT_VALUE}
                   className={styles.infoItem}
-                  isNeedValueTitle={checkIsNeedTitle(data.ticketName)}
+                  isNeedValueTitle={checkIsNeedTitle(data.ticketName || DEFAULT_VALUE)}
                   isNeedOverFlowEllipsis
                 />
               </div>
@@ -71,7 +84,7 @@ export default class DetailModal extends PureComponent {
                   label="优惠券类型"
                   value={data.ticketTypeText || DEFAULT_VALUE}
                   className={styles.infoItem}
-                  isNeedValueTitle={checkIsNeedTitle(data.ticketTypeText)}
+                  isNeedValueTitle={checkIsNeedTitle(data.ticketTypeText || DEFAULT_VALUE)}
                   isNeedOverFlowEllipsis
                 />
               </div>
@@ -81,7 +94,7 @@ export default class DetailModal extends PureComponent {
                   label="使用状态"
                   value={data.statusText || DEFAULT_VALUE}
                   className={styles.infoItem}
-                  isNeedValueTitle={checkIsNeedTitle(data.statusText)}
+                  isNeedValueTitle={checkIsNeedTitle(data.statusText || DEFAULT_VALUE)}
                   isNeedOverFlowEllipsis
                 />
               </div>
@@ -91,7 +104,7 @@ export default class DetailModal extends PureComponent {
                   label="优惠券编号"
                   value={data.ticketId || DEFAULT_VALUE}
                   className={styles.infoItem}
-                  isNeedValueTitle={checkIsNeedTitle(data.ticketId)}
+                  isNeedValueTitle={checkIsNeedTitle(data.ticketId || DEFAULT_VALUE)}
                   isNeedOverFlowEllipsis
                 />
               </div>
@@ -101,7 +114,7 @@ export default class DetailModal extends PureComponent {
                   label="来源营销活动名称"
                   value={data.sourceName || DEFAULT_VALUE}
                   className={styles.infoItem}
-                  isNeedValueTitle={checkIsNeedTitle(data.sourceName)}
+                  isNeedValueTitle={checkIsNeedTitle(data.sourceName || DEFAULT_VALUE)}
                   isNeedOverFlowEllipsis
                 />
               </div>
@@ -111,7 +124,7 @@ export default class DetailModal extends PureComponent {
                   label="来源营销活动编号"
                   value={data.sourceCode || DEFAULT_VALUE}
                   className={styles.infoItem}
-                  isNeedValueTitle={checkIsNeedTitle(data.sourceCode)}
+                  isNeedValueTitle={checkIsNeedTitle(data.sourceCode || DEFAULT_VALUE)}
                   isNeedOverFlowEllipsis
                 />
               </div>
@@ -121,7 +134,7 @@ export default class DetailModal extends PureComponent {
                   label="领取时间"
                   value={data.receiveTime || DEFAULT_VALUE}
                   className={styles.infoItem}
-                  isNeedValueTitle={checkIsNeedTitle(data.receiveTime)}
+                  isNeedValueTitle={checkIsNeedTitle(data.receiveTime || DEFAULT_VALUE)}
                   isNeedOverFlowEllipsis
                 />
               </div>
@@ -131,7 +144,7 @@ export default class DetailModal extends PureComponent {
                   label="生效开始时间"
                   value={data.startTime || DEFAULT_VALUE}
                   className={styles.infoItem}
-                  isNeedValueTitle={checkIsNeedTitle(data.startTime)}
+                  isNeedValueTitle={checkIsNeedTitle(data.startTime || DEFAULT_VALUE)}
                   isNeedOverFlowEllipsis
                 />
               </div>
@@ -141,7 +154,7 @@ export default class DetailModal extends PureComponent {
                   label="生效结束时间"
                   value={data.endTime || DEFAULT_VALUE}
                   className={styles.infoItem}
-                  isNeedValueTitle={checkIsNeedTitle(data.endTime)}
+                  isNeedValueTitle={checkIsNeedTitle(data.endTime || DEFAULT_VALUE)}
                   isNeedOverFlowEllipsis
                 />
               </div>
@@ -149,7 +162,7 @@ export default class DetailModal extends PureComponent {
                 <InfoItem
                   width={INFO_ITEM_WITDH}
                   label="收益率"
-                  value={data.yield || DEFAULT_VALUE}
+                  value={this.getYield(data.yield)}
                   className={styles.infoItem}
                   isNeedValueTitle={checkIsNeedTitle(data.yield)}
                   isNeedOverFlowEllipsis
@@ -159,9 +172,9 @@ export default class DetailModal extends PureComponent {
                 <InfoItem
                   width={INFO_ITEM_WITDH}
                   label="额度/份额"
-                  value={data.quotient || DEFAULT_VALUE}
+                  value={this.getQuotient(data.quotient)}
                   className={styles.infoItem}
-                  isNeedValueTitle={checkIsNeedTitle(data.quotient)}
+                  isNeedValueTitle={checkIsNeedTitle(data.quotient || DEFAULT_VALUE)}
                   isNeedOverFlowEllipsis
                 />
               </div>

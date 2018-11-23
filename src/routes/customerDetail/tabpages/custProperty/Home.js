@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性
  * @Date: 2018-11-06 16:17:28
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-11-23 13:23:10
+ * @Last Modified time: 2018-11-23 14:36:00
  */
 
 import React, { PureComponent } from 'react';
@@ -277,8 +277,7 @@ export default class CustProperty extends PureComponent {
             <TabPane tab="财务信息" key={FINANCE_INFO_KEY}>
               <FinanceInfo
                 customerBasicInfo={customerBasicInfo}
-                data={{person: {},
-organization: {}}}
+                data={{person: {}, organization: {}}}
               />
             </TabPane>
             <TabPane tab="合作业务" key={COOPERATION_KEY}>

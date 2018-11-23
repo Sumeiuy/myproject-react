@@ -68,6 +68,7 @@ export default class FinanceInfo extends PureComponent {
         component = this.renderOrganizationInfo();
         break;
       default:
+        component = this.renderPersonInfo();
         break;
     }
     return component;
