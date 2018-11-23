@@ -1,13 +1,15 @@
 /*
  * @Author: sunweibin
  * @Date: 2018-10-09 16:52:56
- * @Last Modified by: liqianwen
- * @Last Modified time: 2018-11-14 15:24:31
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-11-23 15:40:48
  * @description 新版客户360详情下的账户信息Tab页面的model
  */
+import _ from 'lodash';
+
+import { data } from '../../helper';
 import { detailAccountInfo as api } from '../../api';
 
-import _ from 'lodash';
 
 export default {
   namespace: 'detailAccountInfo',
@@ -126,7 +128,7 @@ export default {
       const { payload } = action;
       return {
         ...state,
-        specificIndexData: payload || {},
+        specificIndexData: payload || [],
       };
     },
     queryDebtDetailSuccess(state, action) {
@@ -263,16 +265,29 @@ export default {
       const { resultData } = yield call(api.queryProfitRateInfo, payload);
       yield put({
         type: 'getProfitRateInfoSuccess',
-        payload: { resultData,
-withCustPofit },
+        payload: {
+          resultData,
+          withCustPofit,
+        },
       });
     },
+
     // 查询资产分布的雷达上具体指标的数据
     * querySpecificIndexData({ payload }, { put, call }) {
       const { resultData } = yield call(api.querySpecificIndexData, payload);
+      // 给数据一个key,避免在组件中render时候，每一次都会变化
+      const newResultData =  _.map(resultData, item => {
+        const { children } = item;
+        const childrenData = _.map(children, data.addKey);
+        const newItem = data.addKey(item);
+        return {
+          ...newItem,
+          children: childrenData,
+        };
+      });
       yield put({
         type: 'querySpecificIndexDataSuccess',
-        payload: resultData,
+        payload: newResultData,
       });
     },
     // 查询资产分布的负债详情的数据

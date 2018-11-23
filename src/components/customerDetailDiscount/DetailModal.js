@@ -7,7 +7,7 @@
  */
 
 import React, { PureComponent } from 'react';
-import proptypes from 'prop-types';
+import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import Modal from '../../components/common/biz/CommonModal';
@@ -25,9 +25,9 @@ const INFO_ITEM_WITDH = '155px';
 const EMPTY_ARRAY = [];
 export default class DetailModal extends PureComponent {
   static propTypes = {
-    visible: proptypes.bool.isRequired,
-    data: proptypes.object.isRequired,
-    onCloseModal: proptypes.func.isRequired,
+    visible: PropTypes.bool.isRequired,
+    data: PropTypes.object.isRequired,
+    onCloseModal: PropTypes.func.isRequired,
   }
 
   @autobind

@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 10:23:58
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-06 15:26:09
+ * @Last Modified time: 2018-11-23 15:38:39
  * @description 此处存放通用的数据格式/类型处理的方法
  */
 import _ from 'lodash';
@@ -155,6 +155,16 @@ const data = {
     return uuid.join('');
     /* eslint-enable */
   },
+  /**
+   * 给数据添加key值
+   * @param {Object} item 需要添加key值的对象
+   */
+  addKey(item) {
+    return {
+      ...item,
+      key: data.uuid(),
+    };
+  }
 };
 
 export default data;

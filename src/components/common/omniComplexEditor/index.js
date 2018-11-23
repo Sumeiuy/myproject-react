@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-19 11:11:19
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-22 16:14:50
+ * @Last Modified time: 2018-11-23 16:13:36
  * @description 多功能复合编辑框
  */
 
@@ -21,8 +21,8 @@ const create = Form.create;
 
 const Option = Select.Option;
 // 默认的校验数据
-const DEFAULT_VALIDATE = { validate: true,
-msg: '' };
+// eslint-disable-next-line
+const DEFAULT_VALIDATE = { validate: true, msg: '' };
 
 @create()
 export default class OmniComplexEditor extends PureComponent {
@@ -84,18 +84,18 @@ export default class OmniComplexEditor extends PureComponent {
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    const { displayValue, value } = nextProps;
-    const { prevValue } = prevState;
-    if (!_.isEqual(value, prevValue)) {
-      // 一般情况如果props中的value值变化了则需要相应的变化state
-      return {
-        prevProps: value,
-        originalValue: displayValue,
-        editorValue: value,
-        loading: false,
-        editing: false,
-      };
-    }
+    // const { displayValue, value } = nextProps;
+    // const { prevValue } = prevState;
+    // if (!_.isEqual(value, prevValue)) {
+    //   // 一般情况如果props中的value值变化了则需要相应的变化state
+    //   return {
+    //     prevProps: value,
+    //     originalValue: displayValue,
+    //     editorValue: value,
+    //     loading: false,
+    //     editing: false,
+    //   };
+    // }
     return null;
   }
 
@@ -111,7 +111,7 @@ export default class OmniComplexEditor extends PureComponent {
       // 用户修改的值
       editorValue: value,
       // 编辑状态
-      editing: false,
+      editing: true,
       // select下拉框的展开状态
       selectState: false,
       // 数据校验结果
@@ -160,7 +160,14 @@ export default class OmniComplexEditor extends PureComponent {
           onChange={this.handleSelectChange}
           {...restProps}
         >
-         {_.map(options, option => (<Option value={option[optionValueKey]}>{option[optionTextKey]}</Option>) )}
+         {_.map(options, option => (
+           <Option
+            key={option[optionValueKey]}
+            value={option[optionValueKey]}
+          >
+            {option[optionTextKey]}
+          </Option>)
+        )}
         </Select>
       );
     }
@@ -192,9 +199,13 @@ export default class OmniComplexEditor extends PureComponent {
 
   // 改变select选项,需要将校验信息的区域隐藏
   @autobind
-  @logable({ type: 'Click',
-payload: { name: '$props.editorName',
-value: '$args[0]' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '$props.editorName',
+      value: '$args[0]',
+    },
+  })
   handleSelectChange(value) {
     this.closeSelectDropdown();
     this.setState({ validateResult: DEFAULT_VALIDATE });
@@ -208,8 +219,10 @@ value: '$args[0]' } })
 
   // 点击确认按钮
   @autobind
-  @logable({ type: 'Click',
-payload: { name: '确认' } })
+  @logable({
+    type: 'Click',
+    payload: { name: '确认' },
+  })
   handleEditorConfirmClick(e) {
     const { editorId, form } = this.props;
     const newValue = form.getFieldValue(editorId);
@@ -217,6 +230,7 @@ payload: { name: '确认' } })
     const checkResult = this.checkData(newValue);
     if (checkResult.validate) {
       // 通过校验
+      this.setState({ loading: true });
       this.props.onEditOK(newValue).then(this.handleEditorAfterSubmit);
     } else {
       // 未通过校验
@@ -230,7 +244,6 @@ payload: { name: '确认' } })
   // 当提交编辑后的操作
   @autobind
   handleEditorAfterSubmit(flag) {
-    debugger;
     // 无论成功与否都必须将loading消失
     this.setState({ loading: false });
     if (flag) {
@@ -241,8 +254,10 @@ payload: { name: '确认' } })
   }
 
   @autobind
-  @logable({ type: 'Click',
-payload: { name: '取消' } })
+  @logable({
+    type: 'Click',
+    payload: { name: '取消' },
+  })
   handleEditorCancelClick(e) {
     const { form } = this.props;
     form.resetFields();
@@ -257,8 +272,10 @@ payload: { name: '取消' } })
   // 如果此时是Select，因为Select的下拉框的展开收缩的行为，变成了人为来控制，
   // 所以需要给内容编辑区域注册点击事件，来再次控制收缩/展开行为
   @autobind
-  @logable({ type: 'Click',
-payload: { name: '收缩/展示下拉框' } })
+  @logable({
+    type: 'Click',
+    payload: { name: '收缩/展示下拉框' },
+  })
   handleEditorContentClick() {
     const { selectState, editing } = this.state;
     if (this.isSelectMode() && editing) {
@@ -269,7 +286,10 @@ payload: { name: '收缩/展示下拉框' } })
   // 进入编辑状态
   @autobind
   enterEditState() {
-    this.setState({ editing: true });
+    this.setState({
+      editing: true,
+      loading: false,
+    });
     if (this.isSelectMode()) {
       this.setState({ selectState: true });
     }
@@ -278,15 +298,20 @@ payload: { name: '收缩/展示下拉框' } })
   // 退出编辑状态
   @autobind
   exitEditState() {
-    this.setState({ editing: false });
+    this.setState({
+      editing: false,
+      loading: false,
+    });
     if (this.isSelectMode()) {
       this.setState({ selectState: false });
     }
   }
 
   @autobind
-  @logable({ type: 'Click',
-payload: { name: '编辑图标' } })
+  @logable({
+    type: 'Click',
+    payload: { name: '编辑图标' },
+  })
   handleEditWrapperClick(e) {
     const { form, editorId, editable } = this.props;
     if (!editable) {

@@ -67,6 +67,13 @@ export default class CustProperty extends PureComponent {
     zjPointExchangeFlow: PropTypes.object.isRequired,
     // 修改个人客户、机构客户的基本信息
     updateCustBasicInfo: PropTypes.func.isRequired,
+    // 查询个人客户、机构客户的财务信息
+    queryFinanceDetail: PropTypes.func.isRequired,
+    financeData: PropTypes.object.isRequired,
+    // 编辑个人客户的财务信息
+    updatePerFinaceData: PropTypes.func.isRequired,
+    // 编辑机构客户的财务信息
+    updateOrgFinaceData: PropTypes.func.isRequired,
   }
 
   static contextTypes = {
@@ -256,6 +263,10 @@ export default class CustProperty extends PureComponent {
       queryZjPointExchangeFlow,
       zjPointExchangeFlow,
       customerBasicInfo,
+      queryFinanceDetail,
+      financeData,
+      updatePerFinaceData,
+      updateOrgFinaceData,
     } = this.props;
     return (
       <div className={styles.custPropertyBox}>
@@ -276,9 +287,12 @@ export default class CustProperty extends PureComponent {
           >
             <TabPane tab="财务信息" key={FINANCE_INFO_KEY}>
               <FinanceInfo
+                location={location}
                 customerBasicInfo={customerBasicInfo}
-                data={{person: {},
-organization: {}}}
+                data={financeData}
+                queryFinanceDetail={queryFinanceDetail}
+                updatePerFinaceData={updatePerFinaceData}
+                updateOrgFinaceData={updateOrgFinaceData}
               />
             </TabPane>
             <TabPane tab="合作业务" key={COOPERATION_KEY}>

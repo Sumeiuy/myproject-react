@@ -7,7 +7,7 @@
  */
 
 import React, { PureComponent } from 'react';
-import proptypes from 'prop-types';
+import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { Input  } from 'antd';
 import { SingleFilter } from 'lego-react-filter/src';
@@ -17,10 +17,10 @@ const { Search } = Input;
 
 export default class Filter extends PureComponent {
   static propTypes = {
-    statusList: proptypes.array.isRequired,
-    onFilterChange: proptypes.func.isRequired,
-    // ticketId: proptypes.string.isRequired,
-    status: proptypes.string.isRequired,
+    statusList: PropTypes.array.isRequired,
+    onFilterChange: PropTypes.func.isRequired,
+    // ticketId: PropTypes.string.isRequired,
+    status: PropTypes.string.isRequired,
   }
 
   @autobind

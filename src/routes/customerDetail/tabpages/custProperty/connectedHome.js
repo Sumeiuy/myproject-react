@@ -27,6 +27,8 @@ const mapStateToProps = state => ({
   zjPointMemberInfo: state.detailCustProperty.zjPointMemberInfo,
   // 紫金积分会员积分兑换流水
   zjPointExchangeFlow: state.detailCustProperty.zjPointExchangeFlow,
+  // 财务信息
+  financeData: state.detailCustProperty.financeData,
 });
 
 const mapDispatchToProps = {
@@ -42,6 +44,12 @@ const mapDispatchToProps = {
   queryZjPointExchangeFlow: effect('detailCustProperty/queryZjPointExchangeFlow', { loading: true }),
   // 修改个人客户、机构客户的基本信息
   updateCustBasicInfo: effect('detailCustProperty/updateCustBasicInfo', { loading: false }),
+  // 查询个人客户、机构客户的财务信息
+  queryFinanceDetail: effect('detailCustProperty/queryFinanceDetail', { loading: true }),
+  // 编辑个人客户的财务信息
+  updatePerFinaceData: effect('detailCustProperty/updatePerFinaceData', { loading: false }),
+  // 编辑机构客户的财务信息
+  updateOrgFinaceData: effect('detailCustProperty/updateOrgFinaceData', { loading: false }),
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);
