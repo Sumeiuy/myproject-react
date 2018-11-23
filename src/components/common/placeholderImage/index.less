@@ -1,0 +1,30 @@
+.placeholderContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 200px;
+  padding-top: 20px;
+  margin: 0 auto;
+  .placeholderImage {
+    flex: 0 0 auto;
+    background-image: url(../../../../static/svg/noData.svg);
+    background-size: cover;
+
+    &.normal {
+      width: 60px;
+      height: 60px;
+    }
+    &.large {
+      width: 100px;
+      height: 100px;
+    }
+  }
+  .placeholderTitle {
+    height: 30px;
+    width: 100%;
+    text-align: center;
+    line-height: 30px;
+    font-size: 14px;
+    color: #ccc;
+  }
+}
