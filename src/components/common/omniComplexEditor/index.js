@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-19 11:11:19
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-23 15:33:33
+ * @Last Modified time: 2018-11-23 16:13:36
  * @description 多功能复合编辑框
  */
 
@@ -230,6 +230,7 @@ export default class OmniComplexEditor extends PureComponent {
     const checkResult = this.checkData(newValue);
     if (checkResult.validate) {
       // 通过校验
+      this.setState({ loading: true });
       this.props.onEditOK(newValue).then(this.handleEditorAfterSubmit);
     } else {
       // 未通过校验
@@ -285,7 +286,10 @@ export default class OmniComplexEditor extends PureComponent {
   // 进入编辑状态
   @autobind
   enterEditState() {
-    this.setState({ editing: true });
+    this.setState({
+      editing: true,
+      loading: false,
+    });
     if (this.isSelectMode()) {
       this.setState({ selectState: true });
     }
@@ -294,7 +298,10 @@ export default class OmniComplexEditor extends PureComponent {
   // 退出编辑状态
   @autobind
   exitEditState() {
-    this.setState({ editing: false });
+    this.setState({
+      editing: false,
+      loading: false,
+    });
     if (this.isSelectMode()) {
       this.setState({ selectState: false });
     }
