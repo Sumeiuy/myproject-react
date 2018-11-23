@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-20 14:30:09
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-23 16:27:05
+ * @Last Modified time: 2018-11-23 18:59:28
  */
 
 import moment from 'moment';
@@ -51,12 +51,19 @@ const profitAbilityLevelList = [
   }
 ];
 
+const assetChangeChartTip = [
+  '1.上图为统计期内资金投入与资产市值的变化情况。',
+  '2. 期初资产为统计期前一日资产市值。',
+  '3. 资金投入为每日累计净流入值。',
+];
+
 const investmentAbilityAnalysis = {
   endDateOfLastMonth,
   lastYearDataOfLastMonth,
   profitAbilityLevelList,
   FUND_INVEST,
   ASSET_MARKET,
+  assetChangeChartTip,
 };
 
 
@@ -68,4 +75,5 @@ export {
   profitAbilityLevelList,
   FUND_INVEST,
   ASSET_MARKET,
+  assetChangeChartTip,
 };

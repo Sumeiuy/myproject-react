@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-23 09:25:41
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-23 18:52:41
+ * @Last Modified time: 2018-11-23 19:00:41
  * @description 资产变动报表
  */
 import React, { PureComponent } from 'react';
@@ -13,7 +13,7 @@ import _ from 'lodash';
 import { number } from '../../../helper';
 import IECharts from '../../IECharts';
 import { filterData, filterXAxisDate } from '../utils';
-import { FUND_INVEST, ASSET_MARKET } from '../config';
+import { FUND_INVEST, ASSET_MARKET, assetChangeChartTip } from '../config';
 import styles from './assetChangeChart.less';
 
 const { thousandFormat } = number;
@@ -111,6 +111,7 @@ export default class AssetChangeChart extends PureComponent {
     const option = this.getChartOption();
     const fundInvestValueCls = classnames([styles.value, styles.fundInvestValue]);
     const assetMarketValueCls = classnames([styles.value, styles.assetMarketValue]);
+    const assetChangeTipData = _.map(assetChangeChartTip, item => <p>{item}</p>);
     return (
       <div className={styles.assetChangeChart}>
         {
@@ -133,9 +134,7 @@ export default class AssetChangeChart extends PureComponent {
                 <div className={styles.assetChangeTips}>
                   <div className={styles.label}>注：</div>
                   <div className={styles.value}>
-                    <p>1.上图为统计期内资金投入与资产市值的变化情况。</p>
-                    <p>2. 期初资产为统计期前一日资产市值。</p>
-                    <p>3. 资金投入为每日累计净流入值。</p>
+                    {assetChangeTipData}
                   </div>
                 </div>
               </div>
