@@ -31,7 +31,12 @@ export default class ChiefViewpoint extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '更多' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: instance => instance.props.title + '-更多'
+    },
+  })
   toListPage() {
     const {
       type,
@@ -56,7 +61,12 @@ export default class ChiefViewpoint extends PureComponent {
 
   // 当前页跳转到详情页
   @autobind
-  @logable({ type: 'Click', payload: { name: '详情' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: instance => instance.props.title + '-详情'
+    },
+  })
   toDetailPage() {
     const { type, data: { id }, location: { query } } = this.props;
     const { push } = this.context;

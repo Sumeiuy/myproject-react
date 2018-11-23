@@ -30,7 +30,7 @@ import iconGold from './img/icon-gold-card.png';
 import iconSliver from './img/icon-sliver-card.png';
 import iconWhiteGold from './img/icon-white-gold.png';
 import iconEmpty from './img/icon-empty.png';
-import logable, { logPV } from '../../../decorators/logable';
+import logable from '../../../decorators/logable';
 
 // 客户男女code码
 const MALE_CODE = '109001';
@@ -233,7 +233,6 @@ export default class CustomerRow extends PureComponent {
   }
 
   @autobind
-  @logPV({ pathname: '/modal/createContact', title: '电话联系' })
   createModal(listItem) {
     const { pOrO, custId, name } = listItem;
     const { createContact } = this.props;

@@ -29,6 +29,7 @@ import ContextProvider from '../../src/layouts/ContextProvider';
 import IEWarningModal from '../../src/components/common/IEWarningModal';
 import ErrorBoundary from '../../src/layouts/ErrorBoundary';
 import PhoneWrapper from '../../src/layouts/PhoneWrapper';
+import logable from '../../src/decorators/logable';
 import styles from './main.less';
 import '../css/fspFix.less';
 import '../../src/css/skin.less';
@@ -188,6 +189,7 @@ export default class Main extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '返回顶部' } })
   handleBackToTopClick() {
     document.documentElement.scrollTop = 0;
     this.setState({

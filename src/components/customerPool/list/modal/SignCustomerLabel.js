@@ -12,7 +12,7 @@ import { MultiFilterWithSearch } from 'lego-react-filter/src';
 
 import CreateLabel from './CreateLabel';
 import styles from './addCustomerLabel.less';
-import logable from '../../../../decorators/logable';
+import logable, { logPV} from '../../../../decorators/logable';
 
 const EMPTY_LIST = [];
 
@@ -85,6 +85,7 @@ export default class SignCustomerLabel extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '添加标签', value: '$args[0]' } })
   handleSearch(value) {
     this.queryLabelInfo(value, () => {
       this.setState({ value });
@@ -115,10 +116,10 @@ export default class SignCustomerLabel extends PureComponent {
 
   @autobind
   @logable({
-    type: 'ButtonClick',
+    type: 'Submit',
     payload: {
-      name: '提交',
-      value: '单客户打标签',
+      name: '客户标签-提交',
+      value: '$state.selectedLabels',
     },
   })
   handleSubmitSignLabel() {
@@ -145,6 +146,7 @@ export default class SignCustomerLabel extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '删除标签', value: '$args[0]' } })
   deleteUserLabel(id) {
     const { selectedLabels } = this.state;
     const fianlSelectedLabels = _.filter(
@@ -178,7 +180,7 @@ export default class SignCustomerLabel extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '关闭' } })
+  @logPV({ pathname: '/modal/closeAddLabelModal', title: '关闭客户标签打开新建标签弹窗' })
   handleCloseAddLabelModal() {
     this.setState({
       custId: '',
@@ -212,6 +214,7 @@ export default class SignCustomerLabel extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '关闭客户标签' } })
   handleCloseModal() {
     this.props.handleCancelSignLabelCustId();
   }

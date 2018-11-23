@@ -477,8 +477,9 @@ export default class CommissionHome extends PureComponent {
     type: 'ViewItem',
     payload: {
       name: '佣金调整左侧列表项',
-      type: '$props.location.query.type',
-      subType: '$props.location.query.subType',
+      type: '批量佣金调整',
+      subType: '$props.location.query.currentId',
+      value: '$args[0]'
     },
   })
   handleListRowClick(record, index) {

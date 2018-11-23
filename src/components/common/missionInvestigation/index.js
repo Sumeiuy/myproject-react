@@ -19,7 +19,7 @@ import GroupModal from '../../customerPool/groupManage/CustomerGroupUpdateModal'
 import Button from '../Button';
 import RestoreScrollTop from '../../../decorators/restoreScrollTop';
 import styles from './index.less';
-import logable from '../../../decorators/logable';
+import logable, { logPV } from '../../../decorators/logable';
 
 const confirm = Modal.confirm;
 const EMPTY_LIST = [];
@@ -253,7 +253,7 @@ export default class MissionInvestigation extends PureComponent {
    * 添加问题
    */
   @autobind
-  @logable({ type: 'Click', payload: { name: '+新增问题' } })
+  @logPV({ pathname: '/modal/addQuestionsModal', title: '新增问题' })
   addQuestion() {
     const { checked, currentSelectRowKeys } = this.state;
     if (!checked) {
@@ -269,7 +269,13 @@ export default class MissionInvestigation extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '任务调查' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '任务调查',
+      value: instance => !instance.state.checked,
+      },
+    })
   handleCheckChange() {
     const {
       checked,
@@ -301,6 +307,7 @@ export default class MissionInvestigation extends PureComponent {
     type: 'ViewItem',
     payload: {
       name: '问题列表',
+      value: '$args[0]',
     },
   })
   handleRowSelectionChange(selectedRowKeys) {
@@ -315,7 +322,7 @@ export default class MissionInvestigation extends PureComponent {
    * 取消弹窗，则取消刚才勾选的selectedKeys
    */
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '取消' } })
+  @logable({ type: 'ButtonClick', payload: { name: '问题列表-取消' } })
   handleCancel() {
     const { originSelectRowKeys, page } = this.state;
     this.scrollModalBodyToTop();
@@ -338,7 +345,7 @@ export default class MissionInvestigation extends PureComponent {
    * 确认，关闭弹窗，将新加的问题加入列表
    */
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '确定' } })
+  @logable({ type: 'ButtonClick', payload: { name: '问题列表-确定' } })
   handleConfirm() {
     const { currentSelectRowKeys } = this.state;
     this.setState({

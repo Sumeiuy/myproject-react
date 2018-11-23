@@ -100,7 +100,7 @@ export default class CombinationRank extends PureComponent {
 
   // 投资顾问搜索框变化
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '搜索投资顾问' } })
+  @logable({ type: 'ButtonClick', payload: { name: '搜索投资顾问', value: '$args[0]' } })
   handleCreatorInputChange(value) {
     this.props.queryCombinationCreator({ keyword: value});
   }

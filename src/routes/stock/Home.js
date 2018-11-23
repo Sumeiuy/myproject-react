@@ -136,7 +136,13 @@ export default class Stock extends PureComponent {
 
   // tab 切换事件
   @autobind
-  @logable({ type: 'Click', payload: { name: '切换Tab', value: '$args[0]' } })
+  @logable({
+     type: 'Click',
+     payload: {
+       name: '切换Tab:个股研报/个股公告',
+       value: '$args[0]'
+       }
+     })
   tabChangeHandle(key) {
     const { keyword } = this.state;
     this.setState({
