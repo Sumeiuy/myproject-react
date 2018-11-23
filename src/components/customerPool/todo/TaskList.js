@@ -2,13 +2,13 @@
  * @Author: zuoguangzu
  * @Date: 2018-11-12 19:25:08
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-23 11:00:38
+ * @Last Modified time: 2018-11-23 14:23:20
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { Table, message, Pagination } from 'antd';
+import { Table, message } from 'antd';
 import _ from 'lodash';
 
 import logable from '../../../decorators/logable';
@@ -17,6 +17,7 @@ import {
   RETURN_TASK_FROM_TODOLIST,
 } from '../../../config/createTaskEntry';
 import { env } from '../../../helper';
+import Pagination from '../../common/Pagination';
 
 import styles from './taskList.less';
 import emptyImg from './img/empty.png';
@@ -286,7 +287,6 @@ export default class TaskList extends PureComponent {
       page: {
         pageSize,
         curPageNum,
-        totalPageNum,
         totalRecordNum,
       }
     } = this.props;
@@ -315,7 +315,7 @@ export default class TaskList extends PureComponent {
           pageSize={pageSize}
           defaultCurrent={1}
           onChange={this.handlePageNumberChange}
-          current={this.state.curPageNum}
+          current={curPageNum}
         />
       </div>
     );

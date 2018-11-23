@@ -414,8 +414,8 @@ export default class ToDo extends PureComponent {
         this.getApplyData({
           startTime,
           endTime,
-          pageSize,
-          pageNum,
+          pageSize: '10',
+          pageNum: '1',
           category,
         });
         break;
@@ -423,8 +423,8 @@ export default class ToDo extends PureComponent {
         this.getApproveData({
           startTime,
           endTime,
-          pageSize,
-          pageNum,
+          pageSize: '10',
+          pageNum: '1',
           category,
           originator,
         });
