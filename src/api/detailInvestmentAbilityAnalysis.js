@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-20 15:53:09
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-22 21:19:51
+ * @Last Modified time: 2018-11-23 09:37:11
  * @Description: 客户360-投资能力分析相关api
  */
 export default function detailInvestmentAbilityAnalysis(api) {
@@ -13,5 +13,7 @@ export default function detailInvestmentAbilityAnalysis(api) {
     queryInvestmentFeatureLabels: query => api.post('/groovynoauth/fsp/cust/custdetail/investment/queryInvestmentFeatureLabels', query),
     // 获取账户资产变动
     queryAssetChangeState: query => api.post('/groovynoauth/fsp/cust/custdetail/investment/queryAssetChangeState', query),
+    // 获取账户资产变动图表
+    queryAssetChangeReport: query => api.post('/groovynoauth/fsp/cust/custdetail/investment/queryAssetChangeReport', query),
   };
 };
