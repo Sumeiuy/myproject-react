@@ -105,6 +105,13 @@ const fspRoutes = [
     action: 'loadInTab',
     url: /\/customerCenter\/360\/.+(?=operateType)/,
   },
+  // 投顾签约计划续签向导
+  {
+    path: '/fsp/customerCenter/stockContractRenew',
+    action: 'loadInTab',
+    containerId: 'stockContractRenew-wizard',
+    url: /client\/tgcontractrenew\/wizard\/main/,
+  },
   // 投顾签约计划变更向导
   {
     path: '/fsp/customerCenter/360Wizard',
