@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-23 09:25:41
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-23 19:00:41
+ * @Last Modified time: 2018-11-23 19:34:46
  * @description 资产变动报表
  */
 import React, { PureComponent } from 'react';
@@ -10,10 +10,12 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import IfWrap from '../../common/biz/IfWrap';
 import { number } from '../../../helper';
 import IECharts from '../../IECharts';
 import { filterData, filterXAxisDate } from '../utils';
 import { FUND_INVEST, ASSET_MARKET, assetChangeChartTip } from '../config';
+
 import styles from './assetChangeChart.less';
 
 const { thousandFormat } = number;
@@ -114,32 +116,28 @@ export default class AssetChangeChart extends PureComponent {
     const assetChangeTipData = _.map(assetChangeChartTip, item => <p>{item}</p>);
     return (
       <div className={styles.assetChangeChart}>
-        {
-          _.isEmpty(assetChangeReportData)
-            ? null
-            : (
-              <div className={styles.chartBox}>
-                <div className={styles.chartlegend}>
-                  <div className={styles.column}>
-                    <span className={fundInvestValueCls}>{FUND_INVEST}</span>
-                  </div>
-                  <div className={styles.column}>
-                    <span className={assetMarketValueCls}>{ASSET_MARKET}</span>
-                  </div>
-                </div>
-                <IECharts
-                  option={option}
-                  style={{ height: '260px' }}
-                />
-                <div className={styles.assetChangeTips}>
-                  <div className={styles.label}>注：</div>
-                  <div className={styles.value}>
-                    {assetChangeTipData}
-                  </div>
-                </div>
+        <IfWrap isRender={!_.isEmpty(assetChangeReportData)}>
+          <div className={styles.chartBox}>
+            <div className={styles.chartlegend}>
+              <div className={styles.column}>
+                <span className={fundInvestValueCls}>{FUND_INVEST}</span>
               </div>
-            )
-        }
+              <div className={styles.column}>
+                <span className={assetMarketValueCls}>{ASSET_MARKET}</span>
+              </div>
+            </div>
+            <IECharts
+              option={option}
+              style={{ height: '260px' }}
+            />
+            <div className={styles.assetChangeTips}>
+              <div className={styles.label}>注：</div>
+              <div className={styles.value}>
+                {assetChangeTipData}
+              </div>
+            </div>
+          </div>
+        </IfWrap>
       </div>
     );
   }

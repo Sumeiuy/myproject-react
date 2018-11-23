@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-19 16:37:18
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-23 14:16:26
+ * @Last Modified time: 2018-11-23 19:23:02
  * @description 账户总体情况
  */
 import React, { PureComponent } from 'react';
@@ -51,28 +51,52 @@ export default class AccountTotalState extends PureComponent {
   // 获取客户盈利能力
   @autobind
   getProfitAbility() {
-    const { location: { query: { custId } } } = this.props;
+    const {
+      location: {
+        query: {
+          custId,
+        }
+      }
+    } = this.props;
     this.props.getProfitAbility({ custId });
   }
 
   // 获取投资账户特征
   @autobind
   getInvestmentFeatureLabels() {
-    const { location: { query: { custId } } } = this.props;
+    const {
+      location: {
+        query: {
+          custId,
+        }
+      }
+    } = this.props;
     this.props.getInvestmentFeatureLabels({ custId });
   }
 
   // 获取账户资产变动
   @autobind
   getAssetChangeState() {
-    const { location: { query: { custId } } } = this.props;
+    const {
+      location: {
+        query: {
+          custId,
+        }
+      }
+    } = this.props;
     this.props.getAssetChangeState({ custId });
   }
 
   // 获取账户资产变动图表数据
   @autobind
   getAssetChangeReport() {
-    const { location: { query: { custId } } } = this.props;
+    const {
+      location: {
+        query: {
+          custId,
+        }
+      }
+    } = this.props;
     this.props.getAssetChangeReport({ custId });
   }
 
