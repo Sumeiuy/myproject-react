@@ -89,7 +89,7 @@ const mapDispatchToProps = {
   getCombinationTree: dispatch(effects.getCombinationTree,
     { loading: true, forceFull: true }),
   getCombinationRankList: dispatch(effects.getCombinationRankList,
-    { loading: true, forceFull: true }),
+    { loading: false, forceFull: true }),
   getCombinationLineChart: dispatch(effects.getCombinationLineChart,
     { loading: true, forceFull: true }),
   combinationRankTabchange: dispatch(effects.combinationRankTabchange,
