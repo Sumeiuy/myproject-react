@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-20 15:28:46
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-22 14:09:29
+ * @Last Modified time: 2018-11-23 09:20:36
  * @description 客户投资特征
  */
 import React, { PureComponent } from 'react';
@@ -27,9 +27,10 @@ export default class InvestmentFeature extends PureComponent {
     investmentFeatureLabels: PropTypes.array.isRequired,
   }
 
+  // 获取盈利能力等级描述
   @autobind
   getLevelDesc() {
-    // 把levelList倒叙排列
+    // 展示的数据和levelList顺序相反，levelList需要倒叙排列
     const levelList = _.slice(profitAbilityLevelList);
     const levelListReverse = _.reverse(levelList);
     const levelDescData = _.map(levelListReverse, level => {

@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-22 14:49:12
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-22 21:50:58
+ * @Last Modified time: 2018-11-23 09:14:53
  * @description 资产变动表格
  */
 import React from 'react';
@@ -46,7 +46,6 @@ export default function AssetChangeTable(props) {
         // 投资收益的正负号
         const investmentIncomeSign = investmentIncome.substr(0, 1);
         // 投资收益数值, 去掉数值前面的正负号, 然后进行千分位转化
-        console.warn('investmentIncome', investmentIncome.substr(1));
         const investmentIncomeData = thousandFormat(investmentIncome.substr(1));
         // 投资收益
         const finalInvestmentIncome = `${investmentIncomeSign}${investmentIncomeData}`;
