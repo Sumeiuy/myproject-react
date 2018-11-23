@@ -277,7 +277,8 @@ export default class CustProperty extends PureComponent {
             <TabPane tab="财务信息" key={FINANCE_INFO_KEY}>
               <FinanceInfo
                 customerBasicInfo={customerBasicInfo}
-                data={{person: {}, organization: {}}}
+                data={{person: {},
+organization: {}}}
               />
             </TabPane>
             <TabPane tab="合作业务" key={COOPERATION_KEY}>
