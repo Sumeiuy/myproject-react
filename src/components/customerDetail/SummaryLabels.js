@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-16 09:15:12
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-16 16:50:15
+ * @Last Modified time: 2018-11-23 11:15:31
  * @description 新版客户360详情重点标签区域
  */
 import React, { PureComponent } from 'react';
@@ -10,10 +10,15 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 
+import PlaceHolder from '../common/placeholderImage';
+import IFWrap from '../common/biz/IfWrap';
 import CustLabel from './CustLabel';
 import MoreLabelModal from './MoreKeyLabelsModal';
 
 import styles from './summaryLabels.less';
+
+// 无数据的展位图
+const PlaceHolderStyles = { paddingTop: '20px' };
 
 export default class SummaryLabels extends PureComponent {
   static propTypes = {
@@ -67,17 +72,18 @@ export default class SummaryLabels extends PureComponent {
           {
             _.map(data, label => (<CustLabel key={label.id} labelData={label} />))
           }
+          <PlaceHolder
+            title="暂无重点标签数据"
+            isRender={_.isEmpty(data)}
+            style={PlaceHolderStyles}
+          />
         </div>
-        {
-          moreLabelsModal
-            ? (
-              <MoreLabelModal
-                data={moreLabelInfo}
-                onClose={this.handleMoreLabelModalClose}
-              />
-            )
-            : null
-        }
+        <IFWrap isRender={moreLabelsModal}>
+          <MoreLabelModal
+            data={moreLabelInfo}
+            onClose={this.handleMoreLabelModalClose}
+          />
+        </IFWrap>
       </div>
     );
   }

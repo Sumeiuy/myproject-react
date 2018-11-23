@@ -2,16 +2,16 @@
  * @Author: sunweibin
  * @Date: 2018-10-11 16:30:07
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-15 15:35:43
+ * @Last Modified time: 2018-11-23 11:19:32
  * @description 新版客户360详情下账户信息Tab下的资产分布组件
  */
 import React, { PureComponent } from 'react';
 import { Checkbox, Table, Popover } from 'antd';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-// import cx from 'classnames';
 import { autobind } from 'core-decorators';
 
+import PlaceHolder from '../common/placeholderImage';
 import IFWrap from '../common/biz/IfWrap';
 import IECharts from '../IECharts';
 import Icon from '../common/Icon';
@@ -89,8 +89,11 @@ export default class AssetDistribute extends PureComponent {
     } = this.props;
     // 判断是否含信用
     const creditFlag = checkedCredit ? 'Y' : 'N';
-    getAssetRadarData({ creditFlag, custId });
-    querySpecificIndexData({ indexKey, creditFlag, custId });
+    getAssetRadarData({ creditFlag,
+custId });
+    querySpecificIndexData({ indexKey,
+creditFlag,
+custId });
   }
 
   // 处理表格表头的配置项
@@ -179,7 +182,8 @@ export default class AssetDistribute extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '含信用' } })
+  @logable({ type: 'Click',
+payload: { name: '含信用' } })
   handleCreditCheckboxChange(e) {
     const { checked } = e.target;
     // 点击含信用checkbox后，需要指标选项全部更换到默认的初始值，并查询相应的数据
@@ -192,14 +196,16 @@ export default class AssetDistribute extends PureComponent {
 
   // 打开负债详情的弹框
   @autobind
-  @logPV({ pathname: '/modal/custDetailAccountDebtDetailModal', title: '负债详情' })
+  @logPV({ pathname: '/modal/custDetailAccountDebtDetailModal',
+title: '负债详情' })
   handleDebtDetailIconClick() {
     this.setState({ debtDetailModal: true });
   }
 
   // 关闭负债详情弹框
   @autobind
-  @logable({ type: 'Click', payload: { name: '关闭'} })
+  @logable({ type: 'Click',
+payload: { name: '关闭'} })
   handleCloseDebtDetailModal() {
     this.setState({ debtDetailModal: false });
   }
@@ -236,8 +242,11 @@ export default class AssetDistribute extends PureComponent {
       location: { query: { custId } },
     } = this.props;
     const data = _.find(assetIndexData, item => item.name === axisName);
-    this.setState({ indexKey: data.key, radarIndexName: axisName });
-    this.props.querySpecificIndexData({ indexKey: data.key, creditFlag, custId });
+    this.setState({ indexKey: data.key,
+radarIndexName: axisName });
+    this.props.querySpecificIndexData({ indexKey: data.key,
+creditFlag,
+custId });
     // 通过 dataIndex 查找到相应的原始数据，从而上传真实的数据
     logCommon({
       type: 'Click',
@@ -350,10 +359,11 @@ export default class AssetDistribute extends PureComponent {
           hasNoRadarData
             ? (
               <div className={styles.body}>
-                <div className={styles.noRadarData}>
-                  <div className={styles.noDataHead}><Icon type="zanwushuju" className={styles.noDataIcon} /></div>
-                  <div className={styles.noDataTip}>暂无资产分布数据</div>
-                </div>
+                <PlaceHolder
+                  isRender
+                  title="暂无资产分布数据"
+                  style={{ paddingTop: '20px' }}
+                />
               </div>
             )
             : (

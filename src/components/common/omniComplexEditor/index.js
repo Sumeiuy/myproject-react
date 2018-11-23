@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-19 11:11:19
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-22 16:14:50
+ * @Last Modified time: 2018-11-23 11:20:18
  * @description 多功能复合编辑框
  */
 
@@ -21,7 +21,8 @@ const create = Form.create;
 
 const Option = Select.Option;
 // 默认的校验数据
-const DEFAULT_VALIDATE = { validate: true, msg: '' };
+const DEFAULT_VALIDATE = { validate: true,
+msg: '' };
 
 @create()
 export default class OmniComplexEditor extends PureComponent {
@@ -191,7 +192,9 @@ export default class OmniComplexEditor extends PureComponent {
 
   // 改变select选项,需要将校验信息的区域隐藏
   @autobind
-  @logable({ type: 'Click', payload: { name: '$props.editorName', value: '$args[0]' } })
+  @logable({ type: 'Click',
+payload: { name: '$props.editorName',
+value: '$args[0]' } })
   handleSelectChange(value) {
     this.closeSelectDropdown();
     this.setState({ validateResult: DEFAULT_VALIDATE });
@@ -205,7 +208,8 @@ export default class OmniComplexEditor extends PureComponent {
 
   // 点击确认按钮
   @autobind
-  @logable({ type: 'Click', payload: { name: '确认' } })
+  @logable({ type: 'Click',
+payload: { name: '确认' } })
   handleEditorConfirmClick(e) {
     const { editorId, form } = this.props;
     const newValue = form.getFieldValue(editorId);
@@ -226,7 +230,6 @@ export default class OmniComplexEditor extends PureComponent {
   // 当提交编辑后的操作
   @autobind
   handleEditorAfterSubmit(flag) {
-    debugger;
     // 无论成功与否都必须将loading消失
     this.setState({ loading: false });
     if (flag) {
@@ -237,7 +240,8 @@ export default class OmniComplexEditor extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '取消' } })
+  @logable({ type: 'Click',
+payload: { name: '取消' } })
   handleEditorCancelClick(e) {
     const { form } = this.props;
     form.resetFields();
@@ -252,7 +256,8 @@ export default class OmniComplexEditor extends PureComponent {
   // 如果此时是Select，因为Select的下拉框的展开收缩的行为，变成了人为来控制，
   // 所以需要给内容编辑区域注册点击事件，来再次控制收缩/展开行为
   @autobind
-  @logable({ type: 'Click', payload: { name: '收缩/展示下拉框' } })
+  @logable({ type: 'Click',
+payload: { name: '收缩/展示下拉框' } })
   handleEditorContentClick() {
     const { selectState, editing } = this.state;
     if (this.isSelectMode() && editing) {
@@ -279,7 +284,8 @@ export default class OmniComplexEditor extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '编辑图标' } })
+  @logable({ type: 'Click',
+payload: { name: '编辑图标' } })
   handleEditWrapperClick(e) {
     const { form, editorId, editable } = this.props;
     if (!editable) {
