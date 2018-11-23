@@ -19,6 +19,7 @@ import DateFilter from '../common/htFilter/dateFilter';
 import { SingleFilter, SingleFilterWithSearch } from 'lego-react-filter/src';
 import TreeFilter from 'lego-tree-filter/src';
 import Pagination from '../common/Pagination';
+import IfTableWrap from '../common/IfTableWrap';
 import {
   STANDARD_TRADE_FLOW_COLUMNS,
   CREDIT_TRADE_FLOW_COLUMNS,
@@ -32,7 +33,7 @@ import {
 } from './config';
 
 import styles from './tradeFlowModal.less';
-
+const NODATA_HINT = '客户暂无资金变动信息';
 const TabPane = Tabs.TabPane;
 const RadioGroup = Radio.Group;
 
@@ -590,7 +591,10 @@ export default class TradeFlowModal extends PureComponent {
       standardTradeFlowRes,
       creditTradeFlowRes,
       optionTradeFlowRes,
-      capitalChangeFlowRes,
+      capitalChangeFlowRes: {
+        list = [],
+        page = {},
+      },
     } = this.props;
     // 补足普通账户流水数据
     const standardData = data.padEmptyDataForList(standardTradeFlowRes.list);
@@ -605,31 +609,14 @@ export default class TradeFlowModal extends PureComponent {
     const optionTradeColumns = this.transformColumnsData(OPTION_TRADE_FLOW_COLUMNS);
     const optionPage = this.getPage(optionTradeFlowRes.page);
     // 资金变动表格信息 ,没有数据时展示占位图标，有数据但少于十条，用空白行补全；
-    const capitalData = capitalChangeFlowRes.list.length < 1 || !capitalChangeFlowRes.list ? [] : data.padEmptyDataForList(capitalChangeFlowRes.list);
+    const capitalData = data.padEmptyDataForList(list);
     const capitalChangeColumns = this.transformColumnsData(CAPITAL_CHANGE_COLUMNS);
-    const capitalPage = this.getPage(capitalChangeFlowRes.page);
+    const capitalPage = this.getPage(page);
+    const isRender = list.length !== 0;
     // 弹出层的自定义关闭按钮
     const closeBtn = [(
       <Button onClick={this.handleModalClose}>关闭</Button>
     )];
-    // 资金变动表格内容
-    const capitalChangeTable = (
-      <div>
-        <div className={styles.body}>
-          <Table
-            pagination={false}
-            dataSource={capitalData}
-            columns={capitalChangeColumns}
-            className={styles.tradeFlowTable}
-            scroll={CAPITAL_CHANGE_TABLE_SCROLL}
-          />
-        </div>
-        <Pagination
-          {...capitalPage}
-          onChange={this.handleCapitalPageChange}
-        />
-      </div>
-    );
 
     return (
       <Modal
@@ -864,7 +851,21 @@ export default class TradeFlowModal extends PureComponent {
                     />
                   </div>
                 </div>
-                {capitalData.length < 1 ? null : capitalChangeTable}
+                <IfTableWrap isRender={isRender} text={NODATA_HINT}>
+                  <div className={styles.body}>
+                    <Table
+                      pagination={false}
+                      dataSource={capitalData}
+                      columns={capitalChangeColumns}
+                      className={styles.tradeFlowTable}
+                      scroll={CAPITAL_CHANGE_TABLE_SCROLL}
+                    />
+                  </div>
+                  <Pagination
+                    {...capitalPage}
+                    onChange={this.handleCapitalPageChange}
+                  />
+                </IfTableWrap>
               </div>
             </TabPane>
           </Tabs>

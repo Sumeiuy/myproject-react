@@ -25,12 +25,14 @@ import DateFilter from '../common/htFilter/dateFilter';
 import { SingleFilterWithSearch } from 'lego-react-filter/src';
 import styles from './accountDetail.less';
 import Pagination from '../common/Pagination';
+import IfTableWrap from '../common/IfTableWrap';
 
 // 默认查询日期半年
 const DEFAULT_START_DATE = moment().subtract(6, 'months');
 const DEFAULT_END_DATE = moment().subtract(1, 'day');
 // 接口请求查询日期的格式
 const DATE_FORMATE_API = 'YYYY-MM-DD';
+const NODATA_HINT = '暂无账户变动信息';
 
 export default class AccountDetail extends PureComponent {
   static propTypes = {
@@ -180,7 +182,10 @@ export default class AccountDetail extends PureComponent {
       fundAccount,
       stockAccount,
       busnTypeDict,
-      accountChangeRes
+      accountChangeRes: {
+        list = [],
+        page = {},
+      },
     } = this.props;
     const {
       startDate,
@@ -188,7 +193,8 @@ export default class AccountDetail extends PureComponent {
       bussinessType,
     } = this.state;
     // 获取分页的页数
-    const page = this.getPage(accountChangeRes.page);
+    const isRender = list.length !== 0;
+    const accountChangePage = this.getPage(page);
     // 补足空白行后的资金账户数据
     const newFundAccount = supplyEmptyRow(fundAccount);
     // 补足空白行后的证券账户
@@ -197,23 +203,6 @@ export default class AccountDetail extends PureComponent {
     const stockAccountColumns = this.getStockTableColumns(STOCK_ACCOUNT_TABLE_COLUMNS);
     // 修改账户变动中表格columns
     const accountChangeColumns = this.getStockTableColumns(ACCOUNT_CHANGE_TABLE_COLUMNS);
-    // 在账户变动表格内容部分
-    const accountChangeTable = (
-      <div>
-      <div className={styles.accountTable}>
-        <Table
-          pagination={false}
-          className={styles.tableBorder}
-          dataSource={accountChangeRes.list}
-          columns={accountChangeColumns}
-        />
-      </div>
-      <Pagination
-        {...page}
-        onChange={this.handlePageChange}
-      />
-    </div>
-    );
 
     return (
       <div className={styles.accountDetailWrap}>
@@ -273,7 +262,20 @@ export default class AccountDetail extends PureComponent {
               />
             </div>
           </div>
-          {accountChangeRes.list.length < 1 || !accountChangeRes.list ? null : accountChangeTable}
+          <IfTableWrap isRender={isRender} text={NODATA_HINT}>
+            <div className={styles.accountTable}>
+              <Table
+                pagination={false}
+                className={styles.tableBorder}
+                dataSource={list}
+                columns={accountChangeColumns}
+              />
+            </div>
+            <Pagination
+              {...accountChangePage}
+              onChange={this.handlePageChange}
+            />
+          </IfTableWrap>
         </div>
       </div>
     );
