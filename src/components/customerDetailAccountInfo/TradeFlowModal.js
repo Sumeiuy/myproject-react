@@ -42,6 +42,8 @@ const DEFAULT_START_DATE = moment().subtract(6, 'months');
 const DEFAULT_END_DATE = moment().subtract(1, 'day');
 // 接口请求查询日期的格式
 const DATE_FORMATE_API = 'YYYY-MM-DD';
+const EMPTY_OBJECT = {};
+const EMPTY_LIST = [];
 
 export default class TradeFlowModal extends PureComponent {
   static propTypes = {
@@ -592,8 +594,8 @@ export default class TradeFlowModal extends PureComponent {
       creditTradeFlowRes,
       optionTradeFlowRes,
       capitalChangeFlowRes: {
-        list = [],
-        page = {},
+        list = EMPTY_LIST,
+        page = EMPTY_OBJECT,
       },
     } = this.props;
     // 补足普通账户流水数据
@@ -612,7 +614,7 @@ export default class TradeFlowModal extends PureComponent {
     const capitalData = data.padEmptyDataForList(list);
     const capitalChangeColumns = this.transformColumnsData(CAPITAL_CHANGE_COLUMNS);
     const capitalPage = this.getPage(page);
-    const isRender = _.isEmpty(list) === false;
+    const isRender = !_.isEmpty(list);
     // 弹出层的自定义关闭按钮
     const closeBtn = [(
       <Button onClick={this.handleModalClose}>关闭</Button>

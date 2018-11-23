@@ -33,6 +33,8 @@ const DEFAULT_END_DATE = moment().subtract(1, 'day');
 // 接口请求查询日期的格式
 const DATE_FORMATE_API = 'YYYY-MM-DD';
 const NODATA_HINT = '暂无账户变动信息';
+const EMPTY_OBJECT = {};
+const EMPTY_LIST = [];
 
 export default class AccountDetail extends PureComponent {
   static propTypes = {
@@ -183,8 +185,8 @@ export default class AccountDetail extends PureComponent {
       stockAccount,
       busnTypeDict,
       accountChangeRes: {
-        list = [],
-        page = {},
+        list = EMPTY_LIST,
+        page = EMPTY_OBJECT,
       },
     } = this.props;
     const {
@@ -193,7 +195,7 @@ export default class AccountDetail extends PureComponent {
       bussinessType,
     } = this.state;
     // 获取分页的页数
-    const isRender = _.isEmpty(list) === false;
+    const isRender = !_.isEmpty(list);
     const accountChangePage = this.getPage(page);
     // 补足空白行后的资金账户数据
     const newFundAccount = supplyEmptyRow(fundAccount);
