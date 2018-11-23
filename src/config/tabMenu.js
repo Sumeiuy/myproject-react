@@ -406,7 +406,7 @@ const newOpenTabConfig = [
   },
   {
     name: '新建或编辑专项业务知识',
-    id: 'FSP_KNOWLEDGE_EDIT',
+    id: 'edit_btn_showEditKnowledge',
     path: '/fsp/knowledgeEdit',
     pid: '',
   },
