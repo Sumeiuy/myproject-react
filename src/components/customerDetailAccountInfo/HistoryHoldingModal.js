@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-05 13:31:51
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-23 14:34:53
+ * @Last Modified time: 2018-11-23 15:55:44
  * @description 新版客户360详情的历史持仓的弹出层
  */
 import React, { PureComponent } from 'react';
@@ -601,24 +601,24 @@ export default class HistoryHoldingModal extends PureComponent {
                 </div>
                 {
                   hasNoStockData
-                  ? (<PlaceHolderImage title="暂无证券历史持仓数据" style={nodataStyle} />)
-                  : (
-                    <div>
-                      <div className={styles.body}>
-                        <Table
-                          pagination={false}
-                          dataSource={stockData}
-                          columns={stockColumns}
-                          className={styles.historyHoldingTable}
-                          scroll={STOCK_HISTORY_HOLDING_TABLE_SCROLL}
+                    ? (<PlaceHolderImage title="暂无证券历史持仓数据" style={nodataStyle} />)
+                    : (
+                      <div>
+                        <div className={styles.body}>
+                          <Table
+                            pagination={false}
+                            dataSource={stockData}
+                            columns={stockColumns}
+                            className={styles.historyHoldingTable}
+                            scroll={STOCK_HISTORY_HOLDING_TABLE_SCROLL}
+                          />
+                        </div>
+                        <Pagination
+                          {...stockPage}
+                          onChange={this.handleStockPageChange}
                         />
                       </div>
-                      <Pagination
-                        {...stockPage}
-                        onChange={this.handleStockPageChange}
-                      />
-                    </div>
-                  )
+                    )
                 }
               </div>
             </TabPane>
