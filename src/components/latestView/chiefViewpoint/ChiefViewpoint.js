@@ -65,8 +65,8 @@ export default class ChiefViewpoint extends PureComponent {
     type: 'Click',
     payload: {
       name: instance => instance.props.title + '-详情'
-      },
-    })
+    },
+  })
   toDetailPage() {
     const { type, data: { id }, location: { query } } = this.props;
     const { push } = this.context;
