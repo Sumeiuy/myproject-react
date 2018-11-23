@@ -1,0 +1,56 @@
+.detailBox {
+  padding: 20px 30px 30px;
+  .infoBox {
+    margin-bottom: 20px;
+  }
+  .title {
+    margin-bottom: 24px;
+    .colorBlock {
+      background: #108ee9;
+      width: 3px;
+      height: 15px;
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+    .titleText {
+      font-size: 16px;
+      color: #666;
+      vertical-align: middle;
+    }
+  }
+  .infoContainer {
+    .infoItemBox {
+      display: inline-block;
+      width: 50%;
+      vertical-align: top;
+    }
+  }
+  .listBox {
+    :global {
+      .ant-table {
+        .ant-table-content {
+          table {
+            table-layout: fixed;
+            width: 100%;
+          }
+          .ant-table-thead {
+            th {
+              font-weight: bold;
+            }
+          }
+          .ant-table-tbody {
+            td {
+              white-space: nowrap;
+              text-overflow: ellipsis;
+              overflow: hidden;
+            }
+          }
+        }
+      }
+      .firstStyle {
+        padding-left: 18px;
+      }
+    }
+  }
+}

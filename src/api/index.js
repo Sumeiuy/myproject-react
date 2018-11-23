@@ -41,6 +41,7 @@ import detailServiceRelationAPI from './detailServiceRelationship';
 import detailAccountInfoAPI from './detailAccountInfo';
 import detailCustPropertyAPI from './detailCustProperty';
 import taskAnalysisReportAPI from './taskAnalysisReport';
+import detailDiscountCouponAPI from './detailDiscountCoupon';
 
 const api = apiCreator();
 
@@ -163,6 +164,8 @@ const exported = {
   detailCustProperty: detailCustPropertyAPI(api),
   // ========== SMART任务相关运营报表
   taskAnalysisReport: taskAnalysisReportAPI(api),
+  // ========== 新版客户360详情下理财优惠券Tab组件的API
+  detailDiscountCoupon: detailDiscountCouponAPI(api),
 };
 
 export default exported;
@@ -210,4 +213,5 @@ export const {
   detailAccountInfo,
   detailCustProperty,
   taskAnalysisReport,
+  detailDiscountCoupon,
 } = exported;

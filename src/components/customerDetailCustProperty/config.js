@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 客户360，客户属性tab相关配置
  * @Date: 2018-11-07 15:17:38
- * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-16 13:01:00
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-11-23 11:01:15
  */
 
 import _ from 'lodash';
@@ -180,4 +180,30 @@ export const newMemberGradeColumns = _.map(MemberGradeColumns, (items) => {
   };
   return newItems;
 });
+
+
+// 财务信息TAB的key
+export const FINANCE_INFO_KEY = 'financeInfo';
+// 合作业务TAB的key
+export const COOPERATION_KEY = 'cooperation';
+// 营销与服务TAB的key
+export const MARKETING_KEY = 'marketing';
+// 会员信息TAB的key
+export const MEMBER_INFO_KEY = 'memberInfo';
+// 关系信息TAB的key
+export const RELATION_INFO_KEY = 'relationInfo';
+
+// 客户属性页面tab的map
+export const custPropertyTabMapData = {
+  // 财务信息TAB
+  [FINANCE_INFO_KEY]: '财务信息',
+  // 合作业务TAB
+  [COOPERATION_KEY]: '合作业务',
+  // 营销与服务TAB
+  [MARKETING_KEY]: '营销与服务',
+  // 会员信息TAB
+  [MEMBER_INFO_KEY]: '会员信息',
+  // 关系信息TAB
+  [RELATION_INFO_KEY]: '关系信息',
+};
 

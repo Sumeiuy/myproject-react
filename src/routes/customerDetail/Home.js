@@ -1,8 +1,8 @@
 /**
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
- * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-09 11:07:03
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-11-23 11:09:39
  */
 
 import React, { PureComponent } from 'react';
@@ -17,10 +17,26 @@ import SummaryInfo from '../../components/customerDetail/SummaryInfo';
 import CustomerBasicInfo from '../../components/customerDetail/CustomerBasicInfo';
 import ServiceRelationship from './tabpages/serviceRelationship/Home';
 import CustProperty from './tabpages/custProperty/connectedHome';
+import DiscountCoupon from './tabpages/discountCoupon/connectedHome';
+import {
+  ACCOUNT_INFO_TAB_KEY,
+  CUSTOMER_INFO_TAB_KEY,
+  INVEST_ANALYZE_TAB_KEY,
+  BUNESSINESS_PROCESS_TAB_KEY,
+  SERVICE_RECORD_TAB_KEY,
+  SERVICE_RELATION_TAB_KEY,
+  CONTRACT_MANAGE_TAB_KEY,
+  INVESTOR_ASSESSMENT_TAB_KEY,
+  PRODUCT_ORDER_TAB_KEY,
+  DISCOUNT_COUPON_TAB_KEY,
+  custDetailTabMap,
+} from '../../components/customerDetail/config';
+import logable from '../../decorators/logable';
 
 import styles from './home.less';
 
 const TabPane = Tabs.TabPane;
+
 
 @withRouter
 export default class Home extends PureComponent {
@@ -54,17 +70,10 @@ export default class Home extends PureComponent {
 
   static contextTypes = {
     push: PropTypes.func.isRequired,
+    replace: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
-  }
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      // 当前的tab页面, 默认展示 账户信息 Tab页
-      activeTabKey: 'accountInfo',
-    };
   }
 
   componentDidMount() {
@@ -112,13 +121,31 @@ export default class Home extends PureComponent {
 
   // 切换客户360详情页的Tab
   @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '$args[1]',
+    },
+  })
   handleTabChange(activeTabKey) {
-    this.setState({ activeTabKey });
+    const { replace } = this.context;
+    const { location: { query, pathName } } = this.props;
+    replace({
+      pathName,
+      query: {
+        ...query,
+        activeTabKey,
+      },
+    });
   }
 
   render() {
-    const { activeTabKey } = this.state;
     const {
+      location: {
+        query: {
+          activeTabKey = ACCOUNT_INFO_TAB_KEY,
+        },
+      },
       location,
       summaryInfo,
       moreLabelInfo,
@@ -167,27 +194,35 @@ export default class Home extends PureComponent {
           <Tabs
             activeKey={activeTabKey}
             className={styles.tab}
-            defaultActiveKey={'accountInfo'}
-            onChange={this.handleTabChange}
+            onChange={
+              activeKey => this.handleTabChange(activeKey, custDetailTabMap[activeKey])
+            }
             animated={false}
             tabBarGutter={40}
           >
-            <TabPane tab="账户信息" key="accountInfo">
+            <TabPane tab="账户信息" key={ACCOUNT_INFO_TAB_KEY}>
               <AccountInfo location={location} />
             </TabPane>
-            <TabPane tab="客户属性" key="customerInfo">
-              <CustProperty />
+            <TabPane tab="客户属性" key={CUSTOMER_INFO_TAB_KEY}>
+              <CustProperty location={location} />
             </TabPane>
-            <TabPane tab="业务办理" key="businessProcessing">
+            <TabPane tab="投资能力分析" key={INVEST_ANALYZE_TAB_KEY}>
             </TabPane>
-            <TabPane tab="服务记录" key="serviceRecord">
+            <TabPane tab="业务办理" key={BUNESSINESS_PROCESS_TAB_KEY}>
             </TabPane>
-            <TabPane tab="服务关系" key="serviceRelation">
+            <TabPane tab="服务记录" key={SERVICE_RECORD_TAB_KEY}>
+            </TabPane>
+            <TabPane tab="服务关系" key={SERVICE_RELATION_TAB_KEY}>
               <ServiceRelationship location={location} />
             </TabPane>
-            <TabPane tab="合约管理" key="contractManagement">
+            <TabPane tab="合约管理" key={CONTRACT_MANAGE_TAB_KEY}>
             </TabPane>
-            <TabPane tab="投资者评估" key="investorAssessment">
+            <TabPane tab="投资者评估" key={INVESTOR_ASSESSMENT_TAB_KEY}>
+            </TabPane>
+            <TabPane tab="产品订单" key={PRODUCT_ORDER_TAB_KEY}>
+            </TabPane>
+            <TabPane tab="理财优惠券" key={DISCOUNT_COUPON_TAB_KEY}>
+              <DiscountCoupon location={location} />
             </TabPane>
           </Tabs>
         </div>
