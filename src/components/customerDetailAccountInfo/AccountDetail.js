@@ -156,7 +156,9 @@ export default class AccountDetail extends PureComponent {
 
   // 切换账户变动页码刷新表格数据
   @autobind
-  @logable({ type: 'Click', payload: { name: '切换账户变动页码', value: '$args[0]'} })
+  @logable({ type: 'Click',
+payload: { name: '切换账户变动页码',
+value: '$args[0]'} })
   handlePageChange(pageNum) {
     this.setState( {pageNum});
     this.getAccountChange({

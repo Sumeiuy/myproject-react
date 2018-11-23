@@ -7,7 +7,8 @@
  */
 
 // 表格滚动的配置
-export const TABLE_SCROLL_SETTING = { x: 400, y: 220 };
+export const TABLE_SCROLL_SETTING = { x: 400,
+y: 220 };
 
 // 资产分布雷达图配置
 export const CHART_RADAR_OPTIONS = {

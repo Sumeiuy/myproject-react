@@ -77,9 +77,11 @@ export default class AccountInfoTabs extends PureComponent {
   queryAccountInByType(accountType) {
     const { location: { query: { custId } } } = this.props;
     if (!_.isEmpty(custId)) {
-      this.props.queryAccountInfo({ custId, accountType });
+      this.props.queryAccountInfo({ custId,
+accountType });
     }
-    this.props.queryBusnTypeDict({accountType: _.lowerCase(accountType), queryType: 'accountChange'});
+    this.props.queryBusnTypeDict({accountType: _.lowerCase(accountType),
+queryType: 'accountChange'});
   }
 
   // 查询接口

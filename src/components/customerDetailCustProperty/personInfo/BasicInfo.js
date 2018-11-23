@@ -97,12 +97,15 @@ export default class BasicInfo extends PureComponent {
   @autobind
   checkChildNumValue(value) {
     if (_.isEmpty(value)) {
-      return { validate: false, msg: '数据不能为空' };
+      return { validate: false,
+msg: '数据不能为空' };
     }
     if (_.isNumber(_.trim(value))) {
-      return { validate: false, msg: '子女数量必须是数字' };
+      return { validate: false,
+msg: '子女数量必须是数字' };
     }
-    return { validate: true, msg: '' };
+    return { validate: true,
+msg: '' };
   }
 
   // 修改婚姻状态

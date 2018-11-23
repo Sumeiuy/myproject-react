@@ -94,7 +94,9 @@ export default class Home extends PureComponent {
       queryCustSummaryInfo({ custId });
     }
     // 获取客户反馈字典信息
-    getMotCustfeedBackDict({ pageNum: 1, pageSize: 10000, type: 2 });
+    getMotCustfeedBackDict({ pageNum: 1,
+pageSize: 10000,
+type: 2 });
   }
 
   componentDidUpdate(prevProps) {
