@@ -56,6 +56,8 @@ export default class AccountInfoHeader extends PureComponent {
     creditTradeFlowRes: PropTypes.object.isRequired,
     // 期权账户交易流水
     optionTradeFlowRes: PropTypes.object.isRequired,
+    // 资金变动交易流水
+    capitalChangeFlowRes: PropTypes.object.isRequired,
   }
 
   static contextTypes = {
@@ -167,6 +169,7 @@ export default class AccountInfoHeader extends PureComponent {
       standardTradeFlowRes,
       creditTradeFlowRes,
       optionTradeFlowRes,
+      capitalChangeFlowRes,
     } = this.props;
 
     return (
@@ -209,6 +212,7 @@ export default class AccountInfoHeader extends PureComponent {
             standardTradeFlowRes ={standardTradeFlowRes}
             creditTradeFlowRes ={creditTradeFlowRes}
             optionTradeFlowRes ={optionTradeFlowRes}
+            capitalChangeFlowRes ={capitalChangeFlowRes}
           />
         </IfWrap>
       </div>

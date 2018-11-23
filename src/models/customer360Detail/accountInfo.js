@@ -60,6 +60,10 @@ export default {
     creditTradeFlowRes: {},
     // 期权账户交易流水
     optionTradeFlowRes: {},
+    // 资金变动交易流水
+    capitalChangeFlowRes: {},
+    // 账户变动
+    accountChangeRes: {},
   },
   reducers: {
     getRealTimeAssetSuccess(state, action) {
@@ -211,6 +215,20 @@ export default {
       return {
         ...state,
         optionTradeFlowRes: resultData || {},
+      };
+    },
+    queryCapitalTradeFlowSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        capitalChangeFlowRes: resultData || {},
+      };
+    },
+    queryAccountChangeSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        accountChangeRes: resultData || {},
       };
     },
     // 清除redux数据
@@ -386,6 +404,22 @@ export default {
         payload: response,
       });
     },
+    // 查询资金变动交易流水
+    * queryCapitalTradeFlow({ payload }, { put, call }) {
+      const response = yield call(api.queryCapitalTradeFlow, payload);
+      yield put({
+        type: ' queryCapitalTradeFlowSuccess',
+        payload: response,
+      });
+    },
+     // 查询账户变动
+    * queryAccountChange({ payload }, { put, call }) {
+      const response = yield call(api.queryAccountChange, payload);
+      yield put({
+        type: ' queryAccountChangeSuccess',
+        payload: response,
+      });
+   },
     // 清空数据
     * clearReduxData({ payload }, { put }) {
       yield put({

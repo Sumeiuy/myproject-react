@@ -8,7 +8,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { Button, Tabs, Table } from 'antd';
+import { Button, Tabs, Table, Radio } from 'antd';
 import moment from 'moment';
 import _ from 'lodash';
 
@@ -23,7 +23,9 @@ import {
   STANDARD_TRADE_FLOW_COLUMNS,
   CREDIT_TRADE_FLOW_COLUMNS,
   OPTION_TRADE_FLOW_COLUMNS,
+  CAPITAL_CHANGE_COLUMNS,
   STANDARD_TRADE_FLOW_TABLE_SCROLL,
+  CAPITAL_CHANGE_TABLE_SCROLL,
   CREDIT_TRADE_FLOW_TABLE_SCROLL,
   OPTION_TRADE_FLOW_TABLE_SCROLL,
   TRADE_FLOW_TABS,
@@ -32,6 +34,7 @@ import {
 import styles from './tradeFlowModal.less';
 
 const TabPane = Tabs.TabPane;
+const RadioGroup = Radio.Group;
 
 // 默认查询日期半年
 const DEFAULT_START_DATE = moment().subtract(6, 'months');
@@ -58,6 +61,8 @@ export default class TradeFlowModal extends PureComponent {
     creditTradeFlowRes: PropTypes.object.isRequired,
     // 期权账户交易流水
     optionTradeFlowRes: PropTypes.object.isRequired,
+    // 资金变动交易流水
+    capitalChangeFlowRes: PropTypes.object.isRequired,
   }
 
   constructor(props) {
@@ -73,6 +78,8 @@ export default class TradeFlowModal extends PureComponent {
       creditEndDate: defaultEndDateString,
       optionStartDate: defaultStartDateString,
       optionEndDate: defaultEndDateString,
+      capitalStartDate: defaultStartDateString,
+      capitalEndDate: defaultEndDateString,
       // 普通账户
       currentStandBusnTypeValue: '', // 选择的业务类别
       currentStandPrdtValue: '',  // 选择的产品代码
@@ -82,6 +89,9 @@ export default class TradeFlowModal extends PureComponent {
       currentCreditPrdtValue: '',  // 选择的产品代码
       // 期权账户
       currentOptionPrdtValue: '',  // 选择的产品代码
+      // 资金变动
+      currentCapitalBusnTypeValue: '', // 选择的业务类别
+      accountTypeRadio: 'normal',  // 选择的账户类型
     };
   }
 
@@ -200,6 +210,30 @@ export default class TradeFlowModal extends PureComponent {
     });
   }
 
+    // 查询资金变动交易流水
+    @autobind
+    queryCapitalTradeFlow(params) {
+      const { location: { query: { custId } } } = this.props;
+      const {
+        capitalStartDate,
+        capitalEndDate,
+        accountTypeRadio,
+        currentCapitalBusnTypeValue
+      } = this.state;
+      // type 值用于到Home页面中区分调用哪个具体api接口
+      this.props.querytradeFlow({
+        type: 'capital',
+        custId,
+        startDate: capitalStartDate,
+        endDate: capitalEndDate,
+        bussinessType: currentCapitalBusnTypeValue,
+        accountType: accountTypeRadio,
+        pageNum: 1,
+        pageSize: 10,
+        ...params,
+      });
+    }
+
   // 将接口返回的分页器数据转换成分页器组件的props
   @autobind
   getPage(page = {}) {
@@ -227,14 +261,22 @@ export default class TradeFlowModal extends PureComponent {
         value: TRADE_FLOW_TABS[activeTabKey],
       },
     });
-    // 切换tab页时调用方法刷数据
+    // 切换tab页时调用方法刷数据，tab不同，对应的accountType也不同，切换tab的时候分别获取对应的业务类别数据和当前tab下的交易流水列表
     if (activeTabKey === 'standardAccountTrade') {
+      // 普通账户历史交易
       this.queryBusnTypeDict({ accountType: 'normal' });
       this.queryStandardTradeFlow();
     } else if (activeTabKey === 'creditAccountTrade') {
+      // 信用账户历史交易
       this.queryBusnTypeDict({ accountType: 'credit' });
       this.queryCreditTradeFlow();
-    } else {
+    } else if(activeTabKey === 'capitalChange') {
+      // 资金变动
+      this.queryBusnTypeDict({ accountType: this.state.accountTypeRadio , queryType: 'moneyChange' });
+      this.queryCapitalTradeFlow();
+    }
+    else {
+      // 期权账户历史交易
       this.queryOptionTradeFlow();
     }
   }
@@ -262,6 +304,15 @@ export default class TradeFlowModal extends PureComponent {
   @logable({ type: 'Click', payload: { name: '切换期权账户页码', value: '$args[0]'} })
   handleOptionPageChange(pageNum) {
     this.queryOptionTradeFlow({
+      pageNum,
+    });
+  }
+
+  // 切换资金变动页码
+  @autobind
+  @logable({ type: 'Click', payload: { name: '切换资金变动页码', value: '$args[0]'} })
+  handleCapitalPageChange(pageNum) {
+    this.queryCapitalTradeFlow({
       pageNum,
     });
   }
@@ -326,6 +377,27 @@ export default class TradeFlowModal extends PureComponent {
     });
   }
 
+  // 资金变动选择起止日期
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '查询日期',
+      value: '$args[0].value',
+    },
+  })
+  handleChangeCapitalDate(date) {
+    const [startDate, endDate] = date.value;
+    this.setState({
+      capitalStartDate: startDate,
+      capitalEndDate: endDate,
+    });
+    this.queryCapitalTradeFlow({
+      startDate: startDate,
+      endDate: endDate,
+    });
+  }
+
   // 普通账户选择业务类别
   @autobind
   @logable({
@@ -356,6 +428,35 @@ export default class TradeFlowModal extends PureComponent {
       this.queryCreditTradeFlow({
         bussinessType: current.value,
       });
+  }
+
+  // 资金变动选择业务类别
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '业务类别',
+      value: '$args[0].value',
+    },
+  })
+  handleFilterCapitalBussinessType(current) {
+    this.setState({ currentCapitalBusnTypeValue: current.value });
+      this.queryCapitalTradeFlow({
+        bussinessType: current.value,
+      });
+  }
+
+  // 资金变动选择帐户类型,因为资金流水的业务类别和帐户类型有联动关系，这里需要再重新获取业务类别数据
+  @autobind
+  @logable({ type: 'Click', payload: { name: '账户类型', value: '$args[0].target.value' } })
+  handleAccountTypeRadioChange(e) {
+    const {value} = e.target;
+    this.setState({ accountTypeRadio: value, currentCapitalBusnTypeValue: ''});
+    this.queryBusnTypeDict({accountType: value , queryType: 'moneyChange'});
+    this.queryCapitalTradeFlow({
+      accountType: value,
+      bussinessType: '',
+    });
   }
 
   // 普通账户选择产品代码
@@ -477,6 +578,10 @@ export default class TradeFlowModal extends PureComponent {
       optionStartDate,
       optionEndDate,
       currentOptionPrdtValue,
+      capitalStartDate,
+      capitalEndDate,
+      currentCapitalBusnTypeValue,
+      accountTypeRadio,
     } = this.state;
     const {
       busnTypeDict,
@@ -485,6 +590,7 @@ export default class TradeFlowModal extends PureComponent {
       standardTradeFlowRes,
       creditTradeFlowRes,
       optionTradeFlowRes,
+      capitalChangeFlowRes,
     } = this.props;
     // 补足普通账户流水数据
     const standardData = data.padEmptyDataForList(standardTradeFlowRes.list);
@@ -498,6 +604,10 @@ export default class TradeFlowModal extends PureComponent {
     const optionData = data.padEmptyDataForList(optionTradeFlowRes.list);
     const optionTradeColumns = this.transformColumnsData(OPTION_TRADE_FLOW_COLUMNS);
     const optionPage = this.getPage(optionTradeFlowRes.page);
+    // 资金变动表格分页器信息
+    const capitalData = data.padEmptyDataForList(capitalChangeFlowRes.list);
+    const capitalChangeColumns = this.transformColumnsData(CAPITAL_CHANGE_COLUMNS);
+    const capitalPage = this.getPage(capitalChangeFlowRes.page);
     // 弹出层的自定义关闭按钮
     const closeBtn = [(
       <Button onClick={this.handleModalClose}>关闭</Button>
@@ -696,6 +806,57 @@ export default class TradeFlowModal extends PureComponent {
                 <Pagination
                   {...optionPage}
                   onChange={this.handleOptionPageChange}
+                />
+              </div>
+            </TabPane>
+            <TabPane tab="资金变动" key="capitalChange">
+              <div className={styles.tabPaneWrap}>
+                <div className={styles.header}>
+                  <div className={styles.filterArea}>
+                    <DateFilter
+                      filterName="查询日期"
+                      initialStartDate={DEFAULT_START_DATE}
+                      value={[capitalStartDate,capitalEndDate]}
+                      onChange={this.handleChangeCapitalDate}
+                      disabledCurrentEnd={false}
+                    />
+                  </div>
+                  <div className={styles.filterArea}>
+                    <span className={styles.label}>账户类型:</span>
+                    <RadioGroup onChange={this.handleAccountTypeRadioChange} value={accountTypeRadio} className={styles.radioGroup}>
+                      <Radio className={styles.accountTypeRadio} value="normal">普通</Radio>
+                      <Radio className={styles.accountTypeRadio} value="credit">信用</Radio>
+                      <Radio className={styles.accountTypeRadio} value="option">期权</Radio>
+                    </RadioGroup>
+                  </div>
+                  <div className={styles.filterArea}>
+                    <SingleFilterWithSearch
+                      filterName="业务类别"
+                      filterId="bussinessType"
+                      value={currentCapitalBusnTypeValue}
+                      data={busnTypeDict.list}
+                      placeholder="请输入业务类别"
+                      dropdownStyle={{
+                        maxHeight: 324,
+                        overflowY: 'auto',
+                        width: 252,
+                      }}
+                      onChange={this.handleFilterCapitalBussinessType}
+                    />
+                  </div>
+                </div>
+                <div className={styles.body}>
+                  <Table
+                    pagination={false}
+                    dataSource={capitalData}
+                    columns={capitalChangeColumns}
+                    className={styles.tradeFlowTable}
+                    scroll={CAPITAL_CHANGE_TABLE_SCROLL}
+                  />
+                </div>
+                <Pagination
+                  {...capitalPage}
+                  onChange={this.handleCapitalPageChange}
                 />
               </div>
             </TabPane>
