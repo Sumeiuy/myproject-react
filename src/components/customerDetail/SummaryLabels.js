@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-16 09:15:12
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-23 11:15:31
+ * @Last Modified time: 2018-11-23 13:15:03
  * @description 新版客户360详情重点标签区域
  */
 import React, { PureComponent } from 'react';
@@ -16,9 +16,6 @@ import CustLabel from './CustLabel';
 import MoreLabelModal from './MoreKeyLabelsModal';
 
 import styles from './summaryLabels.less';
-
-// 无数据的展位图
-const PlaceHolderStyles = { paddingTop: '20px' };
 
 export default class SummaryLabels extends PureComponent {
   static propTypes = {
@@ -75,7 +72,6 @@ export default class SummaryLabels extends PureComponent {
           <PlaceHolder
             title="暂无重点标签数据"
             isRender={_.isEmpty(data)}
-            style={PlaceHolderStyles}
           />
         </div>
         <IFWrap isRender={moreLabelsModal}>

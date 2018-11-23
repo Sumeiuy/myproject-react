@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-23 09:07:18
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-23 09:36:20
+ * @Last Modified time: 2018-11-23 14:16:57
  * @description 无数据的占位图
  */
 import React from 'react';
@@ -21,6 +21,7 @@ function PlaceHolderImage(props) {
     [styles.placeholderImage]: true,
     [imageSize]: true,
   });
+
   return (
     <div className={styles.placeholderContainer} style={style}>
       <div className={imageCls}/>
@@ -31,7 +32,7 @@ function PlaceHolderImage(props) {
 
 PlaceHolderImage.propTypes = {
   // 是否展示
-  isRender: PropTypes.bool.isRequired,
+  isRender: PropTypes.bool,
   // 标题，默认为暂无数据
   title: PropTypes.string,
   // 展位图大小, small|normal|large=>30|60|100
@@ -42,7 +43,8 @@ PlaceHolderImage.propTypes = {
 PlaceHolderImage.defaultProps = {
   title: '暂无数据',
   size: 'normal',
-  style: {}
+  style: {},
+  isRender: true,
 };
 
 export default PlaceHolderImage;

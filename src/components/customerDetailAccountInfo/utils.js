@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-12 14:08:27
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-24 13:47:23
+ * @Last Modified time: 2018-11-23 12:56:21
  * @description 资产分布使用的数字转化
  */
 import _ from 'lodash';
@@ -38,6 +38,7 @@ function formaterMoney(money, options) {
   if (typeof money !== 'number') {
     return null;
   }
+  // eslint-disable-next-line
   return convertMoney(money, { formater: true, ...options });
 }
 
@@ -59,19 +60,6 @@ function addKeyForData(item) {
     ...item,
     key: data.uuid(),
   };
-}
-
-// 给资产分布详情表格里面的数据添加唯一的key
-function updateSpecificIndexData(data) {
-  return _.map(data, item => {
-    const { children } = item;
-    const childrenData = _.map(children, addKeyForData);
-    const newItem = addKeyForData(item);
-    return {
-      ...newItem,
-      children: childrenData,
-    };
-  });
 }
 
 // 生成rowNumber数量的空白数据
@@ -100,6 +88,5 @@ export {
   convertMoney,
   displayMoney,
   displayMoneyWithoutUnit,
-  updateSpecificIndexData,
   supplyEmptyRow,
 };

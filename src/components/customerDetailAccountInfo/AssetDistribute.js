@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-11 16:30:07
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-23 11:19:32
+ * @Last Modified time: 2018-11-23 15:08:25
  * @description 新版客户360详情下账户信息Tab下的资产分布组件
  */
 import React, { PureComponent } from 'react';
@@ -25,7 +25,6 @@ import {
 } from './config';
 import {
   convertMoney,
-  updateSpecificIndexData,
   displayMoney,
   displayMoneyWithoutUnit,
 } from './utils';
@@ -33,6 +32,7 @@ import { composeIndicatorAndData, pickRadarDisplayData } from './assetRadarHelpe
 import { number } from '../../helper';
 import logable, { logPV, logCommon } from '../../decorators/logable';
 import styles from './assetDistribute.less';
+import IfWrap from '../common/biz/IfWrap';
 
 export default class AssetDistribute extends PureComponent {
   static propTypes = {
@@ -62,6 +62,9 @@ export default class AssetDistribute extends PureComponent {
       // 高亮的哪个雷达图指标的名称和key
       indexKey: SPECIFIC_INITIAL_KEY,
       radarIndexName: SPECIFIC_INITIAL_NAME,
+      // 资产分布右侧详情打开的行的key,因为默认打开全部的行，
+      // 但是antd的Table表格的defaultExpandAllRows,只是一次性使用，当数据变化了之后，还是根据以前的key值来展开行
+      assetDetailExpandKeys: [],
     };
   }
 
@@ -71,10 +74,26 @@ export default class AssetDistribute extends PureComponent {
 
   componentDidUpdate(prevProps, prevState) {
     // 如果 custId不同需要重新查一下数据
-    const { location: { query: { custId: nextCustId } } } = this.props;
-    const { location: { query: { custId: prevCustId } } } = prevProps;
+    const {
+      location: {
+        query: { custId: nextCustId },
+      },
+      specificIndexData: nextSD,
+    } = this.props;
+    const {
+      location: {
+        query: { custId: prevCustId },
+      },
+      specificIndexData: prevSD,
+    } = prevProps;
     if (nextCustId !== prevCustId && _.isEmpty(nextCustId)) {
       this.freshDataForDiffUser();
+    }
+    if (prevSD !== nextSD) {
+      // 当数据变化了之后，重新获取表格数据的key
+      this.setState({
+        assetDetailExpandKeys: _.map(nextSD, item => item.key),
+      });
     }
   }
 
@@ -89,11 +108,15 @@ export default class AssetDistribute extends PureComponent {
     } = this.props;
     // 判断是否含信用
     const creditFlag = checkedCredit ? 'Y' : 'N';
-    getAssetRadarData({ creditFlag,
-custId });
-    querySpecificIndexData({ indexKey,
-creditFlag,
-custId });
+    getAssetRadarData({
+      creditFlag,
+      custId,
+    });
+    querySpecificIndexData({
+      indexKey,
+      creditFlag,
+      custId,
+    });
   }
 
   // 处理表格表头的配置项
@@ -108,16 +131,24 @@ custId });
         render: this.renderTableZichanColumn,
       },
       {
-        width: '35%',
-        title: '持仓金额/占比',
+        width: '20%',
+        title: '持仓金额',
         dataIndex: 'value',
         key: 'value',
-        className: styles.holdValueCls,
+        align: 'right',
         render: this.renderTableValueColumn,
       },
       {
+        width: '15%',
+        title: '占比',
+        dataIndex: 'percent',
+        key: 'percent',
+        align: 'right',
+        render: this.renderTablePercentColumn,
+      },
+      {
         width: '35%',
-        title: '收益',
+        title: '收益    ',
         dataIndex: 'profit',
         key: 'profit',
         className: styles.profitCls,
@@ -182,8 +213,10 @@ custId });
   }
 
   @autobind
-  @logable({ type: 'Click',
-payload: { name: '含信用' } })
+  @logable({
+    type: 'Click',
+    payload: { name: '含信用' },
+  })
   handleCreditCheckboxChange(e) {
     const { checked } = e.target;
     // 点击含信用checkbox后，需要指标选项全部更换到默认的初始值，并查询相应的数据
@@ -196,16 +229,20 @@ payload: { name: '含信用' } })
 
   // 打开负债详情的弹框
   @autobind
-  @logPV({ pathname: '/modal/custDetailAccountDebtDetailModal',
-title: '负债详情' })
+  @logPV({
+    pathname: '/modal/custDetailAccountDebtDetailModal',
+    title: '负债详情',
+  })
   handleDebtDetailIconClick() {
     this.setState({ debtDetailModal: true });
   }
 
   // 关闭负债详情弹框
   @autobind
-  @logable({ type: 'Click',
-payload: { name: '关闭'} })
+  @logable({
+    type: 'Click',
+    payload: { name: '关闭'},
+  })
   handleCloseDebtDetailModal() {
     this.setState({ debtDetailModal: false });
   }
@@ -242,11 +279,15 @@ payload: { name: '关闭'} })
       location: { query: { custId } },
     } = this.props;
     const data = _.find(assetIndexData, item => item.name === axisName);
-    this.setState({ indexKey: data.key,
-radarIndexName: axisName });
-    this.props.querySpecificIndexData({ indexKey: data.key,
-creditFlag,
-custId });
+    this.setState({
+      indexKey: data.key,
+      radarIndexName: axisName,
+    });
+    this.props.querySpecificIndexData({
+      indexKey: data.key,
+      creditFlag,
+      custId,
+    });
     // 通过 dataIndex 查找到相应的原始数据，从而上传真实的数据
     logCommon({
       type: 'Click',
@@ -257,6 +298,26 @@ custId });
     });
   }
 
+  @autobind
+  @logable({
+    type: 'Click',
+    payload: { name: '展开/收起资产分布表格行详情' }
+  })
+  handleExpandChange(expanded, record) {
+    const { key } = record;
+    let { assetDetailExpandKeys } = this.state;
+    if (!expanded) {
+      // 如果是，则删除
+      assetDetailExpandKeys = _.filter(assetDetailExpandKeys, item => item !== key);
+    } else {
+      // 如果不是展开，则添加到展开行数据中
+      assetDetailExpandKeys = _.concat(assetDetailExpandKeys, [key]);
+    }
+    this.setState({
+      assetDetailExpandKeys,
+    });
+  }
+
   // 渲染表格资产列数据
   @autobind
   renderTableZichanColumn(value, record) {
@@ -264,27 +325,27 @@ custId });
     return (
       <div className={styles.zichanCell}>
         <div className={styles.zichanText}>
-          <span className={styles.value} title={value}>{value}</span>
           {
             isCreditProduct ? (<span className={styles.icon}>融</span>) : null
           }
+          <span className={styles.value} title={value}>{value}</span>
         </div>
       </div>
     );
   }
 
-  // 渲染持仓金额和占比的单元格
+  // 渲染持仓金额的单元格
   @autobind
-  renderTableValueColumn(value, record) {
-    const { percent } = record;
-    const percentText = number.convertRate(percent || 0);
+  renderTableValueColumn(value) {
     const holdText = displayMoney(value || 0);
-    return (
-      <div className={styles.indexHoldValueCell}>
-        <span className={styles.value}>{holdText}</span>
-        <span className={styles.percent}>{percentText}</span>
-      </div>
-    );
+    return holdText;
+  }
+
+  // 渲染占比的单元格
+  @autobind
+  renderTablePercentColumn(value) {
+    const percentText = number.convertRate(value || 0);
+    return percentText;
   }
 
   // 渲染收益/收益率的单元格
@@ -321,7 +382,12 @@ custId });
   }
 
   render() {
-    const { checkedCredit, debtDetailModal, radarIndexName } = this.state;
+    const {
+      checkedCredit,
+      debtDetailModal,
+      radarIndexName,
+      assetDetailExpandKeys,
+    } = this.state;
     const {
       assetsRadarData: { assetIndexData, totalAsset, debt },
       debtDetail,
@@ -339,8 +405,6 @@ custId });
     const radarOption = this.getRadarOption(assetIndexData || []);
     // 获取表格的columns数据
     const columns = this.getIndexTableColumns();
-    // 给右侧详情数据一个key
-    const detailDataWithKey = updateSpecificIndexData(specificIndexData);
 
     return (
       <div className={styles.container}>
@@ -359,11 +423,7 @@ custId });
           hasNoRadarData
             ? (
               <div className={styles.body}>
-                <PlaceHolder
-                  isRender
-                  title="暂无资产分布数据"
-                  style={{ paddingTop: '20px' }}
-                />
+                <PlaceHolder title="暂无资产分布数据" />
               </div>
             )
             : (
@@ -398,26 +458,23 @@ custId });
                   </div>
                 </div>
                 <div className={styles.indexDetailArea}>
-                  {
-                    _.isEmpty(specificIndexData)
-                      ? (
-                        <div className={styles.noRadarData}>
-                          <div className={styles.noDataHead}><Icon type="zanwushuju" className={styles.noDataIcon} /></div>
-                          <div className={styles.noDataTip}>{`暂无${radarIndexName}数据`}</div>
-                        </div>
-                      )
-                      : (
-                        <Table
-                          rowKey="key"
-                          indentSize={0}
-                          className={styles.indexDetailTable}
-                          dataSource={detailDataWithKey}
-                          columns={columns}
-                          pagination={false}
-                          scroll={TABLE_SCROLL_SETTING}
-                        />
-                      )
-                  }
+                  <PlaceHolder
+                    isRender={_.isEmpty(specificIndexData)}
+                    title={`暂无${radarIndexName}数据`}
+                  />
+                  <IfWrap isRender={!_.isEmpty(specificIndexData)}>
+                    <Table
+                      expandedRowKeys={assetDetailExpandKeys}
+                      rowKey="key"
+                      indentSize={0}
+                      className={styles.indexDetailTable}
+                      dataSource={specificIndexData}
+                      columns={columns}
+                      pagination={false}
+                      scroll={TABLE_SCROLL_SETTING}
+                      onExpand={this.handleExpandChange}
+                    />
+                  </IfWrap>
                 </div>
               </div>
             )
