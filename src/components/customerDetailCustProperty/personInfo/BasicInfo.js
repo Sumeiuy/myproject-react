@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性-个人客户基本信息
  * @Date: 2018-11-07 14:33:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-22 16:15:11
+ * @Last Modified time: 2018-11-23 11:31:39
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -12,7 +12,7 @@ import _ from 'lodash';
 import { message } from 'antd';
 
 import InfoItem from '../../common/infoItem';
-import BasicEditorCell from '../common/BasiceEditorCell';
+// import BasicEditorCell from '../common/BasiceEditorCell';
 import {
   DEFAULT_VALUE,
   DEFAULT_PRIVATE_VALUE,
@@ -97,12 +97,21 @@ export default class BasicInfo extends PureComponent {
   @autobind
   checkChildNumValue(value) {
     if (_.isEmpty(value)) {
-      return { validate: false, msg: '数据不能为空' };
+      return {
+        validate: false,
+        msg: '数据不能为空',
+      };
     }
     if (_.isNumber(_.trim(value))) {
-      return { validate: false, msg: '子女数量必须是数字' };
+      return {
+        validate: false,
+        msg: '子女数量必须是数字',
+      };
     }
-    return { validate: true, msg: '' };
+    return {
+      validate: true,
+      msg: '',
+    };
   }
 
   // 修改婚姻状态
@@ -210,6 +219,15 @@ export default class BasicInfo extends PureComponent {
             />
           </div>
           <div className={styles.infoItemBox}>
+            <InfoItem
+              width={INFO_ITEM_WITDH_110}
+              label="婚姻状况"
+              value={data.maritalText || DEFAULT_VALUE}
+              className={styles.infoItem}
+              isNeedValueTitle={checkIsNeedTitle(data.maritalText || DEFAULT_VALUE)}
+              isNeedOverFlowEllipsis
+            />
+           {/* 本迭代中先关闭
             <BasicEditorCell
               label="婚姻状况"
               width={INFO_ITEM_WITDH_110}
@@ -221,23 +239,43 @@ export default class BasicInfo extends PureComponent {
               displayValue={data.maritalText || DEFAULT_VALUE}
               options={[]}
             />
+            */}
           </div>
           <div className={styles.infoItemBox}>
-            <BasicEditorCell
-              label="子女数量"
+            <InfoItem
               width={INFO_ITEM_WITDH}
+              label="子女数量"
+              value={this.getChildNumText(data.childNum)}
               className={styles.infoItem}
-              editorId="person_children_num"
-              onEditOK={this.updateChildNum}
-              value={data.childNum}
-              displayValue={data.childNum}
-              checkable
-              onCheck={this.checkChildNumValue}
-              onSuccess={this.refreshCustProperty}
+              isNeedValueTitle={checkIsNeedTitle(this.getChildNumText(data.childNum))}
+              isNeedOverFlowEllipsis
             />
+            {/* 本迭代中先关闭
+              <BasicEditorCell
+                label="子女数量"
+                width={INFO_ITEM_WITDH}
+                className={styles.infoItem}
+                editorId="person_children_num"
+                onEditOK={this.updateChildNum}
+                value={data.childNum}
+                displayValue={data.childNum}
+                checkable
+                onCheck={this.checkChildNumValue}
+                onSuccess={this.refreshCustProperty}
+              />
+            */}
           </div>
           <div className={styles.infoItemBox}>
-            <BasicEditorCell
+            <InfoItem
+              width={INFO_ITEM_WITDH}
+              label="爱好"
+              value={data.hobby || DEFAULT_VALUE}
+              className={styles.infoItem}
+              isNeedValueTitle={checkIsNeedTitle(data.hobby || DEFAULT_VALUE)}
+              isNeedOverFlowEllipsis
+            />
+            {/* 本迭代中先关闭
+              <BasicEditorCell
               label="爱好"
               width={INFO_ITEM_WITDH}
               className={styles.infoItem}
@@ -246,6 +284,7 @@ export default class BasicInfo extends PureComponent {
               value={data.hobby || DEFAULT_VALUE}
               displayValue={data.hobby || DEFAULT_VALUE}
             />
+            */}
           </div>
         </div>
       </div>

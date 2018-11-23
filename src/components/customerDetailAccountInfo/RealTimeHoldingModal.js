@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-06 17:44:38
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-06 19:13:55
+ * @Last Modified time: 2018-11-23 14:29:58
  * @description 实时持仓的弹出层
  */
 import React, { PureComponent } from 'react';
@@ -12,6 +12,7 @@ import { autobind } from 'core-decorators';
 import cx from 'classnames';
 import _ from 'lodash';
 
+import IfTableWrap from '../common/IfTableWrap';
 import Table from '../../components/common/table';
 import Modal from '../common/biz/CommonModal';
 import { displayMoney } from './utils';
@@ -93,7 +94,9 @@ export default class RealTimeHoldingModal extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '切换实时持仓Tab', value: '$args[0].target.value' } })
+  @logable({ type: 'Click',
+payload: { name: '切换实时持仓Tab',
+value: '$args[0].target.value' } })
   handleAccountType(e) {
     const { value } = e.target;
     const { location: { query: { custId } } } = this.props;
@@ -134,6 +137,8 @@ export default class RealTimeHoldingModal extends PureComponent {
     // 可取资产
     const advisableFund = displayMoney(advisableFunds);
     // 使用空白行补足数据
+    const hasNoStockData = _.isEmpty(securitiesData);
+    const hasNoProductData = _.isEmpty(productData);
     const stockData = data.padEmptyDataForList(this.converStockData(securitiesData), 5);
     const newProductData = data.padEmptyDataForList(this.converProductData(productData), 5);
 
@@ -179,21 +184,25 @@ export default class RealTimeHoldingModal extends PureComponent {
                   <Radio value="credit">信用</Radio>
                 </RadioGroup>
               </div>
-              <Table
-                className={styles.tableContainer}
-                columns={STOCK_REALTIME_COLUMNS}
-                dataSource={stockData}
-                pagination={false}
-                scroll={{ x: '1026px' }}
-              />
+              <IfTableWrap isRender={hasNoStockData} text="暂无证券实时持仓数据">
+                <Table
+                  className={styles.tableContainer}
+                  columns={STOCK_REALTIME_COLUMNS}
+                  dataSource={stockData}
+                  pagination={false}
+                  scroll={{ x: '1026px' }}
+                />
+              </IfTableWrap>
             </TabPane>
             <TabPane tab="产品实时持仓" key="productRealTimeHolding">
-              <Table className={styles.tableContainer}
-                columns={PRODUCT_REALTIME_COLUMNS}
-                dataSource={newProductData}
-                pagination={false}
-                scroll={{ x: '1026px' }}
-              />
+              <IfTableWrap isRender={hasNoProductData} text="暂无产品实时持仓数据">
+                <Table className={styles.tableContainer}
+                  columns={PRODUCT_REALTIME_COLUMNS}
+                  dataSource={newProductData}
+                  pagination={false}
+                  scroll={{ x: '1026px' }}
+                />
+              </IfTableWrap>
             </TabPane>
           </Tabs>
         </div>

@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-05 13:31:51
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-15 15:34:15
+ * @Last Modified time: 2018-11-23 14:34:53
  * @description 新版客户360详情的历史持仓的弹出层
  */
 import React, { PureComponent } from 'react';
@@ -16,6 +16,7 @@ import cx from 'classnames';
 import { data, number } from '../../helper';
 import { jumpToProductDetailPage } from '../../utils/productCenter';
 import logable, { logCommon } from '../../decorators/logable';
+import PlaceHolderImage from '../common/placeholderImage';
 import Modal from '../common/biz/CommonModal';
 import Pagination from '../common/Pagination';
 import {
@@ -36,6 +37,8 @@ const RadioGroup = Radio.Group;
 const DEFAULT_DATE = moment().subtract(1, 'days');
 // 接口请求查询日期的格式
 const DATE_FORMATE_API = 'YYYY-MM-DD';
+// 无数据的样式
+const nodataStyle = { paddingTop: '50px' };
 
 export default class HistoryHoldingModal extends PureComponent {
   static propTypes = {
@@ -142,7 +145,13 @@ export default class HistoryHoldingModal extends PureComponent {
 
   // 点击证券历史持仓明细中的名称或者代码跳转到策略中西下个股咨询>个股研报
   @autobind
-  @logable({ type: 'Click', payload: { name: '跳转到个股咨询>个股研报', value: '$args[0].name'} })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '跳转到个股咨询>个股研报',
+      value: '$args[0].name',
+    },
+  })
   jumpToStockPage(record) {
     this.context.push({
       pathname: '/strategyCenter/stock',
@@ -154,9 +163,21 @@ export default class HistoryHoldingModal extends PureComponent {
 
   // 点击产品历史持仓明细中的产品名称、代码列跳转到产品详情
   @autobind
-  @logable({ type: 'Click', payload: { name: '跳转到产品详情', value: '$args[0].name'} })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '跳转到产品详情',
+      value: '$args[0].name',
+    },
+  })
   hanleProductCellClick(record) {
-    jumpToProductDetailPage({ type: record.firstTypeCode, code: record.code }, this.context.push);
+    jumpToProductDetailPage(
+      {
+        type: record.firstTypeCode,
+        code: record.code,
+      },
+      this.context.push
+    );
   }
 
   // 修改数据金额所在的column
@@ -358,12 +379,14 @@ export default class HistoryHoldingModal extends PureComponent {
       pageSize: 10,
       current: page.pageNum || 1,
       total: page.totalCount || 0,
-      hideOnSinglePage: _.isUndefined(page.totalPage) || page.totalPage === 1
     };
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '关闭' } })
+  @logable({
+    type: 'Click',
+    payload: { name: '关闭' }
+  })
   handleModalClose() {
     this.props.onClose();
   }
@@ -384,7 +407,13 @@ export default class HistoryHoldingModal extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '账户类型', value: '$args[0].target.value' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '账户类型',
+      value: '$args[0].target.value',
+    },
+  })
   handleAccountTypeRadioChange(e) {
     const { value } = e.target;
     const { stockQueryDate } = this.state;
@@ -398,7 +427,13 @@ export default class HistoryHoldingModal extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '证券历史持仓查询日期', value: '$args[1]'} })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '证券历史持仓查询日期',
+      value: '$args[1]',
+    },
+  })
   handleStockDateChange(date) {
     const stockQueryDate = date.format(DATE_FORMATE_API);
     // 切换证券历史持仓的查询日期,
@@ -413,7 +448,13 @@ export default class HistoryHoldingModal extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '产品历史持仓查询日期', value: '$args[1]'} })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '产品历史持仓查询日期',
+      value: '$args[1]',
+    },
+  })
   handleProductDateChange(date) {
     const productQueryDate = date.format(DATE_FORMATE_API);
     // 切换产品查询日期
@@ -426,7 +467,13 @@ export default class HistoryHoldingModal extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '期权历史持仓查询日期', value: '$args[1]'} })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '期权历史持仓查询日期',
+      value: '$args[1]',
+    },
+  })
   handleOptionDateChange(date) {
     const optionQueryDate = date.format(DATE_FORMATE_API);
     this.setState({ optionQueryDate });
@@ -439,7 +486,13 @@ export default class HistoryHoldingModal extends PureComponent {
 
   // 切换证券历史持仓页码
   @autobind
-  @logable({ type: 'Click', payload: { name: '切换证券历史持仓页码', value: '$args[0]'} })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '切换证券历史持仓页码',
+      value: '$args[0]',
+    },
+  })
   handleStockPageChange(pageNum) {
     const { accountTypeRadio, stockQueryDate } = this.state;
     this.queryStockHolding({
@@ -451,7 +504,13 @@ export default class HistoryHoldingModal extends PureComponent {
 
   // 切换产品历史持仓页码数据
   @autobind
-  @logable({ type: 'Click', payload: { name: '切换产品历史持仓页码', value: '$args[0]'} })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '切换产品历史持仓页码',
+      value: '$args[0]',
+    },
+  })
   handleProductPageChange(pageNum) {
     const { productQueryDate } = this.state;
     this.queryProductHolding({
@@ -462,7 +521,13 @@ export default class HistoryHoldingModal extends PureComponent {
 
   // 切换期权历史持仓页码数据
   @autobind
-  @logable({ type: 'Click', payload: { name: '切换期权历史持仓页码', value: '$args[0]'} })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '切换期权历史持仓页码',
+      value: '$args[0]',
+    },
+  })
   handleOptionPageChange(pageNum) {
     const { optionQueryDate } = this.state;
     this.queryProductHolding({
@@ -474,18 +539,24 @@ export default class HistoryHoldingModal extends PureComponent {
   render() {
     const { activeTabKey, accountTypeRadio } = this.state;
     const { stockHistoryHolding, productHistoryHolding, optionHistoryHolding } = this.props;
+    // 判断证券历史持仓有数据没有
+    const hasNoStockData = _.isEmpty(stockHistoryHolding.list);
     // 补足证券历史持仓数据
     const stockData = data.padEmptyDataForList(stockHistoryHolding.list);
     // 修改证券历史持仓Table 的 columns
     const stockColumns = this.getStockTableColumns(STOCK_HISTORY_HOLDING_COLUMNS);
     // 获取证券历史持仓表格的分页器信息
     const stockPage = this.getPage(stockHistoryHolding.page);
+    // 判断产品历史持仓有数据没有
+    const hasNoProductData = _.isEmpty(productHistoryHolding.list);
     // 补足产品历史持仓数据
     const productData = data.padEmptyDataForList(productHistoryHolding.list);
     // 修改产品持仓Table的 columns
     const productColumns = this.getProductTableColumns(PRODUCT_HISTORY_HOLDING_COLUMNS);
     // 获取产品历史持仓的分页器数据
     const productPage = this.getPage(productHistoryHolding.page);
+    // 判断期权历史持仓有数据没有
+    const hasNoOptionData = _.isEmpty(optionHistoryHolding.list);
     // 补足期权历史持仓数据
     const optionData = data.padEmptyDataForList(optionHistoryHolding.list);
     // 修改期权历史持仓的columns
@@ -528,46 +599,62 @@ export default class HistoryHoldingModal extends PureComponent {
                     />
                   </div>
                 </div>
-                <div className={styles.body}>
-                  <Table
-                    pagination={false}
-                    dataSource={stockData}
-                    columns={stockColumns}
-                    className={styles.historyHoldingTable}
-                    scroll={STOCK_HISTORY_HOLDING_TABLE_SCROLL}
-                  />
-                </div>
-                <Pagination
-                  {...stockPage}
-                  onChange={this.handleStockPageChange}
-                />
+                {
+                  hasNoStockData
+                  ? (<PlaceHolderImage title="暂无证券历史持仓数据" style={nodataStyle} />)
+                  : (
+                    <div>
+                      <div className={styles.body}>
+                        <Table
+                          pagination={false}
+                          dataSource={stockData}
+                          columns={stockColumns}
+                          className={styles.historyHoldingTable}
+                          scroll={STOCK_HISTORY_HOLDING_TABLE_SCROLL}
+                        />
+                      </div>
+                      <Pagination
+                        {...stockPage}
+                        onChange={this.handleStockPageChange}
+                      />
+                    </div>
+                  )
+                }
               </div>
             </TabPane>
             <TabPane tab="产品持仓明细" key="productHistoryHolding">
-              <div className={styles.tabPaneWrap}>
-                <div className={styles.header}>
-                  <div className={styles.dateArea}>
-                    <span className={styles.label}>查询日期:</span>
-                    <DatePicker
-                      onChange={this.handleProductDateChange}
-                      defaultValue={DEFAULT_DATE}
-                    />
+                <div className={styles.tabPaneWrap}>
+                  <div className={styles.header}>
+                    <div className={styles.dateArea}>
+                      <span className={styles.label}>查询日期:</span>
+                      <DatePicker
+                        onChange={this.handleProductDateChange}
+                        defaultValue={DEFAULT_DATE}
+                      />
+                    </div>
                   </div>
+                  {
+                    hasNoProductData
+                      ? (<PlaceHolderImage title="暂无产品历史持仓数据" style={nodataStyle} />)
+                      : (
+                        <div>
+                          <div className={styles.body}>
+                            <Table
+                              pagination={false}
+                              dataSource={productData}
+                              columns={productColumns}
+                              className={styles.historyHoldingTable}
+                              scroll={PRODUCT_HISTORY_HOLDING_TABLE_SCROLL}
+                            />
+                          </div>
+                          <Pagination
+                            {...productPage}
+                            onChange={this.handleProductPageChange}
+                          />
+                        </div>
+                      )
+                  }
                 </div>
-                <div className={styles.body}>
-                  <Table
-                    pagination={false}
-                    dataSource={productData}
-                    columns={productColumns}
-                    className={styles.historyHoldingTable}
-                    scroll={PRODUCT_HISTORY_HOLDING_TABLE_SCROLL}
-                  />
-                </div>
-                <Pagination
-                  {...productPage}
-                  onChange={this.handleProductPageChange}
-                />
-              </div>
             </TabPane>
             <TabPane tab="期权持仓明细" key="optionHistoryHolding">
               <div className={styles.tabPaneWrap}>
@@ -580,19 +667,27 @@ export default class HistoryHoldingModal extends PureComponent {
                     />
                   </div>
                 </div>
-                <div className={styles.body}>
-                  <Table
-                    pagination={false}
-                    dataSource={optionData}
-                    columns={optionColumns}
-                    className={styles.historyHoldingTable}
-                    scroll={OPTION_HISTORY_HOLDING_TABLE_SCROLL}
-                  />
-                </div>
-                <Pagination
-                  {...optionPage}
-                  onChange={this.handleOptionPageChange}
-                />
+                {
+                  hasNoOptionData
+                    ? (<PlaceHolderImage title="暂无期权历史持仓数据" style={nodataStyle} />)
+                    : (
+                      <div>
+                        <div className={styles.body}>
+                          <Table
+                            pagination={false}
+                            dataSource={optionData}
+                            columns={optionColumns}
+                            className={styles.historyHoldingTable}
+                            scroll={OPTION_HISTORY_HOLDING_TABLE_SCROLL}
+                          />
+                        </div>
+                        <Pagination
+                          {...optionPage}
+                          onChange={this.handleOptionPageChange}
+                        />
+                      </div>
+                    )
+                }
               </div>
             </TabPane>
           </Tabs>
