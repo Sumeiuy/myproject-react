@@ -386,7 +386,9 @@ export default class Home extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'DropdownSelect', payload: { name: '对比指标', value: '$args[0]' } })
+  @logable({ type: 'DropdownSelect',
+payload: { name: '对比指标',
+value: '$args[0]' } })
   handleCodeSelectChange({ value }) {
     const { time } = this.state;
     this.getProfitRateInfo({
@@ -400,7 +402,9 @@ export default class Home extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '时间周期', value: '$args[0]' } })
+  @logable({ type: 'Click',
+payload: { name: '时间周期',
+value: '$args[0]' } })
   handleTimeSelectChange(key) {
     const { compareCode } = this.state;
     this.getProfitRateInfo({

@@ -16,10 +16,12 @@ export default function BasiceEditorCell(props) {
   const { className, label, width, children, ...restProps  } = props;
   return (
     <div className={`${styles.wrap} ${className}`}>
-      <div className={styles.label} style={{ width, marginRight: `-${width}`}} >
+      <div className={styles.label} style={{ width,
+marginRight: `-${width}`}} >
         {label}<span className={styles.colon}>:</span>
       </div>
-      <div style={{ marginLeft: width, width: `calc(100% - ${width})` }} >
+      <div style={{ marginLeft: width,
+width: `calc(100% - ${width})` }} >
         <OmniComplexEditor {...restProps} editorName={label} />
       </div>
     </div>

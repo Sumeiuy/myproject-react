@@ -245,7 +245,8 @@ export default class TradeFlowModal extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '关闭' } })
+  @logable({ type: 'Click',
+payload: { name: '关闭' } })
   handleModalClose() {
     this.props.onClose();
   }
@@ -272,7 +273,8 @@ export default class TradeFlowModal extends PureComponent {
       this.queryCreditTradeFlow();
     } else if(activeTabKey === 'capitalChange') {
       // 资金变动
-      this.queryBusnTypeDict({ accountType: this.state.accountTypeRadio , queryType: 'moneyChange' });
+      this.queryBusnTypeDict({ accountType: this.state.accountTypeRadio ,
+queryType: 'moneyChange' });
       this.queryCapitalTradeFlow();
     }
     else {
@@ -283,7 +285,9 @@ export default class TradeFlowModal extends PureComponent {
 
   // 切换普通账户页码
   @autobind
-  @logable({ type: 'Click', payload: { name: '切换普通账户页码', value: '$args[0]'} })
+  @logable({ type: 'Click',
+payload: { name: '切换普通账户页码',
+value: '$args[0]'} })
   handleStandardPageChange(pageNum) {
     this.queryStandardTradeFlow({
       pageNum,
@@ -292,7 +296,9 @@ export default class TradeFlowModal extends PureComponent {
 
   // 切换信用账户页码
   @autobind
-  @logable({ type: 'Click', payload: { name: '切换信用账户页码', value: '$args[0]'} })
+  @logable({ type: 'Click',
+payload: { name: '切换信用账户页码',
+value: '$args[0]'} })
   handleCreditPageChange(pageNum) {
     this.queryCreditTradeFlow({
       pageNum,
@@ -301,7 +307,9 @@ export default class TradeFlowModal extends PureComponent {
 
   // 切换期权账户页码
   @autobind
-  @logable({ type: 'Click', payload: { name: '切换期权账户页码', value: '$args[0]'} })
+  @logable({ type: 'Click',
+payload: { name: '切换期权账户页码',
+value: '$args[0]'} })
   handleOptionPageChange(pageNum) {
     this.queryOptionTradeFlow({
       pageNum,
@@ -310,7 +318,9 @@ export default class TradeFlowModal extends PureComponent {
 
   // 切换资金变动页码
   @autobind
-  @logable({ type: 'Click', payload: { name: '切换资金变动页码', value: '$args[0]'} })
+  @logable({ type: 'Click',
+payload: { name: '切换资金变动页码',
+value: '$args[0]'} })
   handleCapitalPageChange(pageNum) {
     this.queryCapitalTradeFlow({
       pageNum,
@@ -448,11 +458,15 @@ export default class TradeFlowModal extends PureComponent {
 
   // 资金变动选择帐户类型,因为资金流水的业务类别和帐户类型有联动关系，这里需要再重新获取业务类别数据
   @autobind
-  @logable({ type: 'Click', payload: { name: '账户类型', value: '$args[0].target.value' } })
+  @logable({ type: 'Click',
+payload: { name: '账户类型',
+value: '$args[0].target.value' } })
   handleAccountTypeRadioChange(e) {
     const {value} = e.target;
-    this.setState({ accountTypeRadio: value, currentCapitalBusnTypeValue: ''});
-    this.queryBusnTypeDict({accountType: value , queryType: 'moneyChange'});
+    this.setState({ accountTypeRadio: value,
+currentCapitalBusnTypeValue: ''});
+    this.queryBusnTypeDict({accountType: value ,
+queryType: 'moneyChange'});
     this.queryCapitalTradeFlow({
       accountType: value,
       bussinessType: '',
