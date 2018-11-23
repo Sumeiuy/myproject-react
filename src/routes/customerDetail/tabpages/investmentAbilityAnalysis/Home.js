@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-19 15:39:12
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-22 09:30:10
+ * @Last Modified time: 2018-11-22 17:21:52
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -26,6 +26,8 @@ const effects = {
   getProfitAbility: 'detailInvestmentAbilityAnalysis/getProfitAbility',
   // 获取投资账户特征
   getInvestmentFeatureLabels: 'detailInvestmentAbilityAnalysis/getInvestmentFeatureLabels',
+  // 获取账户资产变动
+  getAssetChangeState: 'detailInvestmentAbilityAnalysis/getAssetChangeState',
 };
 
 const mapStateToProps = state => ({
@@ -33,6 +35,8 @@ const mapStateToProps = state => ({
   profitAbility: state.detailInvestmentAbilityAnalysis.profitAbility,
   // 投资账户特征
   investmentFeatureLabels: state.detailInvestmentAbilityAnalysis.investmentFeatureLabels,
+  // 账户资产变动
+  assetChangeList: state.detailInvestmentAbilityAnalysis.assetChangeList,
 });
 
 const mapDispatchToProps = {
@@ -40,6 +44,8 @@ const mapDispatchToProps = {
   getProfitAbility: effect(effects.getProfitAbility, { forceFull: true }),
   // 获取投资账户特征
   getInvestmentFeatureLabels: effect(effects.getInvestmentFeatureLabels, { forceFull: true }),
+  // 获取账户资产变动
+  getAssetChangeState: effect(effects.getAssetChangeState, { forceFull: true }),
 };
 
 @withRouter
@@ -55,6 +61,10 @@ export default class Home extends PureComponent {
     investmentFeatureLabels: PropTypes.array.isRequired,
     // 获取投资账户特征
     getInvestmentFeatureLabels: PropTypes.func.isRequired,
+    // 获取账户资产变动
+    getAssetChangeState: PropTypes.func.isRequired,
+    // 账户资产变动
+    assetChangeList: PropTypes.array.isRequired,
   }
 
   static contextTypes = {
@@ -103,6 +113,8 @@ export default class Home extends PureComponent {
       getProfitAbility,
       investmentFeatureLabels,
       getInvestmentFeatureLabels,
+      getAssetChangeState,
+      assetChangeList,
     } = this.props;
     return (
       <div className={styles.investmentAbilityAnalysis}>
@@ -114,6 +126,8 @@ export default class Home extends PureComponent {
               getProfitAbility={getProfitAbility}
               investmentFeatureLabels={investmentFeatureLabels}
               getInvestmentFeatureLabels={getInvestmentFeatureLabels}
+              getAssetChangeState={getAssetChangeState}
+              assetChangeList={assetChangeList}
             />
           </TabPane>
           <TabPane tab="资产配置分析" key="assetAllocationAnalysis">资产配置分析</TabPane>

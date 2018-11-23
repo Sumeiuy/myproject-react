@@ -2,15 +2,21 @@
  * @Author: zhangjun
  * @Date: 2018-11-20 15:28:46
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-21 17:06:26
+ * @Last Modified time: 2018-11-23 09:20:36
  * @description 客户投资特征
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import classnames from 'classnames';
+import { autobind } from 'core-decorators';
 
+import Icon from '../../common/Icon';
+import { Popover } from 'antd';
 import InvestmentFeatureLabel from './InvestmentFeatureLabel';
 import ProfitAbilityLevel from './ProfitAbilityLevel';
+import { profitAbilityLevelList } from '../config';
+
 import styles from './investmentFeature.less';
 
 export default class InvestmentFeature extends PureComponent {
@@ -19,6 +25,29 @@ export default class InvestmentFeature extends PureComponent {
     profitAbility: PropTypes.object.isRequired,
     // 投资账户特征
     investmentFeatureLabels: PropTypes.array.isRequired,
+  }
+
+  // 获取盈利能力等级描述
+  @autobind
+  getLevelDesc() {
+    // 展示的数据和levelList顺序相反，levelList需要倒叙排列
+    const levelList = _.slice(profitAbilityLevelList);
+    const levelListReverse = _.reverse(levelList);
+    const levelDescData = _.map(levelListReverse, level => {
+      const { levelName, levelDesc, levelClassName } = level;
+      const levelLabelCls = classnames([styles['levelLabel'], styles[levelClassName]]);
+      return (
+        <div className={styles.levelDesc}>
+          <span className={levelLabelCls}>{levelName}</span>
+          <span className={styles.levelValue}>{levelDesc}</span>
+        </div>
+      );
+    });
+    return (
+      <div className={styles.levelDescWrapper}>
+        {levelDescData}
+      </div>
+    );
   }
 
   render() {
@@ -30,6 +59,7 @@ export default class InvestmentFeature extends PureComponent {
       },
       investmentFeatureLabels,
     } = this.props;
+    const levelDesc = this.getLevelDesc();
     return (
       <div className={styles.investmentFeature}>
         <div className={styles.profitAbility}>
@@ -44,9 +74,16 @@ export default class InvestmentFeature extends PureComponent {
           </p>
         </div>
         <div className={styles.profitAbilityLevel}>
-          <p className={styles.title}>
+          <div className={styles.profitAbilityLevelTitle}>
             盈利能力等级
-          </p>
+            <Popover
+              overlayClassName={styles.levelPopover}
+              title={levelDesc}
+              trigger="click"
+            >
+              <Icon type="tishi" className={styles.profitAbilityLevelIcon}/>
+            </Popover>
+          </div>
           <div className={styles.levelWrapper}>
             <ProfitAbilityLevel
               profitAbilityLevel={profitAbilityLevel}

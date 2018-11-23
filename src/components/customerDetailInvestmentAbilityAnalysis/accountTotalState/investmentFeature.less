@@ -49,6 +49,22 @@
         }
       }
     }
+
+    .profitAbilityLevelTitle {
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+      color: #666;
+      font-weight: bold;
+    }
+
+    .profitAbilityLevelIcon {
+      margin: 2px 0 0 6px;
+      font-size: 12px;
+      color: #108ee9;
+      cursor: pointer;
+      display: inline-block;
+    }
   }
 
   .investmentFeatureLabel {
@@ -57,5 +73,55 @@
     .labelContainer {
       margin-top: 20px;
     }
+  }
+}
+
+.levelPopover {
+  :global {
+    .ant-popover-inner {
+      background-color: fade(#021637, 80%);
+
+      .ant-popover-title {
+        color: #fff;
+        border-bottom: 0;
+        padding: 10px;
+      }
+
+      .ant-popover-inner-content {
+        display: none;
+      }
+    }
+    .ant-popover-arrow {
+      background-color: fade(#021637, 80%);
+    }
+  }
+}
+
+.levelDesc {
+  font-size: 12px;
+
+  .levelLabel {
+    width: 30px;
+    display: inline-block;
+  }
+
+  .levelStrong {
+    color: #ff2900;
+  }
+
+  .levelStronger {
+    color: #ff8600;
+  }
+
+  .levelWeaker {
+    color: #ffc728;
+  }
+
+  .levelWeak {
+    color: rgba(200, 206, 134, 0.99);
+  }
+
+  .levelValue {
+    color: #fff;
   }
 }

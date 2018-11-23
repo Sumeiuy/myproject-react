@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-20 14:30:09
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-21 17:07:04
+ * @Last Modified time: 2018-11-22 16:34:23
  */
 
 import moment from 'moment';
@@ -22,18 +22,26 @@ const profitAbilityLevelList = [
   {
     level: 0,
     levelName: '弱',
+    levelDesc: '客户在华泰同资产段中同期收益率排名后20%',
+    levelClassName: 'levelWeak',
   },
   {
     level: 1,
     levelName: '较弱',
+    levelDesc: '客户在华泰同资产段中同期收益率排名前50%-80%（含80%）',
+    levelClassName: 'levelWeaker',
   },
   {
     level: 2,
     levelName: '较强',
+    levelDesc: '客户在华泰同资产段中同期收益率排名前50%-80%（含80%）',
+    levelClassName: 'levelStronger',
   },
   {
     level: 3,
     levelName: '强',
+    levelDesc: '客户在华泰同资产段中同期收益率排名前20%（含20%）',
+    levelClassName: 'levelStrong',
   }
 ];
 
