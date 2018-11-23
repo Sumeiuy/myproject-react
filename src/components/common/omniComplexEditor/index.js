@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-19 11:11:19
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-23 15:11:36
+ * @Last Modified time: 2018-11-23 15:33:33
  * @description 多功能复合编辑框
  */
 
@@ -160,7 +160,14 @@ export default class OmniComplexEditor extends PureComponent {
           onChange={this.handleSelectChange}
           {...restProps}
         >
-         {_.map(options, option => (<Option key={option[optionValueKey]} value={option[optionValueKey]}>{option[optionTextKey]}</Option>) )}
+         {_.map(options, option => (
+           <Option
+            key={option[optionValueKey]}
+            value={option[optionValueKey]}
+          >
+            {option[optionTextKey]}
+          </Option>)
+        )}
         </Select>
       );
     }
