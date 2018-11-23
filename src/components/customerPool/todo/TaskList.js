@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-11-12 19:25:08
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-22 15:15:44
+ * @Last Modified time: 2018-11-23 16:45:28
  */
 
 import React, { PureComponent } from 'react';
@@ -17,6 +17,7 @@ import {
   RETURN_TASK_FROM_TODOLIST,
 } from '../../../config/createTaskEntry';
 import { env } from '../../../helper';
+import Pagination from '../../common/Pagination';
 
 import styles from './taskList.less';
 import emptyImg from './img/empty.png';
@@ -35,6 +36,14 @@ export default class TaskList extends PureComponent {
     clearCreateTaskData: PropTypes.func.isRequired,
     // 无任务的时候提示文字
     emptyText: PropTypes.string.isRequired,
+    // 分页
+    page: PropTypes.object,
+    onPageChange: PropTypes.func,
+  }
+
+  static defaultProps = {
+    onPageChange: _.noop,
+    page: {},
   }
 
   static contextTypes = {
@@ -46,6 +55,7 @@ export default class TaskList extends PureComponent {
     super(props);
     this.state = {
       flowId: null,
+      curPageNum: 1
     };
     this.columns = this.getColumnsByListType();
   }
@@ -134,7 +144,7 @@ export default class TaskList extends PureComponent {
   // 请求基本信息成功，页面跳转
   @autobind
   handleSuccess() {
-    const { location: { query }, taskBasicInfo } = this.props;
+    const { location: { query }, taskBasicInfo, listType } = this.props;
     const { push } = this.context;
     const { flowId } = this.state;
     // 判断返回信息中msg是否报错
@@ -148,12 +158,21 @@ export default class TaskList extends PureComponent {
       };
       openRctTab({
         routerAction: push,
-        url: `/customerPool/createTaskFromTaskRejection1?source=${RETURN_TASK_FROM_TODOLIST}&flowId=${flowId}`,
+        url: `/customerPool/createTaskFromTaskRejection1?source=${RETURN_TASK_FROM_TODOLIST}&flowId=${flowId}&type=${listType}`,
         param,
         pathname: '/customerPool/createTaskFromTaskRejection1',
         query,
       });
     }
+  }
+
+  // 切换页码
+  @autobind
+  handlePageNumberChange(nextPage, currentPageSize) {
+    this.setState({
+      curPageNum: nextPage,
+    });
+    this.props.onPageChange(nextPage);
   }
 
   // 根据type获取列表数据
@@ -248,6 +267,14 @@ export default class TaskList extends PureComponent {
       data,
       emptyText,
     } = this.props;
+    // 生成页码器，此页码器配置项与Antd的一致
+    const {
+      page: {
+        pageSize,
+        curPageNum,
+        totalRecordNum,
+      }
+    } = this.props;
     // 搜索结果为空
     if (_.isEmpty(data)) {
       return (
@@ -266,6 +293,14 @@ export default class TaskList extends PureComponent {
           rowKey='id'
           columns={this.columns}
           dataSource={data}
+          pagination={false}
+        />
+        <Pagination
+          total={totalRecordNum}
+          pageSize={pageSize}
+          defaultCurrent={1}
+          onChange={this.handlePageNumberChange}
+          current={curPageNum}
         />
       </div>
     );
