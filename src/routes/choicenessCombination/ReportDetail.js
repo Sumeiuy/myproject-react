@@ -139,7 +139,7 @@ export default class ReportDetail extends PureComponent {
           </div>
           <div className={styles.right}>
             {
-              !env.isInReact ?
+              !env.isInReact() ?
                 <a onClick={this.handleGoBck}><Icon type="fanhui1" />返回上一页</a> : null
             }
           </div>
