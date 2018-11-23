@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-11-12 19:25:08
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-22 21:42:33
+ * @Last Modified time: 2018-11-23 11:00:38
  */
 
 import React, { PureComponent } from 'react';
@@ -40,11 +40,14 @@ export default class TaskList extends PureComponent {
     onPageChange: PropTypes.func,
   }
 
+  static defaultProps = {
+    onPageChange: _.noop,
+    page: {},
+  }
+
   static contextTypes = {
     push: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
-    onPageChange: _.noop,
-    page: {},
   }
 
   constructor(props) {
@@ -309,7 +312,7 @@ export default class TaskList extends PureComponent {
         />
         <Pagination
           total={totalRecordNum}
-          pageSize={10}
+          pageSize={pageSize}
           defaultCurrent={1}
           onChange={this.handlePageNumberChange}
           current={this.state.curPageNum}
