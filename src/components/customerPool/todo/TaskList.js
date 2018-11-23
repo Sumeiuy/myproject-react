@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-11-12 19:25:08
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-23 14:23:20
+ * @Last Modified time: 2018-11-23 16:45:28
  */
 
 import React, { PureComponent } from 'react';
@@ -144,7 +144,7 @@ export default class TaskList extends PureComponent {
   // 请求基本信息成功，页面跳转
   @autobind
   handleSuccess() {
-    const { location: { query }, taskBasicInfo } = this.props;
+    const { location: { query }, taskBasicInfo, listType } = this.props;
     const { push } = this.context;
     const { flowId } = this.state;
     // 判断返回信息中msg是否报错
@@ -158,7 +158,7 @@ export default class TaskList extends PureComponent {
       };
       openRctTab({
         routerAction: push,
-        url: `/customerPool/createTaskFromTaskRejection1?source=${RETURN_TASK_FROM_TODOLIST}&flowId=${flowId}`,
+        url: `/customerPool/createTaskFromTaskRejection1?source=${RETURN_TASK_FROM_TODOLIST}&flowId=${flowId}&type=${listType}`,
         param,
         pathname: '/customerPool/createTaskFromTaskRejection1',
         query,
@@ -169,21 +169,6 @@ export default class TaskList extends PureComponent {
   // 切换页码
   @autobind
   handlePageNumberChange(nextPage, currentPageSize) {
-    const {
-      location: {
-        query,
-        pathname,
-      },
-    } = this.props;
-    const { replace } = this.context;
-    replace({
-      pathname,
-      query: {
-        ...query,
-        pageNum: nextPage,
-        pageSize: currentPageSize,
-      },
-    });
     this.setState({
       curPageNum: nextPage,
     });

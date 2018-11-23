@@ -405,8 +405,6 @@ export default class ToDo extends PureComponent {
       query: {
         ...query,
         taskType: obj,
-        pageNum: 1,
-        pageSize: 10,
       },
     });
     switch (obj) {
