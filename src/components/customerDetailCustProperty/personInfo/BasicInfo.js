@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性-个人客户基本信息
  * @Date: 2018-11-07 14:33:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-23 11:31:39
+ * @Last Modified time: 2018-11-23 16:15:13
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -58,7 +58,9 @@ export default class BasicInfo extends PureComponent {
       custNature: 'per',
       custId,
       ...param,
-    }).then((resultData) => {
+    }).then(
+      (resultData) => {
+      //接口访问成功的时候
       // 使用这种方式为了让原地编辑组件能够控制loading的状态
       if (!_.isEmpty(resultData)) {
         const flag = resultData.result === 'success';
@@ -69,7 +71,9 @@ export default class BasicInfo extends PureComponent {
         return flag;
       }
       return false;
-    });
+    },
+    () => false
+    );
   }
 
   // 用于修改成功刷新基本信息数据
@@ -96,7 +100,7 @@ export default class BasicInfo extends PureComponent {
   // 校验子女数量必须是数字
   @autobind
   checkChildNumValue(value) {
-    if (_.isEmpty(value)) {
+    if (_.isEmpty(value) && !_.isNumber(value)) {
       return {
         validate: false,
         msg: '数据不能为空',
@@ -242,28 +246,28 @@ export default class BasicInfo extends PureComponent {
             */}
           </div>
           <div className={styles.infoItemBox}>
-            <InfoItem
+           <InfoItem
               width={INFO_ITEM_WITDH}
               label="子女数量"
               value={this.getChildNumText(data.childNum)}
               className={styles.infoItem}
               isNeedValueTitle={checkIsNeedTitle(this.getChildNumText(data.childNum))}
               isNeedOverFlowEllipsis
-            />
-            {/* 本迭代中先关闭
-              <BasicEditorCell
-                label="子女数量"
-                width={INFO_ITEM_WITDH}
-                className={styles.infoItem}
-                editorId="person_children_num"
-                onEditOK={this.updateChildNum}
-                value={data.childNum}
-                displayValue={data.childNum}
-                checkable
-                onCheck={this.checkChildNumValue}
-                onSuccess={this.refreshCustProperty}
-              />
-            */}
+           />
+           {/* 本迭代中先关闭
+             <BasicEditorCell
+               label="子女数量"
+               width={INFO_ITEM_WITDH}
+               className={styles.infoItem}
+               editorId="person_children_num"
+               onEditOK={this.updateChildNum}
+               value={data.childNum}
+               displayValue={data.childNum}
+               checkable
+               onCheck={this.checkChildNumValue}
+               onSuccess={this.refreshCustProperty}
+             />
+              */}
           </div>
           <div className={styles.infoItemBox}>
             <InfoItem
