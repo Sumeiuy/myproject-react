@@ -48,17 +48,17 @@ export default class FSPComponent extends PureComponent {
 
   componentDidUpdate(prevProps) {
     const { location: prevLocation } = prevProps;
-    const { location: { pathname, search, state } } = this.props;
+    const { location: { pathname, search, state = {} } } = this.props;
     const {
       pathname: prevPathname,
       search: prevSearch,
-      state: prevState,
+      state: prevState = {},
     } = prevLocation;
 
     if (
       pathname !== prevPathname ||
       search !== prevSearch ||
-      state !== prevState
+      state.url !== prevState.url
     ) {
       this.getRouteConfig(pathname, search, state);
       this.getFspData({ isinitial: false });
