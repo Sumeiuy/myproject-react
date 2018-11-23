@@ -612,7 +612,7 @@ export default class TradeFlowModal extends PureComponent {
     const capitalData = data.padEmptyDataForList(list);
     const capitalChangeColumns = this.transformColumnsData(CAPITAL_CHANGE_COLUMNS);
     const capitalPage = this.getPage(page);
-    const isRender = list.length !== 0;
+    const isRender = _.isEmpty(list) === false;
     // 弹出层的自定义关闭按钮
     const closeBtn = [(
       <Button onClick={this.handleModalClose}>关闭</Button>

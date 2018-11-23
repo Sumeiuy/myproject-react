@@ -193,7 +193,7 @@ export default class AccountDetail extends PureComponent {
       bussinessType,
     } = this.state;
     // 获取分页的页数
-    const isRender = list.length !== 0;
+    const isRender = _.isEmpty(list) === false;
     const accountChangePage = this.getPage(page);
     // 补足空白行后的资金账户数据
     const newFundAccount = supplyEmptyRow(fundAccount);
