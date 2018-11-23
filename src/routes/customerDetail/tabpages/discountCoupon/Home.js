@@ -3,7 +3,7 @@
  * @Description: 客户360-理财优惠券
  * @Date: 2018-11-06 16:17:28
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-11-23 10:49:40
+ * @Last Modified time: 2018-11-23 14:21:19
  */
 
 import React, { PureComponent } from 'react';
@@ -47,7 +47,7 @@ export default class DiscountCoupon extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      isShowModal: true,
+      isShowModal: false,
       ticketId: '',
       status: '',
     };
@@ -227,6 +227,8 @@ export default class DiscountCoupon extends PureComponent {
           <Table
             pagination={pageinationProps}
             dataSource={list}
+            isNeedEmptyRow
+            rowNumber={10}
             columns={this.getTitleList()}
             scroll={{ x: '1024px' }}
           />

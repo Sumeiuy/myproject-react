@@ -1,0 +1,36 @@
+.wrap {
+  width: 100%;
+  margin: 5px 0;
+  &:after {
+    content: " ";
+    display: table;
+    clear: both;
+  }
+
+  .label {
+    float: left;
+    width: 160px;
+    font-size: 14px;
+    color: #9b9b9b;
+    text-align: right;
+    margin-right: -160px;
+    .colon {
+      padding: 0 4px;
+    }
+  }
+  .value {
+    margin-left: 160px;
+    padding-left: 0;
+    float: left;
+    font-size: 14px;
+    color: #333;
+    white-space: normal;
+    word-break: break-all;
+    word-wrap: break-word;
+  }
+  .textOverFlow {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}

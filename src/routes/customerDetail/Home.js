@@ -2,7 +2,7 @@
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-11-23 11:09:39
+ * @Last Modified time: 2018-11-23 13:22:19
  */
 
 import React, { PureComponent } from 'react';
@@ -18,6 +18,9 @@ import CustomerBasicInfo from '../../components/customerDetail/CustomerBasicInfo
 import ServiceRelationship from './tabpages/serviceRelationship/Home';
 import CustProperty from './tabpages/custProperty/connectedHome';
 import DiscountCoupon from './tabpages/discountCoupon/connectedHome';
+import logable from '../../decorators/logable';
+import ProductOrder from './tabpages/productOrder/Home';
+import InvestmentAbilityAnalysis from './tabpages/investmentAbilityAnalysis/Home';
 import {
   ACCOUNT_INFO_TAB_KEY,
   CUSTOMER_INFO_TAB_KEY,
@@ -31,7 +34,6 @@ import {
   DISCOUNT_COUPON_TAB_KEY,
   custDetailTabMap,
 } from '../../components/customerDetail/config';
-import logable from '../../decorators/logable';
 
 import styles from './home.less';
 
@@ -207,6 +209,7 @@ export default class Home extends PureComponent {
               <CustProperty location={location} />
             </TabPane>
             <TabPane tab="投资能力分析" key={INVEST_ANALYZE_TAB_KEY}>
+              <InvestmentAbilityAnalysis />
             </TabPane>
             <TabPane tab="业务办理" key={BUNESSINESS_PROCESS_TAB_KEY}>
             </TabPane>
@@ -223,6 +226,9 @@ export default class Home extends PureComponent {
             </TabPane>
             <TabPane tab="理财优惠券" key={DISCOUNT_COUPON_TAB_KEY}>
               <DiscountCoupon location={location} />
+            </TabPane>
+            <TabPane tab="产品订单" key="productOrder">
+              <ProductOrder location={location} />
             </TabPane>
           </Tabs>
         </div>

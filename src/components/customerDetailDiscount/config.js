@@ -3,9 +3,10 @@
  * @Description: 客户360-理财优惠券相关config
  * @Date: 2018-11-21 16:48:58
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-11-23 11:17:00
+ * @Last Modified time: 2018-11-23 13:27:38
  */
 import React from 'react';
+import { time } from '../../helper';
 
 export const DEFAULT_VALUE = '--';
 
@@ -91,7 +92,7 @@ export const productTitleList = [
     className: '',
     width: 130,
     render: text => (
-      <span title={text}>{text}</span>
+      <span title={time.format(text)}>{time.format(text)}</span>
     ),
   },
   {

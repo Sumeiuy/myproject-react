@@ -25,6 +25,11 @@
       width: 50%;
       vertical-align: top;
     }
+    div.infoItem {
+      div:nth-child(2) {
+        padding-left: 0;
+      }
+    }
   }
   .listBox {
     :global {
@@ -44,6 +49,10 @@
               white-space: nowrap;
               text-overflow: ellipsis;
               overflow: hidden;
+              span {
+                display: inline-block;
+                height: 19px;
+              }
             }
           }
         }

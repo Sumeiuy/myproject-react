@@ -3,7 +3,7 @@
  * @Description: 客户360-理财优惠券-优惠券详情modal
  * @Date: 2018-11-22 13:46:00
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-11-23 11:19:16
+ * @Last Modified time: 2018-11-23 14:13:59
  */
 
 import React, { PureComponent } from 'react';
@@ -19,6 +19,7 @@ import {
 import styles from './detailModal.less';
 
 const INFO_ITEM_WITDH = '155px';
+const EMPTY_ARRAY = [];
 export default class DetailModal extends PureComponent {
   static propTypes = {
     visible: proptypes.bool.isRequired,
@@ -173,7 +174,8 @@ export default class DetailModal extends PureComponent {
             </div>
             <Table
               pagination={paginationProps}
-              dataSource={data.productList}
+              dataSource={data.productList || EMPTY_ARRAY}
+              isNeedEmptyRow
               columns={productTitleList}
               scroll={{ x: '1000px' }}
             />

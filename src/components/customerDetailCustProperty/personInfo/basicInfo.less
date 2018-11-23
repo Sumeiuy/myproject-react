@@ -4,11 +4,19 @@
 .infoItemBox {
   display: inline-block;
   width: 25%;
+  height: 32px;
   vertical-align: top;
 }
 div.infoItem {
-  div:nth-child(2) {
+  margin: 0;
+  height: 32px;
+  & > div:nth-child(1) {
+    line-height: 32px;
+  }
+  & > div:nth-child(2) {
     padding-left: 0;
+    line-height: 32px;
+    height: 100%;
   }
 }
 .container {
