@@ -11,7 +11,7 @@ export default function detailProductOrder(api) {
     // 根据关键字搜索服务产品
     queryServiceProductByKeyword: query => api.post('/queryServiceProductByKeyword', query),
     // 获取服务订单流水列表
-    queryServiceOrderFlow: query => api.post('/queryServiceOrderFlow', query),
+    queryServiceOrderFlow: query => api.post('/groovynoauth/fsp/cust/prodorder/queryServiceOrderFlow', query),
     // 获取服务订单详情
     queryServiceOrderDetail: query => api.post('/queryServiceOrderDetail', query),
     // 获取服务订单详情 - 服务产品

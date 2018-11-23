@@ -9,31 +9,39 @@
 export const SERVICE_ORDER_FLOW_COLUMNS = [
   {
     title: '订单编号',
-    dataIndex: 'orderId',
+    dataIndex: 'orderNumber',
+    className: 'orderNumber',
+    width: 208,
   },
   {
     title: '类型',
-    dataIndex: 'serviceType',
+    dataIndex: 'typeName',
+    width: 113,
   },
   {
     title: '状态',
-    dataIndex: 'serviceStatus',
+    dataIndex: 'statusName',
+    width: 85,
   },
   {
     title: '创建者',
-    dataIndex: 'creator',
+    dataIndex: 'creatorName',
+    width: 211,
   },
   {
     title: '创建时间',
-    dataIndex: 'createdTime',
+    dataIndex: 'createTime',
+    width: 135,
   },
   {
     title: '受理渠道',
-    dataIndex: 'serviceChannel',
+    dataIndex: 'receivingChannel',
+    width: 129,
   },
   {
     title: '执行情况',
-    dataIndex: 'condition',
+    dataIndex: 'executiveCondition',
+    className: 'executiveCondition',
   },
 ];
 

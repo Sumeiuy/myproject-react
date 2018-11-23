@@ -9,12 +9,17 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+import _ from 'lodash';
+import moment from 'moment';
+import Tooltip from '../common/Tooltip';
 import { SingleFilter, SingleFilterWithSearch } from 'lego-react-filter/src';
 import Table from '../common/table';
 import DateFilter from '../common/htFilter/dateFilter';
 import {
   SERVICE_ORDER_FLOW_COLUMNS,
   DEFAULT_PAGE_SIZE,
+  DATE_FORMATE_STR,
+  DATE_FORMATE_STR_DETAIL,
 } from './config';
 import styles from './productOrderFlow.less';
 
@@ -36,11 +41,59 @@ export default class ProductOrderFlow extends PureComponent {
   handleSearchChanged(value) {
   }
 
+  @autobind
+  transformColumnsData(columns) {
+    return _.map(columns, column => {
+      let newColumn;
+      switch(column.dataIndex) {
+        case 'orderNumber':
+          const renderNum = id => (
+            <a>{id}</a>
+          );
+          newColumn = {
+            ...column,
+            render: renderNum,
+          };
+          break;
+        case 'createTime':
+          const renderFunc = date => {
+            const timeStr = moment(date).format(DATE_FORMATE_STR);
+            const timeStrDetail = moment(date).format(DATE_FORMATE_STR_DETAIL);
+            return (
+              <span>
+                <Tooltip title={timeStrDetail}>{timeStr}</Tooltip>
+              </span>
+            );
+          };
+          newColumn = {
+            ...column,
+            render: renderFunc,
+          };
+          break;
+        default:
+          newColumn = { ...column };
+      }
+      return newColumn;
+    });
+  }
+
   render() {
-    // const {
-    //   productListBySearch,
-    //   serviceOrderFlow,
-    // } = this.props;
+    const {
+      serviceOrderFlow: {
+        list = [],
+        page = {},
+      },
+    } = this.props;
+    const {
+      curPageNum = 1,
+      pageSize = DEFAULT_PAGE_SIZE,
+      totalRecordNum = 1,
+    } = page;
+    const pagination = {
+      current: curPageNum,
+      pageSize,
+      total: totalRecordNum,
+    };
 
     return (
       <div className={styles.productOrderFlowWrap}>
@@ -76,9 +129,11 @@ export default class ProductOrderFlow extends PureComponent {
         </div>
         <div className={styles.body}>
           <Table
-            // dataSource={serviceOrderFlow}
-            columns={SERVICE_ORDER_FLOW_COLUMNS}
+            pagination={pagination}
+            dataSource={list}
+            columns={this.transformColumnsData(SERVICE_ORDER_FLOW_COLUMNS)}
             className={styles.table}
+            rowClassName={styles.tableRow}
           />
         </div>
       </div>
