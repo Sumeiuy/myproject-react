@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-19 15:39:12
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-22 17:21:52
+ * @Last Modified time: 2018-11-23 14:46:57
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -28,6 +28,8 @@ const effects = {
   getInvestmentFeatureLabels: 'detailInvestmentAbilityAnalysis/getInvestmentFeatureLabels',
   // 获取账户资产变动
   getAssetChangeState: 'detailInvestmentAbilityAnalysis/getAssetChangeState',
+  // 获取账户资产变动图表
+  getAssetChangeReport: 'detailInvestmentAbilityAnalysis/getAssetChangeReport',
 };
 
 const mapStateToProps = state => ({
@@ -37,6 +39,8 @@ const mapStateToProps = state => ({
   investmentFeatureLabels: state.detailInvestmentAbilityAnalysis.investmentFeatureLabels,
   // 账户资产变动
   assetChangeList: state.detailInvestmentAbilityAnalysis.assetChangeList,
+  // 账户资产变动图表数据
+  assetChangeReportData: state.detailInvestmentAbilityAnalysis.assetChangeReportData,
 });
 
 const mapDispatchToProps = {
@@ -46,6 +50,8 @@ const mapDispatchToProps = {
   getInvestmentFeatureLabels: effect(effects.getInvestmentFeatureLabels, { forceFull: true }),
   // 获取账户资产变动
   getAssetChangeState: effect(effects.getAssetChangeState, { forceFull: true }),
+  // 获取账户资产变动图表
+  getAssetChangeReport: effect(effects.getAssetChangeReport, { forceFull: true }),
 };
 
 @withRouter
@@ -65,6 +71,10 @@ export default class Home extends PureComponent {
     getAssetChangeState: PropTypes.func.isRequired,
     // 账户资产变动
     assetChangeList: PropTypes.array.isRequired,
+    // 获取账户资产变动图表
+    getAssetChangeReport: PropTypes.func.isRequired,
+    // 账户资产变动图表数据
+    assetChangeReportData: PropTypes.array.isRequired,
   }
 
   static contextTypes = {
@@ -115,6 +125,8 @@ export default class Home extends PureComponent {
       getInvestmentFeatureLabels,
       getAssetChangeState,
       assetChangeList,
+      getAssetChangeReport,
+      assetChangeReportData,
     } = this.props;
     return (
       <div className={styles.investmentAbilityAnalysis}>
@@ -128,6 +140,8 @@ export default class Home extends PureComponent {
               getInvestmentFeatureLabels={getInvestmentFeatureLabels}
               getAssetChangeState={getAssetChangeState}
               assetChangeList={assetChangeList}
+              getAssetChangeReport={getAssetChangeReport}
+              assetChangeReportData={assetChangeReportData}
             />
           </TabPane>
           <TabPane tab="资产配置分析" key="assetAllocationAnalysis">资产配置分析</TabPane>

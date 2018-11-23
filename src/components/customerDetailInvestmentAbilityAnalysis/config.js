@@ -2,10 +2,16 @@
  * @Author: zhangjun
  * @Date: 2018-11-20 14:30:09
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-22 16:34:23
+ * @Last Modified time: 2018-11-23 16:27:05
  */
 
 import moment from 'moment';
+
+// 资金投入
+const FUND_INVEST = '资金投入';
+
+// 资产市值
+const ASSET_MARKET = '资产市值';
 
 // 日期格式
 const dateFormat = 'YYYY/MM/DD';
@@ -49,6 +55,8 @@ const investmentAbilityAnalysis = {
   endDateOfLastMonth,
   lastYearDataOfLastMonth,
   profitAbilityLevelList,
+  FUND_INVEST,
+  ASSET_MARKET,
 };
 
 
@@ -58,4 +66,6 @@ export {
   endDateOfLastMonth,
   lastYearDataOfLastMonth,
   profitAbilityLevelList,
+  FUND_INVEST,
+  ASSET_MARKET,
 };

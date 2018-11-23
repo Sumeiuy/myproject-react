@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-20 16:01:36
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-23 10:54:54
+ * @Last Modified time: 2018-11-23 14:37:30
  * @description 新版客户360详情下的账户信息Tab页面的model
  */
 import { detailInvestmentAbilityAnalysis as api } from '../../api';
@@ -38,6 +38,14 @@ export default {
     },
     // 获取账户资产变动成功
     getAssetChangeStateSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        assetChangeList: payload || [],
+      };
+    },
+    // 获取账户资产变动图表数据
+    getAssetChangeReportSuccess(state, action) {
       const { payload } = action;
       return {
         ...state,

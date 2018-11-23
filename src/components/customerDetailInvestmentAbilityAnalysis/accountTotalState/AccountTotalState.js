@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-19 16:37:18
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-22 17:32:52
+ * @Last Modified time: 2018-11-23 14:16:26
  * @description 账户总体情况
  */
 import React, { PureComponent } from 'react';
@@ -13,6 +13,7 @@ import CountPeriod from '../CountPeriod';
 import InfoTitle from '../InfoTitle';
 import InvestmentFeature from './InvestmentFeature';
 import AssetChangeTable from './AssetChangeTable';
+import AssetChangeChart from './AssetChangeChart';
 import styles from './accountTotalState.less';
 
 export default class AccountTotalState extends PureComponent {
@@ -30,6 +31,10 @@ export default class AccountTotalState extends PureComponent {
     getAssetChangeState: PropTypes.func.isRequired,
     // 账户资产变动
     assetChangeList: PropTypes.array.isRequired,
+    // 获取账户资产变动图表
+    getAssetChangeReport: PropTypes.func.isRequired,
+    // 账户资产变动图表数据
+    assetChangeReportData: PropTypes.array.isRequired,
   }
 
   componentDidMount() {
@@ -39,6 +44,8 @@ export default class AccountTotalState extends PureComponent {
     this.getInvestmentFeatureLabels();
     // 获取账户资产变动
     this.getAssetChangeState();
+    // 获取账户资产变动图表数据
+    this.getAssetChangeReport();
   }
 
   // 获取客户盈利能力
@@ -62,11 +69,19 @@ export default class AccountTotalState extends PureComponent {
     this.props.getAssetChangeState({ custId });
   }
 
+  // 获取账户资产变动图表数据
+  @autobind
+  getAssetChangeReport() {
+    const { location: { query: { custId } } } = this.props;
+    this.props.getAssetChangeReport({ custId });
+  }
+
   render() {
     const {
       profitAbility,
       investmentFeatureLabels,
       assetChangeList,
+      assetChangeReportData,
     } = this.props;
     return (
       <div className={styles.accountTotalState}>
@@ -79,6 +94,9 @@ export default class AccountTotalState extends PureComponent {
         <InfoTitle title="客户资产变动情况"/>
         <AssetChangeTable
           assetChangeList={assetChangeList}
+        />
+        <AssetChangeChart
+          assetChangeReportData={assetChangeReportData}
         />
       </div>
     );
