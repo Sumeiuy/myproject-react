@@ -10,8 +10,12 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { Button, Tabs } from 'antd';
+import Tooltip from '../common/Tooltip';
 import Modal from '../common/biz/CommonModal';
 import styles from './productOrderDetail.less';
+import OtherCommissions from './OtherCommissions';
+import OrderApproval from './OrderApproval';
+import ServiceProductList from './ServiceProductList';
 
 const TabPane = Tabs.TabPane;
 
@@ -30,14 +34,24 @@ export default class ProductOrderDetail extends PureComponent {
     queryOtherCommissions: PropTypes.func.isRequired,
   };
 
-  componentDidMount() {
-    const {
-      orderNumber,
-      queryServiceOrderDetail,
-    } = this.props;
-    queryServiceOrderDetail({
-      orderNumber,
-    });
+  componentDidUpdate(prevProps) {
+    if (this.props.orderNumber !== '' && this.props.orderNumber !== prevProps.orderNumber) {
+      const {
+        orderNumber,
+        queryServiceOrderDetail,
+        queryOtherCommissions,
+        queryOrderApproval,
+      } = this.props;
+      queryServiceOrderDetail({
+        orderNumber,
+      });
+      queryOtherCommissions({
+        orderNumber,
+      });
+      queryOrderApproval({
+        orderNumber,
+      });
+    }
   }
 
   @autobind
@@ -49,7 +63,10 @@ export default class ProductOrderDetail extends PureComponent {
     const {
       visible,
       orderNumber,
+      orderApproval,
+      serviceProductList,
       serviceOrderDetail,
+      otherCommissions,
     } = this.props;
     const {
       originalCommission = '',
@@ -72,23 +89,40 @@ export default class ProductOrderDetail extends PureComponent {
       >
         <div className={styles.serviceOrderDetailWrap}>
           <div className={styles.detailInfo}>
-            <div>
-              <span>客户原佣金（‰）：{originalCommission}</span>
-              <span>客户新佣金（‰）：{newCommission}</span>
-              <span>审批流程：{approveFlow}</span>
+            <div className={styles.detail}>
+              <span className={styles.hint}>客户原佣金（‰）：</span>
+              <span className={styles.info}>{originalCommission}</span>
+              <span className={styles.hint}>客户新佣金（‰）：</span>
+              <span className={styles.info}>{newCommission}</span>
+              <span className={styles.hint}>审批流程：</span>
+              <span className={styles.info}>{approveFlow}</span>
             </div>
-            <div>
-              <span>执行情况：{executiveCondition}</span>
+            <div className={styles.detail}>
+              <span className={styles.hint}>执行情况：</span>
+              <span>
+                <Tooltip title={executiveCondition}>{executiveCondition}</Tooltip>
+              </span>
             </div>
           </div>
-          <Tabs>
+          <Tabs
+            className={styles.detailTab}
+          >
             <TabPane tab="服务产品" key="serviceProductList">
+              <ServiceProductList
+                serviceProductList={serviceProductList}
+              />
             </TabPane>
             <TabPane tab="审批" key="orderApproval">
+              <OrderApproval
+                approvalInfo={orderApproval}
+              />
             </TabPane>
             <TabPane tab="附件" key="ceFiles">
             </TabPane>
             <TabPane tab="其他佣金" key="otherCommissions">
+              <OtherCommissions
+                commissions={otherCommissions}
+              />
             </TabPane>
           </Tabs>
         </div>
