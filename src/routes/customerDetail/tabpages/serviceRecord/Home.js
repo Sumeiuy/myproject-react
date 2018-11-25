@@ -1,14 +1,15 @@
-/**
- * @file customerPool/ServiceLog.js
- *  360服务记录
- * @author zhufeiyang
+/*
+ * @Author: zhufeiyang
+ * @Date: 2018-11-19 11:11:19
+ * @Last Modified by: zhufeiyang
+ * @Last Modified time: 2018-11-22 16:14:50
+ * @description 新版360服务记录
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Input } from 'antd';
+import { Input } from 'antd';
 import { connect } from 'dva';
-import { dva } from '../../../../helper';
 import classnames from 'classnames';
 import _ from 'lodash';
 import moment from 'moment';
@@ -16,8 +17,11 @@ import DateRangePicker from 'lego-react-date/src';
 import { SingleFilter } from 'lego-react-filter/src';
 import { TreeFilter } from 'lego-tree-filter/src';
 import { autobind } from 'core-decorators';
+import Icon from '../../../../components/common/Icon';
+import { dva } from '../../../../helper';
 import logable from '../../../../decorators/logable';
 import IfWrap from '../../../../components/common/biz/IfWrap';
+import ServiceLogList from '../../../../components/customerDetailProductOrder/ServiceLogList';
 import styles from './home.less';
 
 const Search = Input.Search;
@@ -46,8 +50,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   getServiceLog: effect('customerPool/getServiceLog', { loading: true }),
-  getServiceLogMore: effect('customerPool/getServiceLogMore', { loading: true }),
-  getCeFileList: effect('customerPool/getCeFileList', { loading: true }),
+  getServiceLogMore: effect('customerPool/getServiceLogMore', { loading: false }),
+  getCeFileList: effect('customerPool/getCeFileList', { loading: false }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -251,6 +255,11 @@ export default class ServiceLog extends PureComponent {
   handleDateChange(date) {
     const startDate = date.value[0];
     const endDate = date.value[1];
+    // 如果时间没有发生改变, 直接return
+    if (startDate === this.state.startDate &&
+        endDate === this.state.endDate) {
+          return;
+    }
     this.setState({
       startDate,
       endDate,
@@ -365,9 +374,12 @@ export default class ServiceLog extends PureComponent {
       dict: {
         serveAllSource,
         serveAllType,
+        executeTypes,
       },
       serviceLogList,
       isLastServiceLog,
+      filesList,
+      getCeFileList,
     } = this.props;
     const {
       serveSource,
@@ -378,6 +390,7 @@ export default class ServiceLog extends PureComponent {
     } = this.state;
 
     const { defaultStartDate, defaultEndDate } = this.getDefaultDate(startDate, endDate);
+
     return (
       <div className={styles.serviceInner}>
         <div className={styles.servicecontent}>
@@ -422,30 +435,36 @@ export default class ServiceLog extends PureComponent {
               />
             </div>
           </div>
-          {/* <Row>
-            <Col span={20} className={styles.serviceLog}>
-              <Collapse
-                data={logData}
-                executeTypes={executeTypes}
-                serveWay={serveWay}
-                handleCollapseClick={handleCollapseClick}
-                getCeFileList={getCeFileList}
-                filesList={filesList}
-              />
-            </Col>
-          </Row> */}
-          <div>
-            <Button
+          <div className={styles.serviceLog}>
+            <ServiceLogList
+              serviceLogList={serviceLogList}
+              executeTypes={executeTypes}
+              getCeFileList={getCeFileList}
+              filesList={filesList}
+            />
+          </div>
+          <div className={styles.listFooter}>
+            <span
               className={classnames({
+                [styles.btn]: true,
                 [styles.hidden]: isLastServiceLog || _.isEmpty(serviceLogList),
               })}
               onClick={this.handleMoreBtnClick}
-            >加载更多服务记录</Button>
+            >
+              <span className={styles.btnContent}>加载更多服务记录</span>
+              <Icon
+                type="zhankai1"
+                className={styles.icon}
+              />
+            </span>
             <div
               className={classnames({
+                [styles.lastServiceLog]: true,
                 [styles.hidden]: !isLastServiceLog,
               })}
-            >已经是最后一条了</div>
+            >
+              <span className={styles.divider} />已经是最后一条了<span className={styles.divider} />
+            </div>
           </div>
           <div>
 

@@ -226,7 +226,6 @@ export default class OmniComplexEditor extends PureComponent {
   // 当提交编辑后的操作
   @autobind
   handleEditorAfterSubmit(flag) {
-    debugger;
     // 无论成功与否都必须将loading消失
     this.setState({ loading: false });
     if (flag) {
