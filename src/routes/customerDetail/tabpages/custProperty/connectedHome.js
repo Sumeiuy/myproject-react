@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 客户360-客户属性相关effect,mapStateToProps,mapDispatchToProps
  * @Date: 2018-11-06 14:50:44
- * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-12 14:29:28
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-11-22 13:43:53
  */
 import { connect } from 'dva';
 
@@ -40,6 +40,8 @@ const mapDispatchToProps = {
   queryZjPointMemberInfo: effect('detailCustProperty/queryZjPointMemberInfo', { loading: true }),
   // 获取紫金积分会员积分兑换流水
   queryZjPointExchangeFlow: effect('detailCustProperty/queryZjPointExchangeFlow', { loading: true }),
+  // 修改个人客户、机构客户的基本信息
+  updateCustBasicInfo: effect('detailCustProperty/updateCustBasicInfo', { loading: false }),
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

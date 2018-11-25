@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 客户360-客户属性
  * @Date: 2018-11-06 16:17:28
- * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-13 10:53:07
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-11-22 16:11:44
  */
 
 import React, { PureComponent } from 'react';
@@ -66,6 +66,8 @@ export default class CustProperty extends PureComponent {
     // 获取紫金积分会员积分兑换流水
     queryZjPointExchangeFlow: PropTypes.func.isRequired,
     zjPointExchangeFlow: PropTypes.object.isRequired,
+    // 修改个人客户、机构客户的基本信息
+    updateCustBasicInfo: PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -152,10 +154,16 @@ export default class CustProperty extends PureComponent {
     const {
       custInfo: {
         person = EMPTY_OBJECT,
-      }
+      },
+      updateCustBasicInfo,
+      location,
+      queryCustomerProperty,
     } = this.props;
     return (
       <PersonInfo
+        queryCustomerProperty={queryCustomerProperty}
+        location={location}
+        updateCustBasicInfo={updateCustBasicInfo}
         hasDuty={this.hasDuty()}
         data={person}
       />
@@ -195,23 +203,19 @@ export default class CustProperty extends PureComponent {
   // 根据不同的客户类型渲染不同的客户信息组件
   @autobind
   renderCustInfo() {
-    const {
-      custInfo: {
-        custNature,
-      },
-    } = this.props;
+    const { custInfo: { custNature } } = this.props;
     let component = null;
     switch (custNature) {
-      // 如果客户类型是个人客户
       case PERSON_CUST_TYPE:
+        // 如果客户类型是个人客户
         component = this.renderPersonInfo();
         break;
-      // 如果客户类型是普通机构客户
       case ORGANIZATION_CUST_TYPE:
+        // 如果客户类型是普通机构客户
         component = this.renderOrganizationInfo();
         break;
-      // 如果客户类型是产品机构客户
       case PRODUCT_CUST_TYPE:
+        // 如果客户类型是产品机构客户
         component = this.renderProductInfo();
         break;
       default:

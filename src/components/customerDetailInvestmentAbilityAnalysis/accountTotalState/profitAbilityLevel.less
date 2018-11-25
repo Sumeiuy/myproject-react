@@ -1,0 +1,130 @@
+.profitAbilityLevel {
+  width: 280px;
+  display: flex;
+
+  .steps {
+    .stepItem {
+      position: relative;
+      height: 7px;
+      display: flex;
+      align-items: center;
+
+      .itemTail {
+        width: 70px;
+        height: 3px;
+        line-height: 7px;
+        background: #e4e4e4;
+        display: inline-block;
+      }
+
+      .itemIcon {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #e4e4e4;
+        display: inline-block;
+      }
+
+      .itemContent {
+        position: absolute;
+        top: 16px;
+        right: -3px;
+        color: #ccc;
+      }
+    }
+    .itemFinish {
+      .itemContent {
+        color: #333;
+      }
+    }
+    .itemProgress {
+      .itemContent {
+        color: #333;
+      }
+    }
+    &:first-child {
+      .stepItem {
+        .itemTail {
+          width: 0;
+        }
+      }
+      .itemFinish {
+        .itemIcon {
+          background: #f7e287;
+        }
+      }
+      .itemProgress {
+        .itemIcon {
+          background: #f7e287;
+          box-shadow: 0 0 13px #f7e287;
+        }
+      }
+    }
+
+    &:nth-child(2) {
+      .itemContent {
+        right: -9px;
+      }
+      .itemFinish {
+        .itemTail {
+          background: linear-gradient(to right, #f7e288, #ffd07d);
+        }
+        .itemIcon {
+          background: #ffd07d;
+        }
+      }
+      .itemProgress {
+        .itemTail {
+          background: linear-gradient(to right, #f7e288, #ffd07d);
+        }
+        .itemIcon {
+          background: #ffd07d;
+          box-shadow: 0 0 13px #ffd07d;
+        }
+      }
+    }
+
+    &:nth-child(3) {
+      .itemContent {
+        right: -9px;
+      }
+      .itemFinish {
+        .itemTail {
+          background: linear-gradient(to right, #ffd07d, #f38350);
+        }
+        .itemIcon {
+          background: #f38350;
+        }
+      }
+      .itemProgress {
+        .itemTail {
+          background: linear-gradient(to right, #ffd07d, #f38350);
+        }
+        .itemIcon {
+          background: #f38350;
+          box-shadow: 0 0 13px #f38350;
+        }
+      }
+    }
+
+    &:nth-child(4) {
+      .itemFinish {
+        .itemTail {
+          background: linear-gradient(to right, #f38350, #e00505);
+        }
+        .itemIcon {
+          background: #e00505;
+        }
+      }
+      .itemProgress {
+        .itemTail {
+          background: linear-gradient(to right, #f38350, #e00505);
+        }
+        .itemIcon {
+          background: #e00505;
+          box-shadow: 0 0 13px #e00505;
+        }
+      }
+    }
+  }
+}

@@ -1,8 +1,8 @@
 /**
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
- * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-09 11:07:03
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-11-21 16:45:16
  */
 
 import React, { PureComponent } from 'react';
@@ -18,6 +18,9 @@ import CustomerBasicInfo from '../../components/customerDetail/CustomerBasicInfo
 import ServiceRelationship from './tabpages/serviceRelationship/Home';
 import CustProperty from './tabpages/custProperty/connectedHome';
 import ServiceRecord from './tabpages/serviceRecord/Home';
+import ProductOrder from './tabpages/productOrder/Home';
+import InvestmentAbilityAnalysis from './tabpages/investmentAbilityAnalysis/Home';
+
 import styles from './home.less';
 
 const TabPane = Tabs.TabPane;
@@ -73,7 +76,11 @@ export default class Home extends PureComponent {
       queryCustSummaryInfo({ custId });
     }
     // 获取客户反馈字典信息
-    getMotCustfeedBackDict({ pageNum: 1, pageSize: 10000, type: 2 });
+    getMotCustfeedBackDict({
+      pageNum: 1,
+      pageSize: 10000,
+      type: 2
+    });
   }
 
   componentDidUpdate(prevProps) {
@@ -176,6 +183,9 @@ export default class Home extends PureComponent {
             <TabPane tab="客户属性" key="customerInfo">
               <CustProperty location={location} />
             </TabPane>
+            <TabPane tab="投资能力分析" key="investmentAbilityAnalysis">
+              <InvestmentAbilityAnalysis />
+            </TabPane>
             <TabPane tab="业务办理" key="businessProcessing">
             </TabPane>
             <TabPane tab="服务记录" key="serviceRecord">
@@ -187,6 +197,9 @@ export default class Home extends PureComponent {
             <TabPane tab="合约管理" key="contractManagement">
             </TabPane>
             <TabPane tab="投资者评估" key="investorAssessment">
+            </TabPane>
+            <TabPane tab="产品订单" key="productOrder">
+              <ProductOrder location={location} />
             </TabPane>
           </Tabs>
         </div>
