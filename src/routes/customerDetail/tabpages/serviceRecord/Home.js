@@ -21,7 +21,7 @@ import Icon from '../../../../components/common/Icon';
 import { dva } from '../../../../helper';
 import logable from '../../../../decorators/logable';
 import IfWrap from '../../../../components/common/biz/IfWrap';
-import ServiceLogList from '../../../../components/customerDetailProductOrder/ServiceLogList';
+import ServiceLogList from '../../../../components/customerDetailServiceLog/ServiceLogList';
 import styles from './home.less';
 
 const Search = Input.Search;
