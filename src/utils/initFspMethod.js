@@ -7,7 +7,7 @@ import env from '../helper/env';
 import { findBestMatch } from '../helper/os';
 import { parse, parseUrl } from '../helper/url';
 import { fspRoutes, retTabParam, tabMenuConfig } from '../config';
-import { openRctTab, closeFspTab } from './controlPane';
+import { openRctTab, closeTabForEB } from './controlPane';
 
 function findRoute(url) {
   return findBestMatch(url, fspRoutes, 'url');
@@ -127,8 +127,10 @@ function initFspMethod({ store, history, isInReact }) {
       loadPageInTab: {
         run(url, { reactShouldRemove }) {
           const { path } = findRoute(url);
+          const searchString = url.split('?')[1];
           push({
             pathname: path,
+            search: searchString && `?${searchString}`,
             state: {
               url,
               shouldRemove: reactShouldRemove,
@@ -207,11 +209,9 @@ function initFspMethod({ store, history, isInReact }) {
     // 重写eb的关闭tab的方法, 目前只支持关闭当前的active的tab
     window.closeTabForEB = function (id) {
       const tabNeedClose = _.find(tabMenuConfig.newOpenTabConfig, tabItem => tabItem.id === id);
-      if (tabNeedClose) {
-        closeFspTab({
-          id: tabNeedClose.id,
-        });
-      }
+      closeTabForEB({
+        id: tabNeedClose && tabNeedClose.id,
+      });
     };
 
     window.tabW = _.noop;

@@ -20,6 +20,7 @@ import {
   moreFilterCategories,
   moreFilters,
   custListSearchTypes,
+  custListSearchTypeMapData,
 } from './config/filterConfig';
 
 import {
@@ -588,6 +589,7 @@ export default class Filter extends PureComponent {
       this.props.onFilterChange({
         name: obj.id,
         value: obj.value,
+        fromMoreFilter: this.selectFilterIdFromMore, // 用于告诉CustomerList__组件筛选条件是否是从更多中取出，如果是从更多中取出，少执行一次recordPrevFilterValue。
       }, obj.isDeleteFilterFromLocation);
 
       if (!obj.isDeleteFilterFromLocation) {
@@ -789,6 +791,18 @@ export default class Filter extends PureComponent {
     return flag ? decodeURIComponent(q) : '';
   }
 
+  @autobind
+  getCustSearchType() {
+    const {
+      location: {
+        query: {
+          type,
+        }
+      }
+    } = this.props;
+    return custListSearchTypeMapData[type];
+  }
+
   render() {
     const {
       dict,
@@ -833,6 +847,7 @@ export default class Filter extends PureComponent {
         <div className={styles.normalFilter}>
           <CustSearch
             keyword={this.getCustSearchDefaultValue()}
+            type={this.getCustSearchType()}
             location={location}
             getHotPossibleWds={getHotPossibleWds}
             hotPossibleWdsList={hotPossibleWdsList}

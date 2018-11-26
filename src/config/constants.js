@@ -7,7 +7,8 @@
 const exported = {
   container: '.react-app',
   logoText: '华泰证券',
-  version: '1.6.2',
+  oldVersion: '1.6.2', // 老版理财平台版本
+  newVersion: '2.0.0', // 新版理财平台版本
   boardId: 1,
   boardType: 'TYPE_TGJX',
   historyBoardId: 3,
@@ -37,7 +38,8 @@ export default exported;
 export const {
  container,
  logoText,
- version,
+ oldVersion,
+ newVersion,
  boardId,
  boardType,
  historyBoardId,

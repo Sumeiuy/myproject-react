@@ -1,79 +1,109 @@
 .todo {
-	margin: 15px 20px 20px;
+  background: #fff;
+  :global {
+    .ant-tabs-nav-container {
+      display: none;
+    }
+    .ant-tabs-nav-scroll {
+      background: #fff;
+    }
+    .ant-tabs-bar {
+      box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.1);
+    }
+    .ant-tabs-content {
+      padding: 0 20px;
+    }
+    .ant-tabs.ant-tabs-card > .ant-tabs-bar {
+      .ant-tabs-tab {
+        background: #fff;
+        font-size: 14px;
+        color: #333;
+        border: none;
+        text-align: center;
+        padding: 0 20px;
+        border-radius: 12px;
+        margin-left: 20px;
+      }
+      .ant-tabs-tab-active {
+        color: #000;
+        font-weight: bold;
+        background: #f6f6f6;
+        line-height: 24px;
+      }
+    }
+  }
 
-	:global {
-		.total-num {
-			font-size: 14px;
-			color: #666;
-			 em {
-			 	font-style: normal;
-			 	color: #fdb02b;
-			 }
-		}
-		.search-box {
-			float: right;
-			width: 320px;
-			height: 32px;
-			position: relative;
-			.search-input {
-				height: 100%;
-				.ant-input {
-					border: 1px solid #ddd;
-					padding-right: 30px;
-				}
-				.ant-input-suffix {
-					button {
-						background-color: transparent;
-						border-color: transparent;
-						color: #333;
-						&:visited, &:active {
-							background-color: transparent;
-							border-color: transparent;
-						}
-					}
-				}
-			}
-		}
+  :global {
+    .total-num {
+      font-size: 14px;
+      color: #666;
+        em {
+          font-style: normal;
+          color: #fdb02b;
+        }
+    }
+    .search-box {
+      width: 228px;
+      height: 32px;
+      position: relative;
+      .search-input {
+        height: 100%;
+        .ant-input {
+          border: 1px solid #ddd;
+          padding-right: 30px;
+        }
+        .ant-input-suffix {
+          button {
+            background-color: transparent;
+            border-color: transparent;
+            color: #333;
+            &:visited, &:active {
+              background-color: transparent;
+              border-color: transparent;
+            }
+          }
+        }
+      }
+    }
     .todoList {
-	  	background-color: #fff;
+      background-color: #fff;
       margin-top: 15px;
-      border: 1px solid #ddd;
       border-radius: 4px;
       .ant-table-thead > tr > th {
-      	padding: 11px 20px;
-      	background-color: #fff;
-      	span {
-      		font-size: 14px;
-      		color: #333;
-      		font-weight: bold;
-      	}
+        padding: 11px 20px;
+        background-color: #eff0f5;
+        span {
+          font-size: 14px;
+          color: #333;
+          font-weight: bold;
+        }
       }
       .ant-table-tbody {
-      	tr > td {
-      		padding: 11px 20px;
-      		border-bottom: 0;
-      		font-size: 14px;
-      		color: #666;
-      		a {
-      			color: #108ee9;
-      		}
-				}
-				td:not(:first-child) {
-					width: 190px;
-				}
-				tr:nth-child(2n+1) > td {
-	      	background-color: #f9f9f9;
-	    	}
-	    	tr:last-child > td {
-	      	border-bottom: 1px solid #f2f3f4;
-				}
+        tr > td {
+          padding: 11px 20px;
+          border-bottom: 0;
+          font-size: 14px;
+          color: #666;
+          a {
+            color: #108ee9;
+          }
+        }
+        td:not(:first-child) {
+          width: 190px;
+        }
+        tr:nth-child(2n+1) > td {
+          background-color: #f9f9f9;
+        }
+        tr:last-child > td {
+          border-bottom: 1px solid #f2f3f4;
+        }
       }
       .ant-table-pagination {
-      	float: right !important;
-      	margin-top: 45px !important;
-				margin-bottom: 30px !important;
-				margin-right: 10px !important;
-			}
+        float: right !important;
+        margin-top: 45px !important;
+        margin-bottom: 30px !important;
+        margin-right: 10px !important;
+      }
     }
-	}
+  }
 }

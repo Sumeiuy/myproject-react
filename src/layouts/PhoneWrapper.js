@@ -1,8 +1,8 @@
 /*
  * @Author: zhangjun
  * @Date: 2018-05-28 19:14:00
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-01 23:01:33
+ * @Last Modified by: zhangmei
+ * @Last Modified time: 2018-11-13 10:21:30
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
@@ -40,10 +40,6 @@ export default class PhoneWrapper extends Component {
     this.endTime = '';
   }
 
-  componentDidMount() {
-    this.props.getMotCustfeedBackDict({ pageNum: 1, pageSize: 10000, type: 2 });
-  }
-
   // 电话挂断和继续回调函数
   @autobind
   phoneCallback(data) {
@@ -57,11 +53,15 @@ export default class PhoneWrapper extends Component {
   }
 
   // 点击电话号码打电话
-  // TODO 日志查看：找不到方法 未验证
   @autobind
-  @logable({ type: 'Click', payload: { name: '点击' } })
+  @logable({ type: 'Click',
+payload: { name: '点击号码拨打电话' } })
   handleClickPhone() {
     this.startTime = '';
+     // 获取打完电话发服务记录时需要的字典信息
+    return this.props.getMotCustfeedBackDict({ pageNum: 1,
+pageSize: 10000,
+type: 2 });
   }
 
   // 电话接通方法

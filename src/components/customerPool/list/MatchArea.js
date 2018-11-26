@@ -101,7 +101,8 @@ export default class MatchArea extends PureComponent {
     if (_.includes(['search', 'association'], source)
       && listItem.name
       && listItem.name.indexOf(q) > -1) {
-      const markedEle = replaceWord({ value: listItem.name, q });
+      const markedEle = replaceWord({ value: listItem.name,
+q });
       return (
         <li>
           <span>
@@ -126,7 +127,8 @@ export default class MatchArea extends PureComponent {
     if (_.includes(['search', 'association'], source)
       && listItem.idNum
       && listItem.idNum.indexOf(q) > -1) {
-      const markedEle = replaceWord({ value: listItem.idNum, q });
+      const markedEle = replaceWord({ value: listItem.idNum,
+q });
       return (
         <li>
           <span>
@@ -151,7 +153,8 @@ export default class MatchArea extends PureComponent {
     if (_.includes(['search', 'association'], source)
       && listItem.telephone
       && listItem.telephone.indexOf(q) > -1) {
-      const markedEle = replaceWord({ value: listItem.telephone, q });
+      const markedEle = replaceWord({ value: listItem.telephone,
+q });
       return (
         <li>
           <span>
@@ -176,7 +179,8 @@ export default class MatchArea extends PureComponent {
     if (_.includes(['search', 'association'], source)
       && listItem.custId
       && listItem.custId.indexOf(q) > -1) {
-      const markedEle = replaceWord({ value: listItem.custId, q });
+      const markedEle = replaceWord({ value: listItem.custId,
+q });
       return (
         <li>
           <span>
@@ -211,9 +215,11 @@ export default class MatchArea extends PureComponent {
         const markedEle = relatedLabels.map((item) => {
           // 防止热点标签展示重复，这里从query上取source
           if (!isSightingScope(item.source)) {
-            return replaceWord({ value: item.name, q });
+            return replaceWord({ value: item.name,
+q });
           }
-          return `${replaceWord({ value: item.name, q })}-${q}`;
+          return `${replaceWord({ value: item.name,
+q })}-${q}`;
         });
         return (
           <li>
@@ -310,7 +316,8 @@ export default class MatchArea extends PureComponent {
     if (_.includes(['search', 'association'], source)
       && listItem.serviceRecord
       && listItem.serviceRecord.indexOf(q) > -1) {
-      const markedEle = replaceWord({ value: listItem.serviceRecord, q });
+      const markedEle = replaceWord({ value: listItem.serviceRecord,
+q });
       // 接口返回的接口数据是截断过的，需要前端在后面手动加...
       return (
         <li>
@@ -352,7 +359,9 @@ export default class MatchArea extends PureComponent {
       if (!_.isEmpty(relatedLabels)) {
         // 构造成这种格式,父标签-子标签：标签值；子标签：标签值；子标签：标签值；子标签：标签值；
         let markedEle = relatedLabels.map(item =>
-          (replaceWord({ value: item.name, q, type: source })));
+          (replaceWord({ value: item.name,
+q,
+type: source })));
         // 去除空字符串
         markedEle = _.filter(markedEle, item => !_.isEmpty(item));
         // 只有一个标签，去除-符号
@@ -435,7 +444,9 @@ export default class MatchArea extends PureComponent {
     if (!_.isEmpty(list)) {
       const htmlStringList = _.map(
         list,
-        item => `${replaceWord({ value: item.name, q: keyword })}/${replaceWord({ value: item.code, q: keyword })}`,
+        item => `${replaceWord({ value: item.name,
+q: keyword })}/${replaceWord({ value: item.code,
+q: keyword })}`,
       );
       const htmlString = htmlStringList.join(',');
       return (
@@ -462,8 +473,10 @@ export default class MatchArea extends PureComponent {
     if (!_.isEmpty(list)) {
       const data = list[0] || {};
       const { name, code, flag } = data;
-      const codeHtmlString = replaceWord({ value: code, q: keyword });
-      const htmlString = `${replaceWord({ value: name, q: keyword })}/${codeHtmlString}`;
+      const codeHtmlString = replaceWord({ value: code,
+q: keyword });
+      const htmlString = `${replaceWord({ value: name,
+q: keyword })}/${codeHtmlString}`;
       const props = {
         custId,
         data,
@@ -479,7 +492,8 @@ export default class MatchArea extends PureComponent {
         contentNode = (<i>
           <em
             className={styles.clickable}
-            onClick={() => { openProductDetailPage({ data, routerAction: push }); }}
+            onClick={() => { openProductDetailPage({ data,
+routerAction: push }); }}
           >
             {name}
           </em>
@@ -549,8 +563,9 @@ export default class MatchArea extends PureComponent {
   @autobind
   handleOrderCombinationClick({ name, code }) {
     const { push } = this.context;
-    const query = { id: code, name };
-    const pathname = '/choicenessCombination/combinationDetail';
+    const query = { id: code,
+name };
+    const pathname = '/strategyCenter/choicenessCombination/combinationDetail';
     const url = `${pathname}?${urlHelper.stringify(query)}`;
     const param = {
       closable: true,

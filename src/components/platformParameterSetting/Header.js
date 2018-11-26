@@ -35,6 +35,7 @@ function linkGenerator(menuItem, parentPath, push) {
   return (
     <a
       onClick={() => { linkTo(linkToParam); }}
+      style={{fontSize: '14px'}}
     >{menuItem.name}</a>
   );
 }
@@ -47,7 +48,7 @@ function getMenus(menu, parentPath, push, preventItem) {
           <Menu.Item key={menuItem.path}>
             {
               preventItem.path === menuItem.path
-                ? <a>{menuItem.name}</a>
+                ? <a style={{fontSize: '14px'}}>{menuItem.name}</a>
                 : linkGenerator(menuItem, parentPath, push, preventItem)
             }
           </Menu.Item>

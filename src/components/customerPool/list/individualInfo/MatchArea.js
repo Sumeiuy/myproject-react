@@ -4,8 +4,8 @@
  * @author xiaZhiQiang
  *  客户列表项中的匹配出来的数据
  * @author wangjunjun
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-28 09:12:46
+ * @Last Modified by: liqianwen
+ * @Last Modified time: 2018-11-16 13:22:55
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -17,6 +17,7 @@ import Tooltip from '../../../common/Tooltip';
 import { isSightingScope, isLocalScope, handleOpenFsp360TabAction, openProductDetailPage, getDetailBtnVisible } from '../../helper';
 import { url as urlHelper, url, number } from '../../../../helper';
 import { seperator, sessionStore } from '../../../../config';
+import { custListSearchFilterTypes } from '../config/filterConfig';
 import { openRctTab } from '../../../../utils/index';
 import { RANDOM } from '../../../../config/filterContant';
 import HoldingProductDetail from '../HoldingProductDetail';
@@ -49,11 +50,26 @@ const replaceWord = ({ value, searchText, title = '', type = '' }) => {
     `<em class="marked">${searchText}${titleDom || ''}</em>${holder}`);
 };
 
+// 如果过滤组件的id是搜索框支持的6类id的任意一种，需要从本地缓存清除所有这6种
+function getfinalFilterIdArray(filterId) {
+  if (_.isArray(filterId)) {
+    return filterId;
+  }
+  if (_.includes(custListSearchFilterTypes, filterId)) {
+    return custListSearchFilterTypes;
+  }
+  return [filterId];
+}
+
 export default class MatchArea extends PureComponent {
   static setFilterOrder(id, value, hashString) {
     const filterOrder = sessionStore.get(`CUSTOMERPOOL_FILTER_ORDER_${hashString}`) || [];
     const finalId = _.isArray(id) ? id : [id];
-    let finalOrder = _.difference(filterOrder, finalId);
+    // 对于搜索框对应的搜索id，都要进行过滤
+    const finalFilterIdArray = getfinalFilterIdArray(id);
+    // 过滤掉需要过滤的本地filterId缓存
+    let finalOrder = _.difference(filterOrder, finalFilterIdArray);
+
     if (value && !_.includes(value, unlimited)) {
       finalOrder = [...finalId, ...finalOrder];
     }
@@ -159,7 +175,9 @@ export default class MatchArea extends PureComponent {
     if (!_.isEmpty(list)) {
       const htmlStringList = _.map(
         list,
-        item => `${replaceWord({ value: item.name, searchText: keyword })}/${replaceWord({ value: item.code, searchText: keyword })}`,
+        item => `${replaceWord({ value: item.name,
+searchText: keyword })}/${replaceWord({ value: item.code,
+searchText: keyword })}`,
       );
       const htmlString = htmlStringList.join(',');
       return (
@@ -186,8 +204,10 @@ export default class MatchArea extends PureComponent {
     if (!_.isEmpty(list)) {
       const data = list[0] || {};
       const { name, code, flag } = data;
-      const codeHtmlString = replaceWord({ value: code, searchText: keyword });
-      const htmlString = `${replaceWord({ value: name, searchText: keyword })}/${codeHtmlString}`;
+      const codeHtmlString = replaceWord({ value: code,
+searchText: keyword });
+      const htmlString = `${replaceWord({ value: name,
+searchText: keyword })}/${codeHtmlString}`;
       const props = {
         custId,
         data,
@@ -203,7 +223,8 @@ export default class MatchArea extends PureComponent {
         contentNode = (<i>
           <em
             className={styles.clickable}
-            onClick={() => { openProductDetailPage({ data, routerAction: push }); }}
+            onClick={() => { openProductDetailPage({ data,
+routerAction: push }); }}
           >
             {name}
           </em>
@@ -249,13 +270,14 @@ export default class MatchArea extends PureComponent {
   }
 
   // 点击订购组合名称跳转到详情页面
-  // TODO 日志查看：找不到方法 未验证
   @autobind
-  @logable({ type: 'Click', payload: { name: '订购组合' } })
+  @logable({ type: 'Click',
+payload: { name: '订购组合' } })
   handleOrderCombinationClick({ name, code }) {
     const { push } = this.context;
-    const query = { id: code, name };
-    const pathname = '/choicenessCombination/combinationDetail';
+    const query = { id: code,
+name };
+    const pathname = '/strategyCenter/choicenessCombination/combinationDetail';
     const detailURL = `${pathname}?${urlHelper.stringify(query)}`;
     const param = {
       closable: true,
@@ -276,9 +298,9 @@ export default class MatchArea extends PureComponent {
     });
   }
 
-  // TODO 日志查看：找不到方法 未验证
   @autobind
-  @logable({ type: 'Click', payload: { name: '收起/展开' } })
+  @logable({ type: 'Click',
+payload: { name: '收起/展开' } })
   showAllIndividual() {
     const { showAll } = this.state;
     this.setState({
@@ -311,7 +333,7 @@ export default class MatchArea extends PureComponent {
         renderValue = number.thousandFormat(Number(renderValue).toFixed(2), false);
       }
       return (
-        <li kye={`${renderValue}${id}${listItem.custId}`} title={renderValue}>
+        <li key={`${renderValue}${id}${listItem.custId}`} title={renderValue}>
           <span>
             <i className="label">
               {hasCycle ? this.convertCycle(id) : ''}
@@ -346,6 +368,70 @@ export default class MatchArea extends PureComponent {
     }
     return null;
   }
+
+  // 投资期限
+  @autobind
+  renderInvestPeriod(currentItem) {
+    const {
+      listItem,
+    } = this.props;
+    const { custId, investPeriod } = listItem;
+    const { dataTurn, id } = currentItem;
+    if (investPeriod) {
+      return (
+        <li key={`${id}${custId}`} title={dataTurn[investPeriod]}>
+            <span>
+              <i className="label">投资期限：</i>
+              {dataTurn[investPeriod]}
+            </span>
+        </li>
+      );
+    }
+    return null;
+  }
+
+  // 投资偏好
+  @autobind
+  renderInvestVariety(currentItem) {
+    const {
+      listItem,
+    } = this.props;
+    const { custId, investVariety } = listItem;
+    const { dataTurn, id } = currentItem;
+    if (investVariety) {
+      return (
+        <li key={`${id}${custId}`} title={dataTurn[investVariety]}>
+            <span>
+              <i className="label">投资偏好：</i>
+              {dataTurn[investVariety]}
+            </span>
+        </li>
+      );
+    }
+    return null;
+  }
+
+  // 天天发市值
+  @autobind
+  renderTtfMktVal(currentItem) {
+    const {
+      listItem,
+    } = this.props;
+    const { name, id, unit } = currentItem;
+    if (listItem.ttfMktVal) {
+      return (
+        <li key={`${id}${listItem.custId}`}>
+          <span>
+            <i className="label">{name}：</i>
+            {listItem.ttfMktVal}{unit}
+          </span>
+        </li>
+      );
+    }
+    return null;
+  }
+
+
   // 精选组合页面的订购组合
   @autobind
   renderOrderCombination() {
@@ -399,7 +485,8 @@ export default class MatchArea extends PureComponent {
     const { searchText = '' } = this.getFilters();
     if (name
       && name.indexOf(searchText) > -1) {
-      const markedEle = replaceWord({ value: name, searchText });
+      const markedEle = replaceWord({ value: name,
+searchText });
       return (
         <li key={`${name}${custId}`}>
           <span>
@@ -422,7 +509,8 @@ export default class MatchArea extends PureComponent {
     const { searchText = '' } = this.getFilters();
     if (listItem.idNum
       && listItem.idNum.indexOf(searchText) > -1) {
-      const markedEle = replaceWord({ value: listItem.idNum, searchText });
+      const markedEle = replaceWord({ value: listItem.idNum,
+searchText });
       return (
         <li key={listItem.idNum}>
           <span>
@@ -445,7 +533,8 @@ export default class MatchArea extends PureComponent {
     const { searchText = '' } = this.getFilters();
     if (listItem.telephone
       && listItem.telephone.indexOf(searchText) > -1) {
-      const markedEle = replaceWord({ value: listItem.telephone, searchText });
+      const markedEle = replaceWord({ value: listItem.telephone,
+searchText });
       return (
         <li key={listItem.telephone}>
           <span>
@@ -460,6 +549,28 @@ export default class MatchArea extends PureComponent {
     return null;
   }
 
+  //匹配股东账号
+  // 特殊处理 搜股东账号实际上匹配客户经济号 因为股东账号是精确匹配 所以q是url字段的股东账号  这里需要把客户经济号替换成股东账号显示
+  renderShareholderSccountNumber(item) {
+    const {
+      listItem,
+      q,
+    } = this.props;
+    const { name, id, hasCycle } = item;
+    let renderValue = listItem[id];
+      return (
+        <li key={`${renderValue}${id}${listItem.custId}`} title={renderValue}>
+          <span>
+            <i className="label">
+              {hasCycle ? this.convertCycle(id) : ''}
+              {name}：
+            </i>
+            {q}
+          </span>
+        </li>
+      );
+    }
+
   // 匹配经纪客户号
   renderCustId() {
     const {
@@ -468,7 +579,8 @@ export default class MatchArea extends PureComponent {
     const { searchText = '' } = this.getFilters();
     if (listItem.custId
       && listItem.custId.indexOf(searchText) > -1) {
-      const markedEle = replaceWord({ value: listItem.custId, searchText });
+      const markedEle = replaceWord({ value: listItem.custId,
+searchText });
       return (
         <li key={listItem.custId}>
           <span>
@@ -499,6 +611,7 @@ export default class MatchArea extends PureComponent {
       const labelInfo = index === fspLabel.length - 1 ? name : `${name},`;
       return (
         <Tooltip
+          overlayClassName={styles.labelsToolTip}
           placement="bottomLeft"
           title={description}
           key={description}
@@ -544,10 +657,12 @@ export default class MatchArea extends PureComponent {
           // 处理后端返回null的情况
           const description = item.description || '暂无标签描述';
           // 热词改变颜色
-          let replaceWordLables = `${replaceWord({ value: item.name, searchText })}-${searchText}`;
+          let replaceWordLables = `${replaceWord({ value: item.name,
+searchText })}-${searchText}`;
           // 防止热点标签展示重复，这里从query上取source
           if (!isSightingScope(item.source)) {
-            replaceWordLables = replaceWord({ value: item.name, searchText });
+            replaceWordLables = replaceWord({ value: item.name,
+searchText });
           }
           // 在标签后面增加",",最后一个不加
           if (index !== arr.length - 1) {
@@ -556,6 +671,7 @@ export default class MatchArea extends PureComponent {
           const tempKey = `${description}${index}`;
           return (
             <Tooltip
+              overlayClassName={styles.labelsToolTip}
               placement="bottomLeft"
               title={description}
               key={tempKey}
@@ -602,7 +718,8 @@ export default class MatchArea extends PureComponent {
     const { searchText = '' } = this.getFilters();
     if (listItem.serviceRecord
       && listItem.serviceRecord.indexOf(searchText) > -1) {
-      const markedEle = replaceWord({ value: listItem.serviceRecord, searchText });
+      const markedEle = replaceWord({ value: listItem.serviceRecord,
+searchText });
       // 接口返回的接口数据是截断过的，需要前端在后面手动加...
       return (
         <li key={listItem.serviceRecord}>

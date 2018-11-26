@@ -68,9 +68,11 @@ const mapDispatchToProps = {
   // 获取热词列表
   getHotPossibleWds: dispatch(effects.getHotPossibleWds, { loading: false }),
   // 获取上传excel文件解析后的客户
-  queryBatchCustList: dispatch(effects.queryBatchCustList, { loading: true, forceFull: true }),
+  queryBatchCustList: dispatch(effects.queryBatchCustList, { loading: true,
+forceFull: true }),
   // 清除数据
-  clearCreateTaskData: dispatch(effects.clearCreateTaskData, { loading: true, forceFull: true }),
+  clearCreateTaskData: dispatch(effects.clearCreateTaskData, { loading: true,
+forceFull: true }),
   // 获取标签列表
   queryLabelList: dispatch(effects.queryLabelList, { loading: true }),
   // 删除单条标签
@@ -274,7 +276,8 @@ export default class CustomerGroupManage extends PureComponent {
 
   // 查看标签
   @autobind
-  @logPV({ pathname: '/modal/createAndEditLabelModalContent', title: '查看标签' })
+  @logPV({ pathname: '/modal/createAndEditLabelModalContent',
+title: '查看标签' })
   handleEditLabel(record, type) {
     const { id } = record;
     const { queryLabelCust } = this.props;
@@ -291,7 +294,8 @@ export default class CustomerGroupManage extends PureComponent {
   // 删除客户分组
   @autobind
   deleteCustomerGroup({ id, labelFlagCode }) {
-    this.props.deleteLabel({ labelId: id, labelFlag: labelFlagCode })
+    this.props.deleteLabel({ labelId: id,
+labelFlag: labelFlagCode })
       .then(({ resultData }) => {
         if (resultData === 'success') {
           message.success('标签删除成功');
@@ -377,7 +381,8 @@ export default class CustomerGroupManage extends PureComponent {
    * @param {*} record 当前记录
    */
   @autobind
-  @logPV({ pathname: '/modal/createNewLabel', title: '新建标签' })
+  @logPV({ pathname: '/modal/createNewLabel',
+title: '新建标签' })
   showLabelDetailModal(record = {}, isCreateLabel = true, canEdit = false) {
     const { labelName = '', labelDesc = '', id = '', labelTypeId } = record;
     this.setState({
@@ -401,7 +406,8 @@ export default class CustomerGroupManage extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '取消' } })
+  @logable({ type: 'ButtonClick',
+payload: { name: '取消' } })
   handleCloseModal() {
     const { custIds } = this.detailRef.getData();
     if (!_.isEmpty(custIds)) {
@@ -634,7 +640,8 @@ export default class CustomerGroupManage extends PureComponent {
 
   // 显示分组转标签的模态框
   @autobind
-  @logPV({ pathname: '/modal/groupToLabel', title: '分组转标签' })
+  @logPV({ pathname: '/modal/groupToLabel',
+title: '分组转标签' })
   showGroupToLabelModal() {
     this.toggleGroupToLabelModalVisible(true);
   }
@@ -765,7 +772,7 @@ export default class CustomerGroupManage extends PureComponent {
 
     return (
       <div className={styles.groupPanelContainer}>
-        <div className={styles.title}>标签管理</div>
+        {/* <div className={styles.title}>标签管理</div> */}
         <div className={styles.operationRow}>
           <div className={styles.leftSection}>
             <SimpleSearch
@@ -841,7 +848,10 @@ export default class CustomerGroupManage extends PureComponent {
                 getHotPossibleWds={this.queryHotPossibleWds}
                 customerList={labelCustInfo}
                 getGroupCustomerList={queryLabelCust}
-                detailData={{ name, description, id, record }}
+                detailData={{ name,
+description,
+id,
+record }}
                 location={location}
                 onUpdateLabel={this.handleUpdateLabel}
                 queryBatchCustList={queryBatchCustList}

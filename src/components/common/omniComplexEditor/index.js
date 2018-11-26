@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-19 11:11:19
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-23 16:13:36
+ * @Last Modified time: 2018-11-26 10:17:07
  * @description 多功能复合编辑框
  */
 
@@ -89,7 +89,7 @@ export default class OmniComplexEditor extends PureComponent {
     if (!_.isEqual(value, prevValue)) {
       // 一般情况如果props中的value值变化了则需要相应的变化state
       return {
-        prevProps: value,
+        prevValue: value,
         originalValue: displayValue,
         editorValue: value,
         loading: false,

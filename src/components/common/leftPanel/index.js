@@ -22,8 +22,10 @@ const EMPTY_LIST = [];
 const USER_COMMENT_LIST = feedbackOptions.userDegreeOfSatisfaction;
 // 状态字典
 const STATUS_MAP = [
-  { value: 'PROCESSING', label: '解决中' },
-  { value: 'CLOSED', label: '关闭' },
+  { value: 'PROCESSING',
+label: '解决中' },
+  { value: 'CLOSED',
+label: '关闭' },
 ];
 
 export default class LeftPanel extends PureComponent {

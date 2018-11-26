@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 14:15:22
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-09-21 17:38:25
+ * @Last Modified by: zhangmei
+ * @Last Modified time: 2018-11-12 13:41:57
  */
 
 import React, { PureComponent } from 'react';
@@ -159,16 +159,17 @@ export default class CustomerGroupDetail extends PureComponent {
 
   // 导入数据
   @autobind
-  @logable({ type: 'Click', payload: { name: '导入客户' } })
+  @logable({ type: 'Click',
+payload: { name: '导入客户' } })
   onImportHandle() {
     this.setState({
       importVisible: true,
     });
   }
 
-  // TODO 日志查看：找不到方法 未验证
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '否' } })
+  @logable({ type: 'ButtonClick',
+payload: { name: '否' } })
   importHandleCancel() {
     this.setState({
       importVisible: false,
@@ -412,7 +413,8 @@ export default class CustomerGroupDetail extends PureComponent {
       return;
     }
     // 入参改变，后端要求传包含custId，custType的对象数组
-    const newCustIdList = _.concat(includeCustIdList, [{ id: cusId, custType }]);
+    const newCustIdList = _.concat(includeCustIdList, [{ id: cusId,
+custType }]);
 
     // 如果groupId不为空，则添加直接调用接口，添加
     if (_.isEmpty(groupId)) {
@@ -570,7 +572,8 @@ export default class CustomerGroupDetail extends PureComponent {
                 const multiBatchCustList = _.isEmpty(batchCustList) ? [] : custList;
                 // 取出数组对象中所有brokerNumber组成一个新的数组
                 const custIdList = _.map(multiBatchCustList,
-                  item => ({ id: item.custId, custType: item.custType }),
+                  item => ({ id: item.custId,
+custType: item.custType }),
                 );
                 const custIdListSize = _.size(custIdList);
                 const newCustIdList = _.concat(includeCustIdList, custIdList);
@@ -760,9 +763,11 @@ export default class CustomerGroupDetail extends PureComponent {
               {getFieldDecorator('name', {
                 rules: [
                   {
-                    max: 50, message: '最大输入50个字符',
+                    max: 50,
+message: '最大输入50个字符',
                   }, {
-                    required: canEditDetail, message: '分组名称必填',
+                    required: canEditDetail,
+message: '分组名称必填',
                   },
                 ],
                 initialValue: name || '',
@@ -787,7 +792,8 @@ export default class CustomerGroupDetail extends PureComponent {
               {getFieldDecorator('description', {
                 rules: [
                   {
-                    max: 500, message: '最大输入500个字符',
+                    max: 500,
+message: '最大输入500个字符',
                   },
                 ],
                 initialValue: description || '',
