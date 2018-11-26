@@ -33,6 +33,7 @@ const mapStateToProps = state => ({
   personFeedback: state.feedback.personFeedback,
   feedbackDetail: state.feedback.fbDetail,
   processList: state.feedback.processList,
+  empRespDTOList: state.feedback.empRespDTOList,
 });
 
 const mapDispatchToProps = {
@@ -45,6 +46,10 @@ const mapDispatchToProps = {
   getProcessList: fetchDataFunction(true, 'feedback/getAnserOfQustionList'),
   // 更新反馈信息
   updateFeedback: fetchDataFunction(true, 'feedback/updateFeedback'),
+  // 增加满意度信息
+  addFeedbackEvaluation: fetchDataFunction(true, 'feedback/addFeedbackEvaluation'),
+  // 请求经办人列表
+  getEmpListByRespSuccess: fetchDataFunction(true, 'feedback/getEmpListByRespSuccess'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -60,6 +65,8 @@ export default class MyFeedback extends PureComponent {
     getFeedbackDetail: PropTypes.func.isRequired,
     getProcessList: PropTypes.func.isRequired,
     updateFeedback: PropTypes.func.isRequired,
+    empRespDTOList: PropTypes.object.isRequired,
+    addFeedbackEvaluation: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
   }
 
@@ -145,6 +152,13 @@ export default class MyFeedback extends PureComponent {
         },
       );
     }
+    this.props.getEmpListByRespSuccess({
+      respId:'1-3PDQSG5',
+      page: {
+        pageSize: 10,
+        curPageNum,
+      },
+    })
   }
 
   @autobind
@@ -321,6 +335,7 @@ export default class MyFeedback extends PureComponent {
       processList,
       personFeedback,
       feedbackDetail,
+      addFeedbackEvaluation,
       location: {
         query: {
           curPageNum = 1,
@@ -360,6 +375,7 @@ export default class MyFeedback extends PureComponent {
         feedbackDetail={feedbackDetail.resultData || {}}
         showQuestionModal={this.handleQuestionClick}
         resolveQuestion={this.handleResolveClick}
+        addFeedbackEvaluation={addFeedbackEvaluation}
       />
     );
     return (

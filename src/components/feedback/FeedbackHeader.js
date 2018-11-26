@@ -151,6 +151,18 @@ export default class PageHeader extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '用户评价',
+      value: '$args[1]',
+    },
+  })
+  handleFeedbackEvaluationClick(name, key) {
+    this.handleSelectChange(name, key);
+  }
+
+  @autobind
   handleSelectChange(name, key) {
     const { replace, location: { pathname, query } } = this.props;
     replace({
@@ -190,16 +202,22 @@ export default class PageHeader extends PureComponent {
     const getSelectOption = item => item.map(i =>
       <Option key={i.value}>{i.label}</Option>,
     );
-    const { location: { query: {
-      appId,
-      functionName,
-      issueType,
-      feedbackTagEnum,
-      feedbackStatusEnum,
-      processer,
-      feedbackCreateTimeFrom,
-      feedbackCreateTimeTo,
-    } } } = this.props;
+    // 用户评价的下拉选项
+    const userDegreeOfSatisfaction = feedbackOptions.userDegreeOfSatisfaction;
+    const { location: {
+        query: {
+          appId,
+          functionName,
+          issueType,
+          feedbackTagEnum,
+          feedbackStatusEnum,
+          processer,
+          feedbackCreateTimeFrom,
+          feedbackCreateTimeTo,
+          evaluationEnum,
+        }
+      }
+    } = this.props;
 
     // 级联选择的value
     let cascaderVale = [];
@@ -254,6 +272,15 @@ export default class PageHeader extends PureComponent {
           allowClear
         >
           {getSelectOption(stateOptions)}
+        </Select>
+        用户评价: <Select
+          style={{ width: '6%' }}
+          placeholder="全部"
+          value={evaluationEnum}
+          onChange={key => this.handleFeedbackEvaluationClick('evaluationEnum', key)}
+          allowClear
+        >
+          {getSelectOption(userDegreeOfSatisfaction)}
         </Select>
         反馈时间:
         <DateRangePick
