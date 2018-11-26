@@ -43,6 +43,7 @@ import detailCustPropertyAPI from './detailCustProperty';
 import detailProductOrderAPI from './detailProductOrder';
 import taskAnalysisReportAPI from './taskAnalysisReport';
 import detailInvestmentAbilityAnalysisAPI from './detailInvestmentAbilityAnalysis';
+import detailContractManageAPI from './detailContractManage';
 
 const api = apiCreator();
 
@@ -169,6 +170,8 @@ const exported = {
   taskAnalysisReport: taskAnalysisReportAPI(api),
   // ========== 客户360-投资能力分析相关api
   detailInvestmentAbilityAnalysis: detailInvestmentAbilityAnalysisAPI(api),
+  // ========== 新版客户360-合约管理-协议
+  detailContractManage: detailContractManageAPI(api),
 };
 
 export default exported;
@@ -218,4 +221,5 @@ export const {
   detailProductOrder,
   taskAnalysisReport,
   detailInvestmentAbilityAnalysis,
+  detailContractManage,
 } = exported;

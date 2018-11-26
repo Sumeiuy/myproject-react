@@ -19,6 +19,8 @@ import ServiceRelationship from './tabpages/serviceRelationship/Home';
 import CustProperty from './tabpages/custProperty/connectedHome';
 import ProductOrder from './tabpages/productOrder/Home';
 import InvestmentAbilityAnalysis from './tabpages/investmentAbilityAnalysis/Home';
+// 合约管理页面
+import ContractManage from './tabpages/contractManage/Home';
 
 import styles from './home.less';
 
@@ -65,7 +67,7 @@ export default class Home extends PureComponent {
     super(props);
     this.state = {
       // 当前的tab页面, 默认展示 账户信息 Tab页
-      activeTabKey: 'accountInfo',
+      activeTabKey: 'contractManagement',
     };
   }
 
@@ -85,7 +87,11 @@ export default class Home extends PureComponent {
       queryCustSummaryInfo({ custId });
     }
     // 获取客户反馈字典信息
-    getMotCustfeedBackDict({ pageNum: 1, pageSize: 10000, type: 2 });
+    getMotCustfeedBackDict({
+      pageNum: 1,
+      pageSize: 10000,
+      type: 2,
+    });
   }
 
   componentDidUpdate(prevProps) {
@@ -191,6 +197,7 @@ export default class Home extends PureComponent {
               <ServiceRelationship location={location} />
             </TabPane>
             <TabPane tab="合约管理" key="contractManagement">
+                <ContractManage />
             </TabPane>
             <TabPane tab="投资者评估" key="investorAssessment">
             </TabPane>
