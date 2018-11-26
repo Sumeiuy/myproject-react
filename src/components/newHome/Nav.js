@@ -71,11 +71,7 @@ export default function Nav(props) {
     return (
       <dl key={key} onClick={() => handleOpenTab(payload)}>
         <dt className={iconClass}></dt>
-        <dd className={styles.value}>
-          <Tooltip placement="bottom" title={data[key] || 0}>
-            {value}
-          </Tooltip>
-        </dd>
+        <dd className={styles.value}>{value}</dd>
         <dd className={styles.name}>{name}</dd>
       </dl>
     );
@@ -119,7 +115,8 @@ export default function Nav(props) {
       param,
       state,
     });
-    sendLog({title, name});
+    sendLog({title,
+name});
   };
 
   return (

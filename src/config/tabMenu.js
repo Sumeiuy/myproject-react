@@ -4,20 +4,10 @@
  * @author zhufeiyang
  */
 
+import _ from 'lodash';
+
 // 前端可以完全控制主导航的菜单行为
 const newOpenTabConfig = [
-  {
-    name: '资讯列表',
-    id: 'FSP_VIEWPOINT_LIST',
-    path: '/latestView/viewpointList',
-    pid: 'FSP_NEW_HOMEPAGE_PRIMARY',
-  },
-  {
-    name: '资讯详情',
-    id: 'FSP_VIEWPOINT_LIST',
-    path: '/latestView/viewpointDetail',
-    pid: 'FSP_NEW_HOMEPAGE_PRIMARY',
-  },
   {
     name: '自建任务',
     id: 'FSP_CUSTOMER_GROUPMANAGE_CREATETASK',
@@ -91,6 +81,12 @@ const newOpenTabConfig = [
     pid: 'FSP_CUST_M_360',
   },
   {
+    name: '投顾签约续签向导',
+    id: 'utb-stockcontractrenew-wizard',
+    path: '/fsp/customerCenter/stockContractRenew',
+    pid: 'FSP_CUST_M_360',
+  },
+  {
     name: '投顾签约转签向导',
     id: 'utb-stockcontracttransfer-wizard',
     path: '/fsp/customerCenter/tgcontracttransfer',
@@ -151,26 +147,14 @@ const newOpenTabConfig = [
     pid: 'asset_implementation_tab',
   },
   {
-    name: '个股详情',
-    id: 'FSP_STOCK_DETAIL',
-    path: '/stock/detail',
-    pid: 'FSP_STRATEGY_CENTER',
-  },
-  {
-    name: '组合详情',
-    id: 'FSP_COMBINATION_DETAIL',
-    path: '/choicenessCombination/combinationDetail',
-    pid: 'FSP_STRATEGY_CENTER',
-  },
-  {
-    name: '历史报告',
-    id: 'FSP_REPORT_DETAIL',
-    path: '/choicenessCombination/reportDetail',
-    pid: 'FSP_STRATEGY_CENTER',
+    name: '每日晨报',
+    id: 'FSP_BROADCAST_LIST',
+    path: '/strategyCenter/broadcastList',
+    pid: 'FSP_NEW_HOMEPAGE_PRIMARY',
   },
   {
     name: '晨报详情',
-    id: 'FSP_BROADCAST_DETAIL',
+    id: 'FSP_BROADCAST_LIST',
     path: '/broadcastDetail',
     pid: 'FSP_STRATEGY_CENTER',
   },
@@ -331,18 +315,6 @@ const newOpenTabConfig = [
     pid: 'FSP_LATEST_VIEW',
   },
   {
-    name: '大类资产配置分析列表',
-    id: 'FSP_MAJOR_ASSETSLIST',
-    path: '/latestView/majorAssetsList',
-    pid: 'FSP_MAJOR_ASSETSLIST',
-  },
-  {
-    name: '行业主题调整信息列表',
-    id: 'FSP_INDUSTRY_THEMELIST',
-    path: '/latestView/industryThemeList',
-    pid: 'FSP_INDUSTRY_THEMELIST',
-  },
-  {
     name: '超额快取信息',
     id: 'FSP_BIZAPPLY_EXCESSCACHE_EDIT',
     path: '/fsp/bizapply/excesscacheView',
@@ -420,6 +392,24 @@ const newOpenTabConfig = [
     path: '/sysOperate/telephoneNumberManageEdit',
     pid: '',
   },
+  {
+    name: '专项业务知识',
+    id: 'FSP_KNOWLEDGE',
+    path: '/fsp/knowledge',
+    pid: '',
+  },
+  {
+    name: '业务知识信息',
+    id: 'FSP_KNOWLEDGE_DETAIL',
+    path: '/fsp/showKnowledgeDetail',
+    pid: '',
+  },
+  {
+    name: '新建或编辑专项业务知识',
+    id: 'edit_btn_showEditKnowledge',
+    path: '/fsp/knowledgeEdit',
+    pid: '',
+  },
 ];
 
 // 默认当前激活的主导航菜单项
@@ -461,11 +451,139 @@ const defaultMenu = [
   },
 ];
 
+// 暂时不需要共用的面包屑的路由
+const tabNotUseGlobalBreadcrumb = [
+  '/customerPool/list/detail',
+  '/customerPool/createTaskFromTaskRejection2',
+  '/taskCenter/taskList',
+  '/statisticalQuery/report',
+  '/sysOperate/platformParameterSetting',
+  '/sysOperate/telephoneNumberManage',
+  '/statisticalQuery/taskAnalysisReport',
+];
+
+// 不在菜单中需要使用面包屑的路由
+const locationNeedBreadcrumb = [
+ {
+    name: '资讯列表',
+    path: '/strategyCenter/latestView/viewpointList',
+    parent: {
+      name: '最新观点',
+      path: '/strategyCenter/latestView',
+      type: 'link',
+    }
+  },
+  {
+    name: '资讯详情',
+    path: '/strategyCenter/latestView/viewpointDetail',
+    parent: {
+      name: '资讯列表',
+      path: '/strategyCenter/latestView/viewpointList',
+      type: 'link',
+      parent: {
+        name: '最新观点',
+        path: '/strategyCenter/latestView',
+        type: 'link',
+      }
+    }
+  },
+  {
+    name: '大类资产配置分析列表',
+    path: '/strategyCenter/latestView/majorAssetsList',
+    parent: {
+      name: '最新观点',
+      path: '/strategyCenter/latestView',
+      type: 'link',
+    }
+  },
+  {
+    name: '行业主题调整信息列表',
+    path: '/strategyCenter/latestView/industryThemeList',
+    parent: {
+      name: '最新观点',
+      path: '/strategyCenter/latestView',
+      type: 'link',
+    }
+  },
+  {
+    name: '个股详情',
+    path: '/strategyCenter/stock/detail',
+    parent: {
+      name: '个股资讯',
+      path: '/strategyCenter/stock',
+      type: 'link',
+    }
+  },
+  {
+    name: '组合详情',
+    path: '/strategyCenter/choicenessCombination/combinationDetail',
+    parent: {
+      name: '精选组合',
+      path: '/strategyCenter/choicenessCombination',
+      type: 'link',
+    }
+  },
+  {
+    name: '历史报告',
+    path: '/strategyCenter/choicenessCombination/reportDetail',
+    parent: {
+      name: '精选组合',
+      path: '/strategyCenter/choicenessCombination',
+      type: 'link',
+    }
+  },
+];
+
+function findParentBreadcrumb(breadcrumbs, path) {
+  if(_.isArray(breadcrumbs)) {
+    return _.some(breadcrumbs, item => {
+      if(item.parent) {
+        return findParentBreadcrumb(item.parent, path);
+      }
+      return false;
+    });
+  }
+  if(_.isObject(breadcrumbs)) {
+    if(breadcrumbs.path === path) {
+      return true;
+    } else {
+      return findParentBreadcrumb(breadcrumbs.parent, path);
+    }
+  }
+  return false;
+}
+
+function getAllBreadcrumbItem(breadcrumbItem, breadcrumbRoutes = []) {
+  let newBreadcrumbRoutes = breadcrumbRoutes;
+  if (breadcrumbItem) {
+    newBreadcrumbRoutes = [
+      breadcrumbItem,
+       ...breadcrumbRoutes,
+    ];
+    if (breadcrumbItem.parent) {
+      return getAllBreadcrumbItem(breadcrumbItem.parent, newBreadcrumbRoutes);
+    }
+  }
+  return newBreadcrumbRoutes;
+}
+
 const exported = {
   newOpenTabConfig,
   indexPaneKey,
   defaultMenu,
+  tabNotUseGlobalBreadcrumb,
+  locationNeedBreadcrumb,
+  findParentBreadcrumb,
+  getAllBreadcrumbItem,
 };
 
 export default exported;
-export { newOpenTabConfig, indexPaneKey, defaultMenu };
+export {
+  locationNeedBreadcrumb,
+  newOpenTabConfig,
+  indexPaneKey,
+  defaultMenu,
+  tabNotUseGlobalBreadcrumb,
+  findParentBreadcrumb,
+  getAllBreadcrumbItem,
+};

@@ -62,6 +62,7 @@ export default class TabMenu extends PureComponent {
           className={classnames({
             [styles.subItem]: true,
             [styles.activeItem]: this.isActiveMenu(path, item, level, true),
+            [styles.informationCenterItem]: item.name === '资讯中心',
           })}
           onClick={() => this.handleLinkClick(item)}
         >
@@ -92,7 +93,7 @@ export default class TabMenu extends PureComponent {
 
   @autobind
   isActiveMenu(path, menuItem, level, exact = false) {
-    const { activeKey, currentMenuId } = this.props;
+/*     const { activeKey, currentMenuId } = this.props;
     if (activeKey === currentMenuId) { // 一定不是下拉菜单导航，不需要找高亮
       return false;
     }
@@ -112,7 +113,7 @@ export default class TabMenu extends PureComponent {
     }
     if (menuPath && menuPath.indexOf(pathForMatch) > -1) {
       return true;
-    }
+    } */
 
     return false;
   }

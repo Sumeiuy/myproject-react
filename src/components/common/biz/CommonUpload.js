@@ -1,8 +1,8 @@
 /*
  * @Author: LiuJianShu
  * @Date: 2017-09-22 15:02:49
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-09-16 20:03:14
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-11-15 11:03:53
  */
 /**
  * 常用说明
@@ -65,6 +65,8 @@ export default class CommonUpload extends PureComponent {
     deleteAttachment: PropTypes.func,
     // 上传附件方法
     uploadAttachment: PropTypes.func,
+    // 删除成功后回调方法
+    deleteCallback: PropTypes.func,
     // 每个单子对应的唯一附件表 ID，默认为 ''
     attachment: PropTypes.string,
     attachmentList: PropTypes.array,
@@ -76,6 +78,10 @@ export default class CommonUpload extends PureComponent {
     // 标题
     title: PropTypes.string,
     maxFileSize: PropTypes.number,
+    // 是否是假删除
+    isFalseDelete: PropTypes.bool,
+    // 假删除方法
+    onFalseDelete: PropTypes.func,
   }
 
   static defaultProps = {
@@ -90,6 +96,12 @@ export default class CommonUpload extends PureComponent {
     title: '',
     // 最大上传文件限制，单位 MB
     maxFileSize: 20,
+    // 删除成功后回调方法
+    deleteCallback: _.noop,
+    // 是否是假删除
+    isFalseDelete: false,
+    // 假删除方法
+    onFalseDelete: _.noop,
   }
 
   constructor(props) {
@@ -116,7 +128,6 @@ export default class CommonUpload extends PureComponent {
       deleteAttachmentLoading: nextDAL,
       attachmentList: nextAL,
     } = nextProps;
-
     if (preDAL && !nextDAL) {
       const { deleteAttachmentList } = nextProps;
       // 文件列表
@@ -136,7 +147,8 @@ export default class CommonUpload extends PureComponent {
 
   // 上传事件
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '上传附件' } })
+  @logable({ type: 'ButtonClick',
+payload: { name: '上传附件' } })
   onChange(info) {
     const { uploadAttachment, maxFileSize } = this.props;
     const uploadFile = info.file;
@@ -150,7 +162,6 @@ export default class CommonUpload extends PureComponent {
       message.error(`文件大小不能超过 ${maxFileSize} MB`);
       return;
     }
-
     this.setState({
       percent: info.file.percent,
       fileList: info.fileList,
@@ -166,7 +177,7 @@ export default class CommonUpload extends PureComponent {
           fileList: data.attaches,
           oldFileList: data.attaches,
           attachment: data.attachment,
-        }, uploadAttachment(data.attachment));
+        }, uploadAttachment(data.attachment, data.attaches));
       } else {
         // 上传失败的返回值 MAG0005
         this.setState({
@@ -190,19 +201,45 @@ export default class CommonUpload extends PureComponent {
     },
   })
   onRemove(attachId) {
-    const { deleteAttachment } = this.props;
+    const { deleteAttachment, isFalseDelete, onFalseDelete } = this.props;
     const { empId, attachment } = this.state;
     const deleteObj = {
       empId,
       attachId,
       attachment,
     };
-    deleteAttachment(deleteObj);
+    if (!isFalseDelete) {
+      deleteAttachment(deleteObj).then(() => {
+        const { deleteCallback, deleteAttachmentList } = this.props;
+        deleteCallback(deleteAttachmentList);
+      });
+    } else {
+      onFalseDelete();
+    }
   }
 
   // 空方法，用于日志上传
-  @logable({ type: 'Click', payload: { name: '下载' } })
+  @logable({ type: 'Click',
+payload: { name: '下载' } })
   handleDownloadClick() {}
+
+  // 获取上传数据
+  @autobind
+  getUploadData() {
+    const { empId, file, attachment, fileList } = this.state;
+    const { isFalseDelete } = this.props;
+    const defaultData = { empId,
+file,
+attachment };
+    if (isFalseDelete) {
+      const attachId = fileList[0];
+      return {
+        ...defaultData,
+        attachId,
+      };
+    }
+    return { ...defaultData };
+  }
 
   // 清空数据
   @autobind
@@ -221,8 +258,6 @@ export default class CommonUpload extends PureComponent {
   render() {
     const {
       empId,
-      file,
-      attachment,
       fileList,
       percent,
       status,
@@ -232,15 +267,15 @@ export default class CommonUpload extends PureComponent {
       edit,
       title,
       needDefaultText,
+      isFalseDelete,
     } = this.props;
-
-    const actionName = 'ceFileUpload2';
+    // 调用接口的名称，如果是假删除就调用替换文件接口ceFileReplaceUpload2，否则调用上传文件接口ceFileUpload2
+    const actionName = isFalseDelete ? 'ceFileReplaceUpload2' : 'ceFileUpload2';
+    // const actionName = 'ceFileUpload2';
+    // 上传附件接口需要传输的data
+    const data = this.getUploadData();
     const uploadProps = {
-      data: {
-        empId,
-        file,
-        attachment,
-      },
+      data,
       action: `${request.prefix}/file/${actionName}`,
       headers: {
         accept: '*/*',
@@ -249,14 +284,18 @@ export default class CommonUpload extends PureComponent {
       showUploadList: false,
       fileList,
     };
-
     const downloadName = 'ceFileDownload2';
     let fileListElement;
+    // 活动栏目是假删除,删除时第一个文件会设置isDelete属性为true，当isDelete是true时，不显示组件
     if (fileList && fileList.length) {
       fileListElement = (
         <div className={styles.fileList}>
           {
-            fileList.map((item, index) => {
+            _.map(fileList, (item, index) => {
+              // 假删除，删除后不需要渲染元素
+              if (item.isDelete) {
+                return null;
+              }
               const fileName = item.name;
               const popoverHtml = (
                 <div className={styles.filePop}>

@@ -229,7 +229,7 @@ export default class PageHeader extends PureComponent {
           />
         </div>
         类型: <Select
-          style={{ width: '6%' }}
+          style={{ width: '8%' }}
           placeholder="全部"
           value={issueType}
           onChange={key => this.handleTypeClick('issueType', key)}
