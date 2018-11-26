@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-19 10:17:54
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-22 15:57:38
+ * @LastEditTime: 2018-11-26 09:32:15
  * @Description: 产品订单
  */
 
@@ -20,14 +20,24 @@ import styles from './home.less';
 const TabPane = Tabs.TabPane;
 const TRADE_ORDER_FLOW_PAGE_SIZE = 10;
 
-const mapStateToProps = ({ productOrder }) => ({
-  serviceOrderFlow: productOrder.serviceOrderFlow,
-  tradeOrderFlow: productOrder.tradeOrderFlow,
+const mapStateToProps = state => ({
+  serviceOrderFlow: state.productOrder.serviceOrderFlow,
+  tradeOrderFlow: state.productOrder.tradeOrderFlow,
+  jxGroupProductList: state.customerPool.jxGroupProductList, // 产品搜索结果
+  serviceOrderDetail: state.productOrder.serviceOrderDetail,
+  serviceProductList: state.productOrder.serviceProductList,
+  orderApproval: state.productOrder.orderApproval,
+  otherCommissions: state.productOrder.otherCommissions,
 });
 
 const mapDispatchToProps = {
   queryServiceOrderFlow: effect('productOrder/queryServiceOrderFlow'),
   queryTradeOrderFlow: effect('productOrder/queryTradeOrderFlow'),
+  queryJxGroupProduct: effect('customerPool/queryJxGroupProduct'),
+  queryServiceOrderDetail: effect('productOrder/queryServiceOrderDetail'),
+  queryServiceProductList: effect('productOrder/queryServiceProductList'),
+  queryOrderApproval: effect('productOrder/queryOrderApproval'),
+  queryOtherCommissions: effect('productOrder/queryOtherCommissions'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -38,14 +48,20 @@ export default class ProductOrder extends PureComponent {
     tradeOrderFlow: PropTypes.object.isRequired,
     queryServiceOrderFlow: PropTypes.func.isRequired,
     queryTradeOrderFlow: PropTypes.func.isRequired,
+    jxGroupProductList: PropTypes.array.isRequired,
+    queryJxGroupProduct: PropTypes.func.isRequired,
+    serviceOrderDetail: PropTypes.object.isRequired,
+    serviceProductList: PropTypes.array.isRequired,
+    orderApproval: PropTypes.object.isRequired,
+    otherCommissions: PropTypes.object.isRequired,
+    queryServiceOrderDetail: PropTypes.func.isRequired,
+    queryServiceProductList: PropTypes.func.isRequired,
+    queryOrderApproval: PropTypes.func.isRequired,
+    queryOtherCommissions: PropTypes.func.isRequired,
   };
 
   static contextTypes = {
     replace: PropTypes.func.isRequired,
-  }
-
-  componentDidMount() {
-    this.getActiveTabInfo();
   }
 
   componentDidUpdate(prevProps) {
@@ -89,7 +105,7 @@ export default class ProductOrder extends PureComponent {
       queryTradeOrderFlow,
       location: {
         query: {
-          custId
+          custId,
         },
       },
     } = this.props;
@@ -98,10 +114,26 @@ export default class ProductOrder extends PureComponent {
     } else if (activeTabKey === 'tradeOrderFlow') {
       queryTradeOrderFlow({
         custId,
-        pageNum: 0,
+        pageNum: 1,
         pageSize: TRADE_ORDER_FLOW_PAGE_SIZE,
       });
     }
+  }
+
+  @autobind
+  handleProductOrderFlowChanged(payload) {
+    const {
+      location: {
+        query: {
+          custId,
+        },
+      },
+      queryServiceOrderFlow,
+    } = this.props;
+    queryServiceOrderFlow({
+      custId,
+      ...payload,
+    });
   }
 
   @autobind
@@ -135,7 +167,18 @@ export default class ProductOrder extends PureComponent {
 
   render() {
     const {
+      serviceOrderFlow,
       tradeOrderFlow,
+      jxGroupProductList,
+      serviceOrderDetail,
+      serviceProductList,
+      orderApproval,
+      otherCommissions,
+      queryServiceOrderDetail,
+      queryServiceProductList,
+      queryOrderApproval,
+      queryOtherCommissions,
+      queryJxGroupProduct,
     } = this.props;
     const activeKey = this.getTabActiveKeyByUrl();
 
@@ -152,7 +195,20 @@ export default class ProductOrder extends PureComponent {
           </TabPane>
           <TabPane tab="服务订单流水" key="serviceOrderFlow">
             <div className={styles.tabPaneWrap}>
-              <ProductOrderFlow />
+              <ProductOrderFlow
+                productListBySearch={jxGroupProductList}
+                queryJxGroupProduct={queryJxGroupProduct}
+                serviceOrderFlow={serviceOrderFlow}
+                onProductOrderFlowChange={this.handleProductOrderFlowChanged}
+                serviceOrderDetail={serviceOrderDetail}
+                serviceProductList={serviceProductList}
+                orderApproval={orderApproval}
+                otherCommissions={otherCommissions}
+                queryServiceOrderDetail={queryServiceOrderDetail}
+                queryServiceProductList={queryServiceProductList}
+                queryOrderApproval={queryOrderApproval}
+                queryOtherCommissions={queryOtherCommissions}
+              />
             </div>
           </TabPane>
           <TabPane tab="交易订单流水" key="tradeOrderFlow">
