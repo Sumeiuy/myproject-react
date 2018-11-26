@@ -21,7 +21,7 @@ import RemarkList from './RemarkList';
 import Icon from '../common/Icon';
 import styles from './myDetail.less';
 
-const USER_COMMENT = feedbackOptions.userDegreeOfSatisfaction;
+const USER_COMMENT_LIST = feedbackOptions.userDegreeOfSatisfaction;
 // 不能写成无状态组件，因为容器组件要求能访问ref
 export default class MyDetail extends PureComponent {
   static propTypes = {
@@ -35,7 +35,7 @@ export default class MyDetail extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      evaluationType: props.feedbackDetail.evaluation,
+      evaluationStatus: props.feedbackDetail.evaluation,
       preFeedbackDetail: props.feedbackDetail,
     };
   }
@@ -44,7 +44,7 @@ export default class MyDetail extends PureComponent {
   static getDerivedStateFromProps(nextProps, prevState) {
     if (nextProps.feedbackDetail !== prevState.preFeedbackDetail) {
       return {
-        evaluationType: nextProps.feedbackDetail.evaluation,
+        evaluationStatus: nextProps.feedbackDetail.evaluation,
         preFeedbackDetail: nextProps.feedbackDetail,
       };
     }
@@ -96,7 +96,7 @@ export default class MyDetail extends PureComponent {
     // 根据事件去改变用户满意度
     addFeedbackEvaluation(payload).then(() => {
       this.setState({
-        evaluationType: evaluation,
+        evaluationStatus: evaluation,
       });
     });
   }
@@ -135,15 +135,13 @@ export default class MyDetail extends PureComponent {
       feedbackFileUrls = [],
     } = feedbackDetail || {};
 
-    debugger;
-
-    const { evaluationType } = this.state;
+    const { evaluationStatus } = this.state;
     const isStatusEmpty = _.isEmpty(status);
     const statusInfo = status === 'PROCESSING' ? '解决中' : '关闭';
     const imageUrl = _.head(feedbackFileUrls) || '';
     const date = _.isEmpty(createTime) ? '--' : moment(createTime).format('YYYY-MM-DD HH:mm');
     // 根据后台返回的字段来显示对应的满意度
-    const userCommentLabel = USER_COMMENT.filter(item => item.value === evaluationType);
+    const userCommentLabelList = USER_COMMENT_LIST.filter(item => item.value === evaluationStatus);
 
     let detailInfo = [{
       id: 'status',
@@ -210,12 +208,12 @@ export default class MyDetail extends PureComponent {
                 <div className={styles.myFeedBackEvaluation}>满意度调查
                {
                     // 如果评价了就显示评价 没评价就显示满意度评价按钮
-                    evaluationType ?
+                    evaluationStatus ?
                       <div className={styles.feedbackInfo}>
                         我对本次答复的评价:
                          <span>
                           {
-                            `${userCommentLabel[0].label}`
+                            `${userCommentLabelList[0].label}`
                           }
                         </span>
                       </div>

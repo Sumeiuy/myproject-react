@@ -19,7 +19,7 @@ import logable from '../../../decorators/logable';
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
 // 满意度字典
-const USER_COMMENT = feedbackOptions.userDegreeOfSatisfaction;
+const USER_COMMENT_LIST = feedbackOptions.userDegreeOfSatisfaction;
 // 状态字典
 const STATUS_MAP = [
   { value: 'PROCESSING', label: '解决中' },
@@ -31,10 +31,6 @@ export default class LeftPanel extends PureComponent {
     list: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
-  };
-
-  static defaultProps = {
-
   };
 
   constructor(props) {
@@ -196,7 +192,7 @@ export default class LeftPanel extends PureComponent {
         // 用户评价分别显示的类名
         let userCommentClass;
         // 评价字段标签
-        let userCommentLabel;
+        let userCommentLabelList;
         if (record.status) {
           statusClass = classnames({
             'state-resolve': record.status === STATUS_MAP[0].value,
@@ -214,17 +210,17 @@ export default class LeftPanel extends PureComponent {
           // 根据满意度不同状态显示不同颜色
           userCommentClass = classnames({
             'user-comment': record.evaluation,
-            'comment-satisfird': record.evaluation === USER_COMMENT[0].value,
-            'comment-common': record.evaluation === USER_COMMENT[1].value,
-            'comment-discontent': record.evaluation === USER_COMMENT[2].value,
+            'comment-satisfird': record.evaluation === USER_COMMENT_LIST[0].value,
+            'comment-common': record.evaluation === USER_COMMENT_LIST[1].value,
+            'comment-discontent': record.evaluation === USER_COMMENT_LIST[2].value,
           });
           // 根据config配置过滤找到对应显示的满意度
-          userCommentLabel = USER_COMMENT.filter(item => item.value === record.evaluation);
+          userCommentLabelList = USER_COMMENT_LIST.filter(item => item.value === record.evaluation);
         }
         return (
           <div className="rightSection">
             <div className="rightSection-top">
-              <div className={userCommentClass}>{(!_.isEmpty(userCommentLabel) && userCommentLabel[0].label)}</div>
+              <div className={userCommentClass}>{userCommentLabelList[0].label}</div>
               <div className={statusClass}>{(!_.isEmpty(statusLabel) && statusLabel[0].label) || '无'}</div>
             </div>
             <div className="name">{(!_.isEmpty(processerLabel) && processerLabel[0].label) || '无'}</div>
