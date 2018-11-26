@@ -3,7 +3,7 @@
  * @Description: 客户360-业务办理
  * @Date: 2018-11-19 16:20:49
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-26 16:58:25
+ * @Last Modified time: 2018-11-26 17:12:36
  */
 import React,{ PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -21,6 +21,7 @@ const OPEN_DATAE = 'openDate';
 const TRANSACTION_DATE = 'transactionDate';
 const BLACK_LIST= 'blackList';
 const STANDARD_ASSETS = 'standardAssets';
+const TABLENUM = 2;
 export default class BusinessHand extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -48,7 +49,7 @@ export default class BusinessHand extends PureComponent {
       }else {
         return null;
       }
-    }
+    };
     return notOpenList;
   }
 
@@ -63,7 +64,7 @@ export default class BusinessHand extends PureComponent {
       }else {
         return null;
       }
-    }
+    };
     // 黑名单
     const dateColumn = _.find(openList, o => o.key === OPEN_DATAE || o.key === TRANSACTION_DATE);
     dateColumn.render = (text, record) => {
@@ -72,7 +73,7 @@ export default class BusinessHand extends PureComponent {
       }else {
         return null;
       }
-    }
+    };
     // 达标资产
     const standardAssetsColumn = _.find(openList, o => o.key === STANDARD_ASSETS);
     standardAssetsColumn.render = (text, record) => {
@@ -85,7 +86,7 @@ export default class BusinessHand extends PureComponent {
         });
         return newData.substring(0, newData.length-1);
       }
-    }
+    };
     return openList;
     }
 
@@ -107,6 +108,7 @@ export default class BusinessHand extends PureComponent {
                   pagination={false}
                   className={styles.tableBorder}
                   isNeedEmptyRow
+                  rowNumber={TABLENUM}
                   dataSource={openBusinessData}
                   columns={this.renderOpenColumns()}
                 />
@@ -121,6 +123,7 @@ export default class BusinessHand extends PureComponent {
                   pagination={false}
                   className={styles.tableBorder}
                   isNeedEmptyRow
+                  rowNumber={TABLENUM}
                   dataSource={notOpenBusinessData}
                   columns={this.renderNotOpenColumns()}
                 />

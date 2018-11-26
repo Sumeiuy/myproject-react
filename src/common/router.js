@@ -222,6 +222,7 @@ export const getRouterData = (app) => {
           'customer360Detail/accountInfo',
           'customer360Detail/custProperty',
           'customer360Detail/serviceRelationship',
+          'customer360Detail/discountCoupon',
           'customer360Detail/productOrder',
           'customer360Detail/investmentAbilityAnalysis',
           'customer360Detail/businessHand',
