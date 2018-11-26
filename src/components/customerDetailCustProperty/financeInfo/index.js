@@ -78,6 +78,7 @@ export default class FinanceInfo extends PureComponent {
     });
   }
 
+  @autobind
   renderPersonInfo() {
     const {
       location,
@@ -103,6 +104,7 @@ export default class FinanceInfo extends PureComponent {
     );
   }
 
+  @autobind
   renderOrganizationInfo() {
     const {
       updateOrgFinaceData,
@@ -128,6 +130,7 @@ export default class FinanceInfo extends PureComponent {
     );
   }
 
+  @autobind
   renderFinanceInfo() {
     const { customerBasicInfo: { custNature } } = this.props;
     let component = null;
@@ -141,7 +144,6 @@ export default class FinanceInfo extends PureComponent {
         component = this.renderOrganizationInfo();
         break;
       default:
-        component = this.renderOrganizationInfo();
         break;
     }
     return component;

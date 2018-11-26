@@ -188,19 +188,18 @@ export default class DetailModal extends PureComponent {
               <span className={styles.colorBlock} />
               <span className={styles.titleText}>可购买产品列表</span>
             </div>
-            {
-              _.isEmpty(data.productList)
-                ? <IfTableWrap text="暂无产品" />
-                : (
-                  <Table
-                    pagination={paginationProps}
-                    dataSource={data.productList || EMPTY_ARRAY}
-                    isNeedEmptyRow
-                    columns={productTitleList}
-                    scroll={{ x: '1000px' }}
-                  />
-                )
-            }
+            <IfTableWrap
+              text="暂无产品"
+              isRender={!_.isEmpty(data.productList)}
+            >
+              <Table
+                pagination={paginationProps}
+                dataSource={data.productList || EMPTY_ARRAY}
+                isNeedEmptyRow
+                columns={productTitleList}
+                scroll={{ x: '1000px' }}
+              />
+            </IfTableWrap>
           </div>
         </div>
       </Modal>

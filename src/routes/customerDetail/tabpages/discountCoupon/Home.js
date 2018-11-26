@@ -49,7 +49,9 @@ export default class DiscountCoupon extends PureComponent {
     super(props);
     this.state = {
       isShowModal: false,
+      // 优惠券编号，用于精确搜索
       ticketId: '',
+      // 使用状态
       status: '',
     };
   }
@@ -142,7 +144,9 @@ export default class DiscountCoupon extends PureComponent {
   @autobind
   @logable({
     type: 'Click',
-    payload: { name: '关闭理财优惠券详情'},
+    payload: {
+      name: '关闭理财优惠券详情',
+    },
   })
   handleHideModal() {
     this.setState({
@@ -212,9 +216,11 @@ export default class DiscountCoupon extends PureComponent {
             <span
               title={text}
               className={styles.ticketId}
-              onClick={() => this.handleTableItemClick(record)}
             >{text}</span>
-          )
+          ),
+          onCell: record => ({
+            onClick: () => this.handleTableItemClick(record),
+          })
         };
       }
       return {
@@ -252,25 +258,20 @@ export default class DiscountCoupon extends PureComponent {
             onFilterChange={this.handleFilterChange}
           />
           <div className={styles.tableBox}>
-            {
-              _.isEmpty(list)
-                ? (
-                  <IfTableWrap
-                    text="客户暂无理财优惠券"
-                  />
-                )
-                : (
-                  <Table
-                    pagination={paginationData}
-                    dataSource={list}
-                    isNeedEmptyRow
-                    isNeedNoDataStyle
-                    rowNumber={10}
-                    columns={this.getTitleList()}
-                    scroll={{ x: '1024px' }}
-                  />
-                )
-            }
+            <IfTableWrap
+              text="客户暂无理财优惠券"
+              isRender={!_.isEmpty(list)}
+            >
+              <Table
+                pagination={paginationData}
+                dataSource={list}
+                isNeedEmptyRow
+                isNeedNoDataStyle
+                rowNumber={10}
+                columns={this.getTitleList()}
+                scroll={{ x: '1024px' }}
+              />
+            </IfTableWrap>
           </div>
         </div>
         <DetailModal

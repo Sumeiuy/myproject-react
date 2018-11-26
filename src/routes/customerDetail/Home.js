@@ -18,7 +18,7 @@ import CustomerBasicInfo from '../../components/customerDetail/CustomerBasicInfo
 import ServiceRelationship from './tabpages/serviceRelationship/Home';
 import CustProperty from './tabpages/custProperty/connectedHome';
 import DiscountCoupon from './tabpages/discountCoupon/connectedHome';
-import logable from '../../decorators/logable';
+import logable, { logCommon } from '../../decorators/logable';
 import ProductOrder from './tabpages/productOrder/Home';
 import InvestmentAbilityAnalysis from './tabpages/investmentAbilityAnalysis/Home';
 import {
@@ -94,9 +94,11 @@ export default class Home extends PureComponent {
       queryCustSummaryInfo({ custId });
     }
     // 获取客户反馈字典信息
-    getMotCustfeedBackDict({ pageNum: 1,
-pageSize: 10000,
-type: 2 });
+    getMotCustfeedBackDict({
+      pageNum: 1,
+      pageSize: 10000,
+      type: 2,
+    });
   }
 
   componentDidUpdate(prevProps) {
@@ -125,15 +127,15 @@ type: 2 });
 
   // 切换客户360详情页的Tab
   @autobind
-  @logable({
-    type: 'Click',
-    payload: {
-      name: '$args[1]',
-    },
-  })
   handleTabChange(activeTabKey) {
     const { replace } = this.context;
     const { location: { query, pathName } } = this.props;
+    logCommon({
+      type: 'Click',
+      payload: {
+        name: custDetailTabMap[activeTabKey],
+      },
+    });
     replace({
       pathName,
       query: {
@@ -198,9 +200,7 @@ type: 2 });
           <Tabs
             activeKey={activeTabKey}
             className={styles.tab}
-            onChange={
-              activeKey => this.handleTabChange(activeKey, custDetailTabMap[activeKey])
-            }
+            onChange={this.handleTabChange}
             animated={false}
             tabBarGutter={40}
           >
