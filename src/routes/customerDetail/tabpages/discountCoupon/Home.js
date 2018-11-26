@@ -156,9 +156,9 @@ export default class DiscountCoupon extends PureComponent {
 
   @autobind
   @logable({
-    type: 'Click',
+    type: 'ViewItem',
     payload: {
-      name: '$args[0].ticketId',
+      name: '优惠券详情',
     },
   })
   handleTableItemClick(dataItem) {
