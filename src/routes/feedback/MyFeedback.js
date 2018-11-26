@@ -158,7 +158,7 @@ export default class MyFeedback extends PureComponent {
         pageSize: 10,
         curPageNum,
       },
-    })
+    });
   }
 
   @autobind
