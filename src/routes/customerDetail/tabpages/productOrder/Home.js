@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-19 10:17:54
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-23 22:11:51
+ * @LastEditTime: 2018-11-26 09:32:15
  * @Description: 产品订单
  */
 
@@ -178,6 +178,7 @@ export default class ProductOrder extends PureComponent {
       queryServiceProductList,
       queryOrderApproval,
       queryOtherCommissions,
+      queryJxGroupProduct,
     } = this.props;
     const activeKey = this.getTabActiveKeyByUrl();
 
@@ -196,6 +197,7 @@ export default class ProductOrder extends PureComponent {
             <div className={styles.tabPaneWrap}>
               <ProductOrderFlow
                 productListBySearch={jxGroupProductList}
+                queryJxGroupProduct={queryJxGroupProduct}
                 serviceOrderFlow={serviceOrderFlow}
                 onProductOrderFlowChange={this.handleProductOrderFlowChanged}
                 serviceOrderDetail={serviceOrderDetail}

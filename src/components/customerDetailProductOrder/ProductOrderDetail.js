@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-23 09:51:00
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-23 22:41:09
+ * @LastEditTime: 2018-11-26 11:13:35
  * @Description: 服务订单流水详情
  */
 
@@ -80,6 +80,7 @@ export default class ProductOrderDetail extends PureComponent {
 
     return (
       <Modal
+        modalKey="productOrderDetail"
         visible={visible && orderNumber !== ''}
         maskClosable={false}
         title="订单详情"

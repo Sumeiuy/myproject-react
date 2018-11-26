@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-20 10:31:29
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-23 22:11:49
+ * @LastEditTime: 2018-11-26 11:05:37
  * @Description: 服务订单流水
  */
 
@@ -12,7 +12,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import moment from 'moment';
 import Tooltip from '../common/Tooltip';
-import { SingleFilter, SingleFilterWithSearch } from 'lego-react-filter/src';
+import { SingleFilter } from 'lego-react-filter/src';
 import Table from '../common/table';
 import DateFilter from '../common/htFilter/dateFilter';
 import ProductOrderDetail from './ProductOrderDetail';
@@ -23,6 +23,12 @@ import {
   DATE_FORMATE_STR_DETAIL,
 } from './config';
 import styles from './productOrderFlow.less';
+
+// 默认查询日期半年
+const DEFAULT_START_DATE = moment().subtract(6, 'months');
+const DEFAULT_END_DATE = moment().subtract(1, 'day');
+// 接口请求查询日期的格式
+const DATE_FORMATE_API = 'YYYY-MM-DD';
 
 export default class ProductOrderFlow extends PureComponent {
   static propsTypes = {
@@ -37,6 +43,7 @@ export default class ProductOrderFlow extends PureComponent {
     queryServiceProductList: PropTypes.func.isRequired,
     queryOrderApproval: PropTypes.func.isRequired,
     queryOtherCommissions: PropTypes.func.isRequired,
+    queryJxGroupProduct: PropTypes.func.isRequired,
   };
 
   constructor(props) {
@@ -44,6 +51,10 @@ export default class ProductOrderFlow extends PureComponent {
     this.state = {
       isProductOrderDetailShow: false,
       orderNumber: '', // 订单详情的编号
+      currentServiceProductCode: '',
+      serviceType: '',
+      standardStartDate: DEFAULT_START_DATE.format(DATE_FORMATE_API),
+      standardEndDate: DEFAULT_END_DATE.format(DATE_FORMATE_API),
     };
   }
 
@@ -56,6 +67,23 @@ export default class ProductOrderFlow extends PureComponent {
 
   @autobind
   handleSearchChanged(value) {
+    if ( _.trim(value) !== '') {
+      this.props.queryJxGroupProduct({
+        keyword: value,
+      });
+    }
+  }
+
+  @autobind
+  handleServiceProductChanged(value) {
+  }
+
+  @autobind
+  handleServiceTypeChanged(value) {
+  }
+
+  @autobind
+  haneleDateChanged(value) {
   }
 
   @autobind
@@ -116,6 +144,7 @@ export default class ProductOrderFlow extends PureComponent {
         list = [],
         page = {},
       },
+      productListBySearch = [],
       serviceOrderDetail,
       serviceProductList,
       orderApproval,
@@ -128,6 +157,10 @@ export default class ProductOrderFlow extends PureComponent {
     const {
       isProductOrderDetailShow,
       orderNumber,
+      currentServiceProductCode,
+      serviceType,
+      standardStartDate,
+      standardEndDate,
     } = this.state;
     const {
       curPageNum = 1,
@@ -144,30 +177,38 @@ export default class ProductOrderFlow extends PureComponent {
       <div className={styles.productOrderFlowWrap}>
         <div className={styles.header}>
           <div className={styles.filterItem}>
-            <SingleFilterWithSearch
+            <SingleFilter
               filterName="服务产品"
               filterId="serviceProduct"
-              // value={''}
-              // data={productListBySearch}
-              onChange={this.handleSearchChanged}
               placeholder="请输入服务产品"
+              showSearch
+              needItemObj
+              value={currentServiceProductCode}
+              data={productListBySearch}
+              onInputChange={this.handleSearchChanged}
+              onChanged={this.handleServiceProductChanged}
+              dropdownStyle={{
+                maxHeight: 324,
+                overflowY: 'auto',
+                width: 252,
+              }}
             />
           </div>
           <div className={styles.filterItem}>
             <SingleFilter
               filterName="类型"
               filterId="serviceType"
-              // data={}
-              // value={}
-              // onChange={}
+              data={[]}
+              value={serviceType}
+              onChange={this.handleServiceTypeChanged}
             />
           </div>
           <div className={styles.filterItem}>
             <DateFilter
               filterName="创建日期"
-              // initialStartDate={}
-              // value={}
-              // onChange={}
+              initialStartDate={DEFAULT_START_DATE}
+              value={[standardStartDate,standardEndDate]}
+              onChange={this.haneleDateChanged}
               disabledCurrentEnd={false}
             />
           </div>

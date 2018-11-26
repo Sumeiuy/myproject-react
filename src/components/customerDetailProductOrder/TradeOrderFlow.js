@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-21 09:35:09
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-22 18:49:38
+ * @LastEditTime: 2018-11-26 10:41:01
  * @Description: 交易订单流水
  */
 
@@ -82,28 +82,28 @@ export default class TradeOrderFlow extends PureComponent {
   render() {
     const {
       tradeOrderFlowData: {
-        list = [],
-        page = {},
+        custTradeOrderDTOList = [],
+        pageDTO = {},
       },
     } = this.props;
     const {
       pageNum = 1,
       pageSize = DEFAULT_PAGE_SIZE,
       totalCount = 1,
-    } = page;
+    } = pageDTO;
     const pagination = {
       current: pageNum,
       pageSize,
       total: totalCount,
     };
-    const isRender = list.length !== 0;
+    const isRender = custTradeOrderDTOList.length !== 0;
 
     return (
       <div className={styles.tradeOrderFlowWrap}>
         <IfTableWrap isRender={isRender} text={NODATA_HINT}>
           <Table
             pagination={pagination}
-            dataSource={list}
+            dataSource={custTradeOrderDTOList}
             columns={this.transformColumnsData(TRADE_ORDER_FLOW_COLUMNS)}
             className={styles.table}
             rowClassName={styles.tableRow}
