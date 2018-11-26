@@ -37,9 +37,13 @@
       background-color: @tooltip-base-color;
       border-radius: 3px;
       padding: 10px;
-      line-height: 20px;
+      line-height: 16px;
       -webkit-box-shadow: 0 2px 8px rgba(2, 22, 55, 0.15);
               box-shadow: 0 2px 8px rgba(2, 22, 55, 0.15);
+      letter-spacing: 1px;
+      div, section, span, em, a, h1, h2, h3, h4, h5, h6, dd, li, {
+        line-height: 16px;
+      }
     }
 
     .ant-tooltip-placement-top,
@@ -75,6 +79,22 @@
 
   .ant-select-dropdown {
     .fsp-fontfamily();
+  }
+
+  // 去除所有modal的动画样式
+  .ant-modal.zoom-enter,
+  .ant-modal.zoom-appear {
+    animation: none !important;
+    animation-duration: 0 !important;
+    transform: none; // reset scale avoid mousePosition bug
+    opacity: 0;
+    user-select: none; // https://github.com/ant-design/ant-design/issues/11777
+  }
+  .fade-enter,
+  .fade-appear,
+  .fade-leave {
+    animation: none !important;
+    animation-duration: 0 !important;
   }
 }
 // 目标客户池首页指标区域浮层的三角样式

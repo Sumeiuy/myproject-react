@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 最新观点-首页首席观点
  * @Date: 2018-06-21 16:50:10
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-08-30 11:04:41
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-11-26 10:27:21
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -12,7 +12,7 @@ import { openRctTab } from '../../../utils';
 import { url as urlHelper, time } from '../../../helper';
 import config from '../config';
 import Icon from '../../common/Icon';
-import logable from '../../../decorators/logable';
+import logable, { logCommon } from '../../../decorators/logable';
 import styles from './chiefViewpoint.less';
 
 // 内容最大长度
@@ -39,6 +39,7 @@ export default class ChiefViewpoint extends PureComponent {
   })
   toListPage() {
     const {
+      title,
       type,
     } = this.props;
     const { push } = this.context;
@@ -49,13 +50,20 @@ export default class ChiefViewpoint extends PureComponent {
     const query = {
       type,
     };
-    const url = `/latestView/viewpointList?${urlHelper.stringify(query)}`;
+    const url = `/strategyCenter/latestView/viewpointList?${urlHelper.stringify(query)}`;
     openRctTab({
       routerAction: push,
       url,
       param,
       query,
-      pathname: '/latestView/viewpointList',
+      pathname: '/strategyCenter/latestView/viewpointList',
+    });
+    // log日志 最新观点各模块更多
+    logCommon({
+      type: 'Click',
+      payload: {
+        name: title + '-更多',
+      },
     });
   }
 
@@ -68,14 +76,19 @@ export default class ChiefViewpoint extends PureComponent {
     },
   })
   toDetailPage() {
-    const { type, data: { id }, location: { query } } = this.props;
+    const { type, title, data: { id }, location: { query } } = this.props;
     const { push } = this.context;
     const param = {
       id: 'RTC_TAB_VIEWPOINT',
       title: '资讯',
     };
-    const url = '/latestView/viewpointDetail';
-    const newQuery = { ...query, type, id, sourceUrl: '/latestView' };
+    const url = '/strategyCenter/latestView/viewpointDetail';
+    const newQuery = {
+      ...query,
+      type,
+      id,
+      sourceUrl: '/latestView',
+    };
     openRctTab({
       routerAction: push,
       url: `${url}?${urlHelper.stringify(newQuery)}`,
@@ -83,6 +96,13 @@ export default class ChiefViewpoint extends PureComponent {
       pathname: url,
       query: newQuery,
       name: '资讯详情',
+    });
+    // log日志 最新观点各模块详情
+    logCommon({
+      type: 'Click',
+      payload: {
+        name: title + '-详情',
+      },
     });
   }
 

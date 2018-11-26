@@ -20,5 +20,7 @@ export default function morningBoradcast(api) {
     delCeFile: query => api.post('/file/ceFileDelete2', query),
     // 文件列表
     ceFileList: query => api.post('/file/ceFileList2', query),
+    // 活动栏目预览
+    queryContent: query => api.post('/groovynoauth/fsp/activityColumn/queryContent', query),
   };
 }

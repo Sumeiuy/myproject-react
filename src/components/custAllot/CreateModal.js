@@ -2,8 +2,8 @@
  * @Description: 分公司客户划转 home 页面
  * @Author: XuWenKang
  * @Date: 2017-09-22 14:49:16
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-09-21 14:10:58
+ * @Last Modified by: zhangmei
+ * @Last Modified time: 2018-11-12 13:41:44
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -133,7 +133,8 @@ export default class CreateModal extends PureComponent {
 
   // 导入数据
   @autobind
-  @logPV({ pathname: '/modal/custAllotImportData', title: '分公司客户分配导入数据' })
+  @logPV({ pathname: '/modal/custAllotImportData',
+title: '分公司客户分配导入数据' })
   onImportHandle() {
     this.setState({
       importVisible: true,
@@ -252,7 +253,8 @@ export default class CreateModal extends PureComponent {
 
   // 上传事件
   @autobind
-  @logable({ type: 'Click', payload: { name: '分公司客户分配客户导入' } })
+  @logable({ type: 'Click',
+payload: { name: '分公司客户分配客户导入' } })
   handleFileChange(info) {
     const uploadFile = info.file;
     const { size } = uploadFile;
@@ -310,14 +312,16 @@ export default class CreateModal extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '否' } })
+  @logable({ type: 'ButtonClick',
+payload: { name: '否' } })
   importHandleCancel() {
     this.setState({
       importVisible: false,
     });
   }
 
-  @logable({ type: 'Click', payload: { name: '下载模板' } })
+  @logable({ type: 'Click',
+payload: { name: '下载模板' } })
   handleDownloadClick() {}
 
   // 分配规则切换事件
@@ -355,7 +359,8 @@ export default class CreateModal extends PureComponent {
     if (isCust) {
       payload.customer = [{ brokerNumber: record.custId }];
     } else {
-      payload.manage = [{ empId: record.empId, positionId: record.positionId }];
+      payload.manage = [{ empId: record.empId,
+positionId: record.positionId }];
     }
     updateList(payload).then(() => {
       const queryAddedCustListPayload = {
@@ -380,7 +385,8 @@ export default class CreateModal extends PureComponent {
 
   // 客户分页事件
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '客户列表分页' } })
+  @logable({ type: 'ButtonClick',
+payload: { name: '客户列表分页' } })
   handleCustPageChange(pageNum) {
     const { queryAddedCustList, updateData } = this.props;
     const payload = {
@@ -395,7 +401,8 @@ export default class CreateModal extends PureComponent {
 
   // 服务经理分页事件
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '服务经理列表分页' } })
+  @logable({ type: 'ButtonClick',
+payload: { name: '服务经理列表分页' } })
   handleManagePageChange(pageNum) {
     const { queryAddedManageList, updateData } = this.props;
     const payload = {
@@ -496,9 +503,9 @@ export default class CreateModal extends PureComponent {
   }
 
   // 发送添加客户、服务经理请求
-  // TODO 日志查看：打开页面无数据 未验证
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '添加' } })
+  @logable({ type: 'ButtonClick',
+payload: { name: '添加' } })
   sendRequest(modalKey) {
     const { clearData, sendRequest, custModalKey, manageModalKey, updateData } = this.props;
     const { client, manager, alreadyCount } = this.state;

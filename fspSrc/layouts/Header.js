@@ -24,6 +24,7 @@ import api from '../../src/api';
 import { Search } from '../../src/components/customerPool/home';
 import { emp, permission } from '../../src/helper';
 import EnvironmentalInfo from '../../src/components/environmentalInfo/EnvironmentalInfoModal';
+import { logCommon, logPV } from '../../src/decorators/logable';
 
 // 首页执行者视图首次引导提示第十步的dom的id名称(我要提问)
 const NEW_HOME_INTRO_TENTH_SEEP_IDNAME = 'homePageIntroTenthStep';
@@ -107,6 +108,16 @@ export default class Header extends PureComponent {
     );
   }
 
+  getCurrentId(menu) {
+    if(menu.name === '问题反馈') {
+      return NEW_HOME_INTRO_TENTH_SEEP_IDNAME;
+    }
+    if(menu.name === '常用工具') {
+      return NEW_HOME_INTRO_ELEVENTH_SEEP_IDNAME;
+    }
+    return '';
+  }
+
   getMenus(array, level = 2) {
     return array.map((item) => {
       if (item.children && !_.isEmpty(item.children)) {
@@ -122,6 +133,7 @@ export default class Header extends PureComponent {
       return (
         <Menu.Item
           key={item.id}
+          className={styles.menuItem}
         >
           <div
             title={item.name}
@@ -135,11 +147,24 @@ export default class Header extends PureComponent {
   }
 
   preTreatment(secondaryMenu) {
-    return _.filter(secondaryMenu,
+    const filterMenu =  _.filter(secondaryMenu,
       menu =>
         menu.name === '移动版'
         || (!_.isEmpty(menu.children))
         || (!!menu.path));
+
+    let feedbackMenu = _.find(filterMenu, menu => menu.name === '问题反馈') || {};
+
+    if(_.find(feedbackMenu.children, menu => menu.name === '反馈管理')) {
+      feedbackMenu = _.filter(feedbackMenu.children, menu => menu.name !== '反馈记录');
+      return _.map(filterMenu, menu => {
+        if(menu.name === '问题反馈') {
+          menu.children = feedbackMenu;
+        }
+        return menu;
+      });
+    }
+    return filterMenu;
   }
 
   // 获取联想数据
@@ -167,10 +192,29 @@ export default class Header extends PureComponent {
     const { push, location } = this.props;
     if (menuItem.action === 'loadExternSystemPage') {
       const externUrl = fixExternUrl(menuItem.url);
+      logCommon({
+        type: 'NavClick',
+        payload: {
+          name: '次级导航',
+          value: externUrl,
+          url: externUrl,
+        },
+      });
       window.open(externUrl, '_blank');
     } else if (menuItem.action === 'loadInModal') {
+      if(menuItem.name === '我要反馈') {
+        this.handleFeedbackClick();
+      }
       this.handleShowDialog(menuItem);
     } else if (menuItem.path !== location.pathname) {
+      logCommon({
+        type: 'NavClick',
+        payload: {
+          name: '次级导航',
+          value: menuItem.path,
+          url: menuItem.path,
+        },
+      });
       push({
         pathname: menuItem.path,
         query: menuItem.query,
@@ -206,6 +250,10 @@ export default class Header extends PureComponent {
 
   // 环境信息弹窗
   @autobind
+  @logPV({
+    pathname: '',
+    title: '环境信息弹窗',
+  })
   handleEnvironmentalInfoModalShow() {
     this.setState({
       environmentalInfoVisible: true,
@@ -213,6 +261,10 @@ export default class Header extends PureComponent {
   }
 
   @autobind
+  @logPV({
+    pathname: '',
+    title: '隔离墙弹框',
+  })
   handleIsolationWallModalShow() {
     this.setState({
       isolationWallModalVisible: true,
@@ -220,6 +272,10 @@ export default class Header extends PureComponent {
   }
 
   @autobind
+  @logPV({
+    pathname: '',
+    title: '关闭隔离墙弹框',
+  })
   handleIsolationWallModalHide() {
     this.setState({
       isolationWallModalVisible: false,
@@ -255,6 +311,10 @@ export default class Header extends PureComponent {
   }
 
   @autobind
+  @logPV({
+    pathname: '',
+    title: '我要反馈弹框',
+  })
   handleFeedbackClick() {
     if (!$('#feedback-module')[0]) {
       window.handleFeedbackBtnClick();
@@ -263,6 +323,10 @@ export default class Header extends PureComponent {
 
   // 环境信息弹窗点击关闭
   @autobind
+  @logPV({
+    pathname: '',
+    title: '关闭环境信息弹框',
+  })
   handleEnvironmentalInfoHide() {
     this.setState({
       environmentalInfoVisible: false,
@@ -282,12 +346,8 @@ export default class Header extends PureComponent {
             >
               <div>
                 <span className={styles.navItem}>
-                  <span id= {
-                    menu.name === '常用工具'
-                    ? NEW_HOME_INTRO_ELEVENTH_SEEP_IDNAME
-                    : ''
-                  }
-                  >{menu.name}</span>
+                  { menu.name === '问题反馈' ? <i className={styles.feedbackIcon} /> : null}
+                  <span id={this.getCurrentId(menu)}>{menu.name}</span>
                 </span>
                 {
                   (index !== fixSecondaryMenu.length - 1) ?
@@ -344,84 +404,79 @@ export default class Header extends PureComponent {
     const errorIconClasses = className(['iconfont', 'icon-tixing', styles.errorIcon]);
 
     return (
-      <div className={styles.fspHeader}>
-        <EnvironmentalInfo
-          handleEnvironmentalInfoHide={this.handleEnvironmentalInfoHide}
-          environmentalInfoVisible={this.state.environmentalInfoVisible}
-        />
-        <Modal
-          title="隔离墙"
-          width={650}
-          className={styles.modal}
-          destroyOnClose
-          visible={this.state.isolationWallModalVisible}
-          onOk={this.handleSubmitExistCp}
-          onCancel={this.handleIsolationWallModalHide}
-          footer={[
-            <Button key="back" onClick={this.handleIsolationWallModalHide}>取消</Button>,
-            <Button
-              key="submit"
-              type="primary"
-              onClick={this.handleSubmitExistCp}
-            >
-              验证
-            </Button>,
-          ]}
-        >
-          <div className={styles.selectedInfo}>股票代码：</div>
-          <Input
-            value={this.state.stockCode}
-            onChange={e => this.handleInputChange(e.target.value)}
-            onPressEnter={this.handleSubmitExistCp}
+      <div className={styles.fspHeaderContainer}>
+        <div className={styles.fspHeader}>
+          <EnvironmentalInfo
+            handleEnvironmentalInfoHide={this.handleEnvironmentalInfoHide}
+            environmentalInfoVisible={this.state.environmentalInfoVisible}
           />
-          <div className={rightClasses}>
-            <i className={rightIconClasses} />
-            <span>此产品验证通过</span>
+          <Modal
+            title="隔离墙"
+            width={650}
+            className={styles.modal}
+            destroyOnClose
+            visible={this.state.isolationWallModalVisible}
+            onOk={this.handleSubmitExistCp}
+            onCancel={this.handleIsolationWallModalHide}
+            footer={[
+              <Button key="back" onClick={this.handleIsolationWallModalHide}>取消</Button>,
+              <Button
+                key="submit"
+                type="primary"
+                onClick={this.handleSubmitExistCp}
+              >
+                验证
+              </Button>,
+            ]}
+          >
+            <div className={styles.selectedInfo}>股票代码：</div>
+            <Input
+              value={this.state.stockCode}
+              onChange={e => this.handleInputChange(e.target.value)}
+              onPressEnter={this.handleSubmitExistCp}
+            />
+            <div className={rightClasses}>
+              <i className={rightIconClasses} />
+              <span>此产品验证通过</span>
+            </div>
+            <div className={errorClasses}>
+              <i className={errorIconClasses} />
+              <span>此产品验证不通过</span>
+            </div>
+            <div className={errorEmptyClasses}>
+              <i className={errorIconClasses} />
+              <span>产品代码不能为空</span>
+            </div>
+          </Modal>
+          <div><Logo /></div>
+          <div className={styles.search}>
+            <Search
+              orgId={this.orgId}
+              queryHotPossibleWds={this.queryHotPossibleWds}
+              queryHotWdsData={hotPossibleWdsList}
+              push={push}
+              searchHistoryVal={searchHistoryVal}
+              saveSearchVal={this.handleSaveSearchVal}
+              location={location}
+              isOnlySearchable
+            />
           </div>
-          <div className={errorClasses}>
-            <i className={errorIconClasses} />
-            <span>此产品验证不通过</span>
+          <div className={styles.headerContent}>
+            {
+              !_.isEmpty(secondaryMenu) ?
+                this.renderSecondaryMenu(secondaryMenu) : null
+            }
+            {
+              (!_.isEmpty(empRspList)) ?
+                (<EmpRsp
+                  empRspList={empRspList}
+                  empCurrentPosition={empCurrentPosition}
+                  empInfo={empInfo}
+                  onSwitchRsp={this.handleSwitchRsp}
+                />) :
+                null
+            }
           </div>
-          <div className={errorEmptyClasses}>
-            <i className={errorIconClasses} />
-            <span>产品代码不能为空</span>
-          </div>
-        </Modal>
-        <div><Logo /></div>
-        <div className={styles.search}>
-          <Search
-            orgId={this.orgId}
-            queryHotPossibleWds={this.queryHotPossibleWds}
-            queryHotWdsData={hotPossibleWdsList}
-            push={push}
-            searchHistoryVal={searchHistoryVal}
-            saveSearchVal={this.handleSaveSearchVal}
-            location={location}
-            isOnlySearchable
-          />
-        </div>
-        <div className={styles.headerContent}>
-          <div onClick={this.handleFeedbackClick}>
-            <span className={styles.navItem}>
-              <i className={styles.feedbackIcon} />
-              <span id={NEW_HOME_INTRO_TENTH_SEEP_IDNAME}>我要提问</span>
-            </span>
-            <span className={styles.splitLine} />
-          </div>
-          {
-            !_.isEmpty(secondaryMenu) ?
-              this.renderSecondaryMenu(secondaryMenu) : null
-          }
-          {
-            (!_.isEmpty(empRspList)) ?
-              (<EmpRsp
-                empRspList={empRspList}
-                empCurrentPosition={empCurrentPosition}
-                empInfo={empInfo}
-                onSwitchRsp={this.handleSwitchRsp}
-              />) :
-              null
-          }
         </div>
       </div>
     );

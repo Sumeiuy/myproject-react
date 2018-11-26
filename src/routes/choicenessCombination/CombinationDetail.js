@@ -81,24 +81,33 @@ const mapStateToProps = state => ({
 });
 const mapDispatchToProps = {
   getOverview: dispatch(effects.getOverview,
-    { loading: true, forceFull: true }),
+    { loading: true,
+forceFull: true }),
   getCompositionPie: dispatch(effects.getCompositionPie,
-    { loading: true, forceFull: true }),
+    { loading: true,
+forceFull: true }),
   querySecurityList: dispatch(effects.querySecurityList,
-    { loading: true, forceFull: true }),
+    { loading: true,
+forceFull: true }),
   getAdjustWarehouseHistory: dispatch(effects.getAdjustWarehouseHistory,
-    { loading: true, forceFull: true }),
+    { loading: true,
+forceFull: true }),
   getCombinationTree: dispatch(effects.getCombinationTree,
-    { loading: true, forceFull: true }),
+    { loading: true,
+forceFull: true }),
   getCombinationLineChart: dispatch(effects.getCombinationLineChart,
-    { loading: true, forceFull: true }),
+    { loading: true,
+forceFull: true }),
   getOrderingCustList: dispatch(effects.getOrderingCustList,
-    { loading: true, forceFull: true }),
+    { loading: true,
+forceFull: true }),
   getReportHistoryList: dispatch(effects.getReportHistoryList,
-    { loading: true, forceFull: true }),
+    { loading: true,
+forceFull: true }),
   push: routerRedux.push,
   queryHoldRepeatProportion: dispatch(effects.queryHoldRepeatProportion,
-    { loading: true, forceFull: true }),
+    { loading: true,
+forceFull: true }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -376,12 +385,12 @@ export default class CombinationDetail extends PureComponent {
     const query = {
       id,
     };
-    const url = `/choicenessCombination/reportDetail?${urlHelper.stringify(query)}`;
+    const url = `/strategyCenter/choicenessCombination/reportDetail?${urlHelper.stringify(query)}`;
     openRctTab({
       routerAction: push,
       url,
       param,
-      pathname: '/choicenessCombination/reportDetail',
+      pathname: '/strategyCenter/choicenessCombination/reportDetail',
       query,
     });
   }

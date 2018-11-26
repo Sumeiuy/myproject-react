@@ -75,8 +75,6 @@ export default class CommonModal extends PureComponent {
       PropTypes.element,
       PropTypes.node,
     ]),
-    // 确认弹出框是否否需要动画
-    animate: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -92,7 +90,6 @@ export default class CommonModal extends PureComponent {
     wrapClassName: '',
     selfBtnGroup: {},
     onOk: () => { },
-    animate: false,
   }
 
   static showErrorDialog = (content) => {
@@ -104,13 +101,15 @@ export default class CommonModal extends PureComponent {
   };
 
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '$props.okText' } })
+  @logable({ type: 'ButtonClick',
+payload: { name: '$props.okText' } })
   handleOk(modalKey) {
     this.props.onOk(modalKey);
   }
 
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '$props.cancelText' } })
+  @logable({ type: 'ButtonClick',
+payload: { name: '$props.cancelText' } })
   handleCancel(modalKey) {
     this.props.closeModal(modalKey);
   }
@@ -154,12 +153,9 @@ export default class CommonModal extends PureComponent {
     }
     // 用来控制弹出层动画效果的 props
     let animateProps = {
-      transitionName: '',
-      maskTransitionName: '',
+      transitionName: 'noAnimation',
+      maskTransitionName: 'noAnimation',
     };
-    if (this.props.animate) {
-      animateProps = {};
-    }
     return (
       <Modal
         {...this.props}

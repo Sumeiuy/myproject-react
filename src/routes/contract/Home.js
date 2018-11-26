@@ -2,8 +2,8 @@
  * @Description: 合作合约 home 页面
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-08-07 17:00:24
+ * @Last Modified by: zhangmei
+ * @Last Modified time: 2018-11-14 11:20:50
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -409,7 +409,8 @@ export default class Contract extends PureComponent {
     const { getSeibleList } = this.props;
     const params = seibelHelper.constructSeibelPostBody(query, pageNum, pageSize);
     // 默认筛选条件
-    getSeibleList({ ...params, type: pageType }).then(this.getRightDetail);
+    getSeibleList({ ...params,
+type: pageType }).then(this.getRightDetail);
   }
 
   /**
@@ -429,7 +430,9 @@ export default class Contract extends PureComponent {
   // 根据子类型和客户查询合约编号
   @autobind
   handleSearchContractNum(data) {
-    this.props.getContractNumList({ subType: data.subType, Type: '3', custId: data.client.cusId });
+    this.props.getContractNumList({ subType: data.subType,
+Type: '3',
+custId: data.client.cusId });
   }
 
   // 查询客户
@@ -544,7 +547,8 @@ export default class Contract extends PureComponent {
 
   // 头部新建按钮点击事件处理程序
   @autobind
-  @logPV({ pathname: '/modal/createContract', title: '新建合作合约' })
+  @logPV({ pathname: '/modal/createContract',
+title: '新建合作合约' })
   handleCreateBtnClick() {
     const { getFlowStepInfo, resetUnsubscribeDetail } = this.props;
     getFlowStepInfo({
@@ -852,8 +856,8 @@ export default class Contract extends PureComponent {
     type: 'ViewItem',
     payload: {
       name: '合作合约左侧列表项',
-      type: '$props.location.query.type',
-      subType: '$props.location.query.subType',
+      type: '$args[0].title',
+      subType: '$args[0].subType',
     },
   })
   handleListRowClick(record, index) {
