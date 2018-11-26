@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性
  * @Date: 2018-11-06 16:17:28
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-26 14:49:09
+ * @Last Modified time: 2018-11-26 16:04:58
  */
 
 import React, { PureComponent } from 'react';
@@ -216,7 +216,7 @@ export default class CustProperty extends PureComponent {
 
   @autobind
   @logable({ type: 'Click',
-payload: { name: '客户属性下tab切换' } })
+  payload: { name: '客户属性下tab切换' } })
   handleTabChange(activeKey) {
     this.setState({
       activeKey,

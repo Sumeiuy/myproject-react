@@ -1,8 +1,9 @@
 /*
  * @Author: wangyikai
+ * @Description: 客户360-业务办理
  * @Date: 2018-11-19 16:20:49
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-26 10:38:27
+ * @Last Modified time: 2018-11-26 16:58:25
  */
 import React,{ PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -15,6 +16,11 @@ import { number } from '../../helper';
 import { openBusinessColumns, notOpenBusinessColumns } from './config';
 
 const DATE_FORMAT = 'YYYY-MM-DD';
+const OPEN_CONDITIONS = 'openConditions';
+const OPEN_DATAE = 'openDate';
+const TRANSACTION_DATE = 'transactionDate';
+const BLACK_LIST= 'blackList';
+const STANDARD_ASSETS = 'standardAssets';
 export default class BusinessHand extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -32,81 +38,56 @@ export default class BusinessHand extends PureComponent {
     getDetailOperation: PropTypes.func.isRequired,
   }
 
-  constructor(props) {
-    super(props);
-    this.state = {};
+  @autobind
+  renderNotOpenColumns() {
+    const notOpenList = [...notOpenBusinessColumns];
+    const custNameColumn = _.find(notOpenList, o => o.key === OPEN_CONDITIONS);
+    custNameColumn.render = (text, record) => {
+      if(!_.isEmpty(record.businessType)) {
+        return text === true ? '是' : '否';
+      }else {
+        return null;
+      }
+    }
+    return notOpenList;
   }
 
   @autobind
-  notOpenRenderColumns() {
-    return _.map( notOpenBusinessColumns, item=>{
-      const { key } = item;
-      let newItem = {...item};
-      if( key === 'openConditions' ) {
-        newItem = {
-          ...item,
-          render: ( text,record ) => {
-            if( !_.isEmpty(record.businessType) ) {
-              return text === true ? '是' : '否';
-            }else {
-              return null;
-            }
-          }
-        };
+  renderOpenColumns() {
+    const openList = [...openBusinessColumns];
+    // 开通日期,首次交易日期
+    const blackColumn = _.find(openList, o => o.key === BLACK_LIST);
+    blackColumn.render = (text, record) => {
+      if(!_.isEmpty(record.businessType)) {
+        return text === true ? '是' : '否';
+      }else {
+        return null;
       }
-      return newItem;
-    });
-  }
-
-  @autobind
-  openRenderColumns() {
-    return _.map(openBusinessColumns, item=>{
-      const { dataIndex } = item;
-      let newItem = {...item};
-      if( dataIndex === 'openDate' || dataIndex === 'transactionDate') {
-        newItem = {
-          ...item,
-          render: ( text,record ) => {
-            if( !_.isEmpty(record.businessType) ) {
-              return moment(text).format(DATE_FORMAT);
-            }else {
-              return null;
-            }
-          }
-        };
-      };
-      if( dataIndex === 'blackList' ) {
-        newItem = {
-          ...item,
-          render: ( text,record ) => {
-            if( !_.isEmpty(record.businessType) ) {
-              return text === true ? '是' : '否';
-            }else {
-              return null;
-            }
-          }
-        };
-      };
-      if( dataIndex === 'standardAssets') {
-        newItem = {
-          ...item,
-          render: (text,record) => {
-            if( !_.isEmpty(record.businessType) ) {
-              const newData = number.formatToUnit({
-                num: text,
-                isThousandFormat: true,
-                floatLength: 2,
-                isRound: false,
-              });
-              const newsData = newData.substring(0, newData.length-1);
-              return newsData;
-            }
-          }
-        };
+    }
+    // 黑名单
+    const dateColumn = _.find(openList, o => o.key === OPEN_DATAE || o.key === TRANSACTION_DATE);
+    dateColumn.render = (text, record) => {
+      if(!_.isEmpty(record.businessType)) {
+        return moment(text).format(DATE_FORMAT);
+      }else {
+        return null;
       }
-      return newItem;
-    });
-  }
+    }
+    // 达标资产
+    const standardAssetsColumn = _.find(openList, o => o.key === STANDARD_ASSETS);
+    standardAssetsColumn.render = (text, record) => {
+      if(!_.isEmpty(record.businessType)) {
+        const newData = number.formatToUnit({
+          num: text,
+          isThousandFormat: true,
+          floatLength: 2,
+          isRound: false,
+        });
+        return newData.substring(0, newData.length-1);
+      }
+    }
+    return openList;
+    }
 
   render() {
     const {
@@ -127,7 +108,7 @@ export default class BusinessHand extends PureComponent {
                   className={styles.tableBorder}
                   isNeedEmptyRow
                   dataSource={openBusinessData}
-                  columns={this.openRenderColumns()}
+                  columns={this.renderOpenColumns()}
                 />
               </div>
             </div>
@@ -141,7 +122,7 @@ export default class BusinessHand extends PureComponent {
                   className={styles.tableBorder}
                   isNeedEmptyRow
                   dataSource={notOpenBusinessData}
-                  columns={this.notOpenRenderColumns()}
+                  columns={this.renderNotOpenColumns()}
                 />
               </div>
             </div>

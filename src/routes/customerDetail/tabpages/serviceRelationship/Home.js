@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-11-05 17:45:53
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-26 10:59:17
+ * @Last Modified time: 2018-11-26 16:06:09
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -44,7 +44,7 @@ export default class Home extends PureComponent {
     getCustServiceTeam: PropTypes.func.isRequired,
     // 查询账户关系下的介绍信息
     getCustDevInfo: PropTypes.func.isRequired,
-    //查询账户关系下的服务历史信息
+    // 查询账户关系下的服务历史信息
     getCustServiceHistory: PropTypes.func.isRequired,
     // 清除Redux中的数据
     clearReduxData: PropTypes.func.isRequired,

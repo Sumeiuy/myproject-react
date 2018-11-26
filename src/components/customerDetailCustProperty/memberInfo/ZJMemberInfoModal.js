@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-11-15 16:54:09
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-23 14:52:08
+ * @Last Modified time: 2018-11-26 15:58:50
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -32,6 +32,28 @@ export default class ZJMemeberInfoModal extends PureComponent {
     visible: PropTypes.bool.isRequired,
     // 控制弹框是否关闭
     onClose: PropTypes.func.isRequired,
+  }
+
+  componentDidUpdate(prevProps) {
+    const {
+      location: {
+        query: {
+          custId: prevCustId,
+        },
+      },
+    } = prevProps;
+    const {
+      queryZjPointExchangeFlow,
+      location: {
+        query: {
+          custId,
+        },
+      },
+    } = this.props;
+    // url中custId发生变化时重新请求相关数据
+    if (prevCustId !== custId) {
+      queryZjPointExchangeFlow({ custId });
+    }
   }
 
   @autobind
@@ -66,7 +88,7 @@ export default class ZJMemeberInfoModal extends PureComponent {
   // 页码切换的回调
   @autobind
   @logable({ type: 'Click',
-payload: { name: '页码切换' } })
+  payload: { name: '页码切换' } })
   handlePaginationChange(page) {
     const {
       queryZjPointExchangeFlow,
@@ -77,28 +99,6 @@ payload: { name: '页码切换' } })
       pageNum: page,
       custId,
     });
-  }
-
-  componentDidUpdate(prevProps) {
-    const {
-      location: {
-        query: {
-          custId: prevCustId,
-        },
-      },
-    } = prevProps;
-    const {
-      queryZjPointExchangeFlow,
-      location: {
-        query: {
-          custId,
-        },
-      },
-    } = this.props;
-    // url中custId发生变化时重新请求相关数据
-    if (prevCustId !== custId) {
-      queryZjPointExchangeFlow({ custId });
-    }
   }
 
   render() {

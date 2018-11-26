@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-11-19 15:58:39
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-23 11:14:13
+ * @Last Modified time: 2018-11-26 16:04:29
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -109,7 +109,7 @@ export default class Home extends PureComponent {
           getOpenBusiness={getOpenBusiness}
           getNotOpenBusiness={getNotOpenBusiness}
           getDetailOperation={getDetailOperation}
-          />
+        />
       </div>
     );
   }
