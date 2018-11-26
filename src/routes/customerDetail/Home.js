@@ -1,8 +1,8 @@
 /**
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-11-23 13:22:19
+ * @Last Modified by: wangyikai
+ * @Last Modified time: 2018-11-26 17:03:19
  */
 
 import React, { PureComponent } from 'react';
@@ -16,6 +16,7 @@ import BreadCrumb from '../../components/customerDetail/Breadcrumb';
 import SummaryInfo from '../../components/customerDetail/SummaryInfo';
 import CustomerBasicInfo from '../../components/customerDetail/CustomerBasicInfo';
 import ServiceRelationship from './tabpages/serviceRelationship/Home';
+import BusinessHand from './tabpages/businessHand/Home';
 import CustProperty from './tabpages/custProperty/connectedHome';
 import DiscountCoupon from './tabpages/discountCoupon/connectedHome';
 import logable, { logCommon } from '../../decorators/logable';
@@ -214,6 +215,7 @@ export default class Home extends PureComponent {
               <InvestmentAbilityAnalysis />
             </TabPane>
             <TabPane tab="业务办理" key={BUNESSINESS_PROCESS_TAB_KEY}>
+              <BusinessHand location={location} />
             </TabPane>
             <TabPane tab="服务记录" key={SERVICE_RECORD_TAB_KEY}>
             </TabPane>
