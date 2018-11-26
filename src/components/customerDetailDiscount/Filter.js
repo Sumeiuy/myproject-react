@@ -12,6 +12,7 @@ import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import { Input  } from 'antd';
 import { SingleFilter } from 'lego-react-filter/src';
+import logable from '../../decorators/logable';
 import styles from './filter.less';
 
 const { Search } = Input;
@@ -36,9 +37,40 @@ export default class Filter extends PureComponent {
     ];
   }
 
+  @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '优惠券编号搜索',
+      value: '$args[0]',
+    },
+  })
+  handleSearch(value) {
+    const { onFilterChange } = this.props;
+    onFilterChange({
+      name: 'ticketId',
+      value: _.trim(value),
+    });
+  }
+
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '使用状态',
+      value: '$args[0]',
+    },
+  })
+  handleSelectChange(value) {
+    const { onFilterChange } = this.props;
+    onFilterChange({
+      name: 'status',
+      value: value,
+    });
+  }
+
   render() {
     const {
-      onFilterChange,
       status,
     } = this.props;
     return (
@@ -46,10 +78,7 @@ export default class Filter extends PureComponent {
         <div className={styles.searchBox}>
           <Search
             placeholder="优惠券编号"
-            onSearch={value => onFilterChange({
-              name: 'ticketId',
-              value: _.trim(value),
-            })}
+            onSearch={this.handleSearch}
             style={{ width: 200 }}
           />
         </div>
@@ -60,10 +89,7 @@ export default class Filter extends PureComponent {
             value={status}
             data={this.getStatusDataList()}
             dataMap={['statusCode', 'statusText']}
-            onChange={data => onFilterChange({
-              name: 'status',
-              value: data.value
-            })}
+            onChange={this.handleSelectChange}
           />
         </div>
       </div>

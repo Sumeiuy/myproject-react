@@ -14,7 +14,7 @@ import Filter from '../../../../components/customerDetailDiscount/Filter';
 import DetailModal from '../../../../components/customerDetailDiscount/DetailModal';
 import Table from '../../../../components/common/table';
 import IfTableWrap from '../../../../components/common/IfTableWrap';
-import logable from '../../../../decorators/logable';
+import logable, { logPV } from '../../../../decorators/logable';
 import { couponTitleList } from '../../../../components/customerDetailDiscount/config';
 
 import styles from './home.less';
@@ -129,6 +129,10 @@ export default class DiscountCoupon extends PureComponent {
   }
 
   @autobind
+  @logPV({
+    pathname: '/modal/cust360DetailDiscountCouponModal',
+    title: '理财优惠券',
+  })
   handleShowModal() {
     this.setState({
       isShowModal: true,
@@ -136,6 +140,10 @@ export default class DiscountCoupon extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'Click',
+    payload: { name: '关闭理财优惠券详情'},
+  })
   handleHideModal() {
     this.setState({
       isShowModal: false,
@@ -166,6 +174,12 @@ export default class DiscountCoupon extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '页码切换',
+    },
+  })
   handlePaginationChange(pageNum) {
     const {
       ticketId,
