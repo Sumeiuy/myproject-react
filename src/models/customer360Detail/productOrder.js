@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-20 16:16:41
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-26 17:52:37
+ * @LastEditTime: 2018-11-26 21:09:37
  * @Description: 新版客户360详情下的产品订单Tab页面的model
  */
 import { detailProductOrder as api } from '../../api';
@@ -19,6 +19,7 @@ export default {
     serviceProductList: EMPTY_ARRAY,
     orderApproval: EMPTY_OBJECT,
     attachmentList: EMPTY_ARRAY,
+    serviceOrderData: EMPTY_OBJECT,
   },
   reducers: {
     queryServiceOrderFlowSuccess(state, action) {
@@ -63,6 +64,13 @@ export default {
         attachmentList: payload,
       };
     },
+    queryServiceOrderDataSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        serviceOrderData: payload || EMPTY_OBJECT,
+      };
+    }
   },
   effects: {
     * queryServiceOrderFlow({ payload }, { put, call }) {
@@ -105,6 +113,17 @@ export default {
       const { resultData } = yield call(api.getAttachmentList, payload);
       yield put({
         type: 'getAttachmentListSuccess',
+        payload: resultData,
+      });
+    },
+    * queryCustCanChangeCommission({ payload }, { put, call }) {
+      const { resultData } = yield call(api.queryCustCanChangeCommission, payload);
+      return resultData;
+    },
+    * queryServiceOrderData({ payload }, { put, call }) {
+      const { resultData } = yield call(api.queryServiceOrderData, payload);
+      yield put({
+        type: 'queryServiceOrderDataSuccess',
         payload: resultData,
       });
     },

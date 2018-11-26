@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-23 09:51:00
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-26 20:26:45
+ * @LastEditTime: 2018-11-26 21:15:27
  * @Description: 服务订单流水详情-服务产品
  */
 
@@ -42,7 +42,7 @@ export default function ServiceProductList(props) {
         dataSource={props.serviceProductList}
         columns={transformColumnsData(SERVICE_PRODUCT_LIST_COLUMNS)}
         className={styles.table}
-        indentSize="0px"
+        indentSize={0}
       />
     </div>
   );

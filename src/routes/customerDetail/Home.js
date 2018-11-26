@@ -18,8 +18,9 @@ import CustomerBasicInfo from '../../components/customerDetail/CustomerBasicInfo
 import ServiceRelationship from './tabpages/serviceRelationship/Home';
 import BusinessHand from './tabpages/businessHand/Home';
 import CustProperty from './tabpages/custProperty/connectedHome';
+import ServiceRecord from './tabpages/serviceRecord/Home';
 import DiscountCoupon from './tabpages/discountCoupon/connectedHome';
-import logable, { logCommon } from '../../decorators/logable';
+import { logCommon } from '../../decorators/logable';
 import ProductOrder from './tabpages/productOrder/Home';
 import InvestmentAbilityAnalysis from './tabpages/investmentAbilityAnalysis/Home';
 import {
@@ -76,9 +77,6 @@ export default class Home extends PureComponent {
     replace: PropTypes.func.isRequired,
   }
 
-  static defaultProps = {
-  }
-
   componentDidMount() {
     // 初始化的时候查询客户概要信息
     const { location: { query: { custId } } } = this.props;
@@ -103,27 +101,26 @@ export default class Home extends PureComponent {
   }
 
   componentDidUpdate(prevProps) {
-    const { location: { query: prevQuery } } = prevProps;
+    const { location: { query: { custId: prevCustId } } } = prevProps;
     const {
-      location: { query },
+      location: { query: { custId } },
       getCustomerBasicInfo,
       queryCustSummaryInfo,
     } = this.props;
-    if(query && query.custId) {
-      if(prevQuery && prevQuery.custId) {
-        if(query.custId !== prevQuery.custId) {
-          // 查询基本信息
-          getCustomerBasicInfo({ custId: query.custId });
-          // 查询概要信息
-          queryCustSummaryInfo({ custId: query.custId });
-        }
-      } else {
-        // 查询基本信息
-        getCustomerBasicInfo({ custId: query.custId });
-        // 查询概要信息
-        queryCustSummaryInfo({ custId: query.custId });
-      }
+
+    if(custId && custId !== prevCustId) {
+      // 查询基本信息
+      getCustomerBasicInfo({ custId });
+      // 查询概要信息
+      queryCustSummaryInfo({ custId });
     }
+  }
+
+  // 获取客户360页面当前的tabKey
+  getActiveTabKey() {
+    const { location: { query: { custDetailTabKey } } } = this.props;
+    // 默认显示客户信息tab
+    return custDetailTabKey || 'accountInfo';
   }
 
   // 切换客户360详情页的Tab
@@ -218,6 +215,7 @@ export default class Home extends PureComponent {
               <BusinessHand location={location} />
             </TabPane>
             <TabPane tab="服务记录" key={SERVICE_RECORD_TAB_KEY}>
+              <ServiceRecord location={location} />
             </TabPane>
             <TabPane tab="服务关系" key={SERVICE_RELATION_TAB_KEY}>
               <ServiceRelationship location={location} />

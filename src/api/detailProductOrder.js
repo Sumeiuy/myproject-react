@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-20 16:24:14
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-26 17:49:15
+ * @LastEditTime: 2018-11-26 21:04:01
  * @Description: 客户360-产品订单相关api
  */
 
@@ -22,5 +22,9 @@ export default function detailProductOrder(api) {
     queryTradeOrderFlow: query => api.post('/groovynoauth/fsp/cust/custdetail/queryTradeOrderList', query),
     // 获取附件列表
     getAttachmentList: query => api.post('/file/ceFileList2', query),
+    // 获取服务订购订单列表
+    queryServiceOrderData: query => api.post('/groovynoauth/fsp/cust/serviceorder/queryServiceOrderingList', query),
+    // 查询是否可跳转佣金调整的信息
+    queryCustCanChangeCommission: query => api.post('/groovynoauth/fsp/cust/serviceorder/queryCustHasActiveArg', query),
   };
 };

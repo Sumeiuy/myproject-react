@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-19 10:17:54
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-26 18:08:05
+ * @LastEditTime: 2018-11-26 21:08:17
  * @Description: 产品订单
  */
 
@@ -14,6 +14,7 @@ import { Tabs } from 'antd';
 import { generateEffect as effect } from '../../../../helper/dva';
 import ProductOrderFlow from '../../../../components/customerDetailProductOrder/ProductOrderFlow';
 import TradeOrderFlow from '../../../../components/customerDetailProductOrder/TradeOrderFlow';
+import ServiceOrder from '../../../../components/customerDetailProductOrder/ServiceOrder';
 
 import styles from './home.less';
 
@@ -28,6 +29,7 @@ const mapStateToProps = state => ({
   serviceProductList: state.productOrder.serviceProductList,
   orderApproval: state.productOrder.orderApproval,
   attachmentList: state.productOrder.attachmentList,
+  serviceOrderData: state.productOrder.serviceOrderData,
 });
 
 const mapDispatchToProps = {
@@ -38,6 +40,10 @@ const mapDispatchToProps = {
   queryServiceProductList: effect('productOrder/queryServiceProductList'),
   queryOrderApproval: effect('productOrder/queryOrderApproval'),
   getAttachmentList: effect('productOrder/getAttachmentList'),
+  // 查询是否可发起佣金调整
+  queryCustCanChangeCommission: effect('productOrder/queryCustCanChangeCommission', { loading: false }),
+  // 查询服务订购订单
+  queryServiceOrderData: effect('productOrder/queryServiceOrderData'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -46,6 +52,7 @@ export default class ProductOrder extends PureComponent {
     location: PropTypes.object.isRequired,
     serviceOrderFlow: PropTypes.object.isRequired,
     tradeOrderFlow: PropTypes.object.isRequired,
+    serviceOrderData: PropTypes.object.isRequired,
     queryServiceOrderFlow: PropTypes.func.isRequired,
     queryTradeOrderFlow: PropTypes.func.isRequired,
     jxGroupProductList: PropTypes.array.isRequired,
@@ -58,6 +65,8 @@ export default class ProductOrder extends PureComponent {
     queryOrderApproval: PropTypes.func.isRequired,
     attachmentList: PropTypes.array.isRequired,
     getAttachmentList: PropTypes.func.isRequired,
+    queryCustCanChangeCommission: PropTypes.func.isRequired,
+    queryServiceOrderData: PropTypes.func.isRequired,
   };
 
   static contextTypes = {
@@ -179,6 +188,10 @@ export default class ProductOrder extends PureComponent {
       queryJxGroupProduct,
       attachmentList,
       getAttachmentList,
+      location,
+      serviceOrderData,
+      queryCustCanChangeCommission,
+      queryServiceOrderData,
     } = this.props;
     const activeKey = this.getTabActiveKeyByUrl();
 
@@ -191,6 +204,12 @@ export default class ProductOrder extends PureComponent {
         >
           <TabPane tab="服务订购" key="serviceOrder">
             <div className={styles.tabPaneWrap}>
+              <ServiceOrder
+                location={location}
+                serviceOrderData={serviceOrderData}
+                queryCustCanChangeCommission={queryCustCanChangeCommission}
+                queryServiceOrderData={queryServiceOrderData}
+              />
             </div>
           </TabPane>
           <TabPane tab="服务订单流水" key="serviceOrderFlow">
