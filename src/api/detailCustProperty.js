@@ -19,5 +19,11 @@ export default function detailCustProperty(api) {
     queryZjPointExchangeFlow: query => api.post('/groovynoauth/fsp/cust/custdetail/queryZjPointExchangeFlow', query),
     // 编辑个人客户、机构客户的基本信息
     updateCustBasicInfo: query => api.post('/groovynoauth/fsp/cust/custdetail/modifyBasicInfo', query),
+    // 查询个人客户、机构客户的财务信息
+    queryFinanceDetail: query => api.post('/groovynoauth/fsp/cust/custdetail/queryFinanceDetail', query),
+    // 编辑个人客户的财务信息
+    updatePerFinaceData: query => api.post('/groovynoauth/fsp/cust/custdetail/updatePerFinaceData', query),
+    // 编辑机构客户的财务信息
+    updateOrgFinaceData: query => api.post('/groovynoauth/fsp/cust/custdetail/updateOrgFinaceData', query),
   };
 }

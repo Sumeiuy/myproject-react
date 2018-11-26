@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-20 16:01:36
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-23 19:27:04
+ * @Last Modified time: 2018-11-26 13:52:20
  * @description 新版客户360详情下的账户信息Tab页面的model
  */
 import { detailInvestmentAbilityAnalysis as api } from '../../api';
@@ -21,6 +21,8 @@ export default {
     assetChangeList: EMPTY_ARRAY,
     // 账户资产变动图表数据
     assetChangeReportData: EMPTY_ARRAY,
+    // 账户收益走势数据
+    profitTrendData: EMPTY_OBJECT,
   },
   reducers: {
     // 获取客户盈利能力成功
@@ -54,7 +56,15 @@ export default {
         ...state,
         assetChangeReportData: payload || EMPTY_ARRAY,
       };
-    }
+    },
+    // 获取账户收益走势数据
+    getProfitTrendReportSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        profitTrendData: payload || EMPTY_OBJECT,
+      };
+    },
   },
   effects: {
     // 获取客户盈利能力
@@ -86,6 +96,14 @@ export default {
       const { resultData = EMPTY_ARRAY } = yield call(api.queryAssetChangeReport, payload);
       yield put({
         type: 'getAssetChangeReportSuccess',
+        payload: resultData,
+      });
+    },
+    // 获取账户收益走势图表数据
+    * getProfitTrendReport({ payload }, { call, put }) {
+      const { resultData = EMPTY_ARRAY } = yield call(api.queryProfitTrendReport, payload);
+      yield put({
+        type: 'getProfitTrendReportSuccess',
         payload: resultData,
       });
     },

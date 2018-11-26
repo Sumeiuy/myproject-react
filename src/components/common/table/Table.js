@@ -38,6 +38,7 @@ export default class ExtendedTable extends Table {
         size={size}
         current={this.getMaxCurrent(total)}
         onShowSizeChange={this.handleShowSizeChange}
+        useClearStyle
       />
     ) : null;
   }

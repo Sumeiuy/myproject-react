@@ -148,7 +148,7 @@ export default class FeedBackNew extends PureComponent {
   }
 
   render() {
-    const { 
+    const {
       list,
       location,
       replace,

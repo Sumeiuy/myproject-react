@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-20 15:28:46
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-23 09:20:36
+ * @Last Modified time: 2018-11-26 13:42:27
  * @description 客户投资特征
  */
 import React, { PureComponent } from 'react';
@@ -64,7 +64,7 @@ export default class InvestmentFeature extends PureComponent {
       <div className={styles.investmentFeature}>
         <div className={styles.profitAbility}>
           <p className={styles.title}>
-            盈利能力已击败
+            盈利能力超越了
           </p>
           <p className={styles.beatCustPercent}>
             {beatCustPercent}

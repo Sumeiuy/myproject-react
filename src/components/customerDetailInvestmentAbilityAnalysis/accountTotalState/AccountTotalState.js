@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-19 16:37:18
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-23 19:23:02
+ * @Last Modified time: 2018-11-26 13:52:35
  * @description 账户总体情况
  */
 import React, { PureComponent } from 'react';
@@ -14,6 +14,7 @@ import InfoTitle from '../InfoTitle';
 import InvestmentFeature from './InvestmentFeature';
 import AssetChangeTable from './AssetChangeTable';
 import AssetChangeChart from './AssetChangeChart';
+import ProfitTrendChart from './ProfitTrendChart';
 import styles from './accountTotalState.less';
 
 export default class AccountTotalState extends PureComponent {
@@ -35,6 +36,10 @@ export default class AccountTotalState extends PureComponent {
     getAssetChangeReport: PropTypes.func.isRequired,
     // 账户资产变动图表数据
     assetChangeReportData: PropTypes.array.isRequired,
+    // 获取账户收益走势图表数据
+    getProfitTrendReport: PropTypes.func.isRequired,
+    // 账户收益走势图表数据
+    profitTrendData: PropTypes.object.isRequired,
   }
 
   componentDidMount() {
@@ -46,6 +51,8 @@ export default class AccountTotalState extends PureComponent {
     this.getAssetChangeState();
     // 获取账户资产变动图表数据
     this.getAssetChangeReport();
+    // 获取账户收益走势图表
+    this.getProfitTrendReport();
   }
 
   // 获取客户盈利能力
@@ -100,12 +107,26 @@ export default class AccountTotalState extends PureComponent {
     this.props.getAssetChangeReport({ custId });
   }
 
+  // 获取账户收益走势图表数据
+  @autobind
+  getProfitTrendReport() {
+    const {
+      location: {
+        query: {
+          custId,
+        }
+      }
+    } = this.props;
+    this.props.getProfitTrendReport({ custId });
+  }
+
   render() {
     const {
       profitAbility,
       investmentFeatureLabels,
       assetChangeList,
       assetChangeReportData,
+      profitTrendData,
     } = this.props;
     return (
       <div className={styles.accountTotalState}>
@@ -121,6 +142,10 @@ export default class AccountTotalState extends PureComponent {
         />
         <AssetChangeChart
           assetChangeReportData={assetChangeReportData}
+        />
+        <InfoTitle title="账户收益走势"/>
+        <ProfitTrendChart
+          profitTrendData={profitTrendData}
         />
       </div>
     );

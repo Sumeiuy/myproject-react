@@ -28,7 +28,8 @@ export default function BasiceEditorCell(props) {
       <div
         style={{
           marginLeft: width,
-          width: `calc(100% - ${width})`
+          width: `calc(100% - ${width})`,
+          height: '32px',
         }}
       >
         <OmniComplexEditor {...restProps} editorName={label} />

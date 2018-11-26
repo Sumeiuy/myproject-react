@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-11-15 16:54:09
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-16 17:17:31
+ * @Last Modified time: 2018-11-26 18:10:51
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -20,6 +20,10 @@ import logable from '../../../decorators/logable';
 const PAGE_SIZE = 10;
 const EMPTY_ARRAY = [];
 const EMPTY_OBJECT = {};
+const DATE_FORMAT = 'YYYY-MM-DD';
+const TRANDE_DATE= 'tradeDate';
+const PROCESS_DATE= 'processDate';
+const PRODUCT= 'productQuantity';
 
 export default class ZJMemeberInfoModal extends PureComponent {
   static propTypes = {
@@ -34,38 +38,51 @@ export default class ZJMemeberInfoModal extends PureComponent {
     onClose: PropTypes.func.isRequired,
   }
 
+  componentDidUpdate(prevProps) {
+    const {
+      location: {
+        query: {
+          custId: prevCustId,
+        },
+      },
+    } = prevProps;
+    const {
+      queryZjPointExchangeFlow,
+      location: {
+        query: {
+          custId,
+        },
+      },
+    } = this.props;
+    // url中custId发生变化时重新请求相关数据
+    if (prevCustId !== custId) {
+      queryZjPointExchangeFlow({ custId });
+    }
+  }
+
   @autobind
   renderColumns(){
-    return _.map(integralFlowColumns, (items) => {
-      const { dataIndex } = items;
-      let newItems = {...items};
-      // 处理日期格式和加上title
-      if(dataIndex === 'tradeDate' || dataIndex === 'processDate'){
-        newItems =  {
-          ...items,
-          render: text => {
-            const date = text && moment(text).format('YYYY-MM-DD');
-            return (<span title={text}>{date || '--'}</span>);
-          },
-        };
-      }
-      // 处理数据保留两位小数
-      if(dataIndex === 'productQuantity') {
-        newItems = {
-          ...items,
-          render: text => {
-            const data =  number.thousandFormat(number.toFixed(text));
-            return data;
-          }
-        };
-      }
-      return newItems;
-    });
+    const integralFlowList = [...integralFlowColumns];
+    const integralFlowColumn = _.find(integralFlowList, o => o.key === TRANDE_DATE || o.key === PROCESS_DATE);
+    integralFlowColumn.render = text => {
+      const date = text && moment(text).format(DATE_FORMAT);
+      return (<span title={text}>{date || '--'}</span>);
+    };
+    const productQuantityList = _.find(integralFlowList, o => o.key === PRODUCT);
+    productQuantityList.render = text => {
+      return number.thousandFormat(number.toFixed(text));
+    };
+    return integralFlowList;
   }
 
   // 页码切换的回调
   @autobind
-  @logable({ type: 'Click', payload: { name: '页码切换' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '页码切换'
+    }
+  })
   handlePaginationChange(page) {
     const {
       queryZjPointExchangeFlow,
@@ -77,6 +94,7 @@ export default class ZJMemeberInfoModal extends PureComponent {
       custId,
     });
   }
+
   render() {
     const { dataSource, onClose, visible } = this.props;
     const { tradeFlow = EMPTY_ARRAY, page = EMPTY_OBJECT } = dataSource;

@@ -244,32 +244,20 @@ export default class Home extends PureComponent {
     const { location } = nextProps;
     const { query: nextQuery } = location;
     const { location: { query: prevQuery } } = prevState;
+    // url是否发生变化
     const isQueryChange = !_.isEqual(nextQuery, prevQuery);
     if(isQueryChange) {
-      if(nextQuery && nextQuery.custId) {
-        if(prevQuery && prevQuery.custId) {
-          if(nextQuery.custId !== prevQuery.custId) {
-            // 回置收益走势的选项
-            return {
-              time: timeList[0].key,
-              compareCode: codeList[0].key,
-              location,
-            };
-          }
-          return {
-            location,
-          };
-        }
-        // 回置收益走势的选项
+      const { custId } = nextQuery;
+      const { custId: prevCustId } = prevQuery;
+
+      if (custId && custId !== prevCustId) {
         return {
           time: timeList[0].key,
           compareCode: codeList[0].key,
           location,
         };
       }
-      return {
-        location,
-      };
+      return { location };
     }
     return null;
   }
@@ -294,25 +282,16 @@ export default class Home extends PureComponent {
     } = this.props;
     // 获取收益走势数据
     this.getProfitRateInfo({ initial: true });
-
     // 查询是否有已实施的流程
     queryHasDoingFlow({ custId });
   }
 
   componentDidUpdate(prevProps) {
-    const { location: { query: prevQuery } } = prevProps;
-    const { location: { query } } = this.props;
+    const { location: { query: { custId: prevCustId } } } = prevProps;
+    const { location: { query: { custId } } } = this.props;
 
-    if(query && query.custId) {
-      if(prevQuery && prevQuery.custId) {
-        if(query.custId !== prevQuery.custId) {
-          this.getProfitRateInfo({ initial: true });
-        }
-      } else {
-        this.getProfitRateInfo({
-          initial: true
-        });
-      }
+    if(custId && custId !== prevCustId) {
+      this.getProfitRateInfo({ initial: true });
     }
   }
 
@@ -366,6 +345,7 @@ export default class Home extends PureComponent {
   @autobind
   getProfitRateInfo(options) {
     const { location: { query }, queryProfitRateInfo } = this.props;
+    // 初始化时传递下面的参数发送请求
     if(options.initial) {
       queryProfitRateInfo({
         custId: query && query.custId,
@@ -374,7 +354,7 @@ export default class Home extends PureComponent {
         endDate: transformTime('month').endDate,
         withCustPofit: true,
       });
-    } else { // 用户点击触发请求
+    } else { // 用户点击触发请求传递参数
       queryProfitRateInfo({
         custId: query && query.custId,
         indexCode: options.indexCode,
@@ -386,7 +366,11 @@ export default class Home extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'DropdownSelect', payload: { name: '对比指标', value: '$args[0]' } })
+  @logable({
+    type: 'DropdownSelect',
+    payload: { name: '对比指标',
+    value: '$args[0]' },
+  })
   handleCodeSelectChange({ value }) {
     const { time } = this.state;
     this.getProfitRateInfo({
@@ -400,7 +384,11 @@ export default class Home extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '时间周期', value: '$args[0]' } })
+  @logable({
+    type: 'Click',
+    payload: { name: '时间周期',
+    value: '$args[0]' },
+  })
   handleTimeSelectChange(key) {
     const { compareCode } = this.state;
     this.getProfitRateInfo({
