@@ -227,6 +227,7 @@ export const getRouterData = (app) => {
         ],
         () => import('../routes/customerDetail/connectHome' /* webpackChunkName: "customerPool_customerDetail" */),
       ),
+      isPrimary: true, 
     },
     // customerPool/customerGroup 直接进入，所需数据未知
     '/customerPool/customerGroup': {
@@ -594,7 +595,7 @@ export const getRouterData = (app) => {
         import('../routes/advisorSpace/Home') /* webpackChunkName: "advisorSpace" */),
     },
     // smart任务分析报表
-    '/statisticalQuery/taskAnalysisReport': {
+    '/statisticalQuery/taskTable/taskAnalysisReport': {
       component: dynamicWrapper(app, ['taskAnalysisReport'], () =>
         import('../routes/taskAnalysisReport/Home') /* webpackChunkName: "taskAnalysisReport" */),
     }
@@ -654,5 +655,9 @@ export const redirectRoutes = [
   {
     from: '/choicenessCombination/reportDetail',
     to: '/strategyCenter/choicenessCombination/reportDetail',
+  },
+  {
+    from: '/statisticalQuery/taskAnalysisReport',
+    to: '/statisticalQuery/taskTable/taskAnalysisReport',
   },
 ];
