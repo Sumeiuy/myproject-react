@@ -220,7 +220,7 @@ export default class LeftPanel extends PureComponent {
         return (
           <div className="rightSection">
             <div className="rightSection-top">
-              <div className={userCommentClass}>{userCommentLabelList[0].label}</div>
+              <div className={userCommentClass}>{(!_.isEmpty(userCommentLabelList) && userCommentLabelList[0].label)}</div>
               <div className={statusClass}>{(!_.isEmpty(statusLabel) && statusLabel[0].label) || '无'}</div>
             </div>
             <div className="name">{(!_.isEmpty(processerLabel) && processerLabel[0].label) || '无'}</div>
