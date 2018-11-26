@@ -19,6 +19,7 @@ import DateFilter from '../common/htFilter/dateFilter';
 import { SingleFilter, SingleFilterWithSearch } from 'lego-react-filter/src';
 import TreeFilter from 'lego-tree-filter/src';
 import Pagination from '../common/Pagination';
+import IfTableWrap from '../common/IfTableWrap';
 import {
   STANDARD_TRADE_FLOW_COLUMNS,
   CREDIT_TRADE_FLOW_COLUMNS,
@@ -32,7 +33,7 @@ import {
 } from './config';
 
 import styles from './tradeFlowModal.less';
-
+const NODATA_HINT = '客户暂无资金变动信息';
 const TabPane = Tabs.TabPane;
 const RadioGroup = Radio.Group;
 
@@ -41,6 +42,8 @@ const DEFAULT_START_DATE = moment().subtract(6, 'months');
 const DEFAULT_END_DATE = moment().subtract(1, 'day');
 // 接口请求查询日期的格式
 const DATE_FORMATE_API = 'YYYY-MM-DD';
+const EMPTY_OBJECT = {};
+const EMPTY_LIST = [];
 
 export default class TradeFlowModal extends PureComponent {
   static propTypes = {
@@ -604,7 +607,10 @@ queryType: 'moneyChange'});
       standardTradeFlowRes,
       creditTradeFlowRes,
       optionTradeFlowRes,
-      capitalChangeFlowRes,
+      capitalChangeFlowRes: {
+        list = EMPTY_LIST,
+        page = EMPTY_OBJECT,
+      },
     } = this.props;
     // 补足普通账户流水数据
     const standardData = data.padEmptyDataForList(standardTradeFlowRes.list);
@@ -618,14 +624,16 @@ queryType: 'moneyChange'});
     const optionData = data.padEmptyDataForList(optionTradeFlowRes.list);
     const optionTradeColumns = this.transformColumnsData(OPTION_TRADE_FLOW_COLUMNS);
     const optionPage = this.getPage(optionTradeFlowRes.page);
-    // 资金变动表格分页器信息
-    const capitalData = data.padEmptyDataForList(capitalChangeFlowRes.list);
+    // 资金变动表格信息 ,没有数据时展示占位图标，有数据但少于十条，用空白行补全；
+    const capitalData = data.padEmptyDataForList(list);
     const capitalChangeColumns = this.transformColumnsData(CAPITAL_CHANGE_COLUMNS);
-    const capitalPage = this.getPage(capitalChangeFlowRes.page);
+    const capitalPage = this.getPage(page);
+    const isRender = !_.isEmpty(list);
     // 弹出层的自定义关闭按钮
     const closeBtn = [(
       <Button onClick={this.handleModalClose}>关闭</Button>
     )];
+
     return (
       <Modal
         visible
@@ -859,19 +867,21 @@ queryType: 'moneyChange'});
                     />
                   </div>
                 </div>
-                <div className={styles.body}>
-                  <Table
-                    pagination={false}
-                    dataSource={capitalData}
-                    columns={capitalChangeColumns}
-                    className={styles.tradeFlowTable}
-                    scroll={CAPITAL_CHANGE_TABLE_SCROLL}
+                <IfTableWrap isRender={isRender} text={NODATA_HINT}>
+                  <div className={styles.body}>
+                    <Table
+                      pagination={false}
+                      dataSource={capitalData}
+                      columns={capitalChangeColumns}
+                      className={styles.tradeFlowTable}
+                      scroll={CAPITAL_CHANGE_TABLE_SCROLL}
+                    />
+                  </div>
+                  <Pagination
+                    {...capitalPage}
+                    onChange={this.handleCapitalPageChange}
                   />
-                </div>
-                <Pagination
-                  {...capitalPage}
-                  onChange={this.handleCapitalPageChange}
-                />
+                </IfTableWrap>
               </div>
             </TabPane>
           </Tabs>
