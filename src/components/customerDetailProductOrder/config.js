@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-20 15:24:26
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-26 11:10:52
+ * @LastEditTime: 2018-11-26 13:23:23
  * @Description: 新版客户360详情的产品订单T配置项
  */
 
@@ -113,6 +113,55 @@ export const TRADE_ORDER_FLOW_COLUMNS = [
     title: '订单时间',
     dataIndex: 'orderTime',
     key: 'orderTime',
+  },
+];
+
+export const SERVICE_PRODUCT_LIST_COLUMNS = [
+  {
+    title: '产品代码',
+    dataIndex: 'productCode',
+    key: 'productCode',
+    className: 'productCode',
+  },
+  {
+    title: '产品名称',
+    dataIndex: 'productName',
+    key: 'productName',
+  },
+  {
+    title: '操作类型',
+    dataIndex: 'operationType',
+    key: 'operationType',
+  },
+  {
+    title: '产品类型',
+    dataIndex: 'productType',
+    key: 'productType',
+  },
+  {
+    title: '产品佣金(%)',
+    dataIndex: 'productCommission',
+    key: 'productCommission',
+  },
+  {
+    title: '风险是否匹配',
+    dataIndex: 'matchRisk',
+    key: 'matchRisk',
+  },
+  {
+    title: '期限是否匹配',
+    dataIndex: 'matchTime',
+    key: 'matchTime',
+  },
+  {
+    title: '投资品牌是否匹配',
+    dataIndex: 'matchInvestmentBrand',
+    key: 'matchInvestmentBrand',
+  },
+  {
+    title: '签署确认书类型',
+    dataIndex: 'confirmationType',
+    key: 'confirmationType',
   },
 ];
 

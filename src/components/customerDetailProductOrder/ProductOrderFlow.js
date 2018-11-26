@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-20 10:31:29
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-26 11:05:37
+ * @LastEditTime: 2018-11-26 12:44:33
  * @Description: 服务订单流水
  */
 
@@ -46,6 +46,10 @@ export default class ProductOrderFlow extends PureComponent {
     queryJxGroupProduct: PropTypes.func.isRequired,
   };
 
+  static contextTypes = {
+    dict: PropTypes.object.isRequired,
+  };
+
   constructor(props) {
     super(props);
     this.state = {
@@ -79,11 +83,49 @@ export default class ProductOrderFlow extends PureComponent {
   }
 
   @autobind
-  handleServiceTypeChanged(value) {
+  handleServiceTypeChanged(e) {
+    this.setState({
+      serviceType: e.value,
+    }, this.handleProductOrderFlowChange);
   }
 
   @autobind
-  haneleDateChanged(value) {
+  haneleDateChanged(e) {
+    this.setState({
+      standardStartDate: e.value[0],
+      standardEndDate: e.value[1],
+    }, this.handleProductOrderFlowChange);
+  }
+
+  @autobind
+  handlePageChanged(changedPage) {
+    this.handleProductOrderFlowChange(changedPage);
+  }
+
+  @autobind
+  handleProductOrderFlowChange(page) {
+    debugger;
+    const {
+      currentServiceProductCode,
+      serviceType,
+      standardStartDate,
+      standardEndDate,
+    } = this.state;
+    let payload = {
+      serviceProductCode: currentServiceProductCode,
+      type: serviceType,
+      createTimeFrom: standardStartDate,
+      createTimeTo: standardEndDate,
+      pageSize: DEFAULT_PAGE_SIZE,
+      curPageNum: 1,
+    };
+    if (page) {
+      payload = {
+        ...payload,
+        curPageNum: page.current,
+      };
+    }
+    this.props.onProductOrderFlowChange(payload);
   }
 
   @autobind
@@ -163,6 +205,11 @@ export default class ProductOrderFlow extends PureComponent {
       standardEndDate,
     } = this.state;
     const {
+      dict: {
+        productOrderType,
+      }
+     } = this.context;
+    const {
       curPageNum = 1,
       pageSize = DEFAULT_PAGE_SIZE,
       totalRecordNum = 1,
@@ -198,7 +245,7 @@ export default class ProductOrderFlow extends PureComponent {
             <SingleFilter
               filterName="类型"
               filterId="serviceType"
-              data={[]}
+              data={productOrderType}
               value={serviceType}
               onChange={this.handleServiceTypeChanged}
             />
@@ -220,6 +267,7 @@ export default class ProductOrderFlow extends PureComponent {
             columns={this.transformColumnsData(SERVICE_ORDER_FLOW_COLUMNS)}
             className={styles.table}
             rowClassName={styles.tableRow}
+            onChange={this.handlePageChanged}
           />
         </div>
         <ProductOrderDetail

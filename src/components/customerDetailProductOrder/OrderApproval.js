@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-23 09:51:00
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-23 22:41:09
+ * @LastEditTime: 2018-11-26 13:29:42
  * @Description: 服务订单流水详情-审批
  */
 
@@ -33,7 +33,7 @@ export default function OrderApproval(props) {
       </div>
       <div className={styles.approvalList}>
         {
-          _.map(approveMessages, item => {
+          _.map(approveMessages, (item, index) => {
             const {
               handlerName,
               handleTime,
@@ -43,7 +43,7 @@ export default function OrderApproval(props) {
             const timeStr = moment(handleTime).format(DATE_FORMAT_STR);
             const basicInfo = `审批人：${handlerName}于${timeStr}，步骤名称：${stepName}`;
             return (
-              <div className={styles.approval}>
+              <div className={styles.approval} key={`${stepName}${index}`}>
                 <div className={styles.basicInfo}>
                   {basicInfo}
                 </div>
