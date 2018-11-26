@@ -1,8 +1,7 @@
-.assetChangeChart {
+.profitTrendChart {
   margin: 20px 60px 0;
   position: relative;
   padding-bottom: 20px;
-  border-bottom: 1px solid #f2f3f8;
 
   .chartlegend {
     display: flex;
@@ -31,13 +30,31 @@
         }
       }
 
-      .fundInvestValue {
+      .accountDailyRateValue {
+        &:before {
+          background: #485a7b;
+          width: 7px;
+          height: 12px;
+          margin-top: 0;
+        }
+      }
+
+      .HS300DailyRateValue {
+        &:before {
+          background: #fe5f03;
+          width: 7px;
+          height: 12px;
+          margin-top: 2px;
+        }
+      }
+
+      .accountCumulativeRateValue {
         &:before {
           background: #485a7b;
         }
       }
 
-      .assetMarketValue {
+      .HS300CumulativeRateValue {
         &:before {
           background: #fe5f03;
         }
@@ -45,7 +62,7 @@
     }
   }
 
-  .assetChangeTips {
+  .profitTrendTips {
     margin-top: 14px;
     font-size: 12px;
     color: #999;
@@ -53,6 +70,25 @@
     & > div {
       display: inline-block;
       vertical-align: top;
+    }
+  }
+
+  .profitTrendSummary {
+    margin-top: 20px;
+    & > p {
+      font-size: 14px;
+      color: #333;
+      line-height: 20px;
+
+      &:before {
+        content: '';
+        background: #108ee9;
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 10px;
+      }
     }
   }
 }
