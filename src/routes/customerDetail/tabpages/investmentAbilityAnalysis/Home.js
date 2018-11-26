@@ -1,8 +1,9 @@
 /*
  * @Author: zhangjun
  * @Date: 2018-11-19 15:39:12
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-26 13:56:13
+ * @Last Modified time: 2018-11-23 20:37:55
+ * @Last Modified by: zuoguangzu
+ * @Last Modified time: 2018-11-26 17:02:10
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -14,6 +15,7 @@ import { dva } from '../../../../helper';
 import withRouter from '../../../../decorators/withRouter';
 import AccountTotalState from '../../../../components/customerDetailInvestmentAbilityAnalysis/accountTotalState/AccountTotalState';
 import logable from '../../../../decorators/logable';
+import AssetConfigAnalysis from '../../../../components/customerDetailInvestmentAbilityAnalysis/assetConfigAnalysis/AssetConfigAnalysis';
 
 import styles from './home.less';
 
@@ -158,7 +160,10 @@ export default class Home extends PureComponent {
               profitTrendData={profitTrendData}
             />
           </TabPane>
-          <TabPane tab="资产配置分析" key="assetAllocationAnalysis">资产配置分析</TabPane>
+          <TabPane tab="资产配置分析" key="assetAllocationAnalysis">
+            <AssetConfigAnalysis
+            />
+          </TabPane>
           <TabPane tab="收益归因分析" key="incomeAttributionAnalysis">收益归因分析</TabPane>
           <TabPane tab="风控能力分析" key="windControlAbilityAnalysis">风控能力分析</TabPane>
         </Tabs>
