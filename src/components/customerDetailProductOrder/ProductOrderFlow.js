@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-20 10:31:29
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-26 12:44:33
+ * @LastEditTime: 2018-11-26 13:55:38
  * @Description: 服务订单流水
  */
 
@@ -15,6 +15,7 @@ import Tooltip from '../common/Tooltip';
 import { SingleFilter } from 'lego-react-filter/src';
 import Table from '../common/table';
 import DateFilter from '../common/htFilter/dateFilter';
+import IfTableWrap from '../common/IfTableWrap';
 import ProductOrderDetail from './ProductOrderDetail';
 import {
   SERVICE_ORDER_FLOW_COLUMNS,
@@ -29,6 +30,7 @@ const DEFAULT_START_DATE = moment().subtract(6, 'months');
 const DEFAULT_END_DATE = moment().subtract(1, 'day');
 // 接口请求查询日期的格式
 const DATE_FORMATE_API = 'YYYY-MM-DD';
+const NODATA_HINT = '客户暂无服务订单信息';
 
 export default class ProductOrderFlow extends PureComponent {
   static propsTypes = {
@@ -104,7 +106,6 @@ export default class ProductOrderFlow extends PureComponent {
 
   @autobind
   handleProductOrderFlowChange(page) {
-    debugger;
     const {
       currentServiceProductCode,
       serviceType,
@@ -206,7 +207,7 @@ export default class ProductOrderFlow extends PureComponent {
     } = this.state;
     const {
       dict: {
-        productOrderType,
+        serviceOrderType,
       }
      } = this.context;
     const {
@@ -219,6 +220,7 @@ export default class ProductOrderFlow extends PureComponent {
       pageSize,
       total: totalRecordNum,
     };
+    const isRender = list.length !== 0;
 
     return (
       <div className={styles.productOrderFlowWrap}>
@@ -245,7 +247,7 @@ export default class ProductOrderFlow extends PureComponent {
             <SingleFilter
               filterName="类型"
               filterId="serviceType"
-              data={productOrderType}
+              data={serviceOrderType}
               value={serviceType}
               onChange={this.handleServiceTypeChanged}
             />
@@ -261,14 +263,16 @@ export default class ProductOrderFlow extends PureComponent {
           </div>
         </div>
         <div className={styles.body}>
-          <Table
-            pagination={pagination}
-            dataSource={list}
-            columns={this.transformColumnsData(SERVICE_ORDER_FLOW_COLUMNS)}
-            className={styles.table}
-            rowClassName={styles.tableRow}
-            onChange={this.handlePageChanged}
-          />
+          <IfTableWrap isRender={isRender} text={NODATA_HINT}>
+            <Table
+              pagination={pagination}
+              dataSource={list}
+              columns={this.transformColumnsData(SERVICE_ORDER_FLOW_COLUMNS)}
+              className={styles.table}
+              rowClassName={styles.tableRow}
+              onChange={this.handlePageChanged}
+            />
+          </IfTableWrap>
         </div>
         <ProductOrderDetail
           visible={isProductOrderDetailShow}

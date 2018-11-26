@@ -8,7 +8,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import Table from '../common/table'; 
+import Table from '../common/table';
 import {
   SERVICE_PRODUCT_LIST_COLUMNS,
 } from './config';
