@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-19 10:17:54
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-22 15:57:38
+ * @LastEditTime: 2018-11-26 21:08:17
  * @Description: 产品订单
  */
 
@@ -21,16 +21,25 @@ import styles from './home.less';
 const TabPane = Tabs.TabPane;
 const TRADE_ORDER_FLOW_PAGE_SIZE = 10;
 
-const mapStateToProps = ({ productOrder }) => ({
-  serviceOrderFlow: productOrder.serviceOrderFlow,
-  tradeOrderFlow: productOrder.tradeOrderFlow,
-  // 服务订购订单列表
-  serviceOrderData: productOrder.serviceOrderData,
+const mapStateToProps = state => ({
+  serviceOrderFlow: state.productOrder.serviceOrderFlow,
+  tradeOrderFlow: state.productOrder.tradeOrderFlow,
+  jxGroupProductList: state.customerPool.jxGroupProductList, // 产品搜索结果
+  serviceOrderDetail: state.productOrder.serviceOrderDetail,
+  serviceProductList: state.productOrder.serviceProductList,
+  orderApproval: state.productOrder.orderApproval,
+  attachmentList: state.productOrder.attachmentList,
+  serviceOrderData: state.productOrder.serviceOrderData,
 });
 
 const mapDispatchToProps = {
   queryServiceOrderFlow: effect('productOrder/queryServiceOrderFlow'),
   queryTradeOrderFlow: effect('productOrder/queryTradeOrderFlow'),
+  queryJxGroupProduct: effect('customerPool/queryJxGroupProduct', { loading: false }),
+  queryServiceOrderDetail: effect('productOrder/queryServiceOrderDetail'),
+  queryServiceProductList: effect('productOrder/queryServiceProductList'),
+  queryOrderApproval: effect('productOrder/queryOrderApproval'),
+  getAttachmentList: effect('productOrder/getAttachmentList'),
   // 查询是否可发起佣金调整
   queryCustCanChangeCommission: effect('productOrder/queryCustCanChangeCommission', { loading: false }),
   // 查询服务订购订单
@@ -46,16 +55,22 @@ export default class ProductOrder extends PureComponent {
     serviceOrderData: PropTypes.object.isRequired,
     queryServiceOrderFlow: PropTypes.func.isRequired,
     queryTradeOrderFlow: PropTypes.func.isRequired,
+    jxGroupProductList: PropTypes.array.isRequired,
+    queryJxGroupProduct: PropTypes.func.isRequired,
+    serviceOrderDetail: PropTypes.object.isRequired,
+    serviceProductList: PropTypes.array.isRequired,
+    orderApproval: PropTypes.object.isRequired,
+    queryServiceOrderDetail: PropTypes.func.isRequired,
+    queryServiceProductList: PropTypes.func.isRequired,
+    queryOrderApproval: PropTypes.func.isRequired,
+    attachmentList: PropTypes.array.isRequired,
+    getAttachmentList: PropTypes.func.isRequired,
     queryCustCanChangeCommission: PropTypes.func.isRequired,
     queryServiceOrderData: PropTypes.func.isRequired,
   };
 
   static contextTypes = {
     replace: PropTypes.func.isRequired,
-  }
-
-  componentDidMount() {
-    this.getActiveTabInfo();
   }
 
   componentDidUpdate(prevProps) {
@@ -99,7 +114,7 @@ export default class ProductOrder extends PureComponent {
       queryTradeOrderFlow,
       location: {
         query: {
-          custId
+          custId,
         },
       },
     } = this.props;
@@ -108,10 +123,26 @@ export default class ProductOrder extends PureComponent {
     } else if (activeTabKey === 'tradeOrderFlow') {
       queryTradeOrderFlow({
         custId,
-        pageNum: 0,
+        pageNum: 1,
         pageSize: TRADE_ORDER_FLOW_PAGE_SIZE,
       });
     }
+  }
+
+  @autobind
+  handleProductOrderFlowChanged(payload) {
+    const {
+      location: {
+        query: {
+          custId,
+        },
+      },
+      queryServiceOrderFlow,
+    } = this.props;
+    queryServiceOrderFlow({
+      custId,
+      ...payload,
+    });
   }
 
   @autobind
@@ -145,7 +176,18 @@ export default class ProductOrder extends PureComponent {
 
   render() {
     const {
+      serviceOrderFlow,
       tradeOrderFlow,
+      jxGroupProductList,
+      serviceOrderDetail,
+      serviceProductList,
+      orderApproval,
+      queryServiceOrderDetail,
+      queryServiceProductList,
+      queryOrderApproval,
+      queryJxGroupProduct,
+      attachmentList,
+      getAttachmentList,
       location,
       serviceOrderData,
       queryCustCanChangeCommission,
@@ -172,7 +214,20 @@ export default class ProductOrder extends PureComponent {
           </TabPane>
           <TabPane tab="服务订单流水" key="serviceOrderFlow">
             <div className={styles.tabPaneWrap}>
-              <ProductOrderFlow />
+              <ProductOrderFlow
+                productListBySearch={jxGroupProductList}
+                queryJxGroupProduct={queryJxGroupProduct}
+                serviceOrderFlow={serviceOrderFlow}
+                onProductOrderFlowChange={this.handleProductOrderFlowChanged}
+                serviceOrderDetail={serviceOrderDetail}
+                serviceProductList={serviceProductList}
+                orderApproval={orderApproval}
+                queryServiceOrderDetail={queryServiceOrderDetail}
+                queryServiceProductList={queryServiceProductList}
+                queryOrderApproval={queryOrderApproval}
+                attachmentList={attachmentList}
+                getAttachmentList={getAttachmentList}
+              />
             </div>
           </TabPane>
           <TabPane tab="交易订单流水" key="tradeOrderFlow">

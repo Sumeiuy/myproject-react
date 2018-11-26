@@ -2,7 +2,12 @@
   padding: 19px;
 
   .header {
+    height: 25px;
+    margin-bottom: 16px;
     .filterItem {
+      padding-bottom: 16px;
+      font-size: 14px;
+      color: #333;
       float: left;
       margin-right: 30px;
     }
@@ -12,12 +17,25 @@
     .table {
       :global {
         .ant-table-thead > tr > th {
-          padding: 10px 16px;
           white-space: nowrap;
           font-size: 14px;
-          font-weight: bold;
           color: #666;
+          font-weight: bold;
+          padding-bottom: 0;
+          padding-top: 0;
         }
+        .ant-table-tbody > tr > th {
+          padding: 0;
+          font-size: 14px;
+          color: #333;
+        }
+        .orderNumber {
+          padding-left: 20px;
+        }
+      }
+      .tableRow {
+        height: 38px;
+        white-space: nowrap;
       }
     }
   }
