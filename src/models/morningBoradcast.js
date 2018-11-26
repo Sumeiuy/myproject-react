@@ -5,7 +5,25 @@
  * @author xzqiang(crazy_zhiqiang@sina.com)
  */
 import { message } from 'antd';
+import _ from 'lodash';
+import { request } from '../config';
 import { morningBoradcast as api } from '../api';
+import { data } from '../helper';
+
+const downloadName = 'ceFileDownload2';
+
+// 后端返回数据没有预览地址，需要转化成预览地址
+function activityColumnUrlTransform(list) {
+  return _.map(list, item => {
+    const { attaches } = item;
+    const { name, attachId, creator } = attaches[0];
+    return {
+      ...item,
+      index: data.uuid(16),
+      url: `${request.prefix}/file/${downloadName}?attachId=${attachId}&empId=${creator}&filename=${window.encodeURIComponent(name)}`
+    };
+  });
+}
 
 export default {
   namespace: 'morningBoradcast',
@@ -25,6 +43,8 @@ export default {
     delBoradcastInfo: {},  // 删除晨报结果信息
     newUuid: [],
     delSourceFile: {},
+    // 活动栏目
+    activityColumnList: [],
   },
   reducers: {
     // 搜索晨报列表成功
@@ -143,6 +163,14 @@ export default {
         },
       };
     },
+    // 获取活动栏目成功
+    queryContentSuccess(state, action) {
+      const { payload: { resultData = [] }} = action;
+      return {
+        ...state,
+        activityColumnList: activityColumnUrlTransform(resultData),
+      };
+    },
   },
   effects: {
     // 获取晨报列表
@@ -256,6 +284,14 @@ export default {
           },
         });
       }
+    },
+    // 获取活动栏目
+    * queryContent({ payload = {} }, { put, call }) {
+      const response = yield call(api.queryContent, payload);
+      yield put({
+        type: 'queryContentSuccess',
+        payload: response,
+      });
     },
   },
 };

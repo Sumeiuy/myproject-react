@@ -2,7 +2,7 @@
  * @Author: liqianwen
  * @Date: 2018-11-07 13:31:51
  * @Last Modified by: liqianwen
- * @Last Modified time: 2018-11-15 14:47:19
+ * @Last Modified time: 2018-11-26 12:44:09
  * @description 新版客户360详情的交易流水的弹出层
  */
 import React, { PureComponent } from 'react';
@@ -19,6 +19,7 @@ import DateFilter from '../common/htFilter/dateFilter';
 import { SingleFilter, SingleFilterWithSearch } from 'lego-react-filter/src';
 import TreeFilter from 'lego-tree-filter/src';
 import Pagination from '../common/Pagination';
+import IfTableWrap from '../common/IfTableWrap';
 import {
   STANDARD_TRADE_FLOW_COLUMNS,
   CREDIT_TRADE_FLOW_COLUMNS,
@@ -32,7 +33,7 @@ import {
 } from './config';
 
 import styles from './tradeFlowModal.less';
-
+const NODATA_HINT = '客户暂无资金变动信息';
 const TabPane = Tabs.TabPane;
 const RadioGroup = Radio.Group;
 
@@ -41,6 +42,8 @@ const DEFAULT_START_DATE = moment().subtract(6, 'months');
 const DEFAULT_END_DATE = moment().subtract(1, 'day');
 // 接口请求查询日期的格式
 const DATE_FORMATE_API = 'YYYY-MM-DD';
+const EMPTY_OBJECT = {};
+const EMPTY_LIST = [];
 
 export default class TradeFlowModal extends PureComponent {
   static propTypes = {
@@ -590,7 +593,10 @@ export default class TradeFlowModal extends PureComponent {
       standardTradeFlowRes,
       creditTradeFlowRes,
       optionTradeFlowRes,
-      capitalChangeFlowRes,
+      capitalChangeFlowRes: {
+        list = EMPTY_LIST,
+        page = EMPTY_OBJECT,
+      },
     } = this.props;
     // 补足普通账户流水数据
     const standardData = data.padEmptyDataForList(standardTradeFlowRes.list);
@@ -604,14 +610,16 @@ export default class TradeFlowModal extends PureComponent {
     const optionData = data.padEmptyDataForList(optionTradeFlowRes.list);
     const optionTradeColumns = this.transformColumnsData(OPTION_TRADE_FLOW_COLUMNS);
     const optionPage = this.getPage(optionTradeFlowRes.page);
-    // 资金变动表格分页器信息
-    const capitalData = data.padEmptyDataForList(capitalChangeFlowRes.list);
+    // 资金变动表格信息 ,没有数据时展示占位图标，有数据但少于十条，用空白行补全；
+    const capitalData = data.padEmptyDataForList(list);
     const capitalChangeColumns = this.transformColumnsData(CAPITAL_CHANGE_COLUMNS);
-    const capitalPage = this.getPage(capitalChangeFlowRes.page);
+    const capitalPage = this.getPage(page);
+    const isRender = !_.isEmpty(list);
     // 弹出层的自定义关闭按钮
     const closeBtn = [(
       <Button onClick={this.handleModalClose}>关闭</Button>
     )];
+
     return (
       <Modal
         visible
@@ -626,7 +634,7 @@ export default class TradeFlowModal extends PureComponent {
           <Tabs onChange={this.handleTabChange} activeKey={activeTabKey} animated={false}>
             <TabPane tab="普通账户历史交易" key="standardAccountTrade">
               <div className={styles.tabPaneWrap}>
-                <div className={styles.header}>
+                <div className={`${styles.header} clearfix`}>
                   <div className={styles.filterArea}>
                     <DateFilter
                       filterName="查询日期"
@@ -702,7 +710,7 @@ export default class TradeFlowModal extends PureComponent {
             </TabPane>
             <TabPane tab="信用账户历史交易" key="creditAccountTrade">
               <div className={styles.tabPaneWrap}>
-                <div className={styles.header}>
+                <div className={`${styles.header} clearfix`}>
                   <div className={styles.filterArea}>
                     <DateFilter
                       filterName="查询日期"
@@ -764,7 +772,7 @@ export default class TradeFlowModal extends PureComponent {
             </TabPane>
             <TabPane tab="期权账户历史交易" key="optionAccountTrade">
               <div className={styles.tabPaneWrap}>
-                <div className={styles.header}>
+                <div className={`${styles.header} clearfix`}>
                   <div className={styles.filterArea}>
                     <DateFilter
                       filterName="查询日期"
@@ -811,7 +819,7 @@ export default class TradeFlowModal extends PureComponent {
             </TabPane>
             <TabPane tab="资金变动" key="capitalChange">
               <div className={styles.tabPaneWrap}>
-                <div className={styles.header}>
+                <div className={`${styles.header} clearfix`}>
                   <div className={styles.filterArea}>
                     <DateFilter
                       filterName="查询日期"
@@ -845,19 +853,21 @@ export default class TradeFlowModal extends PureComponent {
                     />
                   </div>
                 </div>
-                <div className={styles.body}>
-                  <Table
-                    pagination={false}
-                    dataSource={capitalData}
-                    columns={capitalChangeColumns}
-                    className={styles.tradeFlowTable}
-                    scroll={CAPITAL_CHANGE_TABLE_SCROLL}
+                <IfTableWrap isRender={isRender} text={NODATA_HINT}>
+                  <div className={styles.body}>
+                    <Table
+                      pagination={false}
+                      dataSource={capitalData}
+                      columns={capitalChangeColumns}
+                      className={styles.tradeFlowTable}
+                      scroll={CAPITAL_CHANGE_TABLE_SCROLL}
+                    />
+                  </div>
+                  <Pagination
+                    {...capitalPage}
+                    onChange={this.handleCapitalPageChange}
                   />
-                </div>
-                <Pagination
-                  {...capitalPage}
-                  onChange={this.handleCapitalPageChange}
-                />
+                </IfTableWrap>
               </div>
             </TabPane>
           </Tabs>

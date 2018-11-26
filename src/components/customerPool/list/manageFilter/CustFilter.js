@@ -87,7 +87,7 @@ export default class CustRange extends PureComponent {
     orgId: null,
     defaultFirst: false,
     width: 200,
-    dropdownWidth: 200,
+    dropdownWidth: 240,
     selectBoxStyle: {},
     isDown: false,
     collectData: _.noop,
@@ -201,7 +201,9 @@ export default class CustRange extends PureComponent {
         showSearch
         labelInValue
         dropdownMatchSelectWidth={false}
-        dropdownStyle={{ width: widthDown, maxHeight: 400, overflow: 'auto' }}
+        dropdownStyle={{ width: widthDown,
+maxHeight: 400,
+overflow: 'auto' }}
         getPopupContainer={() => document.querySelector(constants.container)}
         searchPlaceholder={placeholder}
       />

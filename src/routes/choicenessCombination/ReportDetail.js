@@ -17,7 +17,7 @@ import withRouter from '../../decorators/withRouter';
 import fspPatch from '../../decorators/fspPatch';
 import logable from '../../decorators/logable';
 import Icon from '../../components/common/Icon';
-import { dva } from '../../helper';
+import { dva, env } from '../../helper';
 import styles from './reportDetail.less';
 
 const { Header, Footer, Content } = Layout;
@@ -62,14 +62,18 @@ export default class ReportDetail extends PureComponent {
 
 
   // 空方法，用于日志上报
-  @logable({ type: 'Click', payload: { name: '下载PDF 全文' } })
+  @logable({ type: 'Click',
+payload: { name: '下载PDF 全文' } })
   handleDownloadClick() {}
 
-  @logable({ type: 'Click', payload: { name: '下载WORD 全文' } })
+  @logable({ type: 'Click',
+payload: { name: '下载WORD 全文' } })
   handleDownload() {}
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '历史报告详情', value: '返回上一页' } })
+  @logable({ type: 'Click',
+payload: { name: '历史报告详情',
+value: '返回上一页' } })
   handleGoBck() {
     closeRctTab({ id: 'FSP_JX_GROUP_REPORT_DETAIL' });
   }
@@ -138,7 +142,10 @@ export default class ReportDetail extends PureComponent {
             }
           </div>
           <div className={styles.right}>
-            <a onClick={this.handleGoBck}><Icon type="fanhui1" />返回上一页</a>
+            {
+              !env.isInReact() ?
+                <a onClick={this.handleGoBck}><Icon type="fanhui1" />返回上一页</a> : null
+            }
           </div>
         </Footer>
       </Layout>

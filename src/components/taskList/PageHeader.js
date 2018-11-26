@@ -35,7 +35,9 @@ import styles from './pageHeader.less';
 
 const Search = Input.Search;
 
-const typeAll = { label: '不限', value: '', show: true }; // 不限
+const typeAll = { label: '不限',
+value: '',
+show: true }; // 不限
 const creatorFilterId = 'creatorId'; // 创建者filterId
 const custFilterId = 'custId'; // 客户filterId
 const triggerFilterId = 'triggerTime'; // 触发时间filterId
@@ -232,7 +234,7 @@ export default class Pageheader extends PureComponent {
   @logable({
     type: 'DropdownSelect',
     payload: {
-      name: '方式',
+      name: '执行方式',
       value: '$args[0].value.label',
     },
   })
@@ -608,7 +610,8 @@ export default class Pageheader extends PureComponent {
     } else {
       // ['a','b'] => {a:'', b: ''}
       const filterMap = _.reduce(filterOption,
-        (filterQuery, itemQuery) => ({ ...filterQuery, [itemQuery]: '' }), {});
+        (filterQuery, itemQuery) => ({ ...filterQuery,
+[itemQuery]: '' }), {});
       finalQuery = _.merge(query, filterMap);
     }
     replace({
@@ -636,7 +639,8 @@ export default class Pageheader extends PureComponent {
 
   @autobind
   closeFilter(filterId) {
-    this.moreFilterChange({ id: filterId, isDeleteFilterFromLocation: true });
+    this.moreFilterChange({ id: filterId,
+isDeleteFilterFromLocation: true });
   }
 
   // 按服务经理过滤筛选
@@ -648,7 +652,8 @@ export default class Pageheader extends PureComponent {
       clearServiceManagerList,
       location: { query: { ptyMngId = '', ptyMngName = '' } },
     } = this.props;
-    const currentPtyMng = { ptyMngId, ptyMngName };
+    const currentPtyMng = { ptyMngId,
+ptyMngName };
     // 管理者视图显示服务经理过滤筛选
     if (filterControl === CONTROLLER) {
       return (
