@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-11-19 16:27:30
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-23 10:53:53
+ * @Last Modified time: 2018-11-26 17:52:30
  */
 import React from 'react';
 import _ from 'lodash';
@@ -21,7 +21,7 @@ const config = {
       title: '开通日期',
       dataIndex: 'openDate',
       key: 'openDate',
-      className: 'PublicStyle',
+      className: 'publicStyle',
     },
     {
       title: '开通时达标资产(万元)',
@@ -34,19 +34,19 @@ const config = {
       title: '风险等级',
       dataIndex: 'riskGrade',
       key: 'riskGrade',
-      className: 'PublicStyle',
+      className: 'publicStyle',
     },
     {
       title: '全市场首次交易日期',
       dataIndex: 'transactionDate',
       key: 'transactionDate',
-      className: 'PublicStyle',
+      className: 'publicStyle',
     },
     {
       title: '黑名单',
       dataIndex: 'blackList',
       key: 'blackList',
-      className: 'PublicStyle',
+      className: 'publicStyle',
     },
     {
       title: '双录文件',

@@ -2,13 +2,8 @@
  * @Author: XuWenKang
  * @Description: 客户360-客户属性
  * @Date: 2018-11-06 16:17:28
-<<<<<<< HEAD
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-26 16:04:58
-=======
- * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-26 17:07:08
->>>>>>> 2acb4df8ef42f2c6180c39fd8c3a3daf51b189ef
+ * @Last Modified time: 2018-11-26 18:11:35
  */
 
 import React, { PureComponent } from 'react';

@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-11-19 15:33:09
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-20 09:41:35
+ * @Last Modified time: 2018-11-26 18:11:09
  */
 
 import { detailBusinessHand as api } from '../../api';
@@ -46,7 +46,6 @@ export default {
     // 查询业务办理下已开通业务信息
     * getOpenBusiness({ payload }, { put, call }) {
       const { resultData } = yield call(api.queryOpenBusiness, payload);
-      console.warn(resultData);
       yield put({
         type: 'getOpenBusinessSuccess',
         payload: resultData,

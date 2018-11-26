@@ -3,7 +3,7 @@
  * @Description: 客户360-业务办理
  * @Date: 2018-11-19 16:20:49
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-26 17:12:36
+ * @Last Modified time: 2018-11-26 17:51:43
  */
 import React,{ PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -88,7 +88,7 @@ export default class BusinessHand extends PureComponent {
       }
     };
     return openList;
-    }
+  }
 
   render() {
     const {
