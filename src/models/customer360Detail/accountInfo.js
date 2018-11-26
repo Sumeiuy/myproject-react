@@ -263,7 +263,10 @@ export default {
       const { resultData } = yield call(api.queryProfitRateInfo, payload);
       yield put({
         type: 'getProfitRateInfoSuccess',
-        payload: { resultData, withCustPofit },
+        payload: {
+          resultData,
+          withCustPofit,
+        },
       });
     },
     // 查询资产分布的雷达上具体指标的数据
