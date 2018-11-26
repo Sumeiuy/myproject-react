@@ -79,15 +79,19 @@ export default {
       const { payload: { processList = EMPTY_LIST } } = action;
       return {
         ...state,
-          processList,
+        processList,
       };
     },
     getEmpListByRespSuccess(state, action) {
-      const { payload: { resultData = EMPTY_LIST } } = action;
+      const {
+        payload: {
+          resultData = EMPTY_OBJECT
+        }
+      } = action;
       return {
         ...state,
         empRespDTOList:{
-        resultData,
+          resultData,
         }
       };
     }
@@ -195,6 +199,9 @@ export default {
     },
     * addFeedbackEvaluation({ payload }, { call, put }) {
       const response = yield call(api.addFeedbackEvaluation, payload);
+      yield put({
+        payload: response,
+      });
     },
     * getEmpListByResp({ payload }, { call, put }) {
       const response = yield call(api.getEmpListByResp, payload);

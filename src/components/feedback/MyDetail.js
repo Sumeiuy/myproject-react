@@ -21,6 +21,7 @@ import RemarkList from './RemarkList';
 import Icon from '../common/Icon';
 import styles from './myDetail.less';
 
+// 用户评价满意度字典
 const USER_COMMENT_LIST = feedbackOptions.userDegreeOfSatisfaction;
 // 不能写成无状态组件，因为容器组件要求能访问ref
 export default class MyDetail extends PureComponent {
@@ -31,15 +32,7 @@ export default class MyDetail extends PureComponent {
     resolveQuestion: PropTypes.func.isRequired,
     addFeedbackEvaluation: PropTypes.func.isRequired,
   }
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      evaluationStatus: props.feedbackDetail.evaluation,
-      preFeedbackDetail: props.feedbackDetail,
-    };
-  }
-
+  
   // 点击每一个反馈都会更新里面的值
   static getDerivedStateFromProps(nextProps, prevState) {
     if (nextProps.feedbackDetail !== prevState.preFeedbackDetail) {
@@ -50,6 +43,15 @@ export default class MyDetail extends PureComponent {
     }
     return null;
   }
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      evaluationStatus: props.feedbackDetail.evaluation,
+      preFeedbackDetail: props.feedbackDetail,
+    };
+  }
+
 
   @autobind
   renderColumn(data) {

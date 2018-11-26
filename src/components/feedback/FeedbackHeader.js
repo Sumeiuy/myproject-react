@@ -110,8 +110,8 @@ export default class PageHeader extends PureComponent {
       value: '$args[1]',
     },
   })
-  handleTypeClick(name, key) {
-    this.handleSelectChange(name, key);
+  handleTypeClick(key) {
+    this.handleSelectChange('issueType', key);
   }
 
   @autobind
@@ -122,8 +122,8 @@ export default class PageHeader extends PureComponent {
       value: '$args[1]',
     },
   })
-  handleProblemClick(name, key) {
-    this.handleSelectChange(name, key);
+  handleProblemClick(key) {
+    this.handleSelectChange('feedbackTagEnum', key);
   }
 
   @autobind
@@ -134,8 +134,8 @@ export default class PageHeader extends PureComponent {
       value: '$args[1]',
     },
   })
-  handleStatusClick(name, key) {
-    this.handleSelectChange(name, key);
+  handleStatusClick(key) {
+    this.handleSelectChange('feedbackStatusEnum', key);
   }
 
   @autobind
@@ -146,8 +146,8 @@ export default class PageHeader extends PureComponent {
       value: '$args[1]',
     },
   })
-  handleProcesserClick(name, key) {
-    this.handleSelectChange(name, key);
+  handleProcesserClick(key) {
+    this.handleSelectChange('processer', key);
   }
 
   @autobind
@@ -158,8 +158,8 @@ export default class PageHeader extends PureComponent {
       value: '$args[1]',
     },
   })
-  handleFeedbackEvaluationClick(name, key) {
-    this.handleSelectChange(name, key);
+  handleFeedbackEvaluationClick(key) {
+    this.handleSelectChange('evaluationEnum', key);
   }
 
   @autobind
@@ -250,7 +250,7 @@ export default class PageHeader extends PureComponent {
           style={{ width: '8%' }}
           placeholder="全部"
           value={issueType}
-          onChange={key => this.handleTypeClick('issueType', key)}
+          onChange={this.handleTypeClick}
           allowClear
         >
           {getSelectOption(typeOptions)}
@@ -259,7 +259,7 @@ export default class PageHeader extends PureComponent {
           style={{ width: '8%' }}
           placeholder="全部"
           value={feedbackTagEnum}
-          onChange={key => this.handleProblemClick('feedbackTagEnum', key)}
+          onChange={this.handleProblemClick}
           allowClear
         >
           {getSelectOption(questionTagOptions)}
@@ -268,7 +268,7 @@ export default class PageHeader extends PureComponent {
           style={{ width: '6%' }}
           placeholder="解决中"
           value={feedbackStatusEnum}
-          onChange={key => this.handleStatusClick('feedbackStatusEnum', key)}
+          onChange={this.handleStatusClick}
           allowClear
         >
           {getSelectOption(stateOptions)}
@@ -277,7 +277,7 @@ export default class PageHeader extends PureComponent {
           style={{ width: '6%' }}
           placeholder="全部"
           value={evaluationEnum}
-          onChange={key => this.handleFeedbackEvaluationClick('evaluationEnum', key)}
+          onChange={this.handleFeedbackEvaluationClick}
           allowClear
         >
           {getSelectOption(userDegreeOfSatisfaction)}
@@ -293,7 +293,7 @@ export default class PageHeader extends PureComponent {
           style={{ width: '6%' }}
           placeholder="全部"
           value={processer}
-          onChange={key => this.handleProcesserClick('processer', key)}
+          onChange={ this.handleProcesserClick}
           allowClear
         >
           {getSelectOption(operatorOptions)}

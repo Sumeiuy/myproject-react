@@ -28,6 +28,7 @@ const EMPTY_LIST = [];
 const GETDETAIL = 'feedback/getFeedbackDetail';
 const GETRECORDLIST = 'feedback/getFeedbackRecordList';
 const UPDATEQUESTION = 'feedback/updateFeedback';
+const EMPRESPDTOLIST = 'feedback/getEmpListByResp';
 
 const issueTypeOptions = feedbackOptions.typeOptions;
 const TabPane = Tabs.TabPane;
@@ -35,6 +36,7 @@ const TabPane = Tabs.TabPane;
 const mapStateToProps = state => ({
   fbDetail: state.feedback.fbDetail,
   recordList: state.feedback.recordList,
+  empRespDTOList: state.feedback.empRespDTOList,
 });
 
 const getDataFunction = loading => totype => query => ({
@@ -47,6 +49,7 @@ const mapDispatchToProps = {
   getFeedbackDetail: getDataFunction(true)(GETDETAIL),
   getFeedbackRecordList: getDataFunction(true)(GETRECORDLIST),
   updateFeedback: getDataFunction(true)(UPDATEQUESTION),
+  getEmpListByResp: getDataFunction(true)(EMPRESPDTOLIST),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -55,12 +58,11 @@ export default class Detail extends PureComponent {
     fbDetail: PropTypes.object.isRequired,
     recordList: PropTypes.object.isRequired,
     getFeedbackDetail: PropTypes.func.isRequired,
+    getEmpListByResp: PropTypes.func.isRequired,
     getFeedbackRecordList: PropTypes.func.isRequired,
     updateFeedback: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
-  }
-
-  static defaultProps = {
+    empRespDTOList: PropTypes.object.isRequired,
   }
 
   constructor(props) {
