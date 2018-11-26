@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性
  * @Date: 2018-11-06 16:17:28
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-22 16:11:44
+ * @Last Modified time: 2018-11-26 15:42:27
  */
 
 import React, { PureComponent } from 'react';
@@ -70,6 +70,12 @@ export default class CustProperty extends PureComponent {
     zjPointExchangeFlow: PropTypes.object.isRequired,
     // 修改个人客户、机构客户的基本信息
     updateCustBasicInfo: PropTypes.func.isRequired,
+    // 个人客户联系方式数据
+    personalContactWay: PropTypes.object.isRequired,
+    // 查询个人客户联系方式数据
+    queryPersonalContactWay: PropTypes.func.isRequired,
+    // 改变个人客户联系方式中的请勿发短信、请勿打电话
+    changePhoneInfo: PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -160,14 +166,20 @@ export default class CustProperty extends PureComponent {
       updateCustBasicInfo,
       location,
       queryCustomerProperty,
+      personalContactWay,
+      queryPersonalContactWay,
+      changePhoneInfo,
     } = this.props;
     return (
       <PersonInfo
-        queryCustomerProperty={queryCustomerProperty}
         location={location}
-        updateCustBasicInfo={updateCustBasicInfo}
         hasDuty={this.hasDuty()}
         data={person}
+        personalContactWay={personalContactWay}
+        queryPersonalContactWay={queryPersonalContactWay}
+        queryCustomerProperty={queryCustomerProperty}
+        updateCustBasicInfo={updateCustBasicInfo}
+        changePhoneInfo={changePhoneInfo}
       />
     );
   }
@@ -227,7 +239,8 @@ export default class CustProperty extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '客户属性下tab切换' } })
+  @logable({ type: 'Click',
+payload: { name: '客户属性下tab切换' } })
   handleTabChange(activeKey) {
     this.setState({
       activeKey,

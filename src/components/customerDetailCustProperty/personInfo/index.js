@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性-个人属性
  * @Date: 2018-11-07 14:39:15
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-22 16:12:19
+ * @Last Modified time: 2018-11-26 15:42:54
  */
 
 import React, { PureComponent } from 'react';
@@ -20,6 +20,12 @@ export default class PersonInfo extends PureComponent {
     data: PropTypes.object.isRequired,
     hasDuty: PropTypes.bool.isRequired,
     updateCustBasicInfo: PropTypes.func.isRequired,
+    // 个人客户联系方式数据
+    personalContactWay: PropTypes.object.isRequired,
+    // 查询个人客户联系方式数据
+    queryPersonalContactWay: PropTypes.func.isRequired,
+    // 改变个人客户联系方式中的请勿发短信、请勿打电话
+    changePhoneInfo: PropTypes.func.isRequired,
   }
 
   render() {
@@ -29,6 +35,9 @@ export default class PersonInfo extends PureComponent {
       location,
       updateCustBasicInfo,
       queryCustomerProperty,
+      personalContactWay,
+      queryPersonalContactWay,
+      changePhoneInfo,
     } = this.props;
     const {
       phones = EMPTY_ARRAY,
@@ -47,12 +56,16 @@ export default class PersonInfo extends PureComponent {
           queryCustomerProperty={queryCustomerProperty}
         />
         <ContactWay
+          location={location}
           phoneList={phones}
           otherList={others}
           addressList={addresses}
           hasDuty={hasDuty}
           noMessage={noMessage}
           noCall={noCall}
+          personalContactWay={personalContactWay}
+          queryPersonalContactWay={queryPersonalContactWay}
+          changePhoneInfo={changePhoneInfo}
         />
       </div>
     );
