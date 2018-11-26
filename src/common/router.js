@@ -5,14 +5,12 @@ import CustomerPoolWrapper from '../routes/customerPool/CustomerPoolWrapper';
 import { env } from '../helper';
 
 let routerDataCache;
-
 const modelNotExisted = (app, model) => (
   // eslint-disable-next-line
   !app._models.some(({ namespace }) => {
     return namespace === model.substring(model.lastIndexOf('/') + 1);
   })
 );
-
 // wrapper of dynamic
 const dynamicWrapper = (app, models, component) => {
   // () => require('module')
@@ -59,7 +57,6 @@ const dynamicWrapper = (app, models, component) => {
     },
   });
 };
-
 export const getRouterData = (app) => {
   const routerConfig = {
     '/empty': {
@@ -206,11 +203,13 @@ export const getRouterData = (app) => {
     '/customerPool/todo': {
       component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist'], () =>
         import('../routes/customerPool/ToDo' /* webpackChunkName: "customerPool_todo" */)),
+      isPrimary: true,      
     },
     // 从 customerPool 页面中上部的搜索框输入搜索条件、或搜索框下方--猜你感兴趣进入
     '/customerPool/list': {
       component: dynamicWrapper(app, ['customerPool', 'customerLabel'], () =>
         import('../routes/customerPool/CustomerList__' /* webpackChunkName: "customerPool_list" */ )),
+      isPrimary: true,      
     },
     // 从其他地方跳转到新版客户360详情页面，
     '/customerPool/list/detail': {
@@ -223,76 +222,92 @@ export const getRouterData = (app) => {
           'customer360Detail/accountInfo',
           'customer360Detail/custProperty',
           'customer360Detail/serviceRelationship',
+          'customer360Detail/discountCoupon',
           'customer360Detail/productOrder',
-          'customer360Detail/investmentAbilityAnalysis'
+          'customer360Detail/investmentAbilityAnalysis',
+          'customer360Detail/businessHand',
         ],
         () => import('../routes/customerDetail/connectHome' /* webpackChunkName: "customerPool_customerDetail" */),
       ),
+      isPrimary: true, 
     },
     // customerPool/customerGroup 直接进入，所需数据未知
     '/customerPool/customerGroup': {
       component: dynamicWrapper(app, ['customerPool'], () =>
         import('../routes/customerPool/CustomerGroup' /* webpackChunkName: "customerPool_customerGroup" */)),
+      isPrimary: true,      
     },
     // 分组管理发起任务
     // customerPool/createTaskFromCustGroup 直接进入，所需数据未知
     '/customerPool/createTaskFromCustGroup': {
       component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist', 'taskFeedback'], () =>
         import('../routes/customerPool/CreateTask' /* webpackChunkName: "customerPool_createTask" */)),
+      isPrimary: true,      
     },
     // 管理者视图进度条发起任务
     '/customerPool/createTaskFromProgress': {
       component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist', 'taskFeedback'], () =>
         import('../routes/customerPool/CreateTask' /* webpackChunkName: "customerPool_createTask" */)),
+      isPrimary: true,      
     },
     // 管理者视图饼图发起任务
     '/customerPool/createTaskFromPie': {
       component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist', 'taskFeedback'], () =>
         import('../routes/customerPool/CreateTask' /* webpackChunkName: "customerPool_createTask" */)),
+      isPrimary: true,      
     },
     // 从代办流程进去，任务驳回修改
     '/customerPool/createTaskFromTaskRejection1': {
       component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist', 'taskFeedback'], () =>
         import('../routes/customerPool/CreateTask' /* webpackChunkName: "customerPool_createTask" */)),
+      isPrimary: true,      
     },
     // 从任务管理，创建者视图驳回中的任务，进行任务驳回修改
     '/customerPool/createTaskFromTaskRejection2': {
       component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist', 'taskFeedback'], () =>
         import('../routes/customerPool/CreateTask' /* webpackChunkName: "customerPool_createTask" */)),
+      isPrimary: true,      
     },
     // 从管理者视图服务经理维度发起任务
     '/customerPool/createTaskFromCustScope': {
       component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist', 'taskFeedback'], () =>
         import('../routes/customerPool/CreateTask' /* webpackChunkName: "customerPool_createTask" */)),
+      isPrimary: true,      
     },
     // 客户列表发起任务
     '/customerPool/createTask': {
       component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist', 'taskFeedback'], () =>
         import('../routes/customerPool/CreateTask' /* webpackChunkName: "customerPool_createTask" */)),
+      isPrimary: true,      
     },
     // 执行者视图服务结果客户明细的地方发起任务
     '/customerPool/createTaskFromServiceResultCust': {
       component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist', 'taskFeedback'], () =>
         import('../routes/customerPool/CreateTask' /* webpackChunkName: "customerPool_createTask" */)),
+      isPrimary: true,      
     },
     // 标签管理页面发起任务
     '/customerPool/createTaskFromLabelManagement': {
       component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist', 'taskFeedback'], () =>
         import('../routes/customerPool/CreateTask' /* webpackChunkName: "customerPool_createTask" */)),
+      isPrimary: true,      
     },
     // 客户分组管理
     '/customerPool/customerGroupManage': {
       component: dynamicWrapper(app, [], () =>
         import('../routes/customerPool/CustomerGroupManage' /* webpackChunkName: "customerGroupManage" */)),
+      isPrimary: true,      
     },
     '/customerPool/serviceLog': {
       component: dynamicWrapper(app, ['customerPool'], () =>
         import('../routes/customerPool/ServiceLog' /* webpackChunkName: "customerPool_serviceLog" */)),
+      isPrimary: true,
     },
     // 从 /taskList 页面，点击右上角新建进入
     '/customerPool/taskFlow': {
       component: dynamicWrapper(app, ['customerPool', 'taskFeedback'], () =>
         import('../routes/customerPool/TaskFlow' /* webpackChunkName: "customerPool_taskFlow" */)),
+      isPrimary: true,
     },
 
     // 从 FSP 消息提醒进入，亦可直接进入，需要数据需后台配置
@@ -358,9 +373,10 @@ export const getRouterData = (app) => {
         import('../routes/stock/Home' /* webpackChunkName: "stock" */)),
     },
     // 在 stock 页面的列表中点击任意记录进入
-    '/stock/detail': {
+    '/strategyCenter/stock/detail': {
       component: dynamicWrapper(app, ['stock'], () =>
         import('../routes/stock/Detail' /* webpackChunkName: "stock_detail" */)),
+      isPrimary: true,
     },
     // 直接进入
     // 用户中心
@@ -372,12 +388,12 @@ export const getRouterData = (app) => {
     '/userCenter/userInfoApproval': {
       component: dynamicWrapper(app, ['userCenter'], () =>
         import('../routes/userCenter/userInfoApproval' /* webpackChunkName: "userCenter_userInfoApproval" */)),
+      isPrimary: true,
     },
     // 平台参数设置
     '/sysOperate/platformParameterSetting': {
       component: dynamicWrapper(app, [], () =>
         import('../routes/platformParameterSetting/Home' /* webpackChunkName: "platformParameterSetting" */)),
-      exact: false,
     },
     '/sysOperate/platformParameterSetting/taskOperation/customerFeedback': {
       component: dynamicWrapper(app, ['customerFeedback'], () =>
@@ -395,9 +411,13 @@ export const getRouterData = (app) => {
       component: dynamicWrapper(app, ['userCenter'], () =>
         import('../components/platformParameterSetting/routers/LabelManager' /* webpackChunkName: "LabelManager" */)),
     },
-    '/sysOperate/platformParameterSetting/contentOperate': {
+    '/sysOperate/platformParameterSetting/contentOperate/recommendedLabel': {
       component: dynamicWrapper(app, ['operationCenter'], () =>
         import('../components/platformParameterSetting/routers/RecommendedLabel' /* webpackChunkName: "RecommendedLabel" */)),
+    },
+    '/sysOperate/platformParameterSetting/contentOperate/activityColumn': {
+      component: dynamicWrapper(app, ['activityColumn'], () =>
+        import('../components/platformParameterSetting/routers/contentOperate/ActivityColumn' /* webpackChunkName: "ActivityColumn" */)),
     },
     '/sysOperate/platformParameterSetting/customerLabel': {
       component: dynamicWrapper(app, ['customerLabel'], () =>
@@ -415,7 +435,6 @@ export const getRouterData = (app) => {
     '/sysOperate/telephoneNumberManage': {
       component: dynamicWrapper(app, ['telephoneNumberManage'], () =>
         import('../routes/telephoneNumberManage/Home' /* webpackChunkName: "telephoneNumberManage" */)),
-      exact: false,
     },
     '/sysOperate/telephoneNumberManage/distribute': {
       component: dynamicWrapper(app, ['telephoneNumberManage'], () =>
@@ -429,7 +448,6 @@ export const getRouterData = (app) => {
     '/sysOperate/telephoneNumberManageEdit': {
       component: dynamicWrapper(app, ['telephoneNumberManage'], () =>
         import('../routes/telephoneNumberManage/ApplyEdit' /* webpackChunkName: "telephoneNumberManageEdit" */)),
-      exact: false,
     },
     // 精选组合，直接进入
     '/strategyCenter/choicenessCombination': {
@@ -437,15 +455,17 @@ export const getRouterData = (app) => {
         import('../routes/choicenessCombination/Home' /* webpackChunkName: "choicenessCombination" */)),
     },
     // 组合详情 /choicenessCombination/combinationDetail?id=xxx  id为组合id
-    '/choicenessCombination/combinationDetail': {
+    '/strategyCenter/choicenessCombination/combinationDetail': {
       component: dynamicWrapper(app, ['combinationDetail'], () =>
         import('../routes/choicenessCombination/CombinationDetail' /* webpackChunkName: "choicenessCombination_combinationDetail" */)),
+      isPrimary: true,
     },
     // 历史报告详情 /choicenessCombination/reportDetail?id=xxx&combinationCode=xxx
     // id为报告 id，combinationCode 为组合 id
-    '/choicenessCombination/reportDetail': {
+    '/strategyCenter/choicenessCombination/reportDetail': {
       component: dynamicWrapper(app, ['choicenessCombination'], () =>
         import('../routes/choicenessCombination/ReportDetail' /* webpackChunkName: "choicenessCombination_reportDetail" */)),
+      isPrimary: true,
     },
     // 投顾业务能力竞赛
     '/investmentConsultantRace': {
@@ -486,6 +506,7 @@ export const getRouterData = (app) => {
     '/customerPool/keyMonitorAccount': {
       component: dynamicWrapper(app, ['keyMonitorAccount'], () =>
         import('../routes/keyMonitorAccount/Home' /* webpackChunkName: "keyMonitorAccount" */)),
+      isPrimary: true,
     },
     // 最新观点，直接进入
     '/strategyCenter/latestView': {
@@ -493,24 +514,28 @@ export const getRouterData = (app) => {
         import('../routes/latestView/Home' /* webpackChunkName: "latestView" */)),
     },
     // 首席观点列表页面
-    '/latestView/viewpointList': {
+    '/strategyCenter/latestView/viewpointList': {
       component: dynamicWrapper(app, ['latestView'], () =>
         import('../routes/latestView/ViewpointList' /* webpackChunkName: "latestViewpointList" */)),
+      isPrimary: true,
     },
     // 首席观点详情页
-    '/latestView/viewpointDetail': {
+    '/strategyCenter/latestView/viewpointDetail': {
       component: dynamicWrapper(app, ['latestView'], () =>
         import('../routes/latestView/ViewpointDetail' /* webpackChunkName: "latestViewpointDetail" */)),
+      isPrimary: true,
     },
     // 大类资产配置分析列表
-    '/latestView/majorAssetsList': {
+    '/strategyCenter/latestView/majorAssetsList': {
       component: dynamicWrapper(app, ['latestView'], () =>
         import('../routes/latestView/MajorAssetsList' /* webpackChunkName: "majorAssetsList" */)),
+      isPrimary: true,
     },
     // 行业主题调整信息列表
-    '/latestView/industryThemeList': {
+    '/strategyCenter/latestView/industryThemeList': {
       component: dynamicWrapper(app, ['latestView'], () =>
         import('../routes/latestView/IndustryThemeList' /* webpackChunkName: "industryThemeList" */)),
+      isPrimary: true,
     },
     // 股票期权评估申请
     '/businessApplyment/option/stockOptionEvaluation': {
@@ -554,6 +579,7 @@ export const getRouterData = (app) => {
     '/customerPool/labelManagement': {
       component: dynamicWrapper(app, ['labelManagement'], () =>
         import('../routes/labelManagement/Home') /* webpackChunkName: "labelManagement" */),
+      isPrimary: true,
     },
     // 临时委托他人处理任务Home页面
     '/taskCenter/tempDepute': {
@@ -571,16 +597,69 @@ export const getRouterData = (app) => {
         import('../routes/advisorSpace/Home') /* webpackChunkName: "advisorSpace" */),
     },
     // smart任务分析报表
-    '/statisticalQuery/taskAnalysisReport': {
+    '/statisticalQuery/taskTable/taskAnalysisReport': {
       component: dynamicWrapper(app, ['taskAnalysisReport'], () =>
         import('../routes/taskAnalysisReport/Home') /* webpackChunkName: "taskAnalysisReport" */),
     }
   };
   return routerConfig;
 };
-
-// 采取分布式配置的路由路径
-export const distributeRouters = [
-  '/sysOperate/platformParameterSetting',
-  '/sysOperate/telephoneNumberManage',
+// 需要进行重定向的路由配置
+export const redirectRoutes = [
+  {
+    from: '/',
+    to: '/customerPool',
+  },
+  {
+    from: '/invest',
+    to: '/statisticalQuery/report',
+  },
+  {
+    from: '/report',
+    to: '/statisticalQuery/report',
+  },
+  {
+    from: '/custAllot',
+    to: '/businessApplyment/customerPartition/custAllot',
+  },
+  {
+    from: '/departmentCustAllot',
+    to: '/businessApplyment/customerPartition/departmentCustAllot',
+  },
+  {
+    from: '/telephoneNumberManageEdit',
+    to: '/sysOperate/telephoneNumberManageEdit',
+  },
+  {
+    from: '/latestView/viewpointList',
+    to: '/strategyCenter/latestView/viewpointList',
+  },
+  {
+    from: '/latestView/viewpointDetail',
+    to: '/strategyCenter/latestView/viewpointDetail',
+  },
+  {
+    from: '/latestView/majorAssetsList',
+    to: '/strategyCenter/latestView/majorAssetsList',
+  },
+  {
+    from: '/latestView/industryThemeList',
+    to: '/strategyCenter/latestView/industryThemeList',
+  },
+  {
+    from: '/stock/detail',
+    to: '/strategyCenter/stock/detail',
+  },
+  {
+    from: '/choicenessCombination/combinationDetail',
+    to: '/strategyCenter/choicenessCombination/combinationDetail',
+  },
+  {
+    from: '/choicenessCombination/reportDetail',
+    to: '/strategyCenter/choicenessCombination/reportDetail',
+  },
+  {
+    from: '/statisticalQuery/taskAnalysisReport',
+    to: '/statisticalQuery/taskTable/taskAnalysisReport',
+  },
 ];

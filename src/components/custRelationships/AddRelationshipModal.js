@@ -219,7 +219,7 @@ export default class AddRelationshipModal extends Component {
       // 手动上传日志
       const title = action === 'CREATE' ? '添加客户关联关系' : '修改客户关联关系';
       logCommon({
-        type: 'submit',
+        type: 'Submit',
         payload: {
           name: title,
           value: JSON.stringify({ ...this.state, action }),

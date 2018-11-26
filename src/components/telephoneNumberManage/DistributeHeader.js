@@ -11,7 +11,7 @@ import _ from 'lodash';
 import Select from '../common/Select';
 import CustRange from '../pageCommon/SeibelCustRange';
 import AutoComplete from '../common/similarAutoComplete';
-import { logCommon } from '../../decorators/logable';
+import logable, { logCommon } from '../../decorators/logable';
 import config from './config';
 import styles from './distributeHeader.less';
 
@@ -64,6 +64,7 @@ export default class DistributeHeader extends PureComponent {
 
   // 选中部门下拉对象中对应的某个对象
   @autobind
+  @logable({ type: 'DropdownSelect', payload: { name: '部门下拉选项', value: '$args[0].orgId' } })
   selectCustRange(obj) {
     this.props.filterCallback({
       orgId: obj.orgId,
@@ -72,6 +73,7 @@ export default class DistributeHeader extends PureComponent {
 
   // 状态select改变
   @autobind
+  @logable({ type: 'DropdownSelect', payload: { name: '状态下拉选项', value: '$args[1]' } })
   handleStatusChange(key, value) {
     this.props.filterCallback({
       isBinding: value,

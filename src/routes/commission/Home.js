@@ -25,7 +25,6 @@ import { emp, permission } from '../../helper';
 import { seibelConfig } from '../../config';
 import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
-import './home.less';
 import logable, { logPV } from '../../decorators/logable';
 
 const OMIT_ARRAY = ['currentId', 'isResetPageNum'];
@@ -380,13 +379,16 @@ export default class CommissionHome extends PureComponent {
         getBatchCommissionDetail({ batchNum: business1 });
         break;
       case comsubs.single:
-        getSingleDetail({ orderId: business1, loginuser });
+        getSingleDetail({ orderId: business1,
+loginuser });
         break;
       case comsubs.subscribe:
-        getSubscribeDetail({ orderId: business1, loginuser });
+        getSubscribeDetail({ orderId: business1,
+loginuser });
         break;
       case comsubs.unsubscribe:
-        getUnSubscribeDetail({ orderId: business1, loginuser });
+        getUnSubscribeDetail({ orderId: business1,
+loginuser });
         break;
       default:
         break;
@@ -397,7 +399,8 @@ export default class CommissionHome extends PureComponent {
   @autobind
   getApprovalBoardCustInfo(info) {
     const loginuser = emp.getId();
-    this.props.getApprovalRecords({ ...info, loginuser }).then(this.openApprovalBoard);
+    this.props.getApprovalRecords({ ...info,
+loginuser }).then(this.openApprovalBoard);
   }
 
   /**
@@ -461,7 +464,8 @@ export default class CommissionHome extends PureComponent {
     const { getCommissionList } = this.props;
     const params = seibelHelper.constructSeibelPostBody(query, pageNum, pageSize);
     // 默认筛选条件
-    getCommissionList({ ...params, type: pageType }).then(this.getRightDetail);
+    getCommissionList({ ...params,
+type: pageType }).then(this.getRightDetail);
   }
 
   // 创建新的成功后，刷新页面列表
@@ -477,8 +481,9 @@ export default class CommissionHome extends PureComponent {
     type: 'ViewItem',
     payload: {
       name: '佣金调整左侧列表项',
-      type: '$props.location.query.type',
-      subType: '$props.location.query.subType',
+      type: '批量佣金调整',
+      subType: '$props.location.query.currentId',
+      value: '$args[0]'
     },
   })
   handleListRowClick(record, index) {
@@ -495,7 +500,8 @@ export default class CommissionHome extends PureComponent {
         currentId: id,
       },
     });
-    this.setState({ currentSubtype: st, activeRowIndex: index });
+    this.setState({ currentSubtype: st,
+activeRowIndex: index });
     this.getDetail4Subtye(record);
   }
 
@@ -530,7 +536,8 @@ export default class CommissionHome extends PureComponent {
 
   // 头部新建按钮点击事件处理程序
   @autobind
-  @logPV({ pathname: '/modal/createCommission', title: '新建佣金调整' })
+  @logPV({ pathname: '/modal/createCommission',
+title: '新建佣金调整' })
   handleCreateBtnClick() {
     // TODO 此处需要新增一个判断，如果用户所有申请的权限都没有则提示不能点击新建
     if (this.hasCreatApplyAuthority()) {

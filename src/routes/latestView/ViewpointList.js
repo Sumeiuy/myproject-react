@@ -42,7 +42,8 @@ const mapStateToProps = state => ({
 });
 const mapDispatchToProps = {
   queryChiefViewpointList: generateEffect(effects.queryChiefViewpointList,
-    { loading: true, forceFull: true }),
+    { loading: true,
+forceFull: true }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -135,7 +136,7 @@ export default class ViewpointList extends PureComponent {
   @logable({
     type: 'ViewItem',
     payload: {
-      name: '咨询详情',
+      name: '资讯详情',
       type: '$args[0].typeName',
       subType: '$args[0].title',
     },
@@ -144,9 +145,12 @@ export default class ViewpointList extends PureComponent {
     const { location: { query } } = this.props;
     const { id } = data;
     const { push } = this.context;
-    const param = { id: 'RTC_TAB_VIEWPOINT', title: '资讯' };
-    const url = '/latestView/viewpointDetail';
-    const newQuery = { ...query, id, sourceUrl: '/latestView/viewpointList' };
+    const param = { id: 'RTC_TAB_VIEWPOINT',
+title: '资讯' };
+    const url = '/strategyCenter/latestView/viewpointDetail';
+    const newQuery = { ...query,
+id,
+sourceUrl: '/strategyCenter/latestView/viewpointList' };
     linkTo({
       routerAction: push,
       url: `${url}?${urlHelper.stringify(newQuery)}`,
@@ -181,11 +185,16 @@ export default class ViewpointList extends PureComponent {
       startDate,
       endDate,
     }).then(() => {
-      replace({ pathname, query: { ...query, pageNum } });
+      replace({ pathname,
+query: { ...query,
+pageNum } });
     });
   }
 
   @autobind
+  @logable({ type: 'Click',
+payload: { name: '搜索列表',
+value: '$args[0]' } })
   handleQueryList(param) {
     const { replace } = this.context;
     const {
@@ -208,7 +217,8 @@ export default class ViewpointList extends PureComponent {
       startDate: newQuery.startDate,
       endDate: newQuery.endDate,
     }).then(() => {
-      replace({ pathname, query: { ...newQuery } });
+      replace({ pathname,
+query: { ...newQuery } });
     });
   }
 

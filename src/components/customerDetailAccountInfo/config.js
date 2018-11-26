@@ -1,13 +1,13 @@
 /*
  * @Author: sunweibin
  * @Date: 2018-10-11 18:37:20
- * @Last Modified by: liqianwen
- * @Last Modified time: 2018-11-15 16:32:54
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-11-23 11:52:38
  * @description 新版客户360详情的账户信息Tab下页面的配置项
  */
 
 // 表格滚动的配置
-export const TABLE_SCROLL_SETTING = { x: 400, y: 220 };
+export const TABLE_SCROLL_SETTING = { x: 400, y: 220 }; // eslint-disable-line
 
 // 资产分布雷达图配置
 export const CHART_RADAR_OPTIONS = {
@@ -45,12 +45,12 @@ export const CHART_RADAR_OPTIONS = {
     },
   },
   nameGap: 0,
-  axisLine: {
-    show: false,
-  },
   splitNumber: 3,
   splitArea: {
-    show: false,
+    areaStyle: {                            // 分隔区域的样式设置。
+      show: true,
+      color: ['#f4f6f9', '#e9eaec'],
+    }
   },
   triggerEvent: true,
 };
@@ -59,20 +59,16 @@ export const CHART_SERIES_OPTIONS = {
   type: 'radar',
   itemStyle: {
     normal: {
-      opacity: 0,
-    },
+      lineStyle: {
+        color : '#ff8008',
+      },
+      areaStyle: {
+        color: '#fec965',
+        opacity: 1
+      },
+    }
   },
-  lineStyle: {
-    normal: {
-      color: '#f8af87',
-    },
-  },
-  areaStyle: {
-    normal: {
-      color: '#ffede2',
-      opacity: 1,
-    },
-  }
+  symbol: 'circle',
 };
 
 // 初始化查询指定指标的详情数据的key,默认为股票，其key=PA040000
@@ -121,6 +117,7 @@ export const OPTION_HISTORY_HOLDING_TABLE_SCROLL = { x: 2500 };
 export const STANDARD_TRADE_FLOW_TABLE_SCROLL = { x: 2100 };
 export const CREDIT_TRADE_FLOW_TABLE_SCROLL= { x: 1800 };
 export const OPTION_TRADE_FLOW_TABLE_SCROLL = { x: 2500 };
+export const CAPITAL_CHANGE_TABLE_SCROLL = { x: 1300 };
 
 // 证券历史持仓表格显示的columns
 export const STOCK_HISTORY_HOLDING_COLUMNS = [
@@ -701,6 +698,57 @@ export const OPTION_TRADE_FLOW_COLUMNS = [
     dataIndex: 'openStorageDirection',
     key: 'openStorageDirection',
     className: 'openStorageDirection',
+  },
+];
+// 交易流水资金变动columns
+export const CAPITAL_CHANGE_COLUMNS = [
+  {
+    title: '交易日期',
+    dataIndex: 'tradeDate',
+    key: 'tradeDate',
+    className: 'tradeDate',
+    fixed: 'left',
+  },
+  {
+    title: '资金账号',
+    dataIndex: 'accountNumber',
+    key: 'accountNumber',
+    className:'accountNumber',
+    fixed: 'left',
+  },
+  {
+    title: '币种',
+    dataIndex: 'currency',
+    key: 'currency',
+    className:'currency'
+  },
+  {
+    title: '交易渠道',
+    dataIndex: 'tradeChannel',
+    key: 'tradeChannel',
+    className:'tradeChannel'
+  },
+  {
+    title: '业务标志',
+    dataIndex: 'serviceIndication',
+    key: 'serviceIndication',
+    className:'serviceIndication'
+  },
+  {
+    title: '交易金额(元)',
+    dataIndex: 'ammount',
+    key: 'ammount',
+    align: 'right',
+    className:'ammount',
+    isNumber: true,
+  },
+  {
+    title: '余额(元)',
+    dataIndex: 'balance',
+    key: 'balance',
+    align: 'right',
+    className: 'balance',
+    isNumber: true,
   },
 ];
 

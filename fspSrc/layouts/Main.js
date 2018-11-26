@@ -11,11 +11,17 @@ import PropTypes from 'prop-types';
 import { connect } from 'dva';
 import { Helmet } from 'react-helmet';
 import { autobind } from 'core-decorators';
-import { routerRedux } from 'dva/router';
+import {
+  Route,
+  Switch,
+  Redirect,
+  routerRedux,
+} from 'dva/router';
 import { LocaleProvider } from 'antd';
 import zhCN from 'antd/lib/locale-provider/zh_CN';
 import classNames from 'classnames';
 import withRouter from '../../src/decorators/withRouter';
+import { redirectRoutes } from '../../src/common/router';
 
 import Header from './Header';
 import Footer from './Footer';
@@ -29,12 +35,18 @@ import ContextProvider from '../../src/layouts/ContextProvider';
 import IEWarningModal from '../../src/components/common/IEWarningModal';
 import ErrorBoundary from '../../src/layouts/ErrorBoundary';
 import PhoneWrapper from '../../src/layouts/PhoneWrapper';
-import styles from './main.less';
-import '../css/fspFix.less';
-import '../../src/css/skin.less';
+import { findBestMatch } from '../../src/helper/os';
 import emp from '../../src/helper/emp';
 import api from '../../src/api';
 import NewHomeLoading from './NewHomeLoading';
+import FSPComponent from '../routes/fspPage/FSPComponent';
+import { getRoutes } from '../../src/utils/router';
+import { fspRoutes } from '../../src/config';
+import logable, { logCommon } from '../../src/decorators/logable';
+
+import styles from './main.less';
+import '../css/fspFix.less';
+import '../../src/css/skin.less';
 
 const effects = {
   dictionary: 'app/getDictionary',
@@ -93,12 +105,18 @@ const mapDispatchToProps = {
 };
 
 const PHONE = 'phone';
+function findRoute(url) {
+  return findBestMatch(url, fspRoutes, 'url');
+}
+// fsp 跳转
+const FSP_JUMP_STRING = '/fspjump/';
+// 普通跳转
+const JUMP_STRING = '/jump/';
 
 @withRouter
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Main extends PureComponent {
   static propTypes = {
-    children: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
     loading: PropTypes.number.isRequired,
     loadingForceFull: PropTypes.bool,
@@ -169,7 +187,8 @@ export default class Main extends PureComponent {
     api
       .postFspData(fullUrl,
         {},
-        { isFullUrl: true, ignoreCatch: true },
+        { isFullUrl: true,
+ignoreCatch: true },
       )
       .then(() => this.setWinLocationSearch(rsp.pstnId));
   }
@@ -188,6 +207,8 @@ export default class Main extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click',
+payload: { name: '返回顶部' } })
   handleBackToTopClick() {
     document.documentElement.scrollTop = 0;
     this.setState({
@@ -200,9 +221,75 @@ export default class Main extends PureComponent {
     return menus && !_.isEmpty(menus) && !_.isEmpty(menus.primaryMenu);
   }
 
+  // 处理外部系统跳入
+  @autobind
+  handleOutSystemJumpIn(value) {
+    return (<Route
+      path={`${value}(.*)`}
+      exact
+      component={({ location }) => {
+        let pathname = location.pathname.slice(value.length - 1);
+        if (value === FSP_JUMP_STRING) {
+          pathname = findRoute(pathname).path || '';
+        }
+        logCommon({
+          type: 'JumpIn',
+          payload: {
+            name: '外部系统跳入',
+            path: pathname,
+          },
+        });
+        return (<Redirect
+          to={{
+            ...location,
+            pathname,
+          }}
+        />);
+      }}
+    />);
+  }
+
+  renderRoutes() {
+    const { routerData, match } = this.props;
+    return (
+      <Switch>
+        {
+          redirectRoutes.map(item => (
+            <Route
+              key={item.from}
+              path={item.from}
+              exact
+              component={({ location }) => (
+                <Redirect
+                  to={{
+                    ...location,
+                    pathname: item.to,
+                  }}
+                />
+              )}
+            />
+          ))
+        }
+        {
+          getRoutes(match.path, routerData).map(item => (
+            <Route
+              key={item.key}
+              path={item.path}
+              exact={item.exact}
+              render={props => <item.component {...props} />}
+            />
+          ))
+        }
+        {this.handleOutSystemJumpIn(FSP_JUMP_STRING)}
+        {this.handleOutSystemJumpIn(JUMP_STRING)}
+        <Route path="/fsp/(.*)" component={FSPComponent} />
+        <Route path="*" render={() => (<Redirect to="/empty" />)} />
+      </Switch>
+    );
+  }
+
   render() {
     const {
-      children,
       location,
       loading,
       loadingForceFull,
@@ -275,9 +362,8 @@ export default class Main extends PureComponent {
                         {
                           (!_.isEmpty(interfaceState) &&
                             !interfaceState[effects.dictionary] &&
-                            !interfaceState[effects.customerScope] &&
-                            React.isValidElement(children)) ?
-                            children :
+                            !interfaceState[effects.customerScope]) ?
+                            this.renderRoutes() :
                             <div />
                         }
                       </div>

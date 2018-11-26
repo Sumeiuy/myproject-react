@@ -1,7 +1,9 @@
 import React from 'react';
 import _ from 'lodash';
+import { Icon, Tooltip } from 'antd';
 import BusinessOpenedMenu from '../../../common/htFilter/bussinessOpened/';
 
+import styles from './filterConfig.less';
 function getBusinessOpenedFilterLabel(obj) {
   const findDateType = _.find(obj.data.dateType,
     item => item.key === obj.value[0]);
@@ -20,6 +22,27 @@ function getBusinessOpenedFilterLabel(obj) {
       <span className="lego-postfixValue">{`${postfix}`}</span>
     </span>
   );
+}
+
+// 获取投资偏好指标说明
+function getIndicatorDescription() {
+  const content = (
+    <div>
+      <p>固收类：债券、货币市场基金、债券基金等固定收益类投资品种</p>
+      <p>权益类：股票、混合型基金、偏股型基金、股票型基金等权益类投资品种</p>
+      <p>期货和两融：期货、融资融券</p>
+      <p>复杂或高风险产品：复杂或高风险金融产品</p>
+      <p>其他产品：其他产品</p>
+    </div>
+  );
+  return (<div className={styles.investphFooterWrapper}>
+    <div className={styles.explainContent}>
+      <Tooltip title={content} placement="right" overlayStyle={{ maxWidth: 460 }} >
+        <span className={styles.explainIcon}><Icon type="exclamation-circle" className={styles.icon} /></span>
+        <span className={styles.explainText}>指标说明</span>
+      </Tooltip>
+    </div>
+  </div>);
 }
 
 const exported = {
@@ -156,6 +179,29 @@ const exported = {
         overflowY: 'auto',
         width: 195,
       },
+    },
+    {
+      filterName: '投资期限',
+      filterId: 'investPeriod',
+      dictField: 'investPeriodDictionary', // 过滤器数据在字典中对应的字段
+      type: 'multi',
+      dropdownStyle: {
+        maxHeight: 324,
+        overflowY: 'auto',
+        width: 197,
+      },
+    },
+    {
+      filterName: '投资偏好',
+      filterId: 'investVariety',
+      dictField: 'investVarietyDictionary', // 过滤器数据在字典中对应的字段
+      type: 'single',
+      dropdownStyle: {
+        maxHeight: 324,
+        overflowY: 'auto',
+        width: 250
+      },
+      menuFooter: getIndicatorDescription(),
     },
     {
       filterName: '可开通业务',
@@ -427,46 +473,98 @@ const exported = {
         right: 8,
       },
     },
+    {
+      filterName: '天天发市值',
+      filterId: 'ttfMktVal',
+      type: 'range',
+      unit: '元',
+      unitStyle: {
+        right: 8,
+      },
+    },
   ],
 
   moreFilterData: [
-    { value: '可开通业务', key: 'unrights' },
-    { value: '开通业务', key: 'businessOpened' },
-    { value: '客户等级', key: 'customerLevel' },
-    { value: '激活日期', key: 'dateOpened' },
-    { value: '账户状态', key: 'accountStatus' },
-    { value: '佣金率', key: 'minFee' },
-    { value: '持仓产品', key: 'primaryKeyPrdts' },
-    { value: '持仓行业', key: 'primaryKeyIndustry' },
-    { value: '总资产', key: 'totAset' },
-    { value: '介绍人', key: 'devMngId' },
-    { value: '年龄范围', key: 'age' },
-    { value: '最近一次服务', key: 'lastServDt' },
-    { value: '订购组合', key: 'primaryKeyJxgrps' },
-    { value: '高端产品户认定日期', key: 'highPrdtDt' },
-    { value: '产品户认定日期', key: 'buyProdDt' },
-    { value: '高净值户认定日期', key: 'gjzDt' },
-    { value: '签约日期', key: 'tgSignDate' },
-    { value: '有效户生效日期', key: 'validDt' },
-    { value: '未完备信息', key: 'completedRate' },
-    { value: '公募基金购买金额', key: 'kfBuyAmt' },
-    { value: '私募基金购买金额', key: 'smBuyAmt' },
-    { value: '紫金产品购买金额', key: 'finaBuyAmt' },
-    { value: 'OTC购买金额', key: 'otcBuyAmt' },
-    { value: '基础股基交易量', key: 'gjAmt' },
-    { value: '股基净佣金', key: 'gjPurRake' },
-    { value: '净利息额', key: 'netIncome' },
-    { value: '净佣金额', key: 'purRake' },
-    { value: '产品净手续费', key: 'saleFare' },
-    { value: '资金余额（含信用）', key: 'cashAmt' },
-    { value: '普通可用资金', key: 'avlAmt' },
-    { value: '信用可用资金', key: 'avlAmtCrdt' },
-    { value: '总市值（含信用）', key: 'totMktVal' },
-    { value: '归集率', key: 'gjlRate' },
-    { value: '外部市值', key: 'outMktVal' },
-    { value: '净转入资产', key: 'purFinAset' },
-    { value: '收益', key: 'pftAmt' },
-    { value: '收益率', key: 'maxCostRate' },
+    { value: '可开通业务',
+key: 'unrights' },
+    { value: '开通业务',
+key: 'businessOpened' },
+    { value: '客户等级',
+key: 'customerLevel' },
+    { value: '激活日期',
+key: 'dateOpened' },
+    { value: '账户状态',
+key: 'accountStatus' },
+    { value: '佣金率',
+key: 'minFee' },
+    { value: '持仓产品',
+key: 'primaryKeyPrdts' },
+    { value: '持仓行业',
+key: 'primaryKeyIndustry' },
+    { value: '总资产',
+key: 'totAset' },
+    { value: '介绍人',
+key: 'devMngId' },
+    { value: '年龄范围',
+key: 'age' },
+    { value: '最近一次服务',
+key: 'lastServDt' },
+    { value: '订购组合',
+key: 'primaryKeyJxgrps' },
+    { value: '高端产品户认定日期',
+key: 'highPrdtDt' },
+    { value: '产品户认定日期',
+key: 'buyProdDt' },
+    { value: '高净值户认定日期',
+key: 'gjzDt' },
+    { value: '签约日期',
+key: 'tgSignDate' },
+    { value: '有效户生效日期',
+key: 'validDt' },
+    { value: '未完备信息',
+key: 'completedRate' },
+    { value: '公募基金购买金额',
+key: 'kfBuyAmt' },
+    { value: '私募基金购买金额',
+key: 'smBuyAmt' },
+    { value: '紫金产品购买金额',
+key: 'finaBuyAmt' },
+    { value: 'OTC购买金额',
+key: 'otcBuyAmt' },
+    { value: '基础股基交易量',
+key: 'gjAmt' },
+    { value: '股基净佣金',
+key: 'gjPurRake' },
+    { value: '净利息额',
+key: 'netIncome' },
+    { value: '净佣金额',
+key: 'purRake' },
+    { value: '产品净手续费',
+key: 'saleFare' },
+    { value: '资金余额（含信用）',
+key: 'cashAmt' },
+    { value: '普通可用资金',
+key: 'avlAmt' },
+    { value: '信用可用资金',
+key: 'avlAmtCrdt' },
+    { value: '总市值（含信用）',
+key: 'totMktVal' },
+    { value: '归集率',
+key: 'gjlRate' },
+    { value: '外部市值',
+key: 'outMktVal' },
+    { value: '净转入资产',
+key: 'purFinAset' },
+    { value: '收益',
+key: 'pftAmt' },
+    { value: '收益率',
+key: 'maxCostRate' },
+    { value: '天天发市值',
+key: 'ttfMktVal' },
+    { value: '投资期限',
+key: 'investPeriod' },
+    { value: '投资偏好',
+key: 'investVariety' },
   ],
 
   moreFilterCategories: [
@@ -496,6 +594,8 @@ const exported = {
         'tgSignDate',
         'validDt',
         'completedRate',
+        'investPeriod',
+        'investVariety',
       ],
     },
     {
@@ -532,13 +632,28 @@ const exported = {
         'purFinAset',
         'pftAmt',
         'maxCostRate',
+        'ttfMktVal',
       ],
     },
   ],
 };
 
 // 客户列表页面如果url里type是以下类型之一，则把值回填到搜索框
-export const custListSearchTypes = ['NAME', 'SOR_PTY_ID', 'MOBILE', 'ID_NUM', 'ALL'];
+export const custListSearchTypes = ['NAME', 'SOR_PTY_ID', 'MOBILE', 'ID_NUM', 'ALL', 'STK_ACCTS'];
+
+// 客户列表筛选部分搜索框触发的handleFilterChange里的filters以下几种类型只能保持一个
+export const custListSearchFilterTypes = ['sorPtyId', 'idNum', 'mobile', 'name', 'searchText', 'primaryKey'];
+
+// 客户列表搜索组件url里面的type对应filters里存的值的一个map
+export const custListSearchTypeMapData = {
+  'SOR_PTY_ID': 'sorPtyId',
+  'ID_NUM': 'idNum',
+  'MOBILE': 'mobile',
+  'NAME': 'name',
+  'STK_ACCTS': 'primaryKey',
+  'ALL': 'searchText',
+};
+
 
 export default exported;
 

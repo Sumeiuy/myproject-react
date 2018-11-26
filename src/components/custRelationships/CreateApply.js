@@ -2,8 +2,8 @@
  * @Author: hongguangqing
  * @Descripter: 客户关联关系信息申请新建页面
  * @Date: 2018-06-08 13:10:33
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-22 17:38:02
+ * @Last Modified by: zhangmei
+ * @Last Modified time: 2018-11-12 13:58:35
  */
 
 import React, { PureComponent } from 'react';
@@ -117,10 +117,11 @@ export default class CreateApply extends PureComponent {
     };
     // 手动上传日志
     logCommon({
-      type: 'submit',
+      type: 'Submit',
       payload: {
         name: '客户关联关系信息申请',
-        value: JSON.stringify({ ...submitApplyParameter, auditors }),
+        value: JSON.stringify({ ...submitApplyParameter,
+auditors }),
       },
     });
     if (stockRepurchase === 'Y') {
@@ -161,7 +162,8 @@ export default class CreateApply extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '关闭新建弹框' } })
+  @logable({ type: 'Click',
+payload: { name: '关闭新建弹框' } })
   handleModalClose() {
     // 关闭新建申请弹出层的时候，弹出提示是否
     confirm({
@@ -180,9 +182,9 @@ export default class CreateApply extends PureComponent {
     this.setState(obj);
   }
 
-  // TODO 日志查看：打开页面无数据 未验证
   @autobind
-  @logable({ type: 'Click', payload: { name: '提交' } })
+  @logable({ type: 'Click',
+payload: { name: '提交' } })
   handleModalBtnGroupClick(btn) {
     // 点击此处，需要先进行可以提交的规则校验
     const { valid, msg } = validateData(this.state);
@@ -222,7 +224,8 @@ export default class CreateApply extends PureComponent {
   }
 
   @autobind
-  @logPV({ pathname: '/modal/choiceApproval', title: '选择审批人' })
+  @logPV({ pathname: '/modal/choiceApproval',
+title: '选择审批人' })
   handleSelectApprovalModal() {
     const { defaultNextApproverList } = this.state;
     if (_.isEmpty(defaultNextApproverList)) {

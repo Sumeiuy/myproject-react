@@ -80,7 +80,7 @@ export default class ViewpointListItem extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0].name' } })
+  @logable({ type: 'Click', payload: { name: '$args[0].name', type: '紫金时钟观点' } })
   openStockPage(obj) {
     const { code } = obj;
     const { push } = this.context;

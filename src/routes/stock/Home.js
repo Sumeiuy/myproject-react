@@ -2,8 +2,8 @@
  * @Description: 个股页面
  * @Author: Liujianshu
  * @Date: 2018-02-26 16:22:05
- * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-02 15:30:16
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-11-26 10:22:48
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -25,7 +25,7 @@ import logable, { logCommon } from '../../decorators/logable';
 const TabPane = Tabs.TabPane;
 const { typeList } = config;
 const EMPTY_PARAM = '暂无';
-const pathname = '/stock/detail';
+const pathname = '/strategyCenter/stock/detail';
 
 const fetchDataFunction = (globalLoading, type, forceFull) => query => ({
   type,
@@ -136,7 +136,13 @@ export default class Stock extends PureComponent {
 
   // tab 切换事件
   @autobind
-  @logable({ type: 'Click', payload: { name: '切换Tab', value: '$args[0]' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '切换Tab:个股研报/个股公告',
+      value: '$args[0]'
+    }
+  })
   tabChangeHandle(key) {
     const { keyword } = this.state;
     this.setState({

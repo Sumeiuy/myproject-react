@@ -1,8 +1,8 @@
 /**
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
- * @Last Modified by: wangyikai
- * @Last Modified time: 2018-10-31 09:47:16
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-11-13 10:22:19
  */
 
 import React, { PureComponent } from 'react';
@@ -16,13 +16,14 @@ import store from 'store';
 import introJs from 'intro.js';
 import 'intro.js/introjs.css';
 
-import { logPV, logCommon} from '../../decorators/logable';
+import logable, { logPV, logCommon} from '../../decorators/logable';
 import withRouter from '../../decorators/withRouter';
 import Nav from '../../components/newHome/Nav';
 import ViewAndCombination from '../../components/newHome/ViewAndCombination';
 import CommonCell from '../../components/newHome/CommonCell';
 import ChartsTab from '../../components/newHome/ChartsTab';
 import { LabelModal } from '../../components/customerPool/home';
+import ActivityColumnCarousel from '../../components/platformParameterSetting/routers/contentOperate/ActivityColumnCarousel';
 import { dva, url as urlHelper, emp, permission } from '../../helper';
 import { isSightingScope, getFilter, getSortParam } from '../../components/customerPool/helper.js';
 import { openRctTab } from '../../utils';
@@ -64,6 +65,8 @@ const effects = {
   queryCustLabelList: 'customerPool/queryCustLabelList',  // 获取首页可用客户标签列表数据
   custLabelListPaging: 'customerPool/custLabelListPaging', // 首页可用客户标签列表弹窗数据分页处理
   queryNumbers: 'newHome/queryNumbers',  // 首页任务概览
+  // 获取活动栏目
+  queryContent: 'morningBoradcast/queryContent',
 };
 
 const mapStateToProps = state => ({
@@ -88,8 +91,11 @@ const mapStateToProps = state => ({
   initBoradcastFile: state.morningBoradcast.initBoradcastFile, // 晨报详情
   pagingCustLabelData: state.customerPool.pagingCustLabelData, // 前端处理过的带分页的所有可用客户标签数据
   taskNumbers: state.newHome.taskNumbers,
+  // 活动栏目
+  activityColumnList: state.morningBoradcast.activityColumnList,
 });
 
+// 新版首页所有请求都要设置loading: false,
 const mapDispatchToProps = {
   push: routerRedux.push,
   // 重点关注
@@ -111,6 +117,8 @@ const mapDispatchToProps = {
   queryCustLabelList: effect(effects.queryCustLabelList, { loading: false }),
   custLabelListPaging: effect(effects.custLabelListPaging, { loading: false }),
   queryNumbers: effect(effects.queryNumbers, { loading: false }),
+  // 获取活动栏目
+  queryContent: effect(effects.queryContent, { loading: false }),
 };
 
 const EMPTY_LIST = [];
@@ -198,6 +206,9 @@ export default class Home extends PureComponent {
     pagingCustLabelData: PropTypes.object.isRequired,
     queryNumbers: PropTypes.func.isRequired,
     taskNumbers: PropTypes.object.isRequired,
+    // 活动栏目
+    queryContent: PropTypes.func.isRequired,
+    activityColumnList: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -230,6 +241,7 @@ export default class Home extends PureComponent {
       queryIntroCombination,
       queryNumbers,
       queryhomePageNews,
+      queryContent,
     } = this.props;
     const date = moment().format(DATE_FORMAT_STRING);
     // 重点关注
@@ -251,17 +263,20 @@ export default class Home extends PureComponent {
       pageNum: 1,
       pageSize: 10,
     });
+    // 获取活动栏目
+  	queryContent();
 
-    // 组合推荐
-    queryIntroCombination();
-
-    // 待办事项, 有任务管理岗时，将岗位id传给后端
-    // 判断当前登录用户是否在非营业部
-    const isNotSaleDepartment = emp.isManagementHeadquarters(this.loginOrgId)
-      || emp.isFiliale(custRange, this.loginOrgId);
-    // 非营业部登录用户有权限时，传登陆者的orgId
-    queryNumbers({ orgId: isNotSaleDepartment && permission.hasTkMampPermission() ? this.loginOrgId : '' });
-
+     // 这两个接口请求有点慢，延时发送请求
+    new Promise(resolve => resolve()).then(() => {
+      // 组合推荐
+      queryIntroCombination();
+      // 待办事项, 有任务管理岗时，将岗位id传给后端
+      // 判断当前登录用户是否在非营业部
+      const isNotSaleDepartment = emp.isManagementHeadquarters(this.loginOrgId)
+        || emp.isFiliale(custRange, this.loginOrgId);
+      // 非营业部登录用户有权限时，传登陆者的orgId
+      queryNumbers({ orgId: isNotSaleDepartment && permission.hasTkMampPermission() ? this.loginOrgId : '' });
+    });
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -274,7 +289,8 @@ export default class Home extends PureComponent {
 
   // 猜你感兴趣-更多点击事件
   @autobind
-  @logPV({ pathname: '/modal/showMoreLabelModal', title: '猜你感兴趣标签' })
+  @logPV({ pathname: '/modal/showMoreLabelModal',
+title: '猜你感兴趣-更多-可用客户标签弹窗' })
   handleMoreClick() {
     this.setState({
       showMoreLabelModal: true,
@@ -283,7 +299,8 @@ export default class Home extends PureComponent {
 
   // 跳转到投顾业务能力竞赛页面
   @autobind
-  @logPV({ pathname: '/investmentConsultantRace', title: '投顾业务能力竞赛页面' })
+  @logable({ type: 'ButtonClick',
+payload: { name: '点击投顾能力竞赛' } })
   toInvestmentConsultantCompetenceRacePage() {
     const { push } = this.props;
     const url = '/investmentConsultantRace';
@@ -300,11 +317,11 @@ export default class Home extends PureComponent {
 
   // 产品日历的数值点击事件
   @autobind
-  @logPV({ pathname: '/fsp/productCenter/homePage', title: '产品中心页面' })
+  @logable({ type: 'ButtonClick',
+payload: { name: '点击产品中心' } })
   handleProductCalendarValueClick(item) {
     const { push } = this.props;
     const { code } = item;
-    // http://168.61.9.158:15902/htsc-product-base/financial_product_query.do?router=homePage&clientType=crm
     push({
       pathname: '/fsp/productCenter/homePage',
       state: {
@@ -384,7 +401,8 @@ export default class Home extends PureComponent {
 
   // 组合推荐，打开详情页
   @autobind
-  @logPV({ pathname: '/choicenessCombination/combinationDetail', title: '精选组合详情' })
+  @logPV({ pathname: '/strategyCenter/choicenessCombination/combinationDetail',
+title: '精选组合详情' })
   handleCombinationClick(obj) {
     const { push } = this.props;
     const param = {
@@ -399,19 +417,23 @@ export default class Home extends PureComponent {
       id: obj.code,
       name: obj.name,
     };
-    const url = `/choicenessCombination/combinationDetail?${urlHelper.stringify(query)}`;
+    const url = `/strategyCenter/choicenessCombination/combinationDetail?${urlHelper.stringify(query)}`;
     openRctTab({
       routerAction: push,
       url,
       param,
-      pathname: '/choicenessCombination/combinationDetail',
+      pathname: '/strategyCenter/choicenessCombination/combinationDetail',
       query,
     });
   }
 
   // 重点关注、猜你感兴趣 跳转客户列表的点击事件
   @autobind
-  @logPV({ pathname: '/customerPool/list', title: '客户列表' })
+  @logable({ type: 'Click',
+payload: {
+      name: '点击$args[0].name',
+    }
+  })
   handleLinkToCustomerList(item) {
     this.handleOpenTab({
       source: isSightingScope(item.source) ? 'sightingTelescope' : 'tag',
@@ -524,6 +546,7 @@ export default class Home extends PureComponent {
       custLabelListPaging,
       pagingCustLabelData,
       taskNumbers,
+      activityColumnList,
     } = this.props;
 
     const {
@@ -612,8 +635,8 @@ export default class Home extends PureComponent {
     return (
       <div className={styles.container}>
         <div className={styles.leftContent}>
-          {/* 投顾能力竞赛 */}
-          <div className={styles.competitionsLink} onClick={this.toInvestmentConsultantCompetenceRacePage}>
+          <div className={styles.competitionsLink}>
+            <ActivityColumnCarousel activityColumnList={activityColumnList}/>
           </div>
           <div className={styles.mostFocusContentLink}>
             <CommonCell {...keyAttentionProps} />

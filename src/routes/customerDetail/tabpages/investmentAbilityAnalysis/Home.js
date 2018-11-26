@@ -1,8 +1,9 @@
 /*
  * @Author: zhangjun
  * @Date: 2018-11-19 15:39:12
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-22 09:30:10
+ * @Last Modified time: 2018-11-23 20:37:55
+ * @Last Modified by: zuoguangzu
+ * @Last Modified time: 2018-11-26 17:02:10
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -14,6 +15,7 @@ import { dva } from '../../../../helper';
 import withRouter from '../../../../decorators/withRouter';
 import AccountTotalState from '../../../../components/customerDetailInvestmentAbilityAnalysis/accountTotalState/AccountTotalState';
 import logable from '../../../../decorators/logable';
+import AssetConfigAnalysis from '../../../../components/customerDetailInvestmentAbilityAnalysis/assetConfigAnalysis/AssetConfigAnalysis';
 
 import styles from './home.less';
 
@@ -26,6 +28,12 @@ const effects = {
   getProfitAbility: 'detailInvestmentAbilityAnalysis/getProfitAbility',
   // 获取投资账户特征
   getInvestmentFeatureLabels: 'detailInvestmentAbilityAnalysis/getInvestmentFeatureLabels',
+  // 获取账户资产变动
+  getAssetChangeState: 'detailInvestmentAbilityAnalysis/getAssetChangeState',
+  // 获取账户资产变动图表
+  getAssetChangeReport: 'detailInvestmentAbilityAnalysis/getAssetChangeReport',
+  // 获取账户收益走势图表数据
+  getProfitTrendReport: 'detailInvestmentAbilityAnalysis/getProfitTrendReport',
 };
 
 const mapStateToProps = state => ({
@@ -33,6 +41,12 @@ const mapStateToProps = state => ({
   profitAbility: state.detailInvestmentAbilityAnalysis.profitAbility,
   // 投资账户特征
   investmentFeatureLabels: state.detailInvestmentAbilityAnalysis.investmentFeatureLabels,
+  // 账户资产变动
+  assetChangeList: state.detailInvestmentAbilityAnalysis.assetChangeList,
+  // 账户资产变动图表数据
+  assetChangeReportData: state.detailInvestmentAbilityAnalysis.assetChangeReportData,
+  //账户收益走势图表数据
+  profitTrendData: state.detailInvestmentAbilityAnalysis.profitTrendData,
 });
 
 const mapDispatchToProps = {
@@ -40,6 +54,12 @@ const mapDispatchToProps = {
   getProfitAbility: effect(effects.getProfitAbility, { forceFull: true }),
   // 获取投资账户特征
   getInvestmentFeatureLabels: effect(effects.getInvestmentFeatureLabels, { forceFull: true }),
+  // 获取账户资产变动
+  getAssetChangeState: effect(effects.getAssetChangeState, { forceFull: true }),
+  // 获取账户资产变动图表
+  getAssetChangeReport: effect(effects.getAssetChangeReport, { forceFull: true }),
+  // 获取账户收益走势图表数据
+  getProfitTrendReport: effect(effects.getProfitTrendReport, { forceFull: true }),
 };
 
 @withRouter
@@ -55,6 +75,18 @@ export default class Home extends PureComponent {
     investmentFeatureLabels: PropTypes.array.isRequired,
     // 获取投资账户特征
     getInvestmentFeatureLabels: PropTypes.func.isRequired,
+    // 获取账户资产变动
+    getAssetChangeState: PropTypes.func.isRequired,
+    // 账户资产变动
+    assetChangeList: PropTypes.array.isRequired,
+    // 获取账户资产变动图表
+    getAssetChangeReport: PropTypes.func.isRequired,
+    // 账户资产变动图表数据
+    assetChangeReportData: PropTypes.array.isRequired,
+    // 获取账户收益走势图表数据
+    getProfitTrendReport: PropTypes.func.isRequired,
+    // 账户收益走势图表数据
+    profitTrendData: PropTypes.object.isRequired,
   }
 
   static contextTypes = {
@@ -103,6 +135,12 @@ export default class Home extends PureComponent {
       getProfitAbility,
       investmentFeatureLabels,
       getInvestmentFeatureLabels,
+      getAssetChangeState,
+      assetChangeList,
+      getAssetChangeReport,
+      assetChangeReportData,
+      getProfitTrendReport,
+      profitTrendData,
     } = this.props;
     return (
       <div className={styles.investmentAbilityAnalysis}>
@@ -114,9 +152,18 @@ export default class Home extends PureComponent {
               getProfitAbility={getProfitAbility}
               investmentFeatureLabels={investmentFeatureLabels}
               getInvestmentFeatureLabels={getInvestmentFeatureLabels}
+              getAssetChangeState={getAssetChangeState}
+              assetChangeList={assetChangeList}
+              getAssetChangeReport={getAssetChangeReport}
+              assetChangeReportData={assetChangeReportData}
+              getProfitTrendReport={getProfitTrendReport}
+              profitTrendData={profitTrendData}
             />
           </TabPane>
-          <TabPane tab="资产配置分析" key="assetAllocationAnalysis">资产配置分析</TabPane>
+          <TabPane tab="资产配置分析" key="assetAllocationAnalysis">
+            <AssetConfigAnalysis
+            />
+          </TabPane>
           <TabPane tab="收益归因分析" key="incomeAttributionAnalysis">收益归因分析</TabPane>
           <TabPane tab="风控能力分析" key="windControlAbilityAnalysis">风控能力分析</TabPane>
         </Tabs>

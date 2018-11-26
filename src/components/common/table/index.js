@@ -6,39 +6,48 @@
  // 这个table只是简单的将antd的table使用的分页器换为我们自己实现的分页器，完全兼容antd原来的table
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import Table from './Table';
-import styles from './index.less';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import Table from './Table';
+import styles from './index.less';
 export default class CommonTable extends PureComponent {
   static propTypes = {
     // 分页器class
     paginationClass: PropTypes.string,
-    // 是否需要填充空行，只在后端分页的情形下，有效
+    // 是否需要在传入数据条数不足时用空行填充
+    // !!!如果使用空行填充并且需要前端分页，记得翻页器的total要在外面传，不然组件自己取的是填充过后的数据长度，有问题
     isNeedEmptyRow: PropTypes.bool,
+    // table数据一页显示的行数，配合 isNeedEmptyRow 实现数据不满该设定行数时用空行填充
+    rowNumber: PropTypes.number,
   };
 
   static defaultProps = {
     paginationClass: '',
     isNeedEmptyRow: false,
+    rowNumber: 5,
   };
 
- //数据为空时，默认显示空行
+ // 获取填充过的数据，判断当前传进来的dataSource是否能在table里显示满（包括前端分页的情况下）
+ // 如果无法显示满则用空数据填充至能显示满
  @autobind
- padEmptyRow() {
-  const { dataSource } = this.props;
-   const len = _.size(dataSource);
-   let newData = _.cloneDeep(dataSource);
-   if (len < 2) {
-     const padLen = 2 - len;
-     for (let i = 0; i < padLen; i++) {
-       newData = _.concat(newData, [{
-         key: `empty_row_${i}`,
-         flag: true,
-       }]);
-     }
+ getFilledData() {
+   const {
+    dataSource,
+    rowNumber,
+   } = this.props;
+   // 需要往原始数据里面填充空数据的条数
+   const fillNum = rowNumber - (_.size(dataSource) % rowNumber);
+   if (fillNum > 0 && fillNum !== rowNumber) {
+     let emptyItemArr = [];
+     for (let i = 0; i < fillNum; i++) {
+      emptyItemArr.push({
+        key: `empty_row_${i}`,
+        flag: true,
+      });
+     };
+     return _.concat(dataSource, emptyItemArr);
    }
-   return newData;
+   return dataSource;
  }
 
   render() {
@@ -46,9 +55,11 @@ export default class CommonTable extends PureComponent {
       paginationClass,
       isNeedEmptyRow,
       dataSource,
+      isNeedNoData,
+      components,
       ...restProps
     } = this.props;
-    let newDataSource = isNeedEmptyRow ? this.padEmptyRow() : dataSource;
+    let newDataSource = isNeedEmptyRow ? this.getFilledData() : dataSource;
     return (
       <div className={styles.groupTable}>
         <Table

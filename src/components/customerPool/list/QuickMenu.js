@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 
 import Icon from '../../common/Icon';
-import logable from '../../../decorators/logable';
+import { logPV } from '../../../decorators/logable';
 
 import styles from './quickMenu.less';
 
@@ -25,7 +25,7 @@ export default class QuickMenu extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '添加服务记录' } })
+  @logPV({ pathname: '/modal/addServiceRecordModal', title: '创建服务记录弹窗' })
   handleAddServiceRecordClick(listItem) {
     const { toggleServiceRecordModal } = this.props;
     toggleServiceRecordModal({
@@ -36,13 +36,7 @@ export default class QuickMenu extends PureComponent {
   }
 
   @autobind
-  @logable({
-    type: 'Click',
-    payload: {
-      name: '电话联系',
-      value: '$args[0]',
-    },
-  })
+  @logPV({ pathname: '/modal/telephoneModal', title: '联系客户弹框' })
   handleTelephoneClick(listItem) {
     this.props.createModal(listItem);
   }

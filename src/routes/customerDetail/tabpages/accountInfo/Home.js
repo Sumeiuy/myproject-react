@@ -97,6 +97,10 @@ const mapStateToProps = state => ({
   creditTradeFlowRes: state.detailAccountInfo.creditTradeFlowRes,
   // 期权账户交易流水
   optionTradeFlowRes: state.detailAccountInfo.optionTradeFlowRes,
+  // 资金变动交易流水
+  capitalChangeFlowRes: state.detailAccountInfo.capitalChangeFlowRes,
+  // 账户变动
+  accountChangeRes: state.detailAccountInfo.accountChangeRes,
 });
 
 const mapDispatchToProps = {
@@ -140,7 +144,10 @@ const mapDispatchToProps = {
   queryCreditTradeFlow: effect('detailAccountInfo/queryCreditTradeFlow', { forceFull: true }),
   // 获取期权账户交易流水
   queryOptionTradeFlow: effect('detailAccountInfo/queryOptionTradeFlow', { forceFull: true }),
-
+  // 获取资金变动交易流水
+  queryCapitalTradeFlow: effect('detailAccountInfo/queryCapitalTradeFlow', { forceFull: true }),
+  // 获取账户变动
+  queryAccountChange: effect('detailAccountInfo/queryAccountChange', { forceFull: true }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -211,6 +218,10 @@ export default class Home extends PureComponent {
     queryCreditTradeFlow: PropTypes.func.isRequired,
     // 获取期权账户交易流水
     queryOptionTradeFlow: PropTypes.func.isRequired,
+    // 获取资金变动交易流水
+    queryCapitalTradeFlow: PropTypes.func.isRequired,
+    // 获取账户变动
+    queryAccountChange: PropTypes.func.isRequired,
     // 业务类别
     busnTypeDict: PropTypes.object.isRequired,
     // 产品代码
@@ -223,6 +234,10 @@ export default class Home extends PureComponent {
     creditTradeFlowRes: PropTypes.object.isRequired,
     // 期权账户交易流水
     optionTradeFlowRes: PropTypes.object.isRequired,
+    // 资金变动交易流水
+    capitalChangeFlowRes: PropTypes.object.isRequired,
+    //账户变动
+    accountChangeRes: PropTypes.object.isRequired,
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -313,6 +328,7 @@ export default class Home extends PureComponent {
       queryStandardTradeFlow,
       queryCreditTradeFlow,
       queryOptionTradeFlow,
+      queryCapitalTradeFlow,
     } = this.props;
     const tradeFlowMap = {
       busnType: queryBusnTypeDict,
@@ -321,6 +337,7 @@ export default class Home extends PureComponent {
       standard: queryStandardTradeFlow,
       credit: queryCreditTradeFlow,
       option: queryOptionTradeFlow,
+      capital: queryCapitalTradeFlow,
     };
     _.isFunction(tradeFlowMap[type]) && tradeFlowMap[type](otherQuery);
   }
@@ -349,7 +366,11 @@ export default class Home extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'DropdownSelect', payload: { name: '对比指标', value: '$args[0]' } })
+  @logable({
+    type: 'DropdownSelect',
+    payload: { name: '对比指标',
+    value: '$args[0]' },
+  })
   handleCodeSelectChange({ value }) {
     const { time } = this.state;
     this.getProfitRateInfo({
@@ -363,7 +384,11 @@ export default class Home extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '时间周期', value: '$args[0]' } })
+  @logable({
+    type: 'Click',
+    payload: { name: '时间周期',
+    value: '$args[0]' },
+  })
   handleTimeSelectChange(key) {
     const { compareCode } = this.state;
     this.getProfitRateInfo({
@@ -396,6 +421,7 @@ export default class Home extends PureComponent {
       accountSummary,
       queryAccountSummary,
       queryAccountInfo,
+      queryBusnTypeDict,
       accountInfo,
       hasDoingFlow,
       stockHistoryHolding,
@@ -407,6 +433,9 @@ export default class Home extends PureComponent {
       standardTradeFlowRes,
       creditTradeFlowRes,
       optionTradeFlowRes,
+      capitalChangeFlowRes,
+      queryAccountChange,
+      accountChangeRes
     } = this.props;
 
     const { compareCode, time } = this.state;
@@ -435,6 +464,7 @@ export default class Home extends PureComponent {
             standardTradeFlowRes={standardTradeFlowRes}
             creditTradeFlowRes={creditTradeFlowRes}
             optionTradeFlowRes={optionTradeFlowRes}
+            capitalChangeFlowRes={capitalChangeFlowRes}
           />
         </div>
         {/* 中间资产分布和收益走势区域 */}
@@ -462,7 +492,11 @@ export default class Home extends PureComponent {
             queryAccountSummary={queryAccountSummary}
             accountSummary={accountSummary}
             queryAccountInfo={queryAccountInfo}
+            queryBusnTypeDict={queryBusnTypeDict}
+            queryAccountChange={queryAccountChange}
+            busnTypeDict={busnTypeDict}
             accountInfo={accountInfo}
+            accountChangeRes={accountChangeRes}
           />
         </div>
       </div>

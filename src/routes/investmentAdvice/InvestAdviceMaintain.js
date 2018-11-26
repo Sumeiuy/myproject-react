@@ -88,7 +88,8 @@ export default class InvestmentAdvice extends PureComponent {
 
   // 新增投资建议模板
   @autobind
-  @logPV({ pathname: '/modal/addInvestAdviceTpl', title: '新增投资建议模板' })
+  @logPV({ pathname: '/modal/addInvestAdviceTpl',
+title: '新增投资建议模板' })
   addInvestAdviceTemplate() {
     this.setState({
       showModal: true,
@@ -101,7 +102,8 @@ export default class InvestmentAdvice extends PureComponent {
 
   // 编辑投资建议模板
   @autobind
-  @logPV({ pathname: '/modal/editInvestAdviceTpl', title: '编辑投资建议模板' })
+  @logPV({ pathname: '/modal/editInvestAdviceTpl',
+title: '编辑投资建议模板' })
   editInvestAdviceTemplate(item) {
     this.setState({
       showModal: true,
@@ -122,7 +124,8 @@ export default class InvestmentAdvice extends PureComponent {
 
   // 删除投资建议模板确认弹窗
   @autobind
-  @logPV({ pathname: '/modal/deleteConfirmFrame', title: '删除投资建议模板确认弹窗' })
+  @logPV({ pathname: '/modal/deleteConfirmFrame',
+title: '删除投资建议模板确认弹窗' })
   deleteConfirm(id, e) {
     if (e) {
       e.stopPropagation();
@@ -288,7 +291,8 @@ export default class InvestmentAdvice extends PureComponent {
           <div className={styles.collapsePanel}>
             <Mention
               mentionStyle={MentionTextStyles}
-              style={{ width: '100%', height: 50 }}
+              style={{ width: '100%',
+height: 50 }}
               readOnly
               multiLines
               prefix={MENTION_PREFIX}
@@ -333,6 +337,7 @@ export default class InvestmentAdvice extends PureComponent {
           }
 
         </div>
+        <div className={styles.clear} />
         {
           !showModal ? null
           : (<CommonModal

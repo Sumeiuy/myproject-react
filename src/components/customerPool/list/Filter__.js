@@ -20,6 +20,7 @@ import {
   moreFilterCategories,
   moreFilters,
   custListSearchTypes,
+  custListSearchTypeMapData,
 } from './config/filterConfig';
 
 import {
@@ -390,7 +391,7 @@ export default class Filter extends PureComponent {
 
   @autobind
   @logable({
-    type: 'DropdownSelect',
+    type: 'CalendarSelect',
     payload: {
       name: '$args[0].filterName',
       dateType: '$args[0].value.dateType',
@@ -462,7 +463,7 @@ export default class Filter extends PureComponent {
 
   @autobind
   @logable({
-    type: 'DropdownSelect',
+      type: 'CalendarSelect',
     payload: {
       name: '$args[0].filterName',
       min: '$args[0].value[0]',
@@ -527,7 +528,7 @@ export default class Filter extends PureComponent {
 
   @autobind
   @logable({
-    type: 'click',
+    type: 'Click',
     payload: {
       name: '客户筛选-关闭标签',
       value: '$args[0]',
@@ -588,6 +589,7 @@ export default class Filter extends PureComponent {
       this.props.onFilterChange({
         name: obj.id,
         value: obj.value,
+        fromMoreFilter: this.selectFilterIdFromMore, // 用于告诉CustomerList__组件筛选条件是否是从更多中取出，如果是从更多中取出，少执行一次recordPrevFilterValue。
       }, obj.isDeleteFilterFromLocation);
 
       if (!obj.isDeleteFilterFromLocation) {
@@ -598,7 +600,7 @@ export default class Filter extends PureComponent {
 
   @autobind
   @logable({
-    type: 'click',
+    type: 'Click',
     payload: {
       name: '客户筛选-关闭过滤条件',
       value: '$args[0].name',
@@ -789,6 +791,18 @@ export default class Filter extends PureComponent {
     return flag ? decodeURIComponent(q) : '';
   }
 
+  @autobind
+  getCustSearchType() {
+    const {
+      location: {
+        query: {
+          type,
+        }
+      }
+    } = this.props;
+    return custListSearchTypeMapData[type];
+  }
+
   render() {
     const {
       dict,
@@ -833,6 +847,7 @@ export default class Filter extends PureComponent {
         <div className={styles.normalFilter}>
           <CustSearch
             keyword={this.getCustSearchDefaultValue()}
+            type={this.getCustSearchType()}
             location={location}
             getHotPossibleWds={getHotPossibleWds}
             hotPossibleWdsList={hotPossibleWdsList}

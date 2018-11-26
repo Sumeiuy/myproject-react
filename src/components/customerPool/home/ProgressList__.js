@@ -12,9 +12,8 @@ import { Progress } from 'antd';
 import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 import { linkTo } from './homeIndicators_';
-
-import Tooltip from '../../common/Tooltip';
 import { logCommon } from '../../../decorators/logable';
+import Tooltip from '../../common/Tooltip';
 import styles from './progressList.less';
 import { homeModelTypeName, homeModelType } from '../config';
 
@@ -86,7 +85,6 @@ export default class ProgressList extends PureComponent {
 
   /*
   */
-  // TODO 日志查看：
   @autobind
   handleClick(index, item) {
     const { push } = this.context;
@@ -112,7 +110,7 @@ export default class ProgressList extends PureComponent {
       linkTo(param);
     }
 
-    // log日志 --- 业务开通
+    // log日志 --- 经营指标
     logCommon({
       type: 'DrillDown',
       payload: {
@@ -183,17 +181,18 @@ export default class ProgressList extends PureComponent {
               >
                 {
                   /**
-                   * 当为产品销售的时候，特殊处理一下展示单位和数值
+                   * 当为产品销售或者净创收的时候，特殊处理一下展示单位和数值
                   */
                 }
                 {
-                  type === 'productSale' ?
+                  (type === 'productSale') || (type === 'income') ?
                     <div>
                       <span title={item.value}>{item.value}</span>
                       <span title={item.unit}>{item.unit}</span>
                     </div> :
                     <span title={item.thousandsCount}>{item.thousandsCount}</span>
-                }</div>
+                }
+              </div>
             </div>
             <Progress
               percent={(item.percent < 0 ? 0 : item.percent)}

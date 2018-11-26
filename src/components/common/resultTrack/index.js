@@ -607,7 +607,13 @@ export default class ResultTrack extends PureComponent {
    * checkbox切换handler
    */
   @autobind
-  @logable({ type: 'Click', payload: { name: '结果跟踪' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '结果跟踪',
+      value: instance => !instance.state.checked,
+    },
+  })
   handleCheckChange() {
     const {
       checked,

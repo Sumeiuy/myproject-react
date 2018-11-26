@@ -2,8 +2,8 @@
  * @Description: 大类资产配置分析豆腐块
  * @Author: Liujianshu
  * @Date: 2018-06-20 14:02:12
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-08-30 11:00:18
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-11-26 10:26:35
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -14,7 +14,7 @@ import { Tabs } from 'antd';
 import { openRctTab } from '../../../utils';
 import { url as urlHelper } from '../../../helper';
 import Icon from '../../common/Icon';
-import logable from '../../../decorators/logable';
+import logable, { logCommon } from '../../../decorators/logable';
 import Item from './Item';
 import Modal from './Modal';
 import config from '../config';
@@ -46,6 +46,14 @@ export default class MajorAssets extends PureComponent {
 
   // 切换 TAB
   @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '切换Tab：每周观点/战术配置/战略配置',
+      type: '大类资产配置分析',
+      subtype: '$args[0]',
+    },
+  })
   handleTabsChange(key) {
     this.setState({
       activeKey: key,
@@ -70,7 +78,13 @@ export default class MajorAssets extends PureComponent {
 
   // 点击更多事件
   @autobind
-  @logable({ type: 'Click', payload: { name: '更多' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '更多',
+      type: '大类资产配置分析最新观点',
+    },
+  })
   handleMoreClick() {
     const { push } = this.context;
     const { activeKey } = this.state;
@@ -82,14 +96,21 @@ export default class MajorAssets extends PureComponent {
     const query = {
       type: activeObj.id || '',
     };
-    const pathname = '/latestView/majorAssetsList';
-    const url = `/latestView/majorAssetsList?${urlHelper.stringify(query)}`;
+    const pathname = '/strategyCenter/latestView/majorAssetsList';
+    const url = `/strategyCenter/latestView/majorAssetsList?${urlHelper.stringify(query)}`;
     openRctTab({
       routerAction: push,
       url,
       param,
       pathname,
       query,
+    });
+    // log日志 大类资产配置分析最新观点-更多
+    logCommon({
+      type: 'Click',
+      payload: {
+        name: param.title + '-更多',
+      },
     });
   }
 

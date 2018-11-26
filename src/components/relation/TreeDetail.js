@@ -17,7 +17,7 @@ import _ from 'lodash';
 import Icon from '../common/Icon';
 import DetailTable from './DetailTable';
 import styles from './treeDetail.less';
-import logable from '../../decorators/logable';
+import { logPV } from '../../decorators/logable';
 
 // detailTable 组件的表格类型
 const COMPANY_TABLE = '2';
@@ -65,7 +65,8 @@ export default class TreeDetail extends Component {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '负责人' } })
+  @logPV({ pathname: '/modal/editManager',
+title: '编辑负责人' })
   handleEditClick(obj, flag, category, hasManager) {
     this.props.onUpdate(obj, flag, category, hasManager);
   }
@@ -113,7 +114,8 @@ export default class TreeDetail extends Component {
     // 给定唯一的key
     const newInfo = _.map(
       postnTree,
-      (item, index) => ({ ...item, curId: `${index}` }),
+      (item, index) => ({ ...item,
+curId: `${index}` }),
     );
     return (
       <div className={styles.detailContainer} style={style}>

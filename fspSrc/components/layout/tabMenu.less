@@ -1,7 +1,8 @@
 .tabMenu {
   position: relative;
   display: flex;
-  border-bottom: 1px solid #bed6f9;
+  max-width: 1536px;
+  margin: 0 auto;
   background: #fff;
   flex-direction: row;
   z-index: 900;
@@ -158,7 +159,7 @@
       line-height: 38px;
     }
     .ant-dropdown-menu-item:hover, .ant-dropdown-menu-submenu-title:hover {
-      background: #f5f5f5;
+      background: #ecf6fd;
       color: #2e669a;
     }
   }
@@ -189,7 +190,7 @@
       line-height: 38px;
     }
     .ant-dropdown-menu-item:hover, .ant-dropdown-menu-submenu-title:hover {
-      background: #f5f5f5;
+      background: #ecf6fd;
       color: #2e669a;
     }
   }
@@ -201,7 +202,11 @@
   line-height: 38px;
 }
 
-.activeItem {
+.informationCenterItem {
+  border-top: 1px solid #ddd;
+}
+
+/* .activeItem {
   background: #ecf6fd;
   color: #2e669a;
   :global {
@@ -217,7 +222,7 @@
     background: #ecf6fd !important;
     color: #2e669a !important;
   }
-}
+} */
 
 .linkItem {
   width: 100%;

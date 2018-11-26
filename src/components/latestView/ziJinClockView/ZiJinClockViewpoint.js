@@ -12,7 +12,7 @@ import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 
 import Icon from '../../common/Icon';
-import logable from '../../../decorators/logable';
+import logable, { logPV } from '../../../decorators/logable';
 import { openRctTab } from '../../../utils';
 import ViewpointListItem from './ViewpointListItem';
 import ZijinClockDetailModal from './ZijinClockDetailModal';
@@ -74,7 +74,8 @@ export default class ZiJinClockViewpoint extends PureComponent {
 
   // 打开弹窗
   @autobind
-  @logable({ type: 'Click', payload: { name: '打开弹窗' } })
+  @logPV({ pathname: '/modal/ZiJinClockViewpointModal',
+title: '紫金时钟观点-当前周期弹窗' })
   openModal() {
     this.setState({
       [DETAIL_MODAL_VISIBLE]: true,
@@ -90,14 +91,15 @@ export default class ZiJinClockViewpoint extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '更多' } })
+  @logable({ type: 'Click',
+payload: { name: '紫金时钟观点-更多' } })
   toListPage() {
     const { push } = this.context;
     const param = {
       id: 'RTC_TAB_ZIJIN_CLOCK_VIEWPOINT_LIST',
       title: '行业/主题调整',
     };
-    const url = '/latestView/industryThemeList';
+    const url = '/strategyCenter/latestView/industryThemeList';
     openRctTab({
       routerAction: push,
       url,

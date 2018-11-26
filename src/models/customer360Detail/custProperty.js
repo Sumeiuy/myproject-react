@@ -23,6 +23,8 @@ export default {
     zjPointMemberInfo: EMPTY_OBJECT,
     // 紫金积分会员积分兑换流水
     zjPointExchangeFlow: EMPTY_OBJECT,
+    // 财务信息
+    financeData: EMPTY_OBJECT,
   },
   reducers: {
     queryCustomerPropertySuccess(state, action) {
@@ -58,6 +60,13 @@ export default {
       return {
         ...state,
         zjPointExchangeFlow: payload || EMPTY_OBJECT,
+      };
+    },
+    queryFinanceDetailSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        financeData: payload || EMPTY_OBJECT,
       };
     },
   },
@@ -106,6 +115,24 @@ export default {
     * updateCustBasicInfo({ payload }, { put, call }) {
       // 因为此处只是单纯的修改值，并且组件中需要判断修改成功与否展示loading状态
       const { resultData } = yield call(api.updateCustBasicInfo, payload);
+      return resultData;
+    },
+    // 查询个人客户、机构客户的财务信息
+    * queryFinanceDetail({ payload }, { put, call }) {
+      const { resultData } = yield call(api.queryFinanceDetail, payload);
+      yield put({
+        type: 'queryFinanceDetailSuccess',
+        payload: resultData,
+      });
+    },
+    // 编辑个人客户的财务信息
+    * updatePerFinaceData({ payload }, { put, call }) {
+      const { resultData } = yield call(api.updatePerFinaceData, payload);
+      return resultData;
+    },
+    // 编辑机构客户的财务信息
+    * updateOrgFinaceData({ payload }, { put, call }) {
+      const { resultData } = yield call(api.updateOrgFinaceData, payload);
       return resultData;
     },
 

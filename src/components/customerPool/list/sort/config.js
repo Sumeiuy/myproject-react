@@ -105,5 +105,10 @@ export const dynamicInsertQuota = [
     sortType: 'outMktval',
     name: '外部市值',
   },
+  {
+    filterType: 'ttfMktVal',
+    sortType: 'ttfMktVal',
+    name: '天天发市值',
+  },
 ];
 
