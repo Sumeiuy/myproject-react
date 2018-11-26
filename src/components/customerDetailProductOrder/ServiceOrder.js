@@ -14,6 +14,7 @@ import moment from 'moment';
 import Table from '../common/table';
 import { Button, Modal, Tooltip } from 'antd';
 import IfTableWrap from '../common/IfTableWrap';
+import logable from '../../../src/decorators/logable';
 import ascSvg from '../../../static/svg/asc.svg';
 import descSvg from '../../../static/svg/desc.svg';
 import normalSvg from '../../../static/svg/normal.svg';
@@ -26,7 +27,7 @@ import styles from './serviceOrder.less';
 const NODATA_HINT = '客户暂无服务订购信息';
 const warning = Modal.warning;
 
-export default class TradeOrderFlow extends PureComponent {
+export default class ServiceOrder extends PureComponent {
   static propsType = {
     location: PropTypes.object.isRequired,
     serviceOrderData: PropTypes.object.isRequired,
@@ -74,6 +75,10 @@ export default class TradeOrderFlow extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'Click',
+    payload: { name: '服务订购排序', value: '$args[0]'},
+  })
   handleSortChange(column) {
     const { sortType, sortValue } = this.state;
     if (sortValue === column.dataIndex) {
@@ -99,6 +104,10 @@ export default class TradeOrderFlow extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'ButtonClick',
+    payload: { name: '佣金调整跳转' },
+  })
   handleBtnClick() {
     const {
       location: { query: { custId } },
@@ -183,13 +192,6 @@ export default class TradeOrderFlow extends PureComponent {
 
       return newColumn;
     });
-  }
-
-  renderExpandedRow(record) {
-    if(record.children) {
-      // 渲染子table
-    }
-    return null;
   }
 
   render() {
