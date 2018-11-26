@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-19 10:17:54
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-26 09:32:15
+ * @LastEditTime: 2018-11-26 18:08:05
  * @Description: 产品订单
  */
 
@@ -27,7 +27,7 @@ const mapStateToProps = state => ({
   serviceOrderDetail: state.productOrder.serviceOrderDetail,
   serviceProductList: state.productOrder.serviceProductList,
   orderApproval: state.productOrder.orderApproval,
-  otherCommissions: state.productOrder.otherCommissions,
+  attachmentList: state.productOrder.attachmentList,
 });
 
 const mapDispatchToProps = {
@@ -37,7 +37,7 @@ const mapDispatchToProps = {
   queryServiceOrderDetail: effect('productOrder/queryServiceOrderDetail'),
   queryServiceProductList: effect('productOrder/queryServiceProductList'),
   queryOrderApproval: effect('productOrder/queryOrderApproval'),
-  queryOtherCommissions: effect('productOrder/queryOtherCommissions'),
+  getAttachmentList: effect('productOrder/getAttachmentList'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -53,11 +53,9 @@ export default class ProductOrder extends PureComponent {
     serviceOrderDetail: PropTypes.object.isRequired,
     serviceProductList: PropTypes.array.isRequired,
     orderApproval: PropTypes.object.isRequired,
-    otherCommissions: PropTypes.object.isRequired,
     queryServiceOrderDetail: PropTypes.func.isRequired,
     queryServiceProductList: PropTypes.func.isRequired,
     queryOrderApproval: PropTypes.func.isRequired,
-    queryOtherCommissions: PropTypes.func.isRequired,
     attachmentList: PropTypes.array.isRequired,
     getAttachmentList: PropTypes.func.isRequired,
   };
@@ -175,11 +173,9 @@ export default class ProductOrder extends PureComponent {
       serviceOrderDetail,
       serviceProductList,
       orderApproval,
-      otherCommissions,
       queryServiceOrderDetail,
       queryServiceProductList,
       queryOrderApproval,
-      queryOtherCommissions,
       queryJxGroupProduct,
       attachmentList,
       getAttachmentList,
@@ -207,11 +203,9 @@ export default class ProductOrder extends PureComponent {
                 serviceOrderDetail={serviceOrderDetail}
                 serviceProductList={serviceProductList}
                 orderApproval={orderApproval}
-                otherCommissions={otherCommissions}
                 queryServiceOrderDetail={queryServiceOrderDetail}
                 queryServiceProductList={queryServiceProductList}
                 queryOrderApproval={queryOrderApproval}
-                queryOtherCommissions={queryOtherCommissions}
                 attachmentList={attachmentList}
                 getAttachmentList={getAttachmentList}
               />

@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-20 15:24:26
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-26 13:23:23
+ * @LastEditTime: 2018-11-26 18:26:36
  * @Description: 新版客户360详情的产品订单T配置项
  */
 
@@ -130,8 +130,8 @@ export const SERVICE_PRODUCT_LIST_COLUMNS = [
   },
   {
     title: '操作类型',
-    dataIndex: 'operationType',
-    key: 'operationType',
+    dataIndex: 'operateType',
+    key: 'operateType',
   },
   {
     title: '产品类型',

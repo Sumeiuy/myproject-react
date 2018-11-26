@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-20 16:16:41
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-23 20:39:51
+ * @LastEditTime: 2018-11-26 17:52:37
  * @Description: 新版客户360详情下的产品订单Tab页面的model
  */
 import { detailProductOrder as api } from '../../api';
@@ -18,7 +18,6 @@ export default {
     serviceOrderDetail: EMPTY_OBJECT,
     serviceProductList: EMPTY_ARRAY,
     orderApproval: EMPTY_OBJECT,
-    otherCommissions: EMPTY_OBJECT,
     attachmentList: EMPTY_ARRAY,
   },
   reducers: {
@@ -57,13 +56,6 @@ export default {
         orderApproval: payload || EMPTY_OBJECT,
       };
     },
-    queryOtherCommissionsSuccess(state, action) {
-      const { payload } = action;
-      return {
-        ...state,
-        otherCommissions: payload || EMPTY_OBJECT,
-      };
-    },
     getAttachmentListSuccess(state, action) {
       const { payload = EMPTY_ARRAY } = action;
       return {
@@ -93,6 +85,7 @@ export default {
         type: 'queryServiceOrderDetailSuccess',
         payload: resultData,
       });
+      return resultData;
     },
     * queryServiceProductList({ payload }, { put, call }) {
       const { resultData } = yield call(api.queryServiceProductList, payload);
@@ -105,13 +98,6 @@ export default {
       const { resultData } = yield call(api.queryOrderApproval, payload);
       yield put({
         type: 'queryOrderApprovalSuccess',
-        payload: resultData,
-      });
-    },
-    * queryOtherCommissions({ payload }, { put, call }) {
-      const { resultData } = yield call(api.queryOtherCommissions, payload);
-      yield put({
-        type: 'queryOtherCommissionsSuccess',
         payload: resultData,
       });
     },

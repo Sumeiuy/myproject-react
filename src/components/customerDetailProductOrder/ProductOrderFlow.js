@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-20 10:31:29
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-26 13:55:38
+ * @LastEditTime: 2018-11-26 20:44:07
  * @Description: 服务订单流水
  */
 
@@ -40,11 +40,9 @@ export default class ProductOrderFlow extends PureComponent {
     serviceOrderDetail: PropTypes.object.isRequired,
     serviceProductList: PropTypes.array.isRequired,
     orderApproval: PropTypes.object.isRequired,
-    otherCommissions: PropTypes.object.isRequired,
     queryServiceOrderDetail: PropTypes.func.isRequired,
     queryServiceProductList: PropTypes.func.isRequired,
     queryOrderApproval: PropTypes.func.isRequired,
-    queryOtherCommissions: PropTypes.func.isRequired,
     queryJxGroupProduct: PropTypes.func.isRequired,
     attachmentList: PropTypes.array.isRequired,
     getAttachmentList: PropTypes.func.isRequired,
@@ -93,7 +91,10 @@ export default class ProductOrderFlow extends PureComponent {
   }
 
   @autobind
-  handleServiceProductChanged(value) {
+  handleServiceProductChanged(e) {
+    this.setState({
+      serviceProductCode: e.value,
+    }, this.handleProductOrderFlowChange);
   }
 
   @autobind
@@ -203,11 +204,9 @@ export default class ProductOrderFlow extends PureComponent {
       serviceOrderDetail,
       serviceProductList,
       orderApproval,
-      otherCommissions,
       queryServiceOrderDetail,
       queryServiceProductList,
       queryOrderApproval,
-      queryOtherCommissions,
       attachmentList,
       getAttachmentList
     } = this.props;
@@ -295,11 +294,9 @@ export default class ProductOrderFlow extends PureComponent {
           serviceOrderDetail={serviceOrderDetail}
           serviceProductList={serviceProductList}
           orderApproval={orderApproval}
-          otherCommissions={otherCommissions}
           queryServiceOrderDetail={queryServiceOrderDetail}
           queryServiceProductList={queryServiceProductList}
           queryOrderApproval={queryOrderApproval}
-          queryOtherCommissions={queryOtherCommissions}
           attachmentList={attachmentList}
           getAttachmentList={getAttachmentList}
         />
