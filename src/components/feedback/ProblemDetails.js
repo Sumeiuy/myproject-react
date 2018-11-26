@@ -28,6 +28,7 @@ export default class ProblemDetail extends PureComponent {
     visible: PropTypes.bool,
     problemDetails: PropTypes.object,
     form: PropTypes.object.isRequired,
+    empRespDTOList: PropTypes.array.isRequired,
     onCancel: PropTypes.func.isRequired,
     onCreate: PropTypes.func.isRequired,
     nowStatus: PropTypes.bool.isRequired,
@@ -156,6 +157,14 @@ export default class ProblemDetail extends PureComponent {
     }
     return '无';
   }
+  // 显示经办人
+  changeEmpResp(st, options) {
+    if (st && !_.isEmpty(st)) {
+      const nowStatus = _.find(options, o => o.loginName === st) || EMPTY_OBJECT;
+      return nowStatus.lastName || '无';
+    }
+    return '无';
+  }
   /*
   * 时间截取
   */
@@ -186,7 +195,8 @@ export default class ProblemDetail extends PureComponent {
   }
 
   render() {
-    const { form, problemDetails } = this.props;
+    const { form, problemDetails,empRespDTOList } = this.props;
+    console.warn(empRespDTOList);
     const {
       qtab,
       jira,
@@ -253,7 +263,9 @@ export default class ProblemDetail extends PureComponent {
       <Option key={`optionKey${OPTIONKEY++}`} value={i.value}>{i.label}</Option>,
     );
     const channel = _.flattenDeep(_.map(feedbackChannel, obj => obj.children));
-
+    const getEmpResp = item => _.map(i =>
+      <Option key={`EmpResp${OPTIONKEY++}`} value={i.loginName}>{i.lastName}</Option>,
+    );
     return (
       <div>
         <Form layout="vertical">
@@ -340,11 +352,15 @@ export default class ProblemDetail extends PureComponent {
               <div className="wrap">
                 <strong className="name">经办人：</strong>
                 <span className={valueIsVisibel}>
-                  {this.changeDisplay(processer, allOperatorOptions)}
+                  {
+                    this.changeEmpResp(processer, empRespDTOList)
+                    }
                 </span>
                 <div className={editIsVisibel}>
                   <span className={processerValue} onClick={event => this.handleProcesserClick(event, 'processer')} title="点击编辑">
-                    {this.changeDisplay(processer, allOperatorOptions)}
+                    {
+                     this.changeEmpResp(processer, empRespDTOList)
+                      }
                     <Icon type="edit" className="anticon-edit" />
                   </span>
                 </div>
@@ -352,7 +368,9 @@ export default class ProblemDetail extends PureComponent {
                   <FormItem>
                     {getFieldDecorator('processer', { initialValue: `${this.dataNull(processer)}` })(
                       <Select style={{ width: 110 }} className="qtSelect" getPopupContainer={() => document.getElementById('select-processer')}>
-                        {getSelectOption(allOperatorOptions)}
+                        {
+                         getEmpResp(empRespDTOList)
+                          }
                       </Select>,
                     )}
                     <div className="edit-btn">

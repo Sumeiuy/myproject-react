@@ -22,7 +22,7 @@ export default {
     fbDetail: EMPTY_OBJECT,
     recordList: EMPTY_OBJECT,
     processList: EMPTY_LIST,
-    empRespDTOList: EMPTY_OBJECT,
+    empRespDTOList: EMPTY_LIST,
   },
   reducers: {
     changeProblemVisible(state, action) {
@@ -85,14 +85,12 @@ export default {
     getEmpListByRespSuccess(state, action) {
       const {
         payload: {
-          resultData = EMPTY_OBJECT
+          empRespDTOList = EMPTY_LIST
         }
       } = action;
       return {
         ...state,
-        empRespDTOList:{
-          resultData,
-        }
+        empRespDTOList: empRespDTOList && empRespDTOList,
       };
     }
   },
@@ -204,10 +202,10 @@ export default {
       });
     },
     * getEmpListByResp({ payload }, { call, put }) {
-      const response = yield call(api.getEmpListByResp, payload);
+      const { resultData } = yield call(api.getEmpListByResp, payload);
       yield put({
         type: 'getEmpListByRespSuccess',
-        payload: response,
+        payload: resultData,
       });
     }
   },

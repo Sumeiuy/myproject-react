@@ -28,15 +28,12 @@ const EMPTY_LIST = [];
 const GETDETAIL = 'feedback/getFeedbackDetail';
 const GETRECORDLIST = 'feedback/getFeedbackRecordList';
 const UPDATEQUESTION = 'feedback/updateFeedback';
-const EMPRESPDTOLIST = 'feedback/getEmpListByResp';
-
 const issueTypeOptions = feedbackOptions.typeOptions;
 const TabPane = Tabs.TabPane;
 
 const mapStateToProps = state => ({
   fbDetail: state.feedback.fbDetail,
   recordList: state.feedback.recordList,
-  empRespDTOList: state.feedback.empRespDTOList,
 });
 
 const getDataFunction = loading => totype => query => ({
@@ -49,7 +46,6 @@ const mapDispatchToProps = {
   getFeedbackDetail: getDataFunction(true)(GETDETAIL),
   getFeedbackRecordList: getDataFunction(true)(GETRECORDLIST),
   updateFeedback: getDataFunction(true)(UPDATEQUESTION),
-  getEmpListByResp: getDataFunction(true)(EMPRESPDTOLIST),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -58,16 +54,17 @@ export default class Detail extends PureComponent {
     fbDetail: PropTypes.object.isRequired,
     recordList: PropTypes.object.isRequired,
     getFeedbackDetail: PropTypes.func.isRequired,
-    getEmpListByResp: PropTypes.func.isRequired,
     getFeedbackRecordList: PropTypes.func.isRequired,
     updateFeedback: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
-    empRespDTOList: PropTypes.object.isRequired,
+    empRespDTOList: PropTypes.array.isRequired,
   }
 
   constructor(props) {
+
     super(props);
-    const { fbDetail, recordList } = this.props;
+    const { fbDetail, recordList, empRespDTOList} = this.props;
+    // console.warn(empRespDTOList)
     const { resultData = EMPTY_OBJECT } = fbDetail || EMPTY_OBJECT;
     const { resultData: voResultData } = recordList || EMPTY_OBJECT;
     this.state = {
@@ -483,6 +480,7 @@ export default class Detail extends PureComponent {
       previewVisible,
       newWidth,
     } = this.state;
+    const { empRespDTOList } = this.props;
     const { resultData = EMPTY_OBJECT } = dataSource || EMPTY_OBJECT;
     const { resultData: voList = EMPTY_OBJECT } = voDataSource || EMPTY_OBJECT;
     const { remarkList = EMPTY_LIST,
@@ -581,6 +579,7 @@ export default class Detail extends PureComponent {
                         onCancel={this.remarkCancel}
                         onCreate={this.handleCreate}
                         nowStatus={nowStatus}
+                        empRespDTOList={empRespDTOList}
                       />
                     </div>
                   </div>

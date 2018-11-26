@@ -22,16 +22,15 @@ const EMPTY_LIST = [];
 const USER_COMMENT_LIST = feedbackOptions.userDegreeOfSatisfaction;
 // 状态字典
 const STATUS_MAP = [
-  { value: 'PROCESSING',
-label: '解决中' },
-  { value: 'CLOSED',
-label: '关闭' },
+  { value: 'PROCESSING',label: '解决中' },
+  { value: 'CLOSED',label: '关闭' },
 ];
 
 export default class LeftPanel extends PureComponent {
   static propTypes = {
     list: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
+    empRespDTOList: PropTypes.array.isRequired,
     replace: PropTypes.func.isRequired,
   };
 
@@ -205,8 +204,8 @@ export default class LeftPanel extends PureComponent {
         if (!_.isEmpty(record.processer)
           && record.processer !== '无'
           && record.processer !== 'null') {
-          processerLabel = feedbackOptions.allOperatorOptions.filter(item =>
-            item.value === record.processer);
+          processerLabel = this.props.empRespDTOList.filter(item =>
+            item.loginName === record.processer);
         }
         if (record.evaluation) {
           // 根据满意度不同状态显示不同颜色
@@ -235,7 +234,7 @@ export default class LeftPanel extends PureComponent {
             </div>
             <div className="name">
               {
-                (!_.isEmpty(processerLabel) && processerLabel[0].label) || '无'
+                (!_.isEmpty(processerLabel) && processerLabel[0].lastName) || '无'
               }
             </div>
             <div className="date">
@@ -304,8 +303,17 @@ export default class LeftPanel extends PureComponent {
   }
 
   render() {
-    const { list: { resultData = EMPTY_LIST, page = EMPTY_OBJECT },
-      location: { query: { curPageNum, curPageSize } } } = this.props;
+    const {
+      list: {
+        resultData = EMPTY_LIST, page = EMPTY_OBJECT
+        },
+      location: {
+        query: {
+          curPageNum,
+          curPageSize
+        }
+      }
+    } = this.props;
     const { totalRecordNum } = page;
     const { curSelectedRow } = this.state;
 
