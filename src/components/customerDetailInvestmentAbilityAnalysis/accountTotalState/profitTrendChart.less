@@ -1,0 +1,94 @@
+.profitTrendChart {
+  margin: 20px 60px 0;
+  position: relative;
+  padding-bottom: 20px;
+
+  .chartlegend {
+    display: flex;
+    justify-content: flex-end;
+    height: 17px;
+    margin-bottom: 20px;
+
+    .column {
+      margin-left: 20px;
+      height: 17px;
+      display: inline-block;
+
+      .value {
+        font-size: 12px;
+        line-height: 17px;
+        color: #666;
+        display: flex;
+        align-items: center;
+
+        &:before {
+          content: '';
+          width: 18px;
+          height: 2px;
+          margin-right: 5px;
+          display: inline-block;
+        }
+      }
+
+      .accountDailyRateValue {
+        &:before {
+          background: #485a7b;
+          width: 7px;
+          height: 12px;
+          margin-top: 0;
+        }
+      }
+
+      .HS300DailyRateValue {
+        &:before {
+          background: #fe5f03;
+          width: 7px;
+          height: 12px;
+          margin-top: 2px;
+        }
+      }
+
+      .accountCumulativeRateValue {
+        &:before {
+          background: #485a7b;
+        }
+      }
+
+      .HS300CumulativeRateValue {
+        &:before {
+          background: #fe5f03;
+        }
+      }
+    }
+  }
+
+  .profitTrendTips {
+    margin-top: 14px;
+    font-size: 12px;
+    color: #999;
+
+    & > div {
+      display: inline-block;
+      vertical-align: top;
+    }
+  }
+
+  .profitTrendSummary {
+    margin-top: 20px;
+    & > p {
+      font-size: 14px;
+      color: #333;
+      line-height: 20px;
+
+      &:before {
+        content: '';
+        background: #108ee9;
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 10px;
+      }
+    }
+  }
+}

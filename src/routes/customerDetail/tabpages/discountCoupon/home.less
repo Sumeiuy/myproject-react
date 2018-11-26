@@ -1,0 +1,46 @@
+.discountCouponBox {
+  padding: 14px 30px;
+  background-color: #f9f9f9;
+  .discountCouponContainer {
+    padding: 14px 20px;
+    border: 1px solid #dfe4eb;
+    background-color: #fff;
+    :global {
+      .ant-table {
+        .ant-table-content {
+          table {
+            table-layout: fixed;
+            width: 100%;
+          }
+          .ant-table-thead {
+            th {
+              font-weight: bold;
+            }
+          }
+          .ant-table-tbody {
+            td {
+              span {
+                display: inline-block;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                height: 19px;
+                max-width: 80%;
+              }
+            }
+          }
+        }
+      }
+      .firstStyle {
+        padding-left: 18px;
+      }
+    }
+  }
+  .ticketId {
+    color: #108ee9;
+    cursor: pointer;
+  }
+}
+.tableBox {
+  height: 564px;
+}
