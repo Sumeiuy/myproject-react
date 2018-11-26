@@ -76,7 +76,7 @@ export default class SplitPanel extends PureComponent {
     // 重置外层容器样式
     // 防止影响其他界面
     this.setUTBContentMargin('10px', '30px', '10px');
-    // this.resetContainerStyle();
+    this.resetContainerStyle();
     // 取消事件监听
     window.removeEventListener('resize', this.onResizeChange, false);
     this.removeListenerLeftMenu();
