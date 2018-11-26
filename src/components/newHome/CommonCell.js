@@ -29,6 +29,7 @@ export default function CommonCell(props) {
     valueStyle,
     hiddenEmptyValue,
     introPositionId,
+    unit,
   } = props;
   // 渲染 Popover
   const renderPopver = item => {
@@ -70,7 +71,7 @@ export default function CommonCell(props) {
         </div>
         <div>
           <span title={title || value} style={valueStyle}>
-            {showValue}
+            {`${showValue}${unit}`}
           </span>
         </div>
       </li>
@@ -128,6 +129,8 @@ CommonCell.propTypes = {
   valueStyle: PropTypes.object,
   // 是否隐藏空的值
   hiddenEmptyValue: PropTypes.bool,
+  // 文本单位
+  unit: PropTypes.string,
 };
 
 CommonCell.defaultProps = {
@@ -141,4 +144,5 @@ CommonCell.defaultProps = {
   onClick: _.noop,
   valueStyle: {},
   hiddenEmptyValue: false,
+  unit: '',
 };

@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-12 14:36:08
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-09-21 15:00:37
+ * @Last Modified by: zhangmei
+ * @Last Modified time: 2018-11-12 13:39:41
  * @description 投资建议弹出层
  */
 import React, { PureComponent } from 'react';
@@ -194,7 +194,9 @@ export default class ChoiceInvestAdviceModal extends PureComponent {
         if (this.checkWallCollisionStatus('title')) {
           await testWallCollision({ content: desc });
           if (this.checkWallCollisionStatus('desc')) {
-            onOK({ title, desc, mode });
+            onOK({ title,
+desc,
+mode });
           }
         }
       } catch (e) {
@@ -242,7 +244,6 @@ export default class ChoiceInvestAdviceModal extends PureComponent {
     }
   }
 
-  // TODO 日志查看：找不到方法 未验证
   @autobind
   @logPV({
     pathname: '/modal/switchModeChangeConfirm',
@@ -256,11 +257,12 @@ export default class ChoiceInvestAdviceModal extends PureComponent {
     });
   }
 
-  // TODO 日志查看：找不到方法 未验证
   @autobind
-  @logable({ type: 'Click', payload: { name: '点击' } })
+  @logable({ type: 'Click',
+payload: { name: '选择服务内容模板' } })
   handleSelectInvestAdviceTmpl({ id, title }) {
-    this.setState({ templateID: id, title });
+    this.setState({ templateID: id,
+title });
   }
 
   render() {

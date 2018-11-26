@@ -1,0 +1,76 @@
+.columnForm {
+  padding: 25px 30px;
+
+  .formCell {
+    margin-bottom: 20px;
+    height: 30px;
+
+    .columnUpload {
+      margin: -6px 0 0 -8px;
+    }
+
+    :global {
+      .ant-form-item {
+        width: 100%;
+
+        .ant-input {
+          font-size: 14px;
+          color: #333;
+          border: 1px solid #ccc;
+          border-radius: 2px;
+          height: 28px;
+        }
+      }
+    }
+  }
+
+  .formCellUpload {
+    height: auto;
+    max-height: 50px;
+    margin-bottom: 0;
+    overflow: hidden;
+  }
+
+  .columnUpload {
+    .fileUploadItem {
+      margin: 0;
+    }
+  }
+
+  .descCell {
+    height: 200px;
+    position: relative;
+
+    :global {
+      .ant-form-item {
+        width: 100%;
+      }
+
+      .ant-input {
+        width: 100%;
+        height: 170px;
+        font-size: 14px;
+        color: #333;
+        border: 1px solid #ccc;
+        border-radius: 2px;
+      }
+
+      textarea:-ms-input-placeholder {
+        color: #999 !important;
+      }
+    }
+
+    .descBox {
+      flex: 1;
+      position: relative;
+
+      .descCount {
+        position: absolute;
+        right: 0;
+        top: 170px;
+        font-size: 14px;
+        color: #999;
+      }
+    }
+  }
+}

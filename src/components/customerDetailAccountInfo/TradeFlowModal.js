@@ -2,7 +2,7 @@
  * @Author: liqianwen
  * @Date: 2018-11-07 13:31:51
  * @Last Modified by: liqianwen
- * @Last Modified time: 2018-11-15 14:47:19
+ * @Last Modified time: 2018-11-26 12:44:09
  * @description 新版客户360详情的交易流水的弹出层
  */
 import React, { PureComponent } from 'react';
@@ -648,7 +648,7 @@ queryType: 'moneyChange'});
           <Tabs onChange={this.handleTabChange} activeKey={activeTabKey} animated={false}>
             <TabPane tab="普通账户历史交易" key="standardAccountTrade">
               <div className={styles.tabPaneWrap}>
-                <div className={styles.header}>
+                <div className={`${styles.header} clearfix`}>
                   <div className={styles.filterArea}>
                     <DateFilter
                       filterName="查询日期"
@@ -724,7 +724,7 @@ queryType: 'moneyChange'});
             </TabPane>
             <TabPane tab="信用账户历史交易" key="creditAccountTrade">
               <div className={styles.tabPaneWrap}>
-                <div className={styles.header}>
+                <div className={`${styles.header} clearfix`}>
                   <div className={styles.filterArea}>
                     <DateFilter
                       filterName="查询日期"
@@ -786,7 +786,7 @@ queryType: 'moneyChange'});
             </TabPane>
             <TabPane tab="期权账户历史交易" key="optionAccountTrade">
               <div className={styles.tabPaneWrap}>
-                <div className={styles.header}>
+                <div className={`${styles.header} clearfix`}>
                   <div className={styles.filterArea}>
                     <DateFilter
                       filterName="查询日期"
@@ -833,7 +833,7 @@ queryType: 'moneyChange'});
             </TabPane>
             <TabPane tab="资金变动" key="capitalChange">
               <div className={styles.tabPaneWrap}>
-                <div className={styles.header}>
+                <div className={`${styles.header} clearfix`}>
                   <div className={styles.filterArea}>
                     <DateFilter
                       filterName="查询日期"

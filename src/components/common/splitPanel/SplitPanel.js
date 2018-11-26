@@ -218,7 +218,7 @@ export default class SplitPanel extends PureComponent {
     if (this.UTBContentElem) {
       containerElem = this.UTBContentElem.querySelector(splitConfig.container);
     } else {
-      containerElem = document.querySelector(splitConfig.container);
+      containerElem = document.querySelector(splitConfig.reactContainer);
     }
     containerElem.style.height = 'auto';
   }
@@ -316,7 +316,8 @@ export default class SplitPanel extends PureComponent {
 
   // splitPan onChange回调函数
   @autobind
-  @logable({ type: 'Click', payload: { name: '容器拖拽' } })
+  @logable({ type: 'Click',
+payload: { name: '容器拖拽' } })
   panchange(size) {
     this.panMov(size);
     this.initPane();

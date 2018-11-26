@@ -14,12 +14,15 @@ import _ from 'lodash';
 import moment from 'moment';
 import DateRangePick from 'lego-react-date/src';
 import { autobind } from 'core-decorators';
+
+import { dom } from '../../helper';
 import logable from '../../decorators/logable';
 import Select from '../../components/common/Select';
 import Collapse from '../../components/customerPool/list/CreateCollapse';
 import withRouter from '../../decorators/withRouter';
 import styles from './serviceLog.less';
 import { ALL_SERVE_SOURCE } from './config';
+import { fspContainer } from '../../config';
 
 const Search = Input.Search;
 const dateFormat = 'YYYY-MM-DD';
@@ -107,6 +110,11 @@ export default class ServiceLog extends PureComponent {
     }
   }
 
+  componentDidMount() {
+    this.setServiceLogIframeHeight();
+    window.addEventListener('resize', () => this.setServiceLogIframeHeight());
+  }
+
   componentWillReceiveProps(nextProps) {
     const { serviceLogMoreData, serviceLogData } = nextProps;
     const { serviceLogMoreData: prevServiceLogMoreData,
@@ -133,6 +141,36 @@ export default class ServiceLog extends PureComponent {
     }
   }
 
+  componentWillUnmount() {
+    window.removeEventListener('resize', () => this.setServiceLogIframeHeight());
+  }
+
+  // 获取服务记录的iframe的高度
+  @autobind
+  setServiceLogIframeHeight() {
+    // 获取顶层document
+    const topDocument = window.top.document;
+    // 在FSP的框架下的时候，需要设置本页面所在的iframe的高度
+    const isInFsp = topDocument.querySelector(fspContainer.container);
+    if (isInFsp) {
+      // 服务记录的iFrame元素
+      const iframeElement = topDocument.querySelector('#view360-tab-serviceRecord-iframe');
+      // jsp页面的view360-tabs-main元素
+      const view360TabsMainElement = topDocument.querySelector('#view360-tabs-main');
+      if (iframeElement) {
+        // 浏览器窗口的高度
+        const viewHeight = topDocument.documentElement.clientHeight || topDocument.body.clientHeight;
+        // view360-tabs-main底端距离浏览器窗口顶部的高度
+        const tabMainBottom = dom.getRect(view360TabsMainElement, 'bottom');
+        // 各种padding，margin，border的高度
+        const extraHeight = 35;
+        // 计算服务记录iFrame的高度
+        const iframeHeight = viewHeight - tabMainBottom - extraHeight;
+       dom.setStyle(iframeElement, 'height', `${iframeHeight}px`);
+      }
+    }
+  }
+
   @autobind
   @logable({
     type: 'CalendarSelect',
@@ -144,6 +182,9 @@ export default class ServiceLog extends PureComponent {
   })
   handleDateChange(startDate, endDate) {
     const { location: { query, pathname }, replace } = this.props;
+    this.setState({
+      pageNum: PAGE_NUM,
+    });
     if (startDate !== null && endDate !== null) {
       replace({
         pathname,
@@ -184,6 +225,9 @@ export default class ServiceLog extends PureComponent {
   @autobind
   handleSearchServiceRecord(value) {
     const { location: { query, pathname }, replace } = this.props;
+    this.setState({
+      pageNum: PAGE_NUM,
+    });
     replace({
       pathname,
       query: {
@@ -196,7 +240,8 @@ export default class ServiceLog extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '加载更多服务记录' } })
+  @logable({ type: 'ButtonClick',
+payload: { name: '加载更多服务记录' } })
   handleMore() {
     const { location: { query },
       getServiceLogMore,
@@ -231,6 +276,10 @@ export default class ServiceLog extends PureComponent {
     if (_.isEmpty(value)) {
       return;
     }
+    this.setState({
+      serveSource: value,
+      pageNum: PAGE_NUM,
+    });
     const { location: { query, pathname }, replace } = this.props;
     replace({
       pathname,
@@ -240,9 +289,6 @@ export default class ServiceLog extends PureComponent {
         serveDateToPaged: null,
         pageNum: PAGE_NUM,
       },
-    });
-    this.setState({
-      serveSource: value,
     });
   }
 
@@ -314,6 +360,10 @@ export default class ServiceLog extends PureComponent {
     } else {
       type = value;
     }
+    this.setState({
+      serveType: value,
+      pageNum: PAGE_NUM,
+    });
     replace({
       pathname,
       query: {
@@ -322,9 +372,6 @@ export default class ServiceLog extends PureComponent {
         serveDateToPaged: null,
         pageNum: PAGE_NUM,
       },
-    });
-    this.setState({
-      serveType: value,
     });
   }
 

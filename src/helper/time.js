@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 10:13:53
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-30 17:05:18
+ * @Last Modified time: 2018-11-12 14:01:08
  * @description 此处存放与时间相关的公用方法
  */
 import moment from 'moment';

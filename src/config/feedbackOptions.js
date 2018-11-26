@@ -83,11 +83,19 @@ const feedbackOptions = {
   typeOptions: [
     {
       value: 'DEFECT',
-      label: '问题',
+      label: '功能异常',
+    },
+    {
+      value: 'EXPERIENCE',
+      label: '体验问题',
     },
     {
       value: 'SUGGESTION',
-      label: '建议',
+      label: '新功能建议',
+    },
+    {
+      value: 'OTHER',
+      label: '其他',
     },
   ],
   questionTagOptions: [

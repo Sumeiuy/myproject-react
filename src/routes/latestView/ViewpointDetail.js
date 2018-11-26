@@ -15,7 +15,7 @@ import _ from 'lodash';
 
 import withRouter from '../../decorators/withRouter';
 import { openRctTab } from '../../utils';
-import { url as urlHelper, dva, time as timeUtil } from '../../helper';
+import { url as urlHelper, dva, time as timeUtil, env } from '../../helper';
 import config from '../../components/latestView/config';
 import wordSrc from './img/word.png';
 import pdfSrc from './img/pdf.png';
@@ -36,7 +36,8 @@ const mapStateToProps = state => ({
 });
 const mapDispatchToProps = {
   queryChiefViewpointDetail: dispatch(effects.queryChiefViewpointDetail,
-    { loading: true, forceFull: true }),
+    { loading: true,
+forceFull: true }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -70,27 +71,31 @@ export default class ViewpointDetail extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '返回列表' } })
+  @logable({ type: 'Click',
+payload: { name: '返回列表' } })
   handleBackClick() {
     const { location: { query } } = this.props;
     const { push } = this.context;
-    const param = { id: 'RTC_TAB_VIEWPOINT', title: '资讯列表' };
-    const url = `/latestView/viewpointList?${urlHelper.stringify(query)}`;
+    const param = { id: 'RTC_TAB_VIEWPOINT',
+title: '资讯列表' };
+    const url = `/strategyCenter/latestView/viewpointList?${urlHelper.stringify(query)}`;
     openRctTab({
       routerAction: push,
       url,
       param,
       query,
-      pathname: '/latestView/viewpointList',
+      pathname: '/strategyCenter/latestView/viewpointList',
       name: '资讯列表',
     });
   }
 
   // 空方法，用于日志上报
-  @logable({ type: 'Click', payload: { name: '下载PDF 全文' } })
+  @logable({ type: 'Click',
+payload: { name: '下载PDF 全文' } })
   handleDownloadClick() {}
 
-  @logable({ type: 'Click', payload: { name: '下载WORD 全文' } })
+  @logable({ type: 'Click',
+payload: { name: '下载WORD 全文' } })
   handleDownload() {}
 
   render() {
@@ -120,15 +125,18 @@ export default class ViewpointDetail extends PureComponent {
           <div className={styles.content}>
             <div className={styles.head}>
               <div className={styles.titleRow}>
-                <div
-                  className={classnames(styles.backColumn, styles.upper)}
-                  onClick={this.handleBackClick}
-                >
-                  <div className={styles.iconContainer}>
-                    <Icon type="fanhui" className={styles.backIcon} />
-                  </div>
-                  <div className={styles.backTitle}>返回列表</div>
-                </div>
+                {
+                  env.isInReact() ? null :
+                    <div
+                      className={classnames(styles.backColumn, styles.upper)}
+                      onClick={this.handleBackClick}
+                    >
+                      <div className={styles.iconContainer}>
+                        <Icon type="fanhui" className={styles.backIcon} />
+                      </div>
+                      <div className={styles.backTitle}>返回列表</div>
+                    </div>
+                }
                 <div className={styles.title}>
                   {title || '暂无标题'}
                 </div>
@@ -206,15 +214,18 @@ export default class ViewpointDetail extends PureComponent {
                   </a>
                 </div>
               </div>
-              <div
-                className={classnames(styles.backColumn, styles.under)}
-                onClick={this.handleBackClick}
-              >
-                <div className={styles.iconContainer}>
-                  <Icon type="fanhui" className={styles.backIcon} />
+              {
+                env.isInReact() ? null :
+                <div
+                  className={classnames(styles.backColumn, styles.under)}
+                  onClick={this.handleBackClick}
+                >
+                  <div className={styles.iconContainer}>
+                    <Icon type="fanhui" className={styles.backIcon} />
+                  </div>
+                  <div className={styles.backTitle}>返回列表</div>
                 </div>
-                <div className={styles.backTitle}>返回列表</div>
-              </div>
+              }
             </div>
           </div>
         </div>

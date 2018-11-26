@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-06-12 15:12:22
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-22 17:41:47
+ * @Last Modified by: zhangmei
+ * @Last Modified time: 2018-11-12 14:10:39
  * @description 融资类业务驳回后修改页面
  */
 import React, { Component } from 'react';
@@ -231,9 +231,9 @@ export default class RejectUpdateHome extends Component {
     });
   }
 
-  // TODO 日志查看：需要先进行可以提交的规则校验 未验证
   @autobind
-  @logable({ type: 'Click', payload: { name: '提交' } })
+  @logable({ type: 'Click',
+payload: { name: '提交' } })
   handleBtnGroupClick(btn) {
     // 点击此处，需要先进行可以提交的规则校验
     const { valid, msg } = validateData(this.state);
@@ -260,7 +260,8 @@ export default class RejectUpdateHome extends Component {
   }
 
   @autobind
-  @logPV({ pathname: '/modal/choiceApproval', title: '选择审批人' })
+  @logPV({ pathname: '/modal/choiceApproval',
+title: '选择审批人' })
   handleSelectApprovalModal() {
     const { defaultNextApproverList } = this.state;
     if (_.isEmpty(defaultNextApproverList)) {
