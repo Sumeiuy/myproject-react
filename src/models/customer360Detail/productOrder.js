@@ -8,12 +8,12 @@
 import { detailProductOrder as api } from '../../api';
 
 const EMPTY_OBJECT = {};
-
 export default {
   namespace: 'productOrder',
   state: {
     serviceOrderFlow: EMPTY_OBJECT,
     tradeOrderFlow: EMPTY_OBJECT,
+    serviceOrderData: EMPTY_OBJECT,
   },
   reducers: {
     queryServiceOrderFlowSuccess(state, action) {
@@ -28,6 +28,13 @@ export default {
       return {
         ...state,
         tradeOrderFlow: payload || EMPTY_OBJECT,
+      };
+    },
+    queryServiceOrderDataSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        serviceOrderData: payload || EMPTY_OBJECT,
       };
     }
   },
@@ -45,7 +52,18 @@ export default {
         type: 'queryTradeOrderFlowSuccess',
         payload: resultData,
       });
-    }
+    },
+    * queryCustCanChangeCommission({ payload }, { put, call }) {
+      const { resultData } = yield call(api.queryCustCanChangeCommission, payload);
+      return resultData;
+    },
+    * queryServiceOrderData({ payload }, { put, call }) {
+      const { resultData } = yield call(api.queryServiceOrderData, payload);
+      yield put({
+        type: 'queryServiceOrderDataSuccess',
+        payload: resultData,
+      });
+    },
   },
   subscriptions: {
   },

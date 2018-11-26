@@ -14,6 +14,7 @@ import { Tabs } from 'antd';
 import { generateEffect as effect } from '../../../../helper/dva';
 import ProductOrderFlow from '../../../../components/customerDetailProductOrder/ProductOrderFlow';
 import TradeOrderFlow from '../../../../components/customerDetailProductOrder/TradeOrderFlow';
+import ServiceOrder from '../../../../components/customerDetailProductOrder/ServiceOrder';
 
 import styles from './home.less';
 
@@ -23,11 +24,17 @@ const TRADE_ORDER_FLOW_PAGE_SIZE = 10;
 const mapStateToProps = ({ productOrder }) => ({
   serviceOrderFlow: productOrder.serviceOrderFlow,
   tradeOrderFlow: productOrder.tradeOrderFlow,
+  // 服务订购订单列表
+  serviceOrderData: productOrder.serviceOrderData,
 });
 
 const mapDispatchToProps = {
   queryServiceOrderFlow: effect('productOrder/queryServiceOrderFlow'),
   queryTradeOrderFlow: effect('productOrder/queryTradeOrderFlow'),
+  // 查询是否可发起佣金调整
+  queryCustCanChangeCommission: effect('productOrder/queryCustCanChangeCommission', { loading: false }),
+  // 查询服务订购订单
+  queryServiceOrderData: effect('productOrder/queryServiceOrderData'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -36,8 +43,11 @@ export default class ProductOrder extends PureComponent {
     location: PropTypes.object.isRequired,
     serviceOrderFlow: PropTypes.object.isRequired,
     tradeOrderFlow: PropTypes.object.isRequired,
+    serviceOrderData: PropTypes.object.isRequired,
     queryServiceOrderFlow: PropTypes.func.isRequired,
     queryTradeOrderFlow: PropTypes.func.isRequired,
+    queryCustCanChangeCommission: PropTypes.func.isRequired,
+    queryServiceOrderData: PropTypes.func.isRequired,
   };
 
   static contextTypes = {
@@ -136,6 +146,10 @@ export default class ProductOrder extends PureComponent {
   render() {
     const {
       tradeOrderFlow,
+      location,
+      serviceOrderData,
+      queryCustCanChangeCommission,
+      queryServiceOrderData,
     } = this.props;
     const activeKey = this.getTabActiveKeyByUrl();
 
@@ -148,6 +162,12 @@ export default class ProductOrder extends PureComponent {
         >
           <TabPane tab="服务订购" key="serviceOrder">
             <div className={styles.tabPaneWrap}>
+              <ServiceOrder
+                location={location}
+                serviceOrderData={serviceOrderData}
+                queryCustCanChangeCommission={queryCustCanChangeCommission}
+                queryServiceOrderData={queryServiceOrderData}
+              />
             </div>
           </TabPane>
           <TabPane tab="服务订单流水" key="serviceOrderFlow">

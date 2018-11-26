@@ -107,7 +107,7 @@ export default class CustProperty extends PureComponent {
       },
     } = this.props;
     // url中custId发生变化时重新请求相关数据
-    if (prevCustId !== custId) {
+    if (custId && prevCustId !== custId) {
       this.queryData(custId);
     }
   }
