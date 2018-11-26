@@ -250,7 +250,7 @@ export default class CustProperty extends PureComponent {
     const {
       location: {
         query: {
-          custPropertyTabKey = MEMBER_INFO_KEY,
+          custPropertyTabKey = FINANCE_INFO_KEY,
         },
       },
       location,

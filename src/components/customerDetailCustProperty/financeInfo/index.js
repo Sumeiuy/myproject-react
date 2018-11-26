@@ -82,15 +82,19 @@ export default class FinanceInfo extends PureComponent {
     const {
       location,
       customerBasicInfo,
+      updatePerFinaceData,
       data: {
         person = EMPTY_OBJECT,
       },
       customerBasicInfo: {
         isMainEmp,
-      }
+      },
+      queryFinanceDetail,
     } = this.props;
     return (
       <Person
+        queryFinanceDetail={queryFinanceDetail}
+        updatePerFinaceData={updatePerFinaceData}
         data={person}
         isMainEmp={isMainEmp}
         location={location}
@@ -101,6 +105,7 @@ export default class FinanceInfo extends PureComponent {
 
   renderOrganizationInfo() {
     const {
+      updateOrgFinaceData,
       location,
       customerBasicInfo,
       data: {
@@ -108,10 +113,13 @@ export default class FinanceInfo extends PureComponent {
       },
       customerBasicInfo: {
         isMainEmp,
-      }
+      },
+      queryFinanceDetail,
     } = this.props;
     return (
       <Organization
+        queryFinanceDetail={queryFinanceDetail}
+        updateOrgFinaceData={updateOrgFinaceData}
         customerBasicInfo={customerBasicInfo}
         data={organization}
         isMainEmp={isMainEmp}
@@ -133,7 +141,7 @@ export default class FinanceInfo extends PureComponent {
         component = this.renderOrganizationInfo();
         break;
       default:
-        component = this.renderPersonInfo();
+        component = this.renderOrganizationInfo();
         break;
     }
     return component;

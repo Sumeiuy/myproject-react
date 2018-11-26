@@ -84,18 +84,18 @@ export default class OmniComplexEditor extends PureComponent {
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    // const { displayValue, value } = nextProps;
-    // const { prevValue } = prevState;
-    // if (!_.isEqual(value, prevValue)) {
-    //   // 一般情况如果props中的value值变化了则需要相应的变化state
-    //   return {
-    //     prevProps: value,
-    //     originalValue: displayValue,
-    //     editorValue: value,
-    //     loading: false,
-    //     editing: false,
-    //   };
-    // }
+    const { displayValue, value } = nextProps;
+    const { prevValue } = prevState;
+    if (!_.isEqual(value, prevValue)) {
+      // 一般情况如果props中的value值变化了则需要相应的变化state
+      return {
+        prevValue: value,
+        originalValue: displayValue,
+        editorValue: value,
+        loading: false,
+        editing: false,
+      };
+    }
     return null;
   }
 
@@ -111,7 +111,7 @@ export default class OmniComplexEditor extends PureComponent {
       // 用户修改的值
       editorValue: value,
       // 编辑状态
-      editing: true,
+      editing: false,
       // select下拉框的展开状态
       selectState: false,
       // 数据校验结果

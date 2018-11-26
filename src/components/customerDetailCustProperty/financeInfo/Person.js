@@ -58,7 +58,22 @@ export default class Person extends PureComponent {
 
   @autobind
   refreshData() {
-    console.log('refash');
+    const {
+      location: {
+        query: {
+          custId,
+        }
+      },
+      queryFinanceDetail,
+    } = this.props;
+    return queryFinanceDetail({ custId });
+  }
+
+  // 主服务经理并且不是上市公司可以编辑
+  @autobind
+  checkIsEditable() {
+    const { isMainEmp } = this.props;
+    return isMainEmp;
   }
 
   @autobind
@@ -74,7 +89,7 @@ export default class Person extends PureComponent {
       },
       updatePerFinaceData,
     } = this.props;
-    updatePerFinaceData({
+    return updatePerFinaceData({
       custId,
       custNatrue,
       [name]: value,
@@ -104,17 +119,16 @@ export default class Person extends PureComponent {
   render() {
     const {
       data,
-      isMainEmp,
     } = this.props;
     return (
       <div className={styles.infoContainer}>
         <div className={styles.infoItemBox}>
           {
-            true
+            this.checkIsEditable()
               ? (
                 <BasicEditorCell
                   label="收入水平"
-                  width={INFO_ITEM_WITDH}
+                  width={INFO_ITEM_WITDH_110}
                   className={styles.infoItem}
                   editorId="person_income"
                   onEditOK={value => this.updateData(INCOME_NAME, value)}
@@ -189,7 +203,7 @@ export default class Person extends PureComponent {
         </div>
         <div className={styles.infoItemBox}>
           {
-            true
+            this.checkIsEditable()
               ? (
                 <BasicEditorCell
                   label="房产规模"
@@ -218,7 +232,7 @@ export default class Person extends PureComponent {
         </div>
         <div className={styles.infoItemBox}>
           {
-            true
+            this.checkIsEditable()
               ? (
                 <BasicEditorCell
                   label="银行理财规模"
@@ -247,11 +261,11 @@ export default class Person extends PureComponent {
         </div>
         <div className={styles.infoItemBox}>
           {
-            true
+            this.checkIsEditable()
               ? (
                 <BasicEditorCell
                   label="保险类资产规模"
-                  width={INFO_ITEM_WITDH}
+                  width={INFO_ITEM_WITDH_110}
                   className={styles.infoItem}
                   editorId="person_insured"
                   onEditOK={value => this.updateData(INSURED_ASSETS_NAME, value)}
@@ -276,7 +290,7 @@ export default class Person extends PureComponent {
         </div>
         <div className={styles.infoItemBox}>
           {
-            true
+            this.checkIsEditable()
               ? (
                 <BasicEditorCell
                   label="其他资产规模"
@@ -304,16 +318,15 @@ export default class Person extends PureComponent {
           }
         </div>
         <div className={styles.infoItemBox}>
-
           {
-            true
+            this.checkIsEditable()
               ? (
                 <BasicEditorCell
                   label="投入成本收益率"
                   width={INFO_ITEM_WITDH}
                   className={styles.infoItem}
                   editorId="person_insured"
-                  onEditOK={value => this.updateData(OTHER_ASSEST_NAME, value)}
+                  onEditOK={value => this.updateData(YIELD_RATE_NAME, value)}
                   value={data.yieldRate}
                   displayValue={data.yieldRate}
                   checkable
