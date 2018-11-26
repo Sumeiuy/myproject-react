@@ -9,9 +9,11 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+import _ from 'lodash';
 import Filter from '../../../../components/customerDetailDiscount/Filter';
 import DetailModal from '../../../../components/customerDetailDiscount/DetailModal';
 import Table from '../../../../components/common/table';
+import IfTableWrap from '../../../../components/common/IfTableWrap';
 import logable from '../../../../decorators/logable';
 import { couponTitleList } from '../../../../components/customerDetailDiscount/config';
 
@@ -235,15 +237,27 @@ export default class DiscountCoupon extends PureComponent {
             status={status}
             onFilterChange={this.handleFilterChange}
           />
-          <Table
-            pagination={paginationData}
-            dataSource={list}
-            isNeedEmptyRow
-            isNeedNoDataStyle
-            rowNumber={10}
-            columns={this.getTitleList()}
-            scroll={{ x: '1024px' }}
-          />
+          <div className={styles.tableBox}>
+            {
+              _.isEmpty(list)
+                ? (
+                  <IfTableWrap
+                    text="客户暂无理财优惠券"
+                  />
+                )
+                : (
+                  <Table
+                    pagination={paginationData}
+                    dataSource={list}
+                    isNeedEmptyRow
+                    isNeedNoDataStyle
+                    rowNumber={10}
+                    columns={this.getTitleList()}
+                    scroll={{ x: '1024px' }}
+                  />
+                )
+            }
+          </div>
         </div>
         <DetailModal
           data={couponDetail}

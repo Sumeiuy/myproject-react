@@ -11,9 +11,11 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import InfoItem from '../../common/infoItem';
 import BasicEditorCell from '../common/BasiceEditorCell';
+import { number } from '../../../helper';
 import {
   DEFAULT_VALUE,
   checkIsNeedTitle,
+  FINCE_REG,
 } from '../config';
 import styles from './common.less';
 
@@ -53,7 +55,7 @@ export default class Person extends PureComponent {
 
   @autobind
   getViewDataByNum(value) {
-    return value;
+    return _.isNumber(value) ? number.thousandFormat(value) : DEFAULT_VALUE;
   }
 
   @autobind
@@ -66,7 +68,7 @@ export default class Person extends PureComponent {
       },
       queryFinanceDetail,
     } = this.props;
-    return queryFinanceDetail({ custId });
+    queryFinanceDetail({ custId });
   }
 
   // 主服务经理并且不是上市公司可以编辑
@@ -74,6 +76,7 @@ export default class Person extends PureComponent {
   checkIsEditable() {
     const { isMainEmp } = this.props;
     return isMainEmp;
+    // return true;
   }
 
   @autobind
@@ -98,7 +101,7 @@ export default class Person extends PureComponent {
 
   @autobind
   checkNormalValue(value) {
-    if (_.isEmpty(value)) {
+    if (_.isEmpty(value) && !_.isNumber(value)) {
       return {
         validate: false,
         msg: '数据不能为空',
@@ -108,6 +111,31 @@ export default class Person extends PureComponent {
       return {
         validate: false,
         msg: '长度不能超过30',
+      };
+    }
+    return {
+      validate: true,
+      msg: '',
+    };
+  }
+
+  @autobind
+  getYieldValue(value) {
+    return _.isEmpty(value) ? '' : `${number.toFixed(value)}%`;
+  }
+
+  @autobind
+  checkYieldValue(value) {
+    if (_.isEmpty(value) && !_.isNumber(value)) {
+      return {
+        validate: false,
+        msg: '数据不能为空',
+      };
+    }
+    if (!FINCE_REG.test(value)) {
+      return {
+        validate: false,
+        msg: '请输入合法的数据',
       };
     }
     return {
@@ -132,8 +160,8 @@ export default class Person extends PureComponent {
                   className={styles.infoItem}
                   editorId="person_income"
                   onEditOK={value => this.updateData(INCOME_NAME, value)}
-                  value={data.income}
-                  displayValue={data.income}
+                  value={data.income || ''}
+                  displayValue={data.income || ''}
                   checkable
                   onCheck={this.checkNormalValue}
                   onSuccess={this.refreshData}
@@ -145,7 +173,7 @@ export default class Person extends PureComponent {
                   label="收入水平"
                   value={data.income || DEFAULT_VALUE}
                   className={styles.infoItem}
-                  isNeedValueTitle={checkIsNeedTitle(data.income || DEFAULT_VALUE)}
+                  isNeedValueTitle={checkIsNeedTitle(data.income)}
                   isNeedOverFlowEllipsis
                 />
               )
@@ -157,7 +185,7 @@ export default class Person extends PureComponent {
             label="收入来源"
             value={data.source || DEFAULT_VALUE}
             className={styles.infoItem}
-            isNeedValueTitle={checkIsNeedTitle(data.source || DEFAULT_VALUE)}
+            isNeedValueTitle={checkIsNeedTitle(data.source)}
             isNeedOverFlowEllipsis
           />
         </div>
@@ -167,7 +195,7 @@ export default class Person extends PureComponent {
             label="家庭年收入"
             value={data.householdIncome || DEFAULT_VALUE}
             className={styles.infoItem}
-            isNeedValueTitle={checkIsNeedTitle(data.householdIncome || DEFAULT_VALUE)}
+            isNeedValueTitle={checkIsNeedTitle(data.householdIncome)}
             isNeedOverFlowEllipsis
           />
         </div>
@@ -177,7 +205,7 @@ export default class Person extends PureComponent {
             label="负债情况"
             value={data.liabilities || DEFAULT_VALUE}
             className={styles.infoItem}
-            isNeedValueTitle={checkIsNeedTitle(data.liabilities || DEFAULT_VALUE)}
+            isNeedValueTitle={checkIsNeedTitle(data.liabilities)}
             isNeedOverFlowEllipsis
           />
         </div>
@@ -187,7 +215,7 @@ export default class Person extends PureComponent {
             label="可投资资产"
             value={data.investableAssets || DEFAULT_VALUE}
             className={styles.infoItem}
-            isNeedValueTitle={checkIsNeedTitle(data.investableAssets || DEFAULT_VALUE)}
+            isNeedValueTitle={checkIsNeedTitle(data.investableAssets)}
             isNeedOverFlowEllipsis
           />
         </div>
@@ -211,8 +239,8 @@ export default class Person extends PureComponent {
                   className={styles.infoItem}
                   editorId="person_housingSize"
                   onEditOK={value => this.updateData(HOUSE_SIEZ_NAME, value)}
-                  value={data.housingSize}
-                  displayValue={data.housingSize}
+                  value={data.housingSize || ''}
+                  displayValue={data.housingSize || ''}
                   checkable
                   onCheck={this.checkNormalValue}
                   onSuccess={this.refreshData}
@@ -224,7 +252,7 @@ export default class Person extends PureComponent {
                   label="房产规模"
                   value={data.housingSize || DEFAULT_VALUE}
                   className={styles.infoItem}
-                  isNeedValueTitle={checkIsNeedTitle(data.housingSize || DEFAULT_VALUE)}
+                  isNeedValueTitle={checkIsNeedTitle(data.housingSize)}
                   isNeedOverFlowEllipsis
                 />
               )
@@ -240,8 +268,8 @@ export default class Person extends PureComponent {
                   className={styles.infoItem}
                   editorId="person_bank_scale"
                   onEditOK={value => this.updateData(BANK_MONEY_NAME, value)}
-                  value={data.bankMoneyScale}
-                  displayValue={data.bankMoneyScale}
+                  value={data.bankMoneyScale || ''}
+                  displayValue={data.bankMoneyScale || ''}
                   checkable
                   onCheck={this.checkNormalValue}
                   onSuccess={this.refreshData}
@@ -253,7 +281,7 @@ export default class Person extends PureComponent {
                   label="银行理财规模"
                   value={data.bankMoneyScale || DEFAULT_VALUE}
                   className={styles.infoItem}
-                  isNeedValueTitle={checkIsNeedTitle(data.bankMoneyScale || DEFAULT_VALUE)}
+                  isNeedValueTitle={checkIsNeedTitle(data.bankMoneyScale)}
                   isNeedOverFlowEllipsis
                 />
               )
@@ -269,8 +297,8 @@ export default class Person extends PureComponent {
                   className={styles.infoItem}
                   editorId="person_insured"
                   onEditOK={value => this.updateData(INSURED_ASSETS_NAME, value)}
-                  value={data.insuredAssetsScale}
-                  displayValue={data.insuredAssetsScale}
+                  value={data.insuredAssetsScale || ''}
+                  displayValue={data.insuredAssetsScale || ''}
                   checkable
                   onCheck={this.checkNormalValue}
                   onSuccess={this.refreshData}
@@ -282,7 +310,7 @@ export default class Person extends PureComponent {
                   label="保险类资产规模"
                   value={data.insuredAssetsScale || DEFAULT_VALUE}
                   className={styles.infoItem}
-                  isNeedValueTitle={checkIsNeedTitle(data.insuredAssetsScale || DEFAULT_VALUE)}
+                  isNeedValueTitle={checkIsNeedTitle(data.insuredAssetsScale)}
                   isNeedOverFlowEllipsis
                 />
               )
@@ -298,8 +326,8 @@ export default class Person extends PureComponent {
                   className={styles.infoItem}
                   editorId="person_insured"
                   onEditOK={value => this.updateData(OTHER_ASSEST_NAME, value)}
-                  value={data.otherAssetsScale}
-                  displayValue={data.otherAssetsScale}
+                  value={data.otherAssetsScale || ''}
+                  displayValue={data.otherAssetsScale || ''}
                   checkable
                   onCheck={this.checkNormalValue}
                   onSuccess={this.refreshData}
@@ -311,7 +339,7 @@ export default class Person extends PureComponent {
                   label="其他资产规模"
                   value={data.otherAssetsScale || DEFAULT_VALUE}
                   className={styles.infoItem}
-                  isNeedValueTitle={checkIsNeedTitle(data.otherAssetsScale || DEFAULT_VALUE)}
+                  isNeedValueTitle={checkIsNeedTitle(data.otherAssetsScale)}
                   isNeedOverFlowEllipsis
                 />
               )
@@ -327,10 +355,10 @@ export default class Person extends PureComponent {
                   className={styles.infoItem}
                   editorId="person_insured"
                   onEditOK={value => this.updateData(YIELD_RATE_NAME, value)}
-                  value={data.yieldRate}
-                  displayValue={data.yieldRate}
+                  value={data.yieldRate || ''}
+                  displayValue={this.getYieldValue(data.yieldRate)}
                   checkable
-                  onCheck={this.checkNormalValue}
+                  onCheck={this.checkYieldValue}
                   onSuccess={this.refreshData}
                 />
               )
@@ -338,16 +366,16 @@ export default class Person extends PureComponent {
                 <InfoItem
                   width={INFO_ITEM_WITDH}
                   label="投入成本收益率"
-                  value={this.getViewDataByNum(data.yieldRate)}
+                  value={this.getYieldValue(data.yieldRate) || DEFAULT_VALUE}
                   className={styles.infoItem}
-                  isNeedValueTitle={checkIsNeedTitle(this.getViewDataByNum(data.yieldRate))}
+                  isNeedValueTitle={checkIsNeedTitle(this.getYieldValue(data.yieldRate))}
                   isNeedOverFlowEllipsis
                 />
               )
           }
         </div>
         <div className={styles.latestTime}>
-          近期风险承受能力评估问卷日期：{data.latestSurveyTime}
+          近期风险承受能力评估问卷日期：{data.latestSurveyTime || DEFAULT_VALUE}
         </div>
       </div>
     );

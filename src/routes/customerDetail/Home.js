@@ -225,12 +225,10 @@ type: 2 });
             <TabPane tab="投资者评估" key={INVESTOR_ASSESSMENT_TAB_KEY}>
             </TabPane>
             <TabPane tab="产品订单" key={PRODUCT_ORDER_TAB_KEY}>
+              <ProductOrder location={location} />
             </TabPane>
             <TabPane tab="理财优惠券" key={DISCOUNT_COUPON_TAB_KEY}>
               <DiscountCoupon location={location} />
-            </TabPane>
-            <TabPane tab="产品订单" key="productOrder">
-              <ProductOrder location={location} />
             </TabPane>
           </Tabs>
         </div>

@@ -13,6 +13,7 @@ import _ from 'lodash';
 import Modal from '../../components/common/biz/CommonModal';
 import InfoItem from '../common/infoItem';
 import Table from '../../components/common/table';
+import IfTableWrap from '../common/IfTableWrap';
 import { number } from '../../helper';
 import {
   checkIsNeedTitle,
@@ -32,7 +33,8 @@ export default class DetailModal extends PureComponent {
 
   @autobind
   getYield(value) {
-    return _.isNumber(value) ? value.toString() : DEFAULT_VALUE;
+    return (_.isEmpty(value) && !_.isNumber(value))
+      ? DEFAULT_VALUE : `${number.toFixed(value)}%`;
   }
 
   @autobind
@@ -48,6 +50,7 @@ export default class DetailModal extends PureComponent {
     } = this.props;
     const paginationProps = {
       pageSize: 5,
+      total: (data.productList || EMPTY_ARRAY).length,
     };
     return (
       <Modal
@@ -164,7 +167,7 @@ export default class DetailModal extends PureComponent {
                   label="收益率"
                   value={this.getYield(data.yield)}
                   className={styles.infoItem}
-                  isNeedValueTitle={checkIsNeedTitle(data.yield)}
+                  isNeedValueTitle={checkIsNeedTitle(this.getYield(data.yield))}
                   isNeedOverFlowEllipsis
                 />
               </div>
@@ -185,13 +188,19 @@ export default class DetailModal extends PureComponent {
               <span className={styles.colorBlock} />
               <span className={styles.titleText}>可购买产品列表</span>
             </div>
-            <Table
-              pagination={paginationProps}
-              dataSource={data.productList || EMPTY_ARRAY}
-              isNeedEmptyRow
-              columns={productTitleList}
-              scroll={{ x: '1000px' }}
-            />
+            {
+              _.isEmpty(data.productList)
+                ? <IfTableWrap text="暂无产品" />
+                : (
+                  <Table
+                    pagination={paginationProps}
+                    dataSource={data.productList || EMPTY_ARRAY}
+                    isNeedEmptyRow
+                    columns={productTitleList}
+                    scroll={{ x: '1000px' }}
+                  />
+                )
+            }
           </div>
         </div>
       </Modal>

@@ -158,7 +158,8 @@ const config = {
 };
 
 // 根据传入的参数判断是否需要显示title，如果值等于默认值则不显示
-export const checkIsNeedTitle = value => (value !== DEFAULT_VALUE && value !== DEFAULT_PRIVATE_VALUE);
+export const checkIsNeedTitle = value =>
+  (value !== DEFAULT_VALUE && value !== DEFAULT_PRIVATE_VALUE && !_.isEmpty(value));
 
 export default config;
 export const {
@@ -207,3 +208,5 @@ export const custPropertyTabMapData = {
   [RELATION_INFO_KEY]: '关系信息',
 };
 
+// 财务信息使用到的正则，第一位数组不能为0，小数点后最多两位，包含小数点最多17位
+export const FINCE_REG = /(^0\.\d{0,2}$)|(^[1-9](\d{0,16}$|(\d{0,14}\.\d$)|(\d{0,13}\.\d{0,2}$)))|^0{1}$/;

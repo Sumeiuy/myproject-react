@@ -8,6 +8,7 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import { Input  } from 'antd';
 import { SingleFilter } from 'lego-react-filter/src';
@@ -47,7 +48,7 @@ export default class Filter extends PureComponent {
             placeholder="优惠券编号"
             onSearch={value => onFilterChange({
               name: 'ticketId',
-              value
+              value: _.trim(value),
             })}
             style={{ width: 200 }}
           />

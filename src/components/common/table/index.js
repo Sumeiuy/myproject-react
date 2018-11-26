@@ -15,18 +15,16 @@ export default class CommonTable extends PureComponent {
     // 分页器class
     paginationClass: PropTypes.string,
     // 是否需要在传入数据条数不足时用空行填充
+    // !!!如果使用空行填充并且需要前端分页，记得翻页器的total要在外面传，不然组件自己取的是填充过后的数据长度，有问题
     isNeedEmptyRow: PropTypes.bool,
     // table数据一页显示的行数，配合 isNeedEmptyRow 实现数据不满该设定行数时用空行填充
     rowNumber: PropTypes.number,
-    // 是否显示无数据占位图
-    isNeedNoDataStyle: PropTypes.bool,
   };
 
   static defaultProps = {
     paginationClass: '',
     isNeedEmptyRow: false,
     rowNumber: 5,
-    isNeedNoDataStyle: false,
   };
 
  // 获取填充过的数据，判断当前传进来的dataSource是否能在table里显示满（包括前端分页的情况下）
@@ -57,25 +55,16 @@ export default class CommonTable extends PureComponent {
       paginationClass,
       isNeedEmptyRow,
       dataSource,
-      isNeedNoDataStyle,
       ...restProps
     } = this.props;
     let newDataSource = isNeedEmptyRow ? this.getFilledData() : dataSource;
     return (
       <div className={styles.groupTable}>
-        {
-          isNeedNoDataStyle && _.isEmpty(dataSource)
-            ? (
-              <div>noData</div>
-            )
-            : (
-              <Table
-                {...restProps}
-                dataSource={newDataSource}
-                paginationClass={`${styles.pagination} ${paginationClass}`}
-              />
-            )
-        }
+        <Table
+          {...restProps}
+          dataSource={newDataSource}
+          paginationClass={`${styles.pagination} ${paginationClass}`}
+        />
       </div>
     );
   }

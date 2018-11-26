@@ -84,7 +84,7 @@ export default class FinanceInfo extends PureComponent {
       customerBasicInfo,
       updatePerFinaceData,
       data: {
-        person = EMPTY_OBJECT,
+        person,
       },
       customerBasicInfo: {
         isMainEmp,
@@ -95,7 +95,7 @@ export default class FinanceInfo extends PureComponent {
       <Person
         queryFinanceDetail={queryFinanceDetail}
         updatePerFinaceData={updatePerFinaceData}
-        data={person}
+        data={person || EMPTY_OBJECT}
         isMainEmp={isMainEmp}
         location={location}
         customerBasicInfo={customerBasicInfo}
@@ -109,7 +109,7 @@ export default class FinanceInfo extends PureComponent {
       location,
       customerBasicInfo,
       data: {
-        organization = EMPTY_OBJECT,
+        organization,
       },
       customerBasicInfo: {
         isMainEmp,
@@ -121,7 +121,7 @@ export default class FinanceInfo extends PureComponent {
         queryFinanceDetail={queryFinanceDetail}
         updateOrgFinaceData={updateOrgFinaceData}
         customerBasicInfo={customerBasicInfo}
-        data={organization}
+        data={organization || EMPTY_OBJECT}
         isMainEmp={isMainEmp}
         location={location}
       />
