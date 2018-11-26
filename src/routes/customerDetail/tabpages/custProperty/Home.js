@@ -2,20 +2,28 @@
  * @Author: XuWenKang
  * @Description: 客户360-客户属性
  * @Date: 2018-11-06 16:17:28
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-22 16:11:44
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-11-23 14:36:00
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { Tabs } from 'antd';
-import withRouter from '../../../../decorators/withRouter';
 import PersonInfo from '../../../../components/customerDetailCustProperty/personInfo';
 import OrganizationInfo from '../../../../components/customerDetailCustProperty/organizationInfo';
 import ProductInfo from '../../../../components/customerDetailCustProperty/productInfo';
 import MemberInfo from '../../../../components/customerDetailCustProperty/memberInfo';
-import { CUST_TYPE } from '../../../../components/customerDetailCustProperty/config';
+import FinanceInfo from '../../../../components/customerDetailCustProperty/financeInfo';
+import {
+  CUST_TYPE,
+  custPropertyTabMapData,
+  FINANCE_INFO_KEY,
+  COOPERATION_KEY,
+  MARKETING_KEY,
+  MEMBER_INFO_KEY,
+  RELATION_INFO_KEY,
+} from '../../../../components/customerDetailCustProperty/config';
 import { permission } from '../../../../helper';
 import logable from '../../../../decorators/logable';
 
@@ -34,20 +42,9 @@ const {
   PRODUCT_CUST_TYPE,
 } = CUST_TYPE;
 
-// 财务信息TAB的key
-const FINANCE_INFO_KEY = 'financeInfo';
-// 合作业务TAB的key
-const COOPERATION_KEY = 'cooperation';
-// 营销与服务TAB的key
-const MARKETING_KEY = 'marketing';
-// 会员信息TAB的key
-const MEMBER_INFO_KEY = 'memberInfo';
-// 关系信息TAB的key
-const RELATION_INFO_KEY = 'relationInfo';
 // 表格每页显示数据
 const PAGE_SIZE = 10;
 
-@withRouter
 export default class CustProperty extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -70,13 +67,17 @@ export default class CustProperty extends PureComponent {
     zjPointExchangeFlow: PropTypes.object.isRequired,
     // 修改个人客户、机构客户的基本信息
     updateCustBasicInfo: PropTypes.func.isRequired,
+    // 查询个人客户、机构客户的财务信息
+    queryFinanceDetail: PropTypes.func.isRequired,
+    financeData: PropTypes.object.isRequired,
+    // 编辑个人客户的财务信息
+    updatePerFinaceData: PropTypes.func.isRequired,
+    // 编辑机构客户的财务信息
+    updateOrgFinaceData: PropTypes.func.isRequired,
   }
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      activeKey: MEMBER_INFO_KEY,
-    };
+  static contextTypes = {
+    replace: PropTypes.func.isRequired,
   }
 
   componentDidMount() {
@@ -227,15 +228,31 @@ export default class CustProperty extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '客户属性下tab切换' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '$args[1]',
+    },
+  })
   handleTabChange(activeKey) {
-    this.setState({
-      activeKey,
+    const { replace } = this.context;
+    const { location: { query, pathName } } = this.props;
+    replace({
+      pathName,
+      query: {
+        ...query,
+        custPropertyTabKey: activeKey,
+      }
     });
   }
 
   render() {
     const {
+      location: {
+        query: {
+          custPropertyTabKey = FINANCE_INFO_KEY,
+        },
+      },
       location,
       zlUMemberInfo,
       zlUMemberLevelChangeRecords,
@@ -245,8 +262,12 @@ export default class CustProperty extends PureComponent {
       zjPointMemberInfo,
       queryZjPointExchangeFlow,
       zjPointExchangeFlow,
+      customerBasicInfo,
+      queryFinanceDetail,
+      financeData,
+      updatePerFinaceData,
+      updateOrgFinaceData,
     } = this.props;
-    const { activeKey } = this.state;
     return (
       <div className={styles.custPropertyBox}>
         <div className={styles.custInfoBox}>
@@ -257,12 +278,22 @@ export default class CustProperty extends PureComponent {
         <div className={styles.tabBox}>
           <Tabs
             className={styles.tab}
-            activeKey={activeKey}
+            activeKey={custPropertyTabKey}
             animated={false}
             tabBarGutter={2}
-            onChange={this.handleTabChange}
+            onChange={
+              activeKey => this.handleTabChange(activeKey, custPropertyTabMapData[activeKey])
+            }
           >
             <TabPane tab="财务信息" key={FINANCE_INFO_KEY}>
+              <FinanceInfo
+                location={location}
+                customerBasicInfo={customerBasicInfo}
+                data={financeData}
+                queryFinanceDetail={queryFinanceDetail}
+                updatePerFinaceData={updatePerFinaceData}
+                updateOrgFinaceData={updateOrgFinaceData}
+              />
             </TabPane>
             <TabPane tab="合作业务" key={COOPERATION_KEY}>
             </TabPane>
