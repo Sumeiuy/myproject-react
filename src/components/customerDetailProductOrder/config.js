@@ -89,6 +89,52 @@ export const TRADE_ORDER_FLOW_COLUMNS = [
   },
 ];
 
+// 服务订购产品信息列表
+export const SERVICE_ORDER_TABLE_COLUMNS = [
+  {
+    title: '产品代码',
+    dataIndex: 'name',
+    key: 'name',
+    width: '14%',
+  },
+  {
+    title: '服务名称',
+    dataIndex: 'aliasName',
+    key: 'aliasName',
+    width: '16%',
+  },
+  {
+    title: '状态',
+    dataIndex: 'status',
+    key: 'status',
+    width: '14%',
+  },
+  {
+    title: '开始日期',
+    dataIndex: 'startDt',
+    key: 'startDt',
+    width: '14%',
+  },
+  {
+    title: '结束日期',
+    dataIndex: 'endDt',
+    key: 'endDt',
+    width: '14%',
+  },
+  {
+    title: '佣金（‰）',
+    dataIndex: 'intrRate',
+    key: 'intrRate',
+    width: '14%',
+  },
+  {
+    title: '订购方式',
+    dataIndex: 'orderType',
+    key: 'orderType',
+    width: '14%',
+  },
+];
+
 export const DATE_FORMATE_STR = 'YYYY-MM-DD';
 export const DATE_FORMATE_STR_DETAIL = 'YYYY-MM-DD HH:mm:ss';
 export const DEFAULT_PAGE_SIZE = 10;

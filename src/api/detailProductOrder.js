@@ -22,5 +22,9 @@ export default function detailProductOrder(api) {
     queryOtherCommissions: query => api.post('/queryOtherCommissions', query),
     // 获取交易订单流水
     queryTradeOrderFlow: query => api.post('/groovynoauth/fsp/cust/custDetail/queryTradeOrderFlow', query),
+    // 获取服务订购订单列表
+    queryServiceOrderData: query => api.post('/groovynoauth/fsp/cust/serviceorder/queryServiceOrderingList', query),
+    // 查询是否可跳转佣金调整的信息
+    queryCustCanChangeCommission: query => api.post('/groovynoauth/fsp/cust/serviceorder/queryCustHasActiveArg', query),
   };
 };

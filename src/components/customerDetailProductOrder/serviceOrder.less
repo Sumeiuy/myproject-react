@@ -1,0 +1,41 @@
+.tradeOrderFlowWrap {
+  background: #fff;
+  padding: 14px 17px 29px 23px;
+  .btn {
+    :global {
+      .ant-btn-background-ghost.ant-btn-primary:hover,
+      .ant-btn-background-ghost.ant-btn-primary:focus {
+        color: #108ee9;
+        border-color: #108ee9;
+      }
+    }
+  }
+  .table {
+    background: #fff;
+    :global {
+      table > thead > tr > th,
+      table > tbody > tr > td {
+        padding: 0 40px;
+      }
+    }
+    .intrRateStyle {
+      text-align: right;
+    }
+    .intrRateText {
+      padding-right: 10px;
+    }
+    .serviceName {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+    .sortContent {
+      cursor: pointer;
+      .sortImg {
+        width: 12px;
+        height: 14px;
+        margin-left: 6px;
+      }
+    }
+  }
+}
