@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-19 15:39:12
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-23 14:46:57
+ * @Last Modified time: 2018-11-26 13:56:13
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -30,6 +30,8 @@ const effects = {
   getAssetChangeState: 'detailInvestmentAbilityAnalysis/getAssetChangeState',
   // 获取账户资产变动图表
   getAssetChangeReport: 'detailInvestmentAbilityAnalysis/getAssetChangeReport',
+  // 获取账户收益走势图表数据
+  getProfitTrendReport: 'detailInvestmentAbilityAnalysis/getProfitTrendReport',
 };
 
 const mapStateToProps = state => ({
@@ -41,6 +43,8 @@ const mapStateToProps = state => ({
   assetChangeList: state.detailInvestmentAbilityAnalysis.assetChangeList,
   // 账户资产变动图表数据
   assetChangeReportData: state.detailInvestmentAbilityAnalysis.assetChangeReportData,
+  //账户收益走势图表数据
+  profitTrendData: state.detailInvestmentAbilityAnalysis.profitTrendData,
 });
 
 const mapDispatchToProps = {
@@ -52,6 +56,8 @@ const mapDispatchToProps = {
   getAssetChangeState: effect(effects.getAssetChangeState, { forceFull: true }),
   // 获取账户资产变动图表
   getAssetChangeReport: effect(effects.getAssetChangeReport, { forceFull: true }),
+  // 获取账户收益走势图表数据
+  getProfitTrendReport: effect(effects.getProfitTrendReport, { forceFull: true }),
 };
 
 @withRouter
@@ -75,6 +81,10 @@ export default class Home extends PureComponent {
     getAssetChangeReport: PropTypes.func.isRequired,
     // 账户资产变动图表数据
     assetChangeReportData: PropTypes.array.isRequired,
+    // 获取账户收益走势图表数据
+    getProfitTrendReport: PropTypes.func.isRequired,
+    // 账户收益走势图表数据
+    profitTrendData: PropTypes.object.isRequired,
   }
 
   static contextTypes = {
@@ -127,6 +137,8 @@ export default class Home extends PureComponent {
       assetChangeList,
       getAssetChangeReport,
       assetChangeReportData,
+      getProfitTrendReport,
+      profitTrendData,
     } = this.props;
     return (
       <div className={styles.investmentAbilityAnalysis}>
@@ -142,6 +154,8 @@ export default class Home extends PureComponent {
               assetChangeList={assetChangeList}
               getAssetChangeReport={getAssetChangeReport}
               assetChangeReportData={assetChangeReportData}
+              getProfitTrendReport={getProfitTrendReport}
+              profitTrendData={profitTrendData}
             />
           </TabPane>
           <TabPane tab="资产配置分析" key="assetAllocationAnalysis">资产配置分析</TabPane>
