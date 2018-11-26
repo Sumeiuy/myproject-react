@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-25 11:31:40
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-26 15:39:31
+ * @Last Modified time: 2018-11-26 16:40:23
  * @description 账户收益走势图表
  */
 import React, { PureComponent } from 'react';
@@ -22,6 +22,7 @@ export default class ProfitTrendChart extends PureComponent {
     profitTrendData: PropTypes.object.isRequired,
   }
 
+  // 图表浮层提示框
   @autobind
   tooltipFormat(params) {
     const { dataIndex } = params[0];
@@ -168,12 +169,19 @@ export default class ProfitTrendChart extends PureComponent {
         timeRate,
       }
     } = this.props;
+    // 账户日收益率样式
     const accountDailyRateCls = classnames([styles.value, styles.accountDailyRateValue]);
+    // 沪深300日收益率样式
     const HS300DailyRateCls = classnames([styles.value, styles.HS300DailyRateValue]);
+    // 账户累计收益率样式
     const accountCumulativeRateCls = classnames([styles.value, styles.accountCumulativeRateValue]);
+    // 沪深300累计收益率样式
     const HS300CumulativeRateCls = classnames([styles.value, styles.HS300CumulativeRateValue]);
+    // 账户收益走势图提示
     const profitTrendTipData = _.map(profitTrendChartTip, item => <p>{item}</p>);
+    // 图表配置项
     const option = this.getChartOption();
+    // 走势图总结概括文字
     const profitTrendSummary = this.getProfitTrendSummary();
     return (
       <div className={styles.profitTrendChart}>
