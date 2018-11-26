@@ -33,7 +33,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   queryServiceOrderFlow: effect('productOrder/queryServiceOrderFlow'),
   queryTradeOrderFlow: effect('productOrder/queryTradeOrderFlow'),
-  queryJxGroupProduct: effect('customerPool/queryJxGroupProduct'),
+  queryJxGroupProduct: effect('customerPool/queryJxGroupProduct', { loading: false }),
   queryServiceOrderDetail: effect('productOrder/queryServiceOrderDetail'),
   queryServiceProductList: effect('productOrder/queryServiceProductList'),
   queryOrderApproval: effect('productOrder/queryOrderApproval'),
@@ -58,6 +58,8 @@ export default class ProductOrder extends PureComponent {
     queryServiceProductList: PropTypes.func.isRequired,
     queryOrderApproval: PropTypes.func.isRequired,
     queryOtherCommissions: PropTypes.func.isRequired,
+    attachmentList: PropTypes.array.isRequired,
+    getAttachmentList: PropTypes.func.isRequired,
   };
 
   static contextTypes = {
@@ -179,6 +181,8 @@ export default class ProductOrder extends PureComponent {
       queryOrderApproval,
       queryOtherCommissions,
       queryJxGroupProduct,
+      attachmentList,
+      getAttachmentList,
     } = this.props;
     const activeKey = this.getTabActiveKeyByUrl();
 
@@ -208,6 +212,8 @@ export default class ProductOrder extends PureComponent {
                 queryServiceProductList={queryServiceProductList}
                 queryOrderApproval={queryOrderApproval}
                 queryOtherCommissions={queryOtherCommissions}
+                attachmentList={attachmentList}
+                getAttachmentList={getAttachmentList}
               />
             </div>
           </TabPane>

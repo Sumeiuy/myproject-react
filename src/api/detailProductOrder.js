@@ -22,5 +22,7 @@ export default function detailProductOrder(api) {
     queryOtherCommissions: query => api.post('/groovynoauth/fsp/cust/prodorder/queryOtherCommissions', query),
     // 获取交易订单流水
     queryTradeOrderFlow: query => api.post('/groovynoauth/fsp/cust/custdetail/queryTradeOrderList', query),
+    // 获取附件列表
+    getAttachmentList: query => api.post('/file/ceFileList2', query),
   };
 };

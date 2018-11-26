@@ -46,6 +46,8 @@ export default class ProductOrderFlow extends PureComponent {
     queryOrderApproval: PropTypes.func.isRequired,
     queryOtherCommissions: PropTypes.func.isRequired,
     queryJxGroupProduct: PropTypes.func.isRequired,
+    attachmentList: PropTypes.array.isRequired,
+    getAttachmentList: PropTypes.func.isRequired,
   };
 
   static contextTypes = {
@@ -57,7 +59,7 @@ export default class ProductOrderFlow extends PureComponent {
     this.state = {
       isProductOrderDetailShow: false,
       orderNumber: '', // 订单详情的编号
-      currentServiceProductCode: '',
+      serviceProductCode: '',
       serviceType: '',
       standardStartDate: DEFAULT_START_DATE.format(DATE_FORMATE_API),
       standardEndDate: DEFAULT_END_DATE.format(DATE_FORMATE_API),
@@ -65,9 +67,19 @@ export default class ProductOrderFlow extends PureComponent {
   }
 
   componentDidMount() {
+    const {
+      serviceProductCode,
+      serviceType,
+      standardStartDate,
+      standardEndDate,
+    } = this.state;
     this.props.onProductOrderFlowChange({
       curPageNum: 1,
       pageSize: DEFAULT_PAGE_SIZE,
+      serviceProductCode,
+      serviceType,
+      createTimeFrom: standardStartDate,
+      createTimeTo: standardEndDate,
     });
   }
 
@@ -107,13 +119,13 @@ export default class ProductOrderFlow extends PureComponent {
   @autobind
   handleProductOrderFlowChange(page) {
     const {
-      currentServiceProductCode,
+      serviceProductCode,
       serviceType,
       standardStartDate,
       standardEndDate,
     } = this.state;
     let payload = {
-      serviceProductCode: currentServiceProductCode,
+      serviceProductCode,
       type: serviceType,
       createTimeFrom: standardStartDate,
       createTimeTo: standardEndDate,
@@ -196,20 +208,22 @@ export default class ProductOrderFlow extends PureComponent {
       queryServiceProductList,
       queryOrderApproval,
       queryOtherCommissions,
+      attachmentList,
+      getAttachmentList
     } = this.props;
     const {
       isProductOrderDetailShow,
       orderNumber,
-      currentServiceProductCode,
+      serviceProductCode,
       serviceType,
       standardStartDate,
       standardEndDate,
     } = this.state;
-    const {
+    let {
       dict: {
         serviceOrderType,
       }
-     } = this.context;
+    } = this.context;
     const {
       curPageNum = 1,
       pageSize = DEFAULT_PAGE_SIZE,
@@ -232,7 +246,7 @@ export default class ProductOrderFlow extends PureComponent {
               placeholder="请输入服务产品"
               showSearch
               needItemObj
-              value={currentServiceProductCode}
+              value={serviceProductCode}
               data={productListBySearch}
               onInputChange={this.handleSearchChanged}
               onChanged={this.handleServiceProductChanged}
@@ -286,6 +300,8 @@ export default class ProductOrderFlow extends PureComponent {
           queryServiceProductList={queryServiceProductList}
           queryOrderApproval={queryOrderApproval}
           queryOtherCommissions={queryOtherCommissions}
+          attachmentList={attachmentList}
+          getAttachmentList={getAttachmentList}
         />
       </div>
     );

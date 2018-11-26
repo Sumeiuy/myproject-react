@@ -19,6 +19,7 @@ export default {
     serviceProductList: EMPTY_ARRAY,
     orderApproval: EMPTY_OBJECT,
     otherCommissions: EMPTY_OBJECT,
+    attachmentList: EMPTY_ARRAY,
   },
   reducers: {
     queryServiceOrderFlowSuccess(state, action) {
@@ -63,6 +64,13 @@ export default {
         otherCommissions: payload || EMPTY_OBJECT,
       };
     },
+    getAttachmentListSuccess(state, action) {
+      const { payload = EMPTY_ARRAY } = action;
+      return {
+        ...state,
+        attachmentList: payload,
+      };
+    },
   },
   effects: {
     * queryServiceOrderFlow({ payload }, { put, call }) {
@@ -104,6 +112,13 @@ export default {
       const { resultData } = yield call(api.queryOtherCommissions, payload);
       yield put({
         type: 'queryOtherCommissionsSuccess',
+        payload: resultData,
+      });
+    },
+    * getAttachmentList({ payload }, { put, call }) {
+      const { resultData } = yield call(api.getAttachmentList, payload);
+      yield put({
+        type: 'getAttachmentListSuccess',
         payload: resultData,
       });
     },

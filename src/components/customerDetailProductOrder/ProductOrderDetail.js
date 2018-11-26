@@ -32,6 +32,8 @@ export default class ProductOrderDetail extends PureComponent {
     queryServiceProductList: PropTypes.func.isRequired,
     queryOrderApproval: PropTypes.func.isRequired,
     queryOtherCommissions: PropTypes.func.isRequired,
+    attachmentList: PropTypes.array.isRequired,
+    getAttachmentList: PropTypes.func.isRequired,
   };
 
   componentDidUpdate(prevProps) {
@@ -41,14 +43,19 @@ export default class ProductOrderDetail extends PureComponent {
         queryServiceOrderDetail,
         queryOtherCommissions,
         queryOrderApproval,
+        queryServiceProductList,
       } = this.props;
       queryServiceOrderDetail({
         orderNumber,
+        // orderNumber: '1-8892870715',
       });
       queryOtherCommissions({
         orderNumber,
       });
       queryOrderApproval({
+        orderNumber,
+      });
+      queryServiceProductList({
         orderNumber,
       });
     }
