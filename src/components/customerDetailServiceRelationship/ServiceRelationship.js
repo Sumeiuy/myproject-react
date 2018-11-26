@@ -2,18 +2,18 @@
  * @Author: wangyikai
  * @Date: 2018-11-06 13:23:32
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-22 09:36:55
+ * @Last Modified time: 2018-11-21 16:35:03
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import Icon from '../../components/common/Icon';
-import Table from '../../components/common/table';
+import Icon from '../common/Icon';
+import Table from '../common/table';
 import styles from './serviceRelationship.less';
 import { number } from '../../helper';
 import logable, { logPV } from '../../decorators/logable';
-import ServiceHistoryModal from './serviceHistoryModal';
+import ServiceHistoryModal from './ServiceHistoryModal';
 import { serviceTeamColumns, introduceColumns } from './config';
 
 export default class ServiceRelationship extends PureComponent {

@@ -2,11 +2,12 @@
  * @Author: wangyikai
  * @Date: 2018-11-05 17:45:53
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-13 10:16:16
+ * @Last Modified time: 2018-11-26 10:59:17
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import { autobind } from 'core-decorators';
 import { connect } from 'dva';
 import { dva } from '../../../../helper';
 import ServiceRelationship from '../../../../components/customeDetailServiceRelationship/serviceRelationship';
@@ -45,9 +46,52 @@ export default class Home extends PureComponent {
     getCustDevInfo: PropTypes.func.isRequired,
     //查询账户关系下的服务历史信息
     getCustServiceHistory: PropTypes.func.isRequired,
-      // 清除Redux中的数据
-   clearReduxData: PropTypes.func.isRequired,
+    // 清除Redux中的数据
+    clearReduxData: PropTypes.func.isRequired,
   }
+
+  componentDidMount() {
+    const {
+      location: {
+        query: {
+          custId,
+        },
+      },
+    } = this.props;
+    this.queryServiceRelationshipData(custId);
+  }
+
+  componentDidUpdate(prevProps) {
+    const {
+      location: {
+        query: {
+          custId: prevCustId,
+        },
+      },
+    } = prevProps;
+    const {
+      location: {
+        query: {
+          custId,
+        },
+      },
+    } = this.props;
+    // url中custId发生变化时重新请求相关数据
+    if (prevCustId !== custId) {
+      this.queryServiceRelationshipData(custId);
+    }
+  }
+
+  @autobind
+  queryServiceRelationshipData(custId) {
+    const {
+      getCustServiceTeam,
+      getCustDevInfo,
+    } = this.props;
+    getCustServiceTeam({ custId });
+    getCustDevInfo({ custId });
+  }
+
   render() {
     const {
       location,
@@ -61,13 +105,13 @@ export default class Home extends PureComponent {
     return (
       <div>
         <ServiceRelationship
-        location={location}
-        serviceTeam={serviceTeam}
-        introduce={introduce}
-        serviceHistory={serviceHistory}
-        getCustServiceTeam={getCustServiceTeam}
-        getCustDevInfo={getCustDevInfo}
-        getCustServiceHistory={getCustServiceHistory}
+          location={location}
+          serviceTeam={serviceTeam}
+          introduce={introduce}
+          serviceHistory={serviceHistory}
+          getCustServiceTeam={getCustServiceTeam}
+          getCustDevInfo={getCustDevInfo}
+          getCustServiceHistory={getCustServiceHistory}
         />
       </div>
     );

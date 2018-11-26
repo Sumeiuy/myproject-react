@@ -1,8 +1,8 @@
 /**
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-21 16:45:16
+ * @Last Modified by: wangyikai
+ * @Last Modified time: 2018-11-26 14:48:53
  */
 
 import React, { PureComponent } from 'react';
@@ -16,6 +16,7 @@ import BreadCrumb from '../../components/customerDetail/Breadcrumb';
 import SummaryInfo from '../../components/customerDetail/SummaryInfo';
 import CustomerBasicInfo from '../../components/customerDetail/CustomerBasicInfo';
 import ServiceRelationship from './tabpages/serviceRelationship/Home';
+import BusinessHand from './tabpages/businessHand/Home';
 import CustProperty from './tabpages/custProperty/connectedHome';
 import ProductOrder from './tabpages/productOrder/Home';
 import InvestmentAbilityAnalysis from './tabpages/investmentAbilityAnalysis/Home';
@@ -85,7 +86,9 @@ export default class Home extends PureComponent {
       queryCustSummaryInfo({ custId });
     }
     // 获取客户反馈字典信息
-    getMotCustfeedBackDict({ pageNum: 1, pageSize: 10000, type: 2 });
+    getMotCustfeedBackDict({ pageNum: 1,
+pageSize: 10000,
+type: 2 });
   }
 
   componentDidUpdate(prevProps) {
@@ -184,6 +187,7 @@ export default class Home extends PureComponent {
               <InvestmentAbilityAnalysis />
             </TabPane>
             <TabPane tab="业务办理" key="businessProcessing">
+              <BusinessHand location={location} />
             </TabPane>
             <TabPane tab="服务记录" key="serviceRecord">
             </TabPane>

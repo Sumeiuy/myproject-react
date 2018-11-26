@@ -44,6 +44,7 @@ import detailProductOrderAPI from './detailProductOrder';
 import activityColumnAPI from './activityColumn';
 import taskAnalysisReportAPI from './taskAnalysisReport';
 import detailInvestmentAbilityAnalysisAPI from './detailInvestmentAbilityAnalysis';
+import detailBusinessHandAPI from './detailBusinessHand';
 
 const api = apiCreator();
 
@@ -172,6 +173,8 @@ const exported = {
   taskAnalysisReport: taskAnalysisReportAPI(api),
   // ========== 客户360-投资能力分析相关api
   detailInvestmentAbilityAnalysis: detailInvestmentAbilityAnalysisAPI(api),
+  // ========== 新版客户360详情下业务办理的API
+  detailBusinessHand: detailBusinessHandAPI(api),
 };
 
 export default exported;
@@ -222,4 +225,5 @@ export const {
   activityColumn,
   taskAnalysisReport,
   detailInvestmentAbilityAnalysis,
+  detailBusinessHand,
 } = exported;

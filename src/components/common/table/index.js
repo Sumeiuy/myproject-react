@@ -8,6 +8,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import Table from './Table';
 import styles from './index.less';
+import Icon from '../../common/Icon';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 export default class CommonTable extends PureComponent {
@@ -45,6 +46,8 @@ export default class CommonTable extends PureComponent {
       paginationClass,
       isNeedEmptyRow,
       dataSource,
+      isNeedNoData,
+      components,
       ...restProps
     } = this.props;
     let newDataSource = isNeedEmptyRow ? this.padEmptyRow() : dataSource;

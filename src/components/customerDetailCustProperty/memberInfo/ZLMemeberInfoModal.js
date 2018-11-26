@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-11-15 13:53:47
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-16 17:17:35
+ * @Last Modified time: 2018-11-23 14:56:49
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -33,7 +33,8 @@ export default class ZLMemeberInfoModal extends PureComponent {
 
   // 页码改变的回调
   @autobind
-  @logable({ type: 'Click', payload: { name: '页码切换' } })
+  @logable({ type: 'Click',
+payload: { name: '页码切换' } })
   handlePaginationChange(page) {
     const { queryZLUmemberLevelChangeRecords, location: { query: { custId } } } = this.props;
     queryZLUmemberLevelChangeRecords({
@@ -42,6 +43,29 @@ export default class ZLMemeberInfoModal extends PureComponent {
       custId,
     });
   }
+
+  componentDidUpdate(prevProps) {
+    const {
+      location: {
+        query: {
+          custId: prevCustId,
+        },
+      },
+    } = prevProps;
+    const {
+      queryZLUmemberLevelChangeRecords,
+      location: {
+        query: {
+          custId,
+        },
+      },
+    } = this.props;
+    // url中custId发生变化时重新请求相关数据
+    if (prevCustId !== custId) {
+      queryZLUmemberLevelChangeRecords({ custId });
+    }
+  }
+
   render() {
     const { dataSource, onClose, visible } = this.props;
     const { list = EMPTY_ARRAY, page = EMPTY_OBJECT } = dataSource;
