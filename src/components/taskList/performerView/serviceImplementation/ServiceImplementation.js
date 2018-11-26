@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-29 10:03:45
+ * @Last Modified time: 2018-11-26 10:26:14
  */
 
 import React, { PureComponent } from 'react';
@@ -202,7 +202,7 @@ export default class ServiceImplementation extends PureComponent {
   }
 
   componentDidMount() {
-    const { isFold, getPageSize } = this.props;
+    const { isFold, getPageSize, basicInfo: { missionId } } = this.props;
     const isFoldFspLeftMenu = fsp.isFSPLeftMenuFold();
     const newPageSize = getPageSize(isFoldFspLeftMenu, isFold);
     // 给FSP折叠菜单按钮注册点击事件
@@ -213,7 +213,11 @@ export default class ServiceImplementation extends PureComponent {
       // 客户列表联动首先要将服务状态切换成 不限
       // 将客户选择到location中联动的那个客户,因为查询客户列表的接口需要客户rowId,
       // 所以必须先查一把客户信息
-      queryCustomer({ keyWord: custId }).then(this.handleCustListCascadeAfterCust);
+      // 此处的查询相关的客户列表修改成新的接口，在执行者视图详情的区域中查询，需要传递missionId，以便能够查询某个任务下的客户列表
+      queryCustomer({
+        keyWord: custId,
+        missionId,
+      }).then(this.handleCustListCascadeAfterCust);
     } else {
       // 新增一个在头部筛选选择的客户是不存在数据中的客户时,客户数据将会保存到 redux 中
       // 导致页面展示无数据图片后，删除客户筛选条件，客户数据没有重置
@@ -226,7 +230,11 @@ export default class ServiceImplementation extends PureComponent {
         preciseInputValue: '1', // 选中客户列表项第一个
         assetSort: 'desc', // 总资产排序
       });
-      this.queryTargetCustList({ state: stateList, pageSize: newPageSize, pageNum: 1 });
+      this.queryTargetCustList({
+        state: stateList,
+        pageSize: newPageSize,
+        pageNum: 1,
+      });
     }
   }
 
@@ -297,7 +305,10 @@ export default class ServiceImplementation extends PureComponent {
     // 当location中存在custId时，表示进行了筛选过滤，如果此时切换列表项也应该刷新列表数据
     const hasCustIdChange = prevCustId !== nextCustId;
     const hasSwitchApply = prevApplyId !== nextApplyId;
-    let snapshot = { needCascadeCustList: false, needResetDefault: false };
+    let snapshot = {
+      needCascadeCustList: false,
+      needResetDefault: false,
+    };
     if ( !_.isEmpty(nextCustId) && (hasCustIdChange || hasSwitchApply) ) {
       // 如果location中的客户信息变化了，则告知客户列表组件此时需要变化了
       snapshot = {
@@ -405,11 +416,15 @@ export default class ServiceImplementation extends PureComponent {
   handleCustListCascade({ needCascadeCustList, needResetDefault }) {
     // 如果location变化之后，需要判断是否进行客户列表联动
     if (needCascadeCustList) {
-      const { location: { query: { custId } }, queryCustomer } = this.props;
+      const { location: { query: { custId } }, queryCustomer, basicInfo: { missionId } } = this.props;
       // 客户列表联动首先要将服务状态切换成 不限
       // 将客户选择到location中联动的那个客户,因为查询客户列表的接口需要客户rowId,
       // 所以必须先查一把客户信息
-      queryCustomer({ keyWord: custId }).then(this.handleCustListCascadeAfterCust);
+      // 此处的查询相关的客户列表修改成新的接口，在执行者视图详情的区域中查询，需要传递missionId，以便能够查询某个任务下的客户列表
+      queryCustomer({
+        keyWord: custId,
+        missionId,
+      }).then(this.handleCustListCascadeAfterCust);
     }
     // 如果location不存在custId的时候，比如去除客户筛选
     if (needResetDefault) {
@@ -732,7 +747,10 @@ export default class ServiceImplementation extends PureComponent {
         getTaskDetailBasicInfo,
       } = this.props;
       // 重新加载基本信息,不清除服务实施客户列表中当前选中客户状态信息和筛选值、页码
-      getTaskDetailBasicInfo({ taskId: currentId, isClear: false });
+      getTaskDetailBasicInfo({
+        taskId: currentId,
+        isClear: false
+      });
       // 更新redux中的左侧列表
       modifyLocalTaskList({ missionId: currentId });
     }
@@ -827,8 +845,15 @@ export default class ServiceImplementation extends PureComponent {
     const { flowStatus = '', serveTime = '', serveWay = '' } = autoGenerateRecordInfo;
     // 打电话生成服务记录后，再去添加服务记录走的是更新过程，需要传自动生成的那条服务记录的id,
     // 服务状态为完成，code=30
-    const payload = (caller === PHONE && currentMissionFlowId === missionFlowId) ?
-      { ...postBody, id, flowStatus, serveTime, serveWay } : postBody;
+    const payload = (caller === PHONE && currentMissionFlowId === missionFlowId)
+      ? {
+          ...postBody,
+        id,
+        flowStatus,
+        serveTime,
+        serveWay,
+      }
+      : postBody;
     // 将方法接收到的参数以及添加单个服务记录的payload先保存起来，批量添加服务记录完成之后需要用到
     ADD_SERVER_RECORD_FUN_PARAM = {
       postBody,
@@ -855,7 +880,10 @@ export default class ServiceImplementation extends PureComponent {
 
   // 打开批量添加服务记录弹窗
   @autobind
-  @logPV({ pathname: '/modal/batchAddServiceRecordModal', title: '批量添加服务记录弹窗' })
+  @logPV({
+    pathname: '/modal/batchAddServiceRecordModal',
+    title: '批量添加服务记录弹窗',
+  })
   showBatchAddServiceModal() {
     this.setState({
       isShowBatchAddServiceRecord: true,
@@ -1038,7 +1066,10 @@ export default class ServiceImplementation extends PureComponent {
       });
     }
     // 涨乐财富通中才有审批和驳回状态
-    const isReject = this.isRejct({ serviceStatusCode: missionStatusCode, serviceWayCode });
+    const isReject = this.isRejct({
+      serviceStatusCode: missionStatusCode,
+      serviceWayCode,
+    });
     // 按照添加服务记录需要的服务类型和任务反馈联动的数据结构来构造数据
     const motCustfeedBackDict = transformCustFeecbackData(taskFeedbackList);
     // 服务记录的formData

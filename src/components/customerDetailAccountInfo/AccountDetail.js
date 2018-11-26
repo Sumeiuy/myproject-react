@@ -25,12 +25,16 @@ import DateFilter from '../common/htFilter/dateFilter';
 import { SingleFilterWithSearch } from 'lego-react-filter/src';
 import styles from './accountDetail.less';
 import Pagination from '../common/Pagination';
+import IfTableWrap from '../common/IfTableWrap';
 
 // 默认查询日期半年
 const DEFAULT_START_DATE = moment().subtract(6, 'months');
 const DEFAULT_END_DATE = moment().subtract(1, 'day');
 // 接口请求查询日期的格式
 const DATE_FORMATE_API = 'YYYY-MM-DD';
+const NODATA_HINT = '暂无账户变动信息';
+const EMPTY_OBJECT = {};
+const EMPTY_LIST = [];
 
 export default class AccountDetail extends PureComponent {
   static propTypes = {
@@ -97,11 +101,12 @@ export default class AccountDetail extends PureComponent {
     });
   }
 
+  // 对表格中的number类型的数据进行处理
   @autobind
   getStockTableColumns(columns) {
     return _.map(columns, column => {
       const { dataIndex } = column;
-      if (dataIndex === 'accountValue') {
+      if (dataIndex === 'accountValue' || dataIndex === 'singleFeeIncome') {
         return {
           ...column,
           className: styles.moneyCell,
@@ -117,7 +122,7 @@ export default class AccountDetail extends PureComponent {
     });
   }
 
-  //选择起止日期
+  // 选择起止日期
   @autobind
   @logable({
     type: 'DropdownSelect',
@@ -179,7 +184,10 @@ export default class AccountDetail extends PureComponent {
       fundAccount,
       stockAccount,
       busnTypeDict,
-      accountChangeRes
+      accountChangeRes: {
+        list = EMPTY_LIST,
+        page = EMPTY_OBJECT,
+      },
     } = this.props;
     const {
       startDate,
@@ -187,13 +195,16 @@ export default class AccountDetail extends PureComponent {
       bussinessType,
     } = this.state;
     // 获取分页的页数
-    const page = this.getPage(accountChangeRes.page);
+    const isRender = !_.isEmpty(list);
+    const accountChangePage = this.getPage(page);
     // 补足空白行后的资金账户数据
     const newFundAccount = supplyEmptyRow(fundAccount);
     // 补足空白行后的证券账户
     const newStockAccount = supplyEmptyRow(stockAccount);
     // 修改证券账户表格的columns
     const stockAccountColumns = this.getStockTableColumns(STOCK_ACCOUNT_TABLE_COLUMNS);
+    // 修改账户变动中表格columns
+    const accountChangeColumns = this.getStockTableColumns(ACCOUNT_CHANGE_TABLE_COLUMNS);
 
     return (
       <div className={styles.accountDetailWrap}>
@@ -253,18 +264,20 @@ export default class AccountDetail extends PureComponent {
               />
             </div>
           </div>
-          <div className={styles.accountTable}>
-            <Table
-              pagination={false}
-              className={styles.tableBorder}
-              dataSource={accountChangeRes.list}
-              columns={ACCOUNT_CHANGE_TABLE_COLUMNS}
+          <IfTableWrap isRender={isRender} text={NODATA_HINT}>
+            <div className={styles.accountTable}>
+              <Table
+                pagination={false}
+                className={styles.tableBorder}
+                dataSource={list}
+                columns={accountChangeColumns}
+              />
+            </div>
+            <Pagination
+              {...accountChangePage}
+              onChange={this.handlePageChange}
             />
-          </div>
-          <Pagination
-            {...page}
-            onChange={this.handlePageChange}
-          />
+          </IfTableWrap>
         </div>
       </div>
     );

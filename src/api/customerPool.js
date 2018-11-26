@@ -13,7 +13,8 @@ function fixDictoryKeys(dict) {
     ...dict,
     resultData: {
       ...resultData,
-      deputeStatusDictList: _.map(deputeList, item => ({ value: item.key, label: item.value })),
+      deputeStatusDictList: _.map(deputeList, item => ({ value: item.key,
+label: item.value })),
     },
   };
 }
@@ -38,6 +39,12 @@ export default function customerPool(api) {
 
     // 查询待办流程记录列表
     getToDoList: query => api.post('/groovynoauth/fsp/emp/workflow/queryWorkFlowTaskList', query),
+    // 我的申请
+    getApplyList: query => api.post('/groovynoauth/fsp/emp/workflow/queryStartProcessTaskList', query),
+    // 我的审批
+    getApproveList: query => api.post('/groovynoauth/fsp/emp/workflow/queryParticipateProcessTaskList', query),
+    // 发起人下拉框
+    getInitiator: query => api.post('/groovynoauth/fsp/emp/workflow/queryOriginValues', query),
 
     // 获取客户池经营指标
     // getManageIndicators: query => api.post('/groovynoauth/fsp/emp/kpi/queryEmpKPIs', query),

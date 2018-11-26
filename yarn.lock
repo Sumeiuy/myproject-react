@@ -5358,6 +5358,7 @@ lego-react-date@^1.0.8:
     moment "^2.22.2"
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 lego-react-filter@^1.1.17:
   version "1.1.17"
   resolved "http://168.61.48.13:4873/lego-react-filter/-/lego-react-filter-1.1.17.tgz#f6dd523ade019668607914d88c58e27009fb7e7d"
@@ -5367,6 +5368,11 @@ lego-react-filter@^1.1.21:
   version "1.1.21"
   resolved "http://168.61.48.13:4873/lego-react-filter/-/lego-react-filter-1.1.21.tgz#f5377b8f00af58d2df31d14b10c50f3d8239bb4e"
 >>>>>>> master
+=======
+lego-react-filter@^1.1.23:
+  version "1.1.23"
+  resolved "http://168.61.48.13:4873/lego-react-filter/-/lego-react-filter-1.1.23.tgz#20967295dc6382ba3ec8eead2ba5279c1844f48b"
+>>>>>>> b20181123
 
 lego-schedule@^1.0.6:
   version "1.0.6"

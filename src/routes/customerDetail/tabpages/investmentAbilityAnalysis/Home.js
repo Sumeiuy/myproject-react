@@ -1,8 +1,13 @@
 /*
  * @Author: zhangjun
  * @Date: 2018-11-19 15:39:12
+<<<<<<< HEAD
  * @Last Modified by: zuoguangzu
  * @Last Modified time: 2018-11-23 20:37:55
+=======
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-11-23 14:46:57
+>>>>>>> 9d1b39b7fada91dede356227bd0cb1ff5aca09f9
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -27,6 +32,10 @@ const effects = {
   getProfitAbility: 'detailInvestmentAbilityAnalysis/getProfitAbility',
   // 获取投资账户特征
   getInvestmentFeatureLabels: 'detailInvestmentAbilityAnalysis/getInvestmentFeatureLabels',
+  // 获取账户资产变动
+  getAssetChangeState: 'detailInvestmentAbilityAnalysis/getAssetChangeState',
+  // 获取账户资产变动图表
+  getAssetChangeReport: 'detailInvestmentAbilityAnalysis/getAssetChangeReport',
 };
 
 const mapStateToProps = state => ({
@@ -34,6 +43,10 @@ const mapStateToProps = state => ({
   profitAbility: state.detailInvestmentAbilityAnalysis.profitAbility,
   // 投资账户特征
   investmentFeatureLabels: state.detailInvestmentAbilityAnalysis.investmentFeatureLabels,
+  // 账户资产变动
+  assetChangeList: state.detailInvestmentAbilityAnalysis.assetChangeList,
+  // 账户资产变动图表数据
+  assetChangeReportData: state.detailInvestmentAbilityAnalysis.assetChangeReportData,
 });
 
 const mapDispatchToProps = {
@@ -41,6 +54,10 @@ const mapDispatchToProps = {
   getProfitAbility: effect(effects.getProfitAbility, { forceFull: true }),
   // 获取投资账户特征
   getInvestmentFeatureLabels: effect(effects.getInvestmentFeatureLabels, { forceFull: true }),
+  // 获取账户资产变动
+  getAssetChangeState: effect(effects.getAssetChangeState, { forceFull: true }),
+  // 获取账户资产变动图表
+  getAssetChangeReport: effect(effects.getAssetChangeReport, { forceFull: true }),
 };
 
 @withRouter
@@ -56,6 +73,14 @@ export default class Home extends PureComponent {
     investmentFeatureLabels: PropTypes.array.isRequired,
     // 获取投资账户特征
     getInvestmentFeatureLabels: PropTypes.func.isRequired,
+    // 获取账户资产变动
+    getAssetChangeState: PropTypes.func.isRequired,
+    // 账户资产变动
+    assetChangeList: PropTypes.array.isRequired,
+    // 获取账户资产变动图表
+    getAssetChangeReport: PropTypes.func.isRequired,
+    // 账户资产变动图表数据
+    assetChangeReportData: PropTypes.array.isRequired,
   }
 
   static contextTypes = {
@@ -104,6 +129,10 @@ export default class Home extends PureComponent {
       getProfitAbility,
       investmentFeatureLabels,
       getInvestmentFeatureLabels,
+      getAssetChangeState,
+      assetChangeList,
+      getAssetChangeReport,
+      assetChangeReportData,
     } = this.props;
     return (
       <div className={styles.investmentAbilityAnalysis}>
@@ -115,6 +144,10 @@ export default class Home extends PureComponent {
               getProfitAbility={getProfitAbility}
               investmentFeatureLabels={investmentFeatureLabels}
               getInvestmentFeatureLabels={getInvestmentFeatureLabels}
+              getAssetChangeState={getAssetChangeState}
+              assetChangeList={assetChangeList}
+              getAssetChangeReport={getAssetChangeReport}
+              assetChangeReportData={assetChangeReportData}
             />
           </TabPane>
           <TabPane tab="资产配置分析" key="assetAllocationAnalysis">

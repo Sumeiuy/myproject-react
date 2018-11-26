@@ -2,8 +2,8 @@
  * @Description: PC电话拨号页面
  * @Author: maoquan
  * @Date: 2018-04-11 20:22:50
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-09 17:03:56
+ * @Last Modified by: zhangmei
+ * @Last Modified time: 2018-11-12 13:26:28
  */
 
 import React, { PureComponent } from 'react';
@@ -200,9 +200,9 @@ export default class Phone extends PureComponent {
     });
   }
 
-  // TODO 日志查看:找不到方法 未验证
   @autobind
-  @logable({ type: 'Click', payload: { name: '点击' } })
+  @logable({ type: 'Click',
+payload: { name: '拨打电话' } })
   handleClick() {
     const { number, custType, onClick } = this.props;
     if (this.canCall() !== true) {
@@ -225,6 +225,8 @@ export default class Phone extends PureComponent {
     onClick({
       number,
       custType,
+     }).then(() => {
+      this.prepareCall(number);
     });
     this.prepareCall(number);
     this.showMask();
@@ -232,14 +234,16 @@ export default class Phone extends PureComponent {
 
   // 显示通话蒙版
   @autobind
-  @logable({ type: 'Click', payload: { name: '显示' } })
+  @logable({ type: 'Click',
+payload: { name: '显示' } })
   showMask() {
     this.setState({ showMask: true });
   }
 
   // 隐藏通话蒙版
   @autobind
-  @logable({ type: 'Click', payload: { name: '隐藏' } })
+  @logable({ type: 'Click',
+payload: { name: '隐藏' } })
   hideMask() {
     this.setState({ showMask: false });
   }

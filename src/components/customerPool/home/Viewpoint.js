@@ -26,7 +26,8 @@ export default class Viewpoint extends PureComponent {
 
   @autobind
   openNewTab(url, query, editPane) {
-    const param = { id: 'RTC_TAB_VIEWPOINT', title: '资讯' };
+    const param = { id: 'RTC_TAB_VIEWPOINT',
+title: '资讯' };
     const { push } = this.props;
     openRctTab({
       routerAction: push,
@@ -39,26 +40,28 @@ export default class Viewpoint extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '更多 >' } })
+  @logable({ type: 'Click',
+payload: { name: '更多 >' } })
   handleMoreClick() {
     // 跳转到资讯列表界面
-    this.openNewTab('/latestView/viewpointList', null,
+    this.openNewTab('/strategyCenter/latestView/viewpointList', null,
       {
         name: '资讯列表',
-        path: '/latestView/viewpointList',
+        path: '/strategyCenter/latestView/viewpointList',
       });
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '详情' } })
+  @logable({ type: 'Click',
+payload: { name: '详情' } })
   handleDetailClick(id) {
     // 跳转到资讯详情界面
-    this.openNewTab('/latestView/viewpointDetail', {
+    this.openNewTab('/strategyCenter/latestView/viewpointDetail', {
       id,
     },
       {
         name: '资讯详情',
-        path: '/latestView/viewpointDetail',
+        path: '/strategyCenter/latestView/viewpointDetail',
       });
   }
 
@@ -120,7 +123,8 @@ export default class Viewpoint extends PureComponent {
     const formateAbstract = newFormateAbstract.replace('↵', '');
     const isShowMore = infoVOList.length > 12;
     const isHiddenDetail = _.isEmpty(abstract);
-    const newInfoVOList = _.map(infoVOList, (item, index) => ({ ...item, id: `${index}` }));
+    const newInfoVOList = _.map(infoVOList, (item, index) => ({ ...item,
+id: `${index}` }));
     return (
       <div className={styles.container}>
         <div className={styles.head}>首席投顾观点</div>

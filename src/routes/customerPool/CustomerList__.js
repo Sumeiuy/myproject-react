@@ -10,6 +10,7 @@ import { routerRedux } from 'dva/router';
 import { connect } from 'dva';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import { message } from 'antd';
 import store from 'store';
 import introJs from 'intro.js';
 // 修复 intro 样式错乱-v2.9.3
@@ -19,9 +20,10 @@ import Filter from '../../components/customerPool/list/Filter__';
 import CustomerLists from '../../components/customerPool/list/CustomerLists__';
 import MatchArea from '../../components/customerPool/list/individualInfo/MatchArea';
 import { dynamicInsertQuota } from '../../components/customerPool/list/sort/config';
-import { permission, emp, url, check, dva } from '../../helper';
+import { permission, emp, url, check, dva, env } from '../../helper';
 import withRouter from '../../decorators/withRouter';
 import { seperator, sessionStore } from '../../config';
+import { custListSearchFilterTypes } from '../../components/customerPool/list/config/filterConfig';
 
 import {
   ALL_DEPARTMENT_ID,
@@ -44,8 +46,13 @@ const EMPTY_OBJECT = {};
 const CUR_PAGE = 1; // 默认当前页
 const CUR_PAGESIZE = 20; // 默认页大小
 
+let prevFilterValue ={riskLevels:'',
+investPeriod:'',
+investVariety:''}; // 用于暂存第一次点击风险三要素(风险等级、投资期限、投资偏好)
+
 const DEFAULT_SORT_DIRECTION = 'desc';
-const DEFAULT_SORT = { sortType: 'totAset', sortDirection: DEFAULT_SORT_DIRECTION }; // 默认排序方式
+const DEFAULT_SORT = { sortType: 'totAset',
+sortDirection: DEFAULT_SORT_DIRECTION }; // 默认排序方式
 
 // 存储在本地用来判断是否第一次进入新版客户列表页面
 const IS_FIRST_TIME_LOAD_CUSTOMER_LIST = 'IS_FIRST_TIME_LOAD_CUSTOMER_LIST';
@@ -76,6 +83,7 @@ function addRangeParams(filterObj) {
     'avlAmtCrdt', // 信用可用资金
     'totMktVal', // 总市值
     'outMktVal', // 外部市值
+    'ttfMktVal', // 天天发市值
   ];
 
   _.each(rangeParam, (key) => {
@@ -182,6 +190,7 @@ function addSingleParams(filterObj) {
   const singleParams = [
     'customType',  // 客户性质
     'custClass',  // 客户类型
+    'investVariety', // 投资偏好
   ];
 
   _.each(singleParams, (key) => {
@@ -201,6 +210,7 @@ function addMultiParams(filterObj) {
     'customerLevel', // 客户等级
     'accountStatus', // 账户状态
     'completedRate', // 信息完备率
+    'investPeriod', // 投资期限
     'riskLevels', // 风险等级
     'customLabels', //自定义客户标签
   ];
@@ -295,7 +305,9 @@ function getSortParam(query, filterParams) {
   const sortFilter = filterParams[sortType] || {};
   const dateType = sortFilter.dateType || '';
   if (sortType && sortDirection) {
-    sortsReqList = [{ sortType, sortDirection, dateType }];
+    sortsReqList = [{ sortType,
+sortDirection,
+dateType }];
   }
   return {
     sortsReqList,
@@ -745,6 +757,11 @@ export default class CustomerList extends PureComponent {
         param.searchTypeReq = null;
         param.searchText = null;
       }
+      if (query.type === 'STK_ACCTS') {
+        // 股东账号,要求传入客户经济和和类型(SOR_PTY_ID)
+        param.searchText = query.labelMapping;
+        param.searchTypeReq = 'SOR_PTY_ID';
+      }
     }
 
     if (query.source === 'tag' || query.source === 'sightingTelescope') {
@@ -821,7 +838,8 @@ export default class CustomerList extends PureComponent {
     };
     // url中存在ptyMng，取id
     if (_.has(finalQuery, 'ptyMngId')) {
-      return { ptyMngId, ptyMngName };
+      return { ptyMngId,
+ptyMngName };
     }
     // 从首页的搜索、热词、联想词、瞄准镜和外部平台过来，判断是否有任务管理权限
     if (_.includes(ENTERLIST_PERMISSION_TASK_MANAGE, finalQuery.source)) {
@@ -889,7 +907,8 @@ export default class CustomerList extends PureComponent {
       location: { query },
     } = this.props;
     const { sortType = '', sortDirection = '' } = query;
-    let currentSort = { sortType, sortDirection };
+    let currentSort = { sortType,
+sortDirection };
     const { clearAllMoreFilters, name, value } = filterItem;
     let valueList = _.split(value, seperator.filterValueSeperator);
     valueList = _.filter(valueList, valueItem => valueItem !== '');
@@ -898,7 +917,8 @@ export default class CustomerList extends PureComponent {
     }
     // 当删除当前排序指标对应的过滤器时，排序指标置空使用默认值
     if (isDeleteFilterFromLocation && name === sortType) {
-      currentSort = { sortType: '', sortDirection: '' };
+      currentSort = { sortType: '',
+sortDirection: '' };
     }
     const needDynamicInsertQuota = _.find(dynamicInsertQuota, item => item.filterType === name);
     if (needDynamicInsertQuota) {
@@ -909,7 +929,8 @@ export default class CustomerList extends PureComponent {
           sortDirection: DEFAULT_SORT_DIRECTION,
         };
       } else if (name === sortType) {
-        currentSort = { sortType: '', sortDirection: '' };
+        currentSort = { sortType: '',
+sortDirection: '' };
       }
     }
     return currentSort;
@@ -950,9 +971,53 @@ export default class CustomerList extends PureComponent {
     });
   }
 
+
+  //记录是否第一次选择风险三要素（风险等级、投资期限、投资偏好）
+  @autobind
+  recordPrevFilterValue(obj, isDel) {
+    if (obj.name === 'investPeriod'
+      || obj.name === 'investVariety'
+      || obj.name === 'riskLevels' ) {
+        if (isDel || obj.fromMoreFilter) {
+          prevFilterValue[obj.name] = ''; // 关闭过滤组件时清空值。
+          return;
+        }
+        if (!prevFilterValue[obj.name]) {
+          const messageContent = '取自T-1日数据，仅供用于客户筛查，不能作为客户适当性判定的最终依据！';
+          message.warning(
+             `${obj.name === 'investPeriod' ? '投资期限' : (obj.name === 'investVariety' ? '投资偏好' : '风险等级')}${messageContent}`
+             ,4);
+        }
+        prevFilterValue[obj.name] = obj.value;
+    }
+  }
+
+  // 将传入的filtersData里的匹配中custSerach五种类型之一的数据清除，
+  @autobind
+  getReplacedFiltersData(filtersArray, name) {
+    // 判断当前触发filterChange的类型是否是属于筛选部分搜索框里的五种类型之一
+    const flag = !_.isEmpty(
+      _.filter(custListSearchFilterTypes, item => item === name)
+    );
+    if (!flag) {
+      return filtersArray;
+    }
+    return _.filter(filtersArray,
+      item => _.isEmpty(
+          _.filter(custListSearchFilterTypes,
+          itemType => {
+            return item.indexOf(itemType) > -1;
+          }
+        )
+      )
+    );
+  }
+
   // 筛选变化
   @autobind
   handleFilterChange(obj, isDeleteFilterFromLocation = false, options = {}) {
+    // 如果是第一次勾选风险三要素（风险等级、投资期限、投资品种）弹出提示
+    this.recordPrevFilterValue(obj, isDeleteFilterFromLocation);
     const {
       replace,
       location: { query, pathname },
@@ -965,10 +1030,13 @@ export default class CustomerList extends PureComponent {
     // type.a|category.b,c,d  形式放到url中
     const { filters = '' } = query;
     const filtersArray = filters ? filters.split(filterSeperator) : [];
-    const newFilterArray = [...filtersArray];
+    // const newFilterArray = [...filtersArray];
+    const newFilterArray = this.getReplacedFiltersData(filtersArray, obj.name);
+
 
     // 手动上传日志
-    handleFilter({ name: obj.name, value: obj.value });
+    handleFilter({ name: obj.name,
+value: obj.value });
 
     // 清除url上所有的已选moreFilter
     if (obj.clearAllMoreFilters) {
@@ -1025,7 +1093,8 @@ export default class CustomerList extends PureComponent {
       handleOrder,
     } = this.props;
     // 手动上传日志
-    handleOrder({ sortType: obj.sortType, sortDirection: obj.sortDirection });
+    handleOrder({ sortType: obj.sortType,
+sortDirection: obj.sortDirection });
 
     replace({
       pathname,
@@ -1171,7 +1240,8 @@ export default class CustomerList extends PureComponent {
     // 排序的默认值 ： 总资产降序
     let reorderValue = DEFAULT_SORT;
     if (sortType && sortDirection) {
-      reorderValue = { sortType, sortDirection };
+      reorderValue = { sortType,
+sortDirection };
     }
     const { expandAll, queryParam } = this.state;
 
@@ -1180,8 +1250,10 @@ export default class CustomerList extends PureComponent {
       custRange: serviceDepartment,
       expandAll,
     };
+
+    const customerListStyle = env.isInReact() ? { marginTop: 0 } : null;
     return (
-      <div className={styles.customerlist}>
+      <div className={styles.customerlist} style={customerListStyle}>
         <Filter
           filtersOfAllSightingTelescope={allSightingTelescopeFilters}
           getFiltersOfSightingTelescopeSequence={getFiltersOfSightingTelescopeSequence}

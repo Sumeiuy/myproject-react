@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 执行者视图模块的接口
  * @Date: 2018-08-20 13:15:28
- * @Last Modified by:   XuWenKang
- * @Last Modified time: 2018-08-20 13:15:28
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-11-12 13:44:01
  */
 
 export default function performerView(api) {
@@ -45,7 +45,7 @@ export default function performerView(api) {
     // 导出
     exportCustListExcel: query => api.post('/groovynoauth/fsp/assess/common/exportCustListExcel', query),
     // 执行者视图查客户
-    queryCustomer: query => api.post('/groovynoauth/fsp/cust/custlist/queryCustsServedByEmpId', query),
+    queryCustomer: query => api.post('/groovynoauth/fsp/cust/custlist/queryMssnCustsByExecutorId', query),
     // 任务列表管理者视图下任务实施简报的生成
     createMotReport: query => api.post('/groovynoauth/fsp/campaign/mot/createMOTFeedBackExcelFile', query),
     // 获取生成报告信息

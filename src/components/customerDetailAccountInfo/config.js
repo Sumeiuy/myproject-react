@@ -720,36 +720,35 @@ export const CAPITAL_CHANGE_COLUMNS = [
     title: '币种',
     dataIndex: 'currency',
     key: 'currency',
-    align: 'right',
     className:'currency'
   },
   {
     title: '交易渠道',
     dataIndex: 'tradeChannel',
     key: 'tradeChannel',
-    align: 'right',
     className:'tradeChannel'
   },
   {
     title: '业务标志',
     dataIndex: 'serviceIndication',
     key: 'serviceIndication',
-    align: 'right',
     className:'serviceIndication'
   },
   {
-    title: '交易金额',
+    title: '交易金额(元)',
     dataIndex: 'ammount',
     key: 'ammount',
     align: 'right',
-    className:'ammount'
+    className:'ammount',
+    isNumber: true,
   },
   {
-    title: '余额',
+    title: '余额(元)',
     dataIndex: 'balance',
     key: 'balance',
     align: 'right',
-    className: 'balance'
+    className: 'balance',
+    isNumber: true,
   },
 ];
 

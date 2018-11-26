@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 22:49:02
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-17 15:28:40
+ * @Last Modified time: 2018-11-12 13:46:44
  */
 
 import React from 'react';
@@ -16,7 +16,8 @@ import { ASSET_DESC } from './config';
 import styles from './header.less';
 
 // 状态为不限
-const STATE_UNLIMITED = { key: '', value: '不限' };
+const STATE_UNLIMITED = { key: '',
+value: '不限' };
 
 // 筛选列表的浮层父节点id
 const popupContainer = '#performerViewDetail';
@@ -41,6 +42,7 @@ export default function Header(props) {
     parameter,
     targetCustList,
     queryCustomer,
+    basicInfo: { missionId },
   } = props;
   const { state, assetSort, rowId, preciseInputValue } = parameter;
   const { page: { totalCount }, list } = targetCustList;
@@ -57,7 +59,8 @@ export default function Header(props) {
   };
   const handleSearchCustomer = (value) => {
     if (value) {
-      queryCustomer({ keyWord: value });
+      queryCustomer({ keyWord: value,
+missionId });
     }
   };
   const stateData = [STATE_UNLIMITED, ...dict.serveStatus];

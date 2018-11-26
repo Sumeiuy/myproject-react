@@ -105,6 +105,13 @@ const fspRoutes = [
     action: 'loadInTab',
     url: /\/customerCenter\/360\/.+(?=operateType)/,
   },
+  // 投顾签约计划续签向导
+  {
+    path: '/fsp/customerCenter/stockContractRenew',
+    action: 'loadInTab',
+    containerId: 'stockContractRenew-wizard',
+    url: /client\/tgcontractrenew\/wizard\/main/,
+  },
   // 投顾签约计划变更向导
   {
     path: '/fsp/customerCenter/360Wizard',
@@ -344,6 +351,34 @@ const fspRoutes = [
     action: 'loadInTab',
     containerId: 'FSP_M_K_CENTER',
     url: '/knowledge/initmain',
+  },
+  // 专项业务知识
+  {
+    path: '/fsp/knowledge',
+    action: 'loadInTab',
+    containerId: 'FSP_M_K_CENTER',
+    url: '/knowledge/initmain',
+  },
+  // 业务知识信息
+  {
+    path: '/fsp/showKnowledgeDetail',
+    action: 'loadInTab',
+    containerId: 'edit_btn_showDetailsKnowledge',
+    url: /\/knowledge\/showUpdKnowledge\?.*details$/,
+  },
+  // 新建专项业务知识
+   {
+    path: '/fsp/knowledgeEdit',
+    action: 'loadInTab',
+    containerId: 'edit_btn_showDetailsKnowledge',
+    url: /\/knowledge\/showeAddKnowledge/,
+  },
+  // 编辑专项业务知识
+  {
+    path: '/fsp/knowledgeEdit',
+    action: 'loadInTab',
+    containerId: 'edit_btn_showDetailsKnowledge',
+    url: /\/knowledge\/showUpdKnowledge/,
   },
 ];
 

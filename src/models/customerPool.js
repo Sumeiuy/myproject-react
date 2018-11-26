@@ -190,6 +190,12 @@ export default {
     industryDetail: EMPTY_OBJECT,
     // 客户列表自定义标签
     definedLabelsInfo: EMPTY_LIST,
+    // 申请列表
+    applyList: EMPTY_OBJECT,
+    // 审批列表
+    approveList: EMPTY_OBJECT,
+    // 发起人下拉框数据
+    initiator: EMPTY_LIST,
   },
 
   subscriptions: {
@@ -244,7 +250,7 @@ export default {
             });
           },
           todo(params) {
-            const { keyword } = params;
+            const { keyword, taskType } = params;
             if (keyword) {
               dispatch({
                 type: 'search',
@@ -253,10 +259,12 @@ export default {
               });
               return;
             }
-            dispatch({
-              type: 'getToDoList',
-              loading: true,
-            });
+            if (taskType === 'MY_TODO') {
+              dispatch({
+                type: 'getToDoList',
+                loading: true,
+              });
+            }
           },
         };
         const matchRouteAndCallback = matchRouteAndexec.bind(this, pathname, query);
@@ -264,6 +272,7 @@ export default {
       });
     },
   },
+
   effects: {
     // 投顾绩效
     * getCustCount({ payload }, { call, put }) {  //eslint-disable-line
@@ -353,7 +362,8 @@ export default {
       const { resultData: { monthlyProfits } } = yield call(api.getCustIncome, payload);
       yield put({
         type: 'getCustIncomeSuccess',
-        payload: { ...payload, monthlyProfits },
+        payload: { ...payload,
+monthlyProfits },
       });
     },
     // 默认推荐词及热词推荐列表及历史搜索数据
@@ -457,12 +467,15 @@ export default {
       }
       yield put({
         type: 'getCustContactSuccess',
-        payload: { resultData, custId },
+        payload: { resultData,
+custId },
       });
       // 唤起电话联系弹窗时，获取自建任务平台的服务类型、任务反馈字典，为打电话做准备
       yield put({
         type: 'app/getMotCustfeedBackDict',
-        payload: { pageNum: 1, pageSize: 10000, type: 2 },
+        payload: { pageNum: 1,
+pageSize: 10000,
+type: 2 },
       });
     },
     * getCustEmail({ payload }, { call, put, select }) {
@@ -477,7 +490,8 @@ export default {
       }
       yield put({
         type: 'getCustEmailSuccess',
-        payload: { resultData, custId },
+        payload: { resultData,
+custId },
       });
     },
     // 获取最近五次服务记录
@@ -495,12 +509,15 @@ export default {
         const { resultData: fileResultData } = fileListRes;
         yield put({
           type: 'getServiceRecordSuccess',
-          payload: { resultData, custId, fileResultData },
+          payload: { resultData,
+custId,
+fileResultData },
         });
       } else {
         yield put({
           type: 'getServiceRecordSuccess',
-          payload: { resultData, custId },
+          payload: { resultData,
+custId },
         });
       }
     },
@@ -633,7 +650,9 @@ export default {
       const { resultData } = response;
       yield put({
         type: 'deleteCustomerFromGroupSuccess',
-        payload: { resultData, custId, groupId },
+        payload: { resultData,
+custId,
+groupId },
       });
       yield put({
         type: 'toastM',
@@ -673,7 +692,8 @@ export default {
         const { resultData: fileResultData } = fileListRes;
         yield put({
           type: 'getServiceLogSuccess',
-          payload: { resultData, fileResultData },
+          payload: { resultData,
+fileResultData },
         });
       } else {
         yield put({
@@ -688,8 +708,10 @@ export default {
         yield put({
           type: 'getSearchServerPersonListSuccess',
           payload: [
-            { ptyMngName: '所有人', ptyMngId: '' },
-            { ptyMngName: '我的', ptyMngId: emp.getId() },
+            { ptyMngName: '所有人',
+ptyMngId: '' },
+            { ptyMngName: '我的',
+ptyMngId: emp.getId() },
           ],
         });
       } else {
@@ -840,7 +862,8 @@ export default {
     },
     // 根据问题IdList生成模板id
     * generateTemplateId({ payload }, { call, put }) {
-      const { resultData } = yield call(api.generateTemplateId, { ...payload, assessType });
+      const { resultData } = yield call(api.generateTemplateId, { ...payload,
+assessType });
       yield put({
         type: 'generateTemplateIdSuccess',
         payload: resultData,
@@ -947,7 +970,8 @@ export default {
       const { resultData } = yield call(api.queryHoldingProduct, payload);
       yield put({
         type: 'queryHoldingProductSuccess',
-        payload: { ...payload, resultData },
+        payload: { ...payload,
+resultData },
       });
     },
     // 添加电话记录，关联打电话自动生成的服务记录
@@ -994,7 +1018,8 @@ export default {
       if (code === '0') {
         yield put({
           type: 'queryHoldingIndustryDetailSuccess',
-          payload: { ...payload, resultData: resultData.detail },
+          payload: { ...payload,
+resultData: resultData.detail },
         });
       }
     },
@@ -1009,6 +1034,30 @@ export default {
       yield put({
         type: 'queryDefinedLabelsInfoSuccess',
         payload: finalResultData,
+      });
+    },
+    // 获取申请列表
+    * getApplyList({ payload }, { call, put }) {
+      const resultData = yield call(api.getApplyList, payload);
+      yield put({
+        type: 'getApplyListSuccess',
+        payload: resultData,
+      });
+    },
+    // 获取审批列表
+    * getApproveList({ payload }, { call, put }) {
+      const resultData = yield call(api.getApproveList, payload);
+      yield put({
+        type: 'getApproveListSuccess',
+        payload: resultData,
+      });
+    },
+    // 获取发起人下拉框
+    * getInitiator({ payload }, { call, put }) {
+      const resultData = yield call(api.getInitiator, payload);
+      yield put({
+        type: 'getInitiatorSuccess',
+        payload: resultData,
       });
     },
   },
@@ -1091,7 +1140,9 @@ export default {
       let custRange = [];
       if (resultData) {
         custRange = [
-          { id: resultData.id, name: resultData.name, level: resultData.level },
+          { id: resultData.id,
+name: resultData.name,
+level: resultData.level },
           ...resultData.children,
         ];
       }
@@ -1740,7 +1791,8 @@ export default {
     queryHoldingIndustryDetailSuccess(state, action) {
       const { payload: { industryId, custId, resultData } } = action;
       // 在集合里面添加一个industryNameCode，存的是已经组合在一起的name/code，方便页面中展示
-      const currentList = _.map(resultData, item => ({ ...item, industryNameCode: `${item.name}/${item.code}` }));
+      const currentList = _.map(resultData, item => ({ ...item,
+industryNameCode: `${item.name}/${item.code}` }));
       return {
         ...state,
         industryDetail: {
@@ -1756,5 +1808,29 @@ export default {
         definedLabelsInfo: payload,
       };
     },
+    // 获取申请列表成功
+    getApplyListSuccess(state, action) {
+      const { payload: { resultData = {} } } = action;
+      return {
+        ...state,
+        applyList: resultData,
+      };
+    },
+    // 获取审批列表成功
+    getApproveListSuccess(state, action) {
+      const { payload: { resultData = {} }} = action;
+      return {
+        ...state,
+        approveList: resultData,
+      };
+    },
+    // 发起人下拉框
+    getInitiatorSuccess(state, action) {
+      const { payload: { resultData: { empInfo = [] } }} = action;
+      return {
+        ...state,
+        initiator: empInfo,
+      };
+    }
   },
 };
