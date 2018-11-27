@@ -54,11 +54,6 @@ export default class Person extends PureComponent {
   }
 
   @autobind
-  getViewDataByNum(value) {
-    return _.isNumber(value) ? number.thousandFormat(value) : DEFAULT_VALUE;
-  }
-
-  @autobind
   refreshData() {
     const {
       location: {
@@ -223,9 +218,9 @@ export default class Person extends PureComponent {
           <InfoItem
             width={INFO_ITEM_WITDH}
             label="可投资资产占比"
-            value={this.getViewDataByNum(data.investableAssetsCycle)}
+            value={data.investableAssetsCycle || DEFAULT_VALUE}
             className={styles.infoItem}
-            isNeedValueTitle={checkIsNeedTitle(this.getViewDataByNum(data.investableAssetsCycle))}
+            isNeedValueTitle={checkIsNeedTitle(data.investableAssetsCycle)}
             isNeedOverFlowEllipsis
           />
         </div>
