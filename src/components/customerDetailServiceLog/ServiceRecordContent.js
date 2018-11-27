@@ -46,7 +46,7 @@ export default function ServiceRecordContent(props) {
           <IfWrap isRender={!isMOTReturnVisitTask}>
             <ServiceRecordItem
               feedbackStatus={item.zlcftMsgStatus}
-              content={item.custFeedback}
+              content={item.zlcftMsgStatus}
               title={'客户反馈'}
             />
           </IfWrap>
@@ -105,7 +105,7 @@ export default function ServiceRecordContent(props) {
       </IfWrap>
       <ServiceRecordItem
         feedbackStatus={item.zlcftMsgStatus}
-        content={item.custFeedback}
+        content={item.zlcftMsgStatus}
         title={'客户反馈'}
       />
       <ServiceRecordItem
