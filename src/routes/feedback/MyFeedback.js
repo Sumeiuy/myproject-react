@@ -45,6 +45,8 @@ const mapDispatchToProps = {
   getProcessList: fetchDataFunction(true, 'feedback/getAnserOfQustionList'),
   // 更新反馈信息
   updateFeedback: fetchDataFunction(true, 'feedback/updateFeedback'),
+  // 增加满意度信息
+  addFeedbackEvaluation: fetchDataFunction(true, 'feedback/addFeedbackEvaluation'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -60,6 +62,7 @@ export default class MyFeedback extends PureComponent {
     getFeedbackDetail: PropTypes.func.isRequired,
     getProcessList: PropTypes.func.isRequired,
     updateFeedback: PropTypes.func.isRequired,
+    addFeedbackEvaluation: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
   }
 
@@ -321,6 +324,7 @@ export default class MyFeedback extends PureComponent {
       processList,
       personFeedback,
       feedbackDetail,
+      addFeedbackEvaluation,
       location: {
         query: {
           curPageNum = 1,
@@ -360,6 +364,7 @@ export default class MyFeedback extends PureComponent {
         feedbackDetail={feedbackDetail.resultData || {}}
         showQuestionModal={this.handleQuestionClick}
         resolveQuestion={this.handleResolveClick}
+        addFeedbackEvaluation={addFeedbackEvaluation}
       />
     );
     return (
