@@ -33,6 +33,14 @@ export default class MyDetail extends PureComponent {
     addFeedbackEvaluation: PropTypes.func.isRequired,
   }
   
+  constructor(props) {
+    super(props);
+    this.state = {
+      evaluationStatus: props.feedbackDetail.evaluation,
+      preFeedbackDetail: props.feedbackDetail,
+    };
+  }
+
   // 点击每一个反馈都会更新里面的值
   static getDerivedStateFromProps(nextProps, prevState) {
     if (nextProps.feedbackDetail !== prevState.preFeedbackDetail) {
@@ -43,15 +51,6 @@ export default class MyDetail extends PureComponent {
     }
     return null;
   }
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      evaluationStatus: props.feedbackDetail.evaluation,
-      preFeedbackDetail: props.feedbackDetail,
-    };
-  }
-
 
   @autobind
   renderColumn(data) {
@@ -211,21 +210,31 @@ export default class MyDetail extends PureComponent {
                {
                     // 如果评价了就显示评价 没评价就显示满意度评价按钮
                     evaluationStatus ?
-                      <div className={styles.feedbackInfo}>
-                        我对本次答复的评价:
-                         <span>
-                          {
-                            `${userCommentLabelList[0].label}`
-                          }
-                        </span>
-                      </div>
+                        <div className={styles.feedbackInfo}>
+                          我对本次答复的评价:
+                          <span>
+                            {`${userCommentLabelList[0].label}`}
+                          </span>
+                        </div>
                       :
-                      <div className={styles.feedbackBox}>
-                        <div className={styles.feedbackTitle}>您对本次反馈的答复是否满意?</div>
-                        <Button type="primary" size="large" onClick={() => this.handleFeedbackChange('SATISFIED')}>满意</Button>
-                        <Button size="large" onClick={() => this.handleFeedbackChange('COMMON')}>一般</Button>
-                        <Button size="large" onClick={() => this.handleFeedbackChange('DISCONTENT')}>不满意</Button>
-                      </div>
+                        <div className={styles.feedbackBox}>
+                          <div className={styles.feedbackTitle}>您对本次反馈的答复是否满意?</div>
+                          <Button type="primary" size="large"
+                            onClick={() => this.handleFeedbackChange('SATISFIED')}
+                          >
+                            满意
+                          </Button>
+                          <Button size="large"
+                            onClick={() => this.handleFeedbackChange('COMMON')}
+                          >
+                            一般
+                          </Button>
+                          <Button size="large"
+                            onClick={() => this.handleFeedbackChange('DISCONTENT')}
+                          >
+                            不满意
+                          </Button>
+                        </div>
                   }
                 </div>
               )

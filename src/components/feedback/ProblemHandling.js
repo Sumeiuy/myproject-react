@@ -231,7 +231,7 @@ export default class ProblemHandling extends PureComponent {
                   <FormItem>
                     {/* initialValue 值为 undefined时，才展示 placeholder */}
                     {getFieldDecorator('processer', {
-                      initialValue: initProcessValue || undefined,}
+                      initialValue: initProcessValue || undefined}
                     )(
                       <Select
                         placeholder="请选择"

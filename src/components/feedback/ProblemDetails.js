@@ -166,7 +166,7 @@ export default class ProblemDetail extends PureComponent {
     }
     return '无';
   }
-  
+
   /*
   * 时间截取
   */

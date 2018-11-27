@@ -197,9 +197,6 @@ export default {
     },
     * addFeedbackEvaluation({ payload }, { call, put }) {
       const response = yield call(api.addFeedbackEvaluation, payload);
-      yield put({
-        payload: response,
-      });
     },
     * getEmpListByResp({ payload }, { call, put }) {
       const { resultData } = yield call(api.getEmpListByResp, payload);

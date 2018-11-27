@@ -22,8 +22,8 @@ const EMPTY_LIST = [];
 const USER_COMMENT_LIST = feedbackOptions.userDegreeOfSatisfaction;
 // 状态字典
 const STATUS_MAP = [
-  { value: 'PROCESSING',label: '解决中' },
-  { value: 'CLOSED',label: '关闭' },
+  { value: 'PROCESSING', label: '解决中' },
+  { value: 'CLOSED', label: '关闭' },
 ];
 
 export default class LeftPanel extends PureComponent {
@@ -207,6 +207,7 @@ export default class LeftPanel extends PureComponent {
           processerLabel = this.props.empRespDTOList.filter(item =>
             item.loginName === record.processer);
         }
+        // 如果有满意度
         if (record.evaluation) {
           // 根据满意度不同状态显示不同颜色
           userCommentClass = classnames({
@@ -305,7 +306,8 @@ export default class LeftPanel extends PureComponent {
   render() {
     const {
       list: {
-        resultData = EMPTY_LIST, page = EMPTY_OBJECT
+        resultData = EMPTY_LIST,
+        page = EMPTY_OBJECT,
         },
       location: {
         query: {
