@@ -1,8 +1,8 @@
 /**
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
- * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-26 17:03:19
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-11-27 10:27:27
  */
 
 import React, { PureComponent } from 'react';
@@ -75,6 +75,18 @@ export default class Home extends PureComponent {
   static contextTypes = {
     push: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
+  }
+
+  static childContextTypes = {
+    custBasic: PropTypes.object,
+  };
+
+  @autobind
+  getChildContext() {
+    const { customerBasicInfo } = this.props;
+    return {
+      custBasic: customerBasicInfo,
+    };
   }
 
   componentDidMount() {

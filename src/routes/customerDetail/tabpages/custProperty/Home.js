@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性
  * @Date: 2018-11-06 16:17:28
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-27 09:07:36
+ * @Last Modified time: 2018-11-27 09:28:23
  */
 
 import React, { PureComponent } from 'react';
@@ -41,9 +41,6 @@ const {
   // 产品机构客户类型标识
   PRODUCT_CUST_TYPE,
 } = CUST_TYPE;
-
-// 表格每页显示数据
-const PAGE_SIZE = 10;
 
 export default class CustProperty extends PureComponent {
   static propTypes = {
@@ -139,10 +136,7 @@ export default class CustProperty extends PureComponent {
   // 和custId相关的接口，初次调用和custId发生变化时调用，避免多次重复写，统一放到一个方法里
   @autobind
   queryData(custId) {
-    const {
-      queryCustomerProperty,
-    } = this.props;
-    queryCustomerProperty({
+    this.props.queryCustomerProperty({
       custId,
     });
   }

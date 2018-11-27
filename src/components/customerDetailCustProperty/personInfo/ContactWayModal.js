@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-26 13:58:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-26 16:42:33
+ * @Last Modified time: 2018-11-27 10:28:19
  * @description 联系方式弹框-个人客户联系方式修改
  */
 import React, { Component } from 'react';
@@ -11,7 +11,7 @@ import { autobind } from 'core-decorators';
 import { Button, Switch } from 'antd';
 import _ from 'lodash';
 
-import Table from '../../common/table';
+import Table from '../common/InfoTable';
 import IFNoData from '../common/IfNoData';
 import logable from '../../../decorators/logable';
 import Modal from '../../common/biz/CommonModal';
@@ -34,6 +34,10 @@ export default class ContactWayModal extends Component {
     changePhoneInfo: PropTypes.func.isRequired,
   }
 
+  static contextTypes = {
+    custBasic: PropTypes.object.isRequired,
+  };
+
   static getDerivedStateFromProps(nextProps, prevState) {
     const { data } = nextProps;
     const { prevProps } = prevState;
@@ -47,7 +51,7 @@ export default class ContactWayModal extends Component {
     return null;
   }
 
-  constructor(props) {
+  constructor(props, context) {
     super(props);
     this.state = {
       prevProps: props,
@@ -56,6 +60,8 @@ export default class ContactWayModal extends Component {
       // 请勿打电话
       noCall: false,
     };
+    // 判断是否是主服务经理
+    this.isMainEmp = _.get(context.custBasic, 'isMainEmp');
   }
 
   @autobind
@@ -151,8 +157,8 @@ export default class ContactWayModal extends Component {
               <IFNoData title="地址信息" isRender={hasNoPhoneInfo}>
                 <Table
                   columns={PHONE_COLUMNS}
-                  pagination={false}
                   dataSource={data.tellphoneInfo}
+                  isMainEmp={this.isMainEmp}
                 />
               </IFNoData>
             </div>

@@ -2,17 +2,18 @@
  * @Author: sunweibin
  * @Date: 2018-11-26 16:44:23
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-27 09:09:23
+ * @Last Modified time: 2018-11-27 10:22:38
  * @description 联系方式使用的Table
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Table, Icon } from 'antd';
+import { Table } from 'antd';
 import _ from 'lodash';
 
+import Icon from '../../common/Icon';
 import { isFromNoSupportUpdateSource } from './utils';
 
-import { styles } from './infoTable.less';
+import styles from './infoTable.less';
 
 function InfoTable(props) {
   // 给表格添加操作列内容
@@ -30,8 +31,8 @@ function InfoTable(props) {
             // 只有主服务经理能够修改非主要的并且来自可以修改的来源的存在操作列
             return (
               <span>
-                <span><Icon type="edit" /></span>
-                <span><Icon type="edit" /></span>
+                <span><Icon type="shenqing" /></span>
+                <span><Icon type="shanchu" /></span>
               </span>
             );
           }
