@@ -2,7 +2,7 @@
  * @Author: liqianwen
  * @Date: 2018-11-07 13:31:51
  * @Last Modified by: liqianwen
- * @Last Modified time: 2018-11-27 16:27:28
+ * @Last Modified time: 2018-11-27 16:30:44
  * @description 新版客户360详情的交易流水的弹出层
  */
 import React, { PureComponent } from 'react';
@@ -47,7 +47,6 @@ const DEFAULT_END_DATE = moment().subtract(1, 'day');
 const DATE_FORMATE_API = 'YYYY-MM-DD';
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
-// 无数据的样式
 
 export default class TradeFlowModal extends PureComponent {
   static propTypes = {
