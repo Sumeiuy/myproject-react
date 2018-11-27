@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-11-05 18:50:57
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-08 17:29:22
+ * @Last Modified time: 2018-11-19 19:31:25
  */
 import { detailServiceRelationship as api } from '../../api';
 export default {

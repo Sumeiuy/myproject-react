@@ -218,6 +218,11 @@ const permission = {
     return hasDuty(dutyList, duty.HTSC_GPQQSQG);
   },
 
+  // 营业部服务岗
+  hasYYBFWGPermission() {
+    return hasDuty(dutyList, duty.HTSC_YYBFWG);
+  },
+
   // HTSC 交易信息查询权限（非私密客户）
   hasNPCTIQPermission() {
     return hasDuty(dutyList, duty.HTSC_TIQ_NPC);

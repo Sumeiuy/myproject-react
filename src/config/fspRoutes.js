@@ -14,7 +14,7 @@ const fspRoutes = [
   // 跳回首页
   {
     path: '/customerPool',
-    action: '',
+    action: 'loadInTab',
     url: '/fspRouteError', // url属性可以为string类型，或者为RegExp类型，从而方便匹配
   },
   // MOT任务相关
@@ -26,7 +26,7 @@ const fspRoutes = [
   },
   // MOT服务统计
   {
-    path: '/fsp/statisticalQuery/MOTStatistics',
+    path: '/fsp/statisticalQuery/taskTable/MOTStatistics',
     action: 'loadInTab',
     containerId: 'FSP_MOT_TAB_SERVICE_STATISTICS',
     url: '/mot/statistics/showList',

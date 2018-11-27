@@ -119,6 +119,10 @@ export default {
     deleteCustomerFromGroupResult: {},
     // 360服务记录查询数据
     serviceLogData: [],
+    // 360服务记录数据，这里有几个冗余的数据，需要后期优化
+    serviceLogList: [],
+    // 是否是最后一条服务记录
+    isLastServiceLog: false,
     // 360服务记录查询更多数据
     serviceLogMoreData: [],
     // 预览客户细分数据
@@ -1458,7 +1462,9 @@ level: resultData.level },
       return {
         ...state,
         serviceLogData: resultData,
+        serviceLogList: resultData,
         filesList: fileResultData,
+        isLastServiceLog: false,
       };
     },
     // 文件下载文件列表
@@ -1475,12 +1481,14 @@ level: resultData.level },
         searchServerPersonList: action.payload,
       };
     },
-    // 360服务记录查询更多服务成功
+    // 360服务记录查询更多服务成功, 这里的代码需要修正
     getServiceLogMoreSuccess(state, action) {
       const { payload: { resultData } } = action;
       return {
         ...state,
+        serviceLogList: _.concat(state.serviceLogList, resultData),
         serviceLogMoreData: resultData,
+        isLastServiceLog: _.isEmpty(resultData),
       };
     },
     // 获取客户细分列表成功

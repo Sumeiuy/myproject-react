@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 客户360-客户属性
  * @Date: 2018-11-06 16:17:28
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-11-23 14:36:00
+ * @Last Modified by: wangyikai
+ * @Last Modified time: 2018-11-26 18:11:35
  */
 
 import React, { PureComponent } from 'react';
@@ -107,7 +107,7 @@ export default class CustProperty extends PureComponent {
       },
     } = this.props;
     // url中custId发生变化时重新请求相关数据
-    if (prevCustId !== custId) {
+    if (custId && prevCustId !== custId) {
       this.queryData(custId);
     }
   }
@@ -134,21 +134,9 @@ export default class CustProperty extends PureComponent {
   queryData(custId) {
     const {
       queryCustomerProperty,
-      queryZLUmemberLevelChangeRecords,
-      queryZjPointExchangeFlow
     } = this.props;
-    queryZLUmemberLevelChangeRecords({
-      custId,
-      pageSize: PAGE_SIZE,
-      pageNum: 1,
-    });
     queryCustomerProperty({
       custId,
-    });
-    queryZjPointExchangeFlow({
-      custId,
-      pageSize: PAGE_SIZE,
-      pageNum: 1,
     });
   }
 

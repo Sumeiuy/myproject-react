@@ -224,7 +224,8 @@ export const getRouterData = (app) => {
           'customer360Detail/serviceRelationship',
           'customer360Detail/discountCoupon',
           'customer360Detail/productOrder',
-          'customer360Detail/investmentAbilityAnalysis'
+          'customer360Detail/investmentAbilityAnalysis',
+          'customer360Detail/businessHand',
         ],
         () => import('../routes/customerDetail/connectHome' /* webpackChunkName: "customerPool_customerDetail" */),
       ),

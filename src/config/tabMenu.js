@@ -459,7 +459,7 @@ const tabNotUseGlobalBreadcrumb = [
   '/statisticalQuery/report',
   '/sysOperate/platformParameterSetting',
   '/sysOperate/telephoneNumberManage',
-  '/statisticalQuery/taskAnalysisReport',
+  '/statisticalQuery/taskTable/taskAnalysisReport',
 ];
 
 // 不在菜单中需要使用面包屑的路由

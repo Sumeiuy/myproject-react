@@ -23,12 +23,15 @@ import './home.less';
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const OMIT_ARRAY = ['currentId', 'isResetPageNum'];
+const EMPRESPDTOLIST = 'feedback/getEmpListByResp';
+const FEEDBACKLIST = 'feedback/getFeedbackList';
 const mapStateToProps = state => ({
   list: state.feedback.list,
+  empRespDTOList: state.feedback.empRespDTOList,
 });
 
-const getDataFunction = loading => query => ({
-  type: 'feedback/getFeedbackList',
+const getDataFunction = loading => totype => query => ({
+  type: totype,
   payload: query || {},
   loading,
 });
@@ -36,7 +39,8 @@ const getDataFunction = loading => query => ({
 const mapDispatchToProps = {
   push: routerRedux.push,
   replace: routerRedux.replace,
-  getFeedbackList: getDataFunction(true),
+  getFeedbackList: getDataFunction(true)(FEEDBACKLIST),
+  getEmpListByResp: getDataFunction(true)(EMPRESPDTOLIST),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -48,10 +52,8 @@ export default class FeedBackNew extends PureComponent {
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
-  }
-
-  static defaultProps = {
-
+    getEmpListByResp: PropTypes.func.isRequired,
+    empRespDTOList: PropTypes.array.isRequired,
   }
 
   constructor(props) {
@@ -62,12 +64,22 @@ export default class FeedBackNew extends PureComponent {
   }
 
   componentWillMount() {
-    const { getFeedbackList, location: { query, query: {
-      curPageNum,
-      curPageSize,
-     } } } = this.props;
+    const {
+      getFeedbackList,
+      getEmpListByResp,
+      location: {
+        query,
+        query: {
+          curPageNum,
+          curPageSize,
+        }
+      }
+    } = this.props;
     // 默认筛选条件
     getFeedbackList(feedbackHelper.constructPostBody(query, curPageNum || 1, curPageSize || 10));
+    getEmpListByResp({
+      respId: '1-3PDQSG5',
+    })
   }
 
   componentWillReceiveProps(nextProps) {
@@ -136,7 +148,12 @@ export default class FeedBackNew extends PureComponent {
   }
 
   render() {
-    const { list, location, replace } = this.props;
+    const {
+      list,
+      location,
+      replace,
+      empRespDTOList,
+    } = this.props;
     // 此处需要提供一个方法给返回的接口查询设置是否查询到数据
     const { isEmpty } = this.state;
     const topPanel = (
@@ -150,12 +167,14 @@ export default class FeedBackNew extends PureComponent {
         list={list}
         replace={replace}
         location={location}
+        empRespDTOList={empRespDTOList}
       />
     );
 
     const rightPanel = (
       <Detail
         location={location}
+        empRespDTOList={empRespDTOList}
       />
     );
     return (
