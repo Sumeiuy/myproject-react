@@ -312,9 +312,12 @@ export default class ProtocolTab extends PureComponent {
     payload: { name: '编辑协议' },
   })
   handleEditProtocol(record = EMPTY_OBJECT, isAdd = false) {
-    const { custInfo = EMPTY_OBJECT } = this.props;
     const {
-      custId = '',
+      custInfo = EMPTY_OBJECT,
+      summaryCustInfo = EMPTY_OBJECT,
+    } = this.props;
+    const { custRowId = '' } = summaryCustInfo;
+    const {
       custNature = DEFAULT_PER_TYPE,
     } = custInfo;
     const { id = '' } = record;
@@ -322,7 +325,7 @@ export default class ProtocolTab extends PureComponent {
     ? `${custNature}:investcontract`
     : `${custNature}:investcontract:${id}`;
     const query = {
-      busiId: custId,
+      busiId: custRowId,
       routeType,
     };
     this.handleJumpFspProtocol({
