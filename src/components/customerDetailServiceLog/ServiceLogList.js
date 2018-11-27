@@ -46,9 +46,8 @@ export default class ServiceLogList extends PureComponent {
     let serviceLogMap = [];
     const { serviceLogList } = this.props;
     _.each(serviceLogList, item => {
-      debugger;
-      const feedbackTime = (item.serveTime.split(' '))[0].replace(/\//g, '-');
       if(item) {
+        const feedbackTime = (item.serveTime.split(' '))[0].replace(/\//g, '-');
         const currentLog = _.find(serviceLogMap, log => log.date === feedbackTime);
         if(currentLog) {
           currentLog.logList = _.concat(currentLog.logList, item);
