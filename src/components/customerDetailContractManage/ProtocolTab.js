@@ -317,7 +317,9 @@ export default class ProtocolTab extends PureComponent {
       custNature = DEFAULT_PER_TYPE,
     } = custInfo;
     const { id = '' } = record;
-    const routeType = isAdd ? `${custNature}:investcontract` : `${custNature}:${id}`;
+    const routeType = isAdd
+    ? `${custNature}:investcontract`
+    : `${custNature}:investcontract:${id}`;
     const query = {
       busiId: custId,
       routeType,
@@ -337,14 +339,17 @@ export default class ProtocolTab extends PureComponent {
   })
   handleUpdateProtocol(record) {
     const { custInfo = EMPTY_OBJECT } = this.props;
-    const { custNature = DEFAULT_PER_TYPE } = custInfo;
+    const {
+      custId = '',
+      custNature = DEFAULT_PER_TYPE,
+    } = custInfo;
     const {
       rowId = '',
       xSubmitFlag = 'N',
       argValiDate = '',
     } = record;
     const query = {
-      rowId,
+      rowId: custId,
       custTypeCode: custNature,
       argId: rowId,
       xSubmitFlag,
