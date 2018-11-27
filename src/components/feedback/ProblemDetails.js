@@ -159,9 +159,9 @@ export default class ProblemDetail extends PureComponent {
   }
   // 显示经办人
   renderEmpResp(st, options) {
-    if (st && !_.isEmpty(st)) {
+    if (!_.isEmpty(st)) {
       const nowStatus = options.filter(item =>
-        item.loginName === st) || EMPTY_OBJECT;
+        item.loginName === st);
       return nowStatus[0].lastName || '无';
     }
     return '无';
