@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-20 10:31:29
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-27 12:55:26
+ * @LastEditTime: 2018-11-27 18:43:31
  * @Description: 服务订单流水
  */
 
@@ -101,7 +101,7 @@ export default class ProductOrderFlow extends PureComponent {
   })
   handleServiceProductChanged(e) {
     this.setState({
-      serviceProductCode: e.value,
+      serviceProductCode: e.value.prodId,
     }, this.handleProductOrderFlowChange);
   }
 
@@ -268,10 +268,11 @@ export default class ProductOrderFlow extends PureComponent {
               placeholder="请输入服务产品"
               showSearch
               needItemObj
+              dataMap={['prodId', 'prodName']}
               value={serviceProductCode}
               data={productListBySearch}
               onInputChange={this.handleSearchChanged}
-              onChanged={this.handleServiceProductChanged}
+              onChange={this.handleServiceProductChanged}
               dropdownStyle={{
                 maxHeight: 324,
                 overflowY: 'auto',

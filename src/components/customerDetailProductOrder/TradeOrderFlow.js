@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-21 09:35:09
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-27 17:35:13
+ * @LastEditTime: 2018-11-27 18:27:29
  * @Description: 交易订单流水
  */
 
@@ -116,6 +116,7 @@ export default class TradeOrderFlow extends PureComponent {
             pagination={pagination}
             dataSource={custTradeOrderDTOList}
             columns={this.transformColumnsData(TRADE_ORDER_FLOW_COLUMNS)}
+            rowKey="orderTime"
             className={styles.table}
             rowClassName={styles.tableRow}
             onChange={this.handlePageChanged}
