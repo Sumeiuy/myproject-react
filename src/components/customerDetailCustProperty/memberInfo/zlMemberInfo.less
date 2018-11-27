@@ -56,6 +56,10 @@
     table {
       border: none;
     }
+    table > thead > tr > th,
+    table > tbody > tr > td {
+      white-space: nowrap;
+    }
     table > thead > tr > th {
       font-weight: bold;
     }
@@ -70,22 +74,9 @@
         padding-left: 185px;
       }
       .lastStyle {
-        padding-right: 120px;
+        padding-right: 115px;
         padding-left: 185px;
       }
     }
 }
-.memberGradeModal {
-  .noDataContainer {
-    margin: 100px auto 0;
-    width: 300px;
-    text-align: center;
-    color: #ccc;
-    .noDataIcon {
-      font-size: 100px;
-}
-    .noDataText {
-      font-size: 20px;
-    }
-  }
-}
+
