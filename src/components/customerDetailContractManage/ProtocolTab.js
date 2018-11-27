@@ -34,6 +34,11 @@ const KEY_START_TIME = 'startTime';
 const KEY_END_TIME = 'endTime';
 const KEY_HANDLER_NAME = 'handlerName';
 const KEY_OPERATION = 'operation';
+// 个人类别默认值
+const DEFAULT_PER_TYPE = 'per';
+
+const EMPTY_OBJECT = {};
+const EMPTY_ARRAY = [];
 
 export default class ProtocolTab extends PureComponent {
   static propTypes = {
@@ -84,7 +89,7 @@ export default class ProtocolTab extends PureComponent {
   @autobind
   queryData() {
     const {
-      empInfo: { empInfo = {} },
+      empInfo: { empInfo = EMPTY_OBJECT },
       queryList,
       queryLoginInfo,
       location: { query: { custId } },
@@ -165,6 +170,8 @@ export default class ProtocolTab extends PureComponent {
   @autobind
   renderOperationColumn(text, record) {
     const {
+      // 子类型 code
+      subTypeCode,
       // 状态
       statusCode,
       // 收费模式
@@ -172,6 +179,9 @@ export default class ProtocolTab extends PureComponent {
       // 节点
       node,
     } = record;
+    if (subTypeCode !== TOUGU_SUBTYPE) {
+      return null;
+    }
     // 协议状态为新建时，操作类型为：编辑、删除
     if (statusCode === 'New') {
       return (
@@ -179,7 +189,7 @@ export default class ProtocolTab extends PureComponent {
           <Icon
             type="bianji1"
             title="编辑"
-            onClick={this.handleEditProtocol}
+            onClick={() => this.handleEditProtocol(record, false)}
           />
           <Icon
             type="shanchu"
@@ -236,9 +246,9 @@ export default class ProtocolTab extends PureComponent {
 
   // 统一处理跳转 fsp 协议的方法
   @autobind
-  handleJumpFspProtocol(payload = {}) {
+  handleJumpFspProtocol(payload = EMPTY_OBJECT) {
     const {
-      query = {},
+      query = EMPTY_OBJECT,
       pathname = '',
       url = '',
     } = payload;
@@ -253,10 +263,13 @@ export default class ProtocolTab extends PureComponent {
 
   // 跳转 FSP 的协议详情
   @autobind
-  @logable({ type: 'ViewItem', payload: { name: '协议编号' } })
+  @logable({
+    type: 'ViewItem',
+    payload: { name: '协议编号' },
+  })
   handleViewTouGuProtocol(record) {
-    const { custInfo = {} } = this.props;
-    const { custNature = 'per' } = custInfo;
+    const { custInfo = EMPTY_OBJECT } = this.props;
+    const { custNature = DEFAULT_PER_TYPE } = custInfo;
     const { rowId } = record;
     const query = {
       rowId,
@@ -271,10 +284,13 @@ export default class ProtocolTab extends PureComponent {
 
   // 非投顾，跳转 React 的协议详情
   @autobind
-  @logable({ type: 'ViewItem', payload: { name: '协议编号' } })
+  @logable({
+    type: 'ViewItem',
+    payload: { name: '协议编号' },
+  })
   handleViewOtherProtocol(record) {
     const { push } = this.context;
-    const { custInfo = {} } = this.props;
+    const { custInfo = EMPTY_OBJECT } = this.props;
     const { custId, name } = custInfo;
     const { subTypeCode = '' } = record;
     const newSubTypeCode = subTypeCode.replace(' ', '');
@@ -290,20 +306,22 @@ export default class ProtocolTab extends PureComponent {
 
   // 新建、编辑协议
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '编辑协议' } })
-  handleEditProtocol(isAdd = false) {
-    const { custInfo = {} } = this.props;
+  @logable({
+    type: 'ButtonClick',
+    payload: { name: '编辑协议' },
+  })
+  handleEditProtocol(record = EMPTY_OBJECT, isAdd = false) {
+    const { custInfo = EMPTY_OBJECT } = this.props;
     const {
       custId = '',
-      custNature = 'per',
+      custNature = DEFAULT_PER_TYPE,
     } = custInfo;
+    const { id = '' } = record;
+    const routeType = isAdd ? `${custNature}:investcontract` : `${custNature}:${id}`;
     const query = {
-      routeType: `${custNature}:investcontract`,
+      busiId: custId,
+      routeType,
     };
-    // 非新建操作时，才需要 busiId 字段
-    if (!isAdd) {
-      query.busiId = custId;
-    }
     this.handleJumpFspProtocol({
       query,
       url: '/client/investcontract/wizard/main',
@@ -313,10 +331,13 @@ export default class ProtocolTab extends PureComponent {
 
   // 变更协议
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '变更协议' } })
+  @logable({
+    type: 'ButtonClick',
+    payload: { name: '变更协议' },
+  })
   handleUpdateProtocol(record) {
-    const { custInfo = {} } = this.props;
-    const { custNature = 'per' } = custInfo;
+    const { custInfo = EMPTY_OBJECT } = this.props;
+    const { custNature = DEFAULT_PER_TYPE } = custInfo;
     const {
       rowId = '',
       xSubmitFlag = 'N',
@@ -338,7 +359,10 @@ export default class ProtocolTab extends PureComponent {
 
   // 终止协议
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '终止协议' } })
+  @logable({
+    type: 'ButtonClick',
+    payload: { name: '终止协议' },
+  })
   handleCloseProtocol(record) {
     const {
       submitProtocol,
@@ -361,7 +385,10 @@ export default class ProtocolTab extends PureComponent {
 
   // 删除协议
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '删除协议' } })
+  @logable({
+    type: 'ButtonClick',
+    payload: { name: '删除协议' },
+  })
   handleDeleteProtocol(record) {
     const {
       deleteProtocol,
@@ -385,10 +412,13 @@ export default class ProtocolTab extends PureComponent {
 
   // 查看历史记录
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '查看历史记录' } })
+  @logable({
+    type: 'ButtonClick',
+    payload: { name: '查看历史记录' },
+  })
   handleViewHistoryProtocol(record) {
-    const { custInfo = {} } = this.props;
-    const { custNature = 'per' } = custInfo;
+    const { custInfo = EMPTY_OBJECT } = this.props;
+    const { custNature = DEFAULT_PER_TYPE } = custInfo;
     const { rowId } = record;
     const query = {
       rowId,
@@ -405,7 +435,10 @@ export default class ProtocolTab extends PureComponent {
 
   // 处理投顾签约，判断是否通过前置条件后决定是否跳转
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '投顾签约' } })
+  @logable({
+    type: 'ButtonClick',
+    payload: { name: '投顾签约' },
+  })
   handlePassPrecondition() {
     const {
       queryPassPrecondition,
@@ -414,14 +447,14 @@ export default class ProtocolTab extends PureComponent {
     queryPassPrecondition({
       custId,
     }).then(() => {
-      this.handleEditProtocol(true);
+      this.handleEditProtocol({}, true);
     });
   }
 
   // 渲染投顾签约按钮
   @autobind
   renderTouGuBtn({ isTouGu = false, isSameOrg = false }) {
-    const { custInfo = {} } = this.props;
+    const { custInfo = EMPTY_OBJECT } = this.props;
     const { isMainEmp = false } = custInfo;
     if (isMainEmp && isTouGu && isSameOrg) {
       return (
@@ -441,7 +474,7 @@ export default class ProtocolTab extends PureComponent {
 
   render() {
     const {
-      data: { list = [] },
+      data: { list = EMPTY_ARRAY },
       loginInfo,
     } = this.props;
     const titleList = this.getProtocolColumns(PROTOCOL_COLUMNS);
