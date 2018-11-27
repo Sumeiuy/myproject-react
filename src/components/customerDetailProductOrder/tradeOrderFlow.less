@@ -2,6 +2,9 @@
   padding: 19px;
   .table {
     :global {
+      .ant-table table {
+        table-layout: fixed;
+      }
       .ant-table-thead > tr > th {
         white-space: nowrap;
         font-size: 14px;
@@ -14,6 +17,10 @@
       .ant-table-tbody > tr > td {
         font-size: 14px;
         color: #333;
+        padding-right: 0;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
       }
 
       .productCode {

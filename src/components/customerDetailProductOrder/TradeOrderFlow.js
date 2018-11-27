@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-21 09:35:09
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-26 10:41:01
+ * @LastEditTime: 2018-11-27 17:35:13
  * @Description: 交易订单流水
  */
 
@@ -55,6 +55,17 @@ export default class TradeOrderFlow extends PureComponent {
           newColumn = {
             ...column,
             render: isBool => isBool ? '是' : '否',
+          };
+          break;
+        case 'productName':
+        case 'confirmationType':
+          newColumn = {
+            ...column,
+            render: content => (
+              <span>
+                <Tooltip title={content}>{content}</Tooltip>
+              </span>
+            )
           };
           break;
         case 'orderTime':
