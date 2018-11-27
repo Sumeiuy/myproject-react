@@ -42,9 +42,6 @@ const {
   PRODUCT_CUST_TYPE,
 } = CUST_TYPE;
 
-// 表格每页显示数据
-const PAGE_SIZE = 10;
-
 export default class CustProperty extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -107,7 +104,7 @@ export default class CustProperty extends PureComponent {
       },
     } = this.props;
     // url中custId发生变化时重新请求相关数据
-    if (prevCustId !== custId) {
+    if (custId && prevCustId !== custId) {
       this.queryData(custId);
     }
   }

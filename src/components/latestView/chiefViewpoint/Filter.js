@@ -110,6 +110,24 @@ export default class Filter extends PureComponent {
     });
   }
 
+  @autobind
+  @logable({ type: 'Click', payload: { name: '搜索', value: '$args[0]' } })
+  handleSearch(value) {
+    const { onFilter } = this.props;
+    onFilter({
+      keyword: value,
+    });
+  }
+
+  @autobind
+  @logable({ type: 'DropdownSelect', payload: { name: '调整方向', value: '$args[0]' } })
+  handleSelect(value) {
+    const { onFilter } = this.props;
+    onFilter({
+      type: value,
+    });
+  }
+
   render() {
     const { selectedTypeList } = this.state;
     const {
@@ -117,7 +135,6 @@ export default class Filter extends PureComponent {
       keyword,
       startDate,
       endDate,
-      onFilter,
       filterType,
     } = this.props;
     const defaultDate = [
@@ -134,7 +151,7 @@ export default class Filter extends PureComponent {
           <Search
             defaultValue={keyword}
             placeholder={isViewpointFilterType ? '标题' : '行业/主题'}
-            onSearch={value => onFilter({ keyword: value })}
+            onSearch={this.handleSearch}
             style={searchStyle}
             enterButton
           />
@@ -156,7 +173,7 @@ export default class Filter extends PureComponent {
             : <Select
               style={selectStyle}
               defaultValue={type}
-              onChange={value => onFilter({ type: value })}
+              onChange={this.handleSelect}
             >
               {
                 this.getOptionList()

@@ -9,7 +9,7 @@ import bowser from 'bowser';
 import { constants, fspContainer } from '../config';
 
 // 归一化浏览器名称
-function formatBowserName(name) {
+export function formatBowserName(name) {
   const aliasMap = {
     IE: 'Internet Explorer',
   };

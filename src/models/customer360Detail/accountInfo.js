@@ -443,14 +443,6 @@ export default {
         payload,
       });
     },
-    // 查询客户是否有已实施的流程
-    * queryHasDoingFlow({ payload }, { put, call }) {
-      const { resultData } = yield call(api.queryHasDoingFlow, payload);
-      yield put({
-        type: 'queryHasDoingFlowSuccess',
-        payload: resultData,
-      });
-    },
   },
   subscriptions: {
   },

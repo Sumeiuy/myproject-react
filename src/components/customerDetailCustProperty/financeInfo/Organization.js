@@ -102,8 +102,9 @@ export default class Organization extends PureComponent {
 
   @autobind
   getViewData(value) {
+    // 后端返回数据可能是字符串可能是数字类型
     return (_.isEmpty(value) && !_.isNumber(value))
-      ? '' : number.thousandFormat(number.toFixed(value));
+      ? '' : number.thousandFormat(number.toFixed(Number(value)));
   }
 
   @autobind

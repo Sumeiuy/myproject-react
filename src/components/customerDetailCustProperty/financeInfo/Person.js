@@ -54,8 +54,8 @@ export default class Person extends PureComponent {
   }
 
   @autobind
-  getViewDataByNum(value) {
-    return _.isNumber(value) ? number.thousandFormat(value) : DEFAULT_VALUE;
+  getViewData(value) {
+    return !_.isEmpty(value) ? number.thousandFormat(value) : DEFAULT_VALUE;
   }
 
   @autobind
@@ -193,9 +193,9 @@ export default class Person extends PureComponent {
           <InfoItem
             width={INFO_ITEM_WITDH}
             label="家庭年收入"
-            value={data.householdIncome || DEFAULT_VALUE}
+            value={this.getViewData(data.householdIncome)}
             className={styles.infoItem}
-            isNeedValueTitle={checkIsNeedTitle(data.householdIncome)}
+            isNeedValueTitle={checkIsNeedTitle(this.getViewData(data.householdIncome))}
             isNeedOverFlowEllipsis
           />
         </div>
@@ -223,9 +223,9 @@ export default class Person extends PureComponent {
           <InfoItem
             width={INFO_ITEM_WITDH}
             label="可投资资产占比"
-            value={this.getViewDataByNum(data.investableAssetsCycle)}
+            value={data.investableAssetsCycle || DEFAULT_VALUE}
             className={styles.infoItem}
-            isNeedValueTitle={checkIsNeedTitle(this.getViewDataByNum(data.investableAssetsCycle))}
+            isNeedValueTitle={checkIsNeedTitle(data.investableAssetsCycle)}
             isNeedOverFlowEllipsis
           />
         </div>
@@ -350,7 +350,7 @@ export default class Person extends PureComponent {
             this.checkIsEditable()
               ? (
                 <BasicEditorCell
-                  label="投入成本收益率"
+                  label="投入成本收益率%"
                   width={INFO_ITEM_WITDH}
                   className={styles.infoItem}
                   editorId="person_insured"

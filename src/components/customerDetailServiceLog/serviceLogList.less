@@ -1,0 +1,106 @@
+/*
+ * @Author: zhufeiyang
+ * @Date: 2018-11-19 11:11:19
+ * @Last Modified by: zhufeiyang
+ * @Last Modified time: 2018-11-22 16:14:50
+ * @description 新版360服务记录
+ */
+
+.serviceLogList {
+  :global {
+    .ant-collapse .ant-collapse-item-disabled > .ant-collapse-header,
+    .ant-collapse .ant-collapse-item-disabled > .ant-collapse-header > .arrow {
+      cursor: auto;
+    }
+    .ant-collapse > .ant-collapse-item.ant-collapse-no-arrow > .ant-collapse-header {
+      margin-top: 20px;
+      background: #f6fafe;
+      height: 38px;
+      line-height: 38px;
+      font-size: 14px;
+      color: #333;
+      font-weight: bold;
+      padding: 0 0 0 20px;
+    }
+    .ant-collapse-borderless > .ant-collapse-item {
+      border-bottom: none;
+    }
+    .ant-collapse-content > .ant-collapse-content-box {
+      padding: 0;
+    }
+    .ant-collapse-borderless > .ant-collapse-item > .ant-collapse-content > .ant-collapse-content-box {
+      padding-top: 0;
+    }
+  }
+  .serviceLogPane {
+    :global {
+      .ant-collapse > .ant-collapse-item.ant-collapse-no-arrow > .ant-collapse-header {
+        margin: 0;
+        font-weight: normal;
+        padding: 0;
+        background: #fff;
+      }
+    }
+    .serviceContentPane {
+      :global {
+        .ant-collapse-content-box {
+          margin-left: 120px;
+          background: #f8f8f8;
+        }
+      }
+    }
+    .panelHeader {
+      display: flex;
+      padding-left: 40px;
+      font-size: 14px;
+      line-height: 38px;
+      color: #333;
+      .timeLabel {
+        flex: 0 0 auto;
+        padding-right: 25px;
+        color: #999;
+      }
+      .headerLeft {
+        flex: 1 1 auto;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .headerRight {
+        flex: 0 0 auto;
+        padding-left: 90px;
+        color: #999;
+        .icon {
+          color: #108ee9;
+          padding-left: 16px;
+          font-size: 12px;
+        }
+        .disable {
+          color: #ccc;
+        }
+      }
+    }
+  }
+  .timeRow {
+    display: flex;
+    padding-left: 40px;
+    font-size: 14px;
+    .timeLabel {
+      flex: 0 0 auto;
+      color: #999;
+      margin-right: 25px;
+      line-height: 38px;
+    }
+    .serviceLogContent {
+      flex: 1 1 auto;
+      height: 134px;
+      background: #f8f8f8;
+      .logHeader {
+        height: 38px;
+        line-height: 38px;
+        color: #333;
+        background: #fff;
+      }
+    }
+  }
+}

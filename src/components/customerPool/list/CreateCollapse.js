@@ -12,7 +12,7 @@ import { Collapse } from 'antd';
 import classnames from 'classnames';
 import moment from 'moment';
 import ServiceRecordContent from './ServiceRecordContent';
-import logable, { logCommon } from '../../../decorators/logable';
+import logable from '../../../decorators/logable';
 import styles from './createCollapse.less';
 
 const EMPTY_LIST = [];

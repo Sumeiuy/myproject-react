@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-21 09:35:09
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-22 15:14:55
+ * @LastEditTime: 2018-11-27 18:27:29
  * @Description: 交易订单流水
  */
 
@@ -30,6 +30,11 @@ export default class TradeOrderFlow extends PureComponent {
     onTradeOrderFlowChange: PropTypes.func.isRequired,
   };
 
+  componentDidMount() {
+    // 获取初始数据
+    this.props.onTradeOrderFlowChange(1, DEFAULT_PAGE_SIZE);
+  }
+
   @autobind
   handlePageChanged(changedPage) {
     const {
@@ -50,6 +55,17 @@ export default class TradeOrderFlow extends PureComponent {
           newColumn = {
             ...column,
             render: isBool => isBool ? '是' : '否',
+          };
+          break;
+        case 'productName':
+        case 'confirmationType':
+          newColumn = {
+            ...column,
+            render: content => (
+              <span>
+                <Tooltip title={content}>{content}</Tooltip>
+              </span>
+            )
           };
           break;
         case 'orderTime':
@@ -77,29 +93,30 @@ export default class TradeOrderFlow extends PureComponent {
   render() {
     const {
       tradeOrderFlowData: {
-        list = [],
-        page = {},
+        custTradeOrderDTOList = [],
+        pageDTO = {},
       },
     } = this.props;
     const {
       pageNum = 1,
       pageSize = DEFAULT_PAGE_SIZE,
       totalCount = 1,
-    } = page;
+    } = pageDTO;
     const pagination = {
       current: pageNum,
       pageSize,
       total: totalCount,
     };
-    const isRender = list.length !== 0;
+    const isRender = custTradeOrderDTOList.length !== 0;
 
     return (
       <div className={styles.tradeOrderFlowWrap}>
         <IfTableWrap isRender={isRender} text={NODATA_HINT}>
           <Table
             pagination={pagination}
-            dataSource={list}
+            dataSource={custTradeOrderDTOList}
             columns={this.transformColumnsData(TRADE_ORDER_FLOW_COLUMNS)}
+            rowKey="orderTime"
             className={styles.table}
             rowClassName={styles.tableRow}
             onChange={this.handlePageChanged}
