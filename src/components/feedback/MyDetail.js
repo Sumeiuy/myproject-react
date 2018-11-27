@@ -32,7 +32,7 @@ export default class MyDetail extends PureComponent {
     resolveQuestion: PropTypes.func.isRequired,
     addFeedbackEvaluation: PropTypes.func.isRequired,
   }
-  
+
   constructor(props) {
     super(props);
     this.state = {
