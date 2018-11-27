@@ -144,6 +144,21 @@ const feedbackOptions = {
       label: '本人',
     },
   ],
+  // 用户评价的下拉选项
+  userDegreeOfSatisfaction: [
+    {
+      value: 'SATISFIED',
+      label: '满意',
+    },
+    {
+      value: 'COMMON',
+      label: '一般',
+    },
+    {
+      value: 'DISCONTENT',
+      label: '不满意',
+    },
+  ],
   allOperatorOptions: [
     {
       value: '001423',

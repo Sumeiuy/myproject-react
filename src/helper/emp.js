@@ -105,6 +105,15 @@ const emp = {
     }
     return pstnId;
   },
+
+   /**
+   * 获取登录人当前的职位相关信息
+   * @author sunweibin
+   * @returns {String|null} 职位信息
+   */
+  getPstnDetail() {
+    return window.forReactPosition || this.curPostion;
+  },
   /**
    * 获取代登录人的ID号
    */
