@@ -75,8 +75,8 @@ export default class Person extends PureComponent {
   @autobind
   checkIsEditable() {
     const { isMainEmp } = this.props;
-    return isMainEmp;
-    // return true;
+    // return isMainEmp;
+    return true;
   }
 
   @autobind
@@ -350,7 +350,7 @@ export default class Person extends PureComponent {
             this.checkIsEditable()
               ? (
                 <BasicEditorCell
-                  label="投入成本收益率"
+                  label="投入成本收益率%"
                   width={INFO_ITEM_WITDH}
                   className={styles.infoItem}
                   editorId="person_insured"
