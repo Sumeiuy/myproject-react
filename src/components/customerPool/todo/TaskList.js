@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-11-12 19:25:08
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-27 13:42:40
+ * @Last Modified time: 2018-11-27 20:39:28
  */
 
 import React, { PureComponent } from 'react';
@@ -10,6 +10,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { Table, message } from 'antd';
 import _ from 'lodash';
+import moment from 'moment';
 
 import logable from '../../../decorators/logable';
 import { openRctTab } from '../../../utils';
@@ -208,7 +209,6 @@ export default class TaskList extends PureComponent {
             title: '提交时间',
             dataIndex: 'startTime',
             key: 'startTime',
-            render: (item, record) => (<span className={styles.applyStartTime}>{record.startTime}</span>),
           },
         ];
         break;
@@ -275,8 +275,17 @@ export default class TaskList extends PureComponent {
         totalRecordNum,
       }
     } = this.props;
-    // 搜索结果为空
-    if (_.isEmpty(data)) {
+    const newData = _.map(data, item => {
+      const { startTime, endTime } = item;
+      return {
+        ...item,
+        startTime: startTime && moment(Number(startTime)).format('YYYY-MM-DD'),
+        endTime: endTime && moment(Number(endTime)).format('YYYY-MM-DD'),
+      };
+    });
+
+    //数据为空
+    if (_.isEmpty(newData)) {
       return (
         <div className={styles.empty}>
             <div className={styles.emptyContainer}>
@@ -292,7 +301,7 @@ export default class TaskList extends PureComponent {
           className={className}
           rowKey='id'
           columns={this.columns}
-          dataSource={data}
+          dataSource={newData}
           pagination={false}
         />
         <Pagination
