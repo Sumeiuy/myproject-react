@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-19 10:17:54
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-26 21:08:17
+ * @LastEditTime: 2018-11-27 10:58:23
  * @Description: 产品订单
  */
 
@@ -11,6 +11,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'dva';
 import { autobind } from 'core-decorators';
 import { Tabs } from 'antd';
+import logable from '../../../../decorators/logable';
 import { generateEffect as effect } from '../../../../helper/dva';
 import ProductOrderFlow from '../../../../components/customerDetailProductOrder/ProductOrderFlow';
 import TradeOrderFlow from '../../../../components/customerDetailProductOrder/TradeOrderFlow';
@@ -86,6 +87,7 @@ export default class ProductOrder extends PureComponent {
   }
 
   @autobind
+  @logable({type: 'Click', payload: { name: '产品订单切换显示面板', value: '$args[0]'}})
   handleTabChange(activeTabKey) {
     this.replaceActiveTabKey(activeTabKey);
   }

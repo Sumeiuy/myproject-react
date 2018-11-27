@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-20 10:31:29
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-26 20:44:07
+ * @LastEditTime: 2018-11-27 12:55:26
  * @Description: 服务订单流水
  */
 
@@ -11,6 +11,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import moment from 'moment';
+import logable from '../../decorators/logable';
 import Tooltip from '../common/Tooltip';
 import { SingleFilter } from 'lego-react-filter/src';
 import Table from '../common/table';
@@ -91,6 +92,13 @@ export default class ProductOrderFlow extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '服务订单流水服务产品选择',
+      value: '$args[0].value',
+    },
+  })
   handleServiceProductChanged(e) {
     this.setState({
       serviceProductCode: e.value,
@@ -98,6 +106,13 @@ export default class ProductOrderFlow extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '服务订单流水类型选择',
+      value: '$args[0].value',
+    },
+  })
   handleServiceTypeChanged(e) {
     this.setState({
       serviceType: e.value,
@@ -105,6 +120,13 @@ export default class ProductOrderFlow extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'CalendarSelect',
+    payload: {
+      name: '服务订单流水日期选择',
+      value: '$args[0].value',
+    },
+  })
   haneleDateChanged(e) {
     this.setState({
       standardStartDate: e.value[0],
@@ -143,6 +165,7 @@ export default class ProductOrderFlow extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ViewItem', payload: { name: '点击服务订单编号', value: '$args[0]' } })
   handleOrderNumberClicked(id) {
     this.setState({
       isProductOrderDetailShow: true,
