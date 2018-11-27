@@ -75,8 +75,8 @@ export default class Person extends PureComponent {
   @autobind
   checkIsEditable() {
     const { isMainEmp } = this.props;
-    // return isMainEmp;
-    return true;
+    return isMainEmp;
+    // return true;
   }
 
   @autobind
