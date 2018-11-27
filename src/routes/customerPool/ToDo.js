@@ -390,8 +390,6 @@ subject: value });
         query,
         query: {
           taskType,
-          pageSize = 10,
-          pageNum = 1,
         }
       }
     } = this.props;
