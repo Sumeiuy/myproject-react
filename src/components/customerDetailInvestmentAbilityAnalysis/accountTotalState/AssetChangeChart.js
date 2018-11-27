@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-23 09:25:41
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-23 19:43:48
+ * @Last Modified time: 2018-11-27 13:35:58
  * @description 资产变动报表
  */
 import React, { PureComponent } from 'react';
@@ -11,7 +11,7 @@ import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import IfWrap from '../../common/biz/IfWrap';
-import { number } from '../../../helper';
+import { number, data } from '../../../helper';
 import IECharts from '../../IECharts';
 import { filterData, filterXAxisDate } from '../utils';
 import { FUND_INVEST, ASSET_MARKET, assetChangeChartTip } from '../config';
@@ -113,7 +113,7 @@ export default class AssetChangeChart extends PureComponent {
     const option = this.getChartOption();
     const fundInvestValueCls = classnames([styles.value, styles.fundInvestValue]);
     const assetMarketValueCls = classnames([styles.value, styles.assetMarketValue]);
-    const assetChangeTipData = _.map(assetChangeChartTip, item => <p>{item}</p>);
+    const assetChangeTipData = _.map(assetChangeChartTip, item => <p key={data.uuid()}>{item}</p>);
     return (
       <div className={styles.assetChangeChart}>
         <IfWrap isRender={!_.isEmpty(assetChangeReportData)}>

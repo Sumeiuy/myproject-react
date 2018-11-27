@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-20 16:01:36
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-26 13:52:20
+ * @Last Modified time: 2018-11-27 12:11:46
  * @description 新版客户360详情下的账户信息Tab页面的model
  */
 import { detailInvestmentAbilityAnalysis as api } from '../../api';
@@ -69,7 +69,7 @@ export default {
   effects: {
     // 获取客户盈利能力
     * getProfitAbility({ payload }, { call, put }) {
-      const { resultData = EMPTY_OBJECT } = yield call(api.queryProfitAbility, payload);
+      const { resultData } = yield call(api.queryProfitAbility, payload);
       yield put({
         type: 'getProfitAbilitySuccess',
         payload: resultData,
@@ -77,7 +77,7 @@ export default {
     },
     // 获取投资账户特征
     * getInvestmentFeatureLabels({ payload }, { call, put }) {
-      const { resultData = EMPTY_ARRAY } = yield call(api.queryInvestmentFeatureLabels, payload);
+      const { resultData } = yield call(api.queryInvestmentFeatureLabels, payload);
       yield put({
         type: 'getInvestmentFeatureLabelsSuccess',
         payload: resultData,
@@ -85,7 +85,7 @@ export default {
     },
     // 获取账户资产变动
     * getAssetChangeState({ payload }, { call, put }) {
-      const { resultData = EMPTY_ARRAY } = yield call(api.queryAssetChangeState, payload);
+      const { resultData } = yield call(api.queryAssetChangeState, payload);
       yield put({
         type: 'getAssetChangeStateSuccess',
         payload: resultData,
@@ -93,7 +93,7 @@ export default {
     },
     // 获取账户资产变动图表
     * getAssetChangeReport({ payload }, { call, put }) {
-      const { resultData = EMPTY_ARRAY } = yield call(api.queryAssetChangeReport, payload);
+      const { resultData } = yield call(api.queryAssetChangeReport, payload);
       yield put({
         type: 'getAssetChangeReportSuccess',
         payload: resultData,

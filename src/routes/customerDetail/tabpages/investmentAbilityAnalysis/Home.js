@@ -2,8 +2,8 @@
  * @Author: zhangjun
  * @Date: 2018-11-19 15:39:12
  * @Last Modified time: 2018-11-23 20:37:55
- * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-26 17:02:10
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-11-27 13:39:16
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -95,10 +95,10 @@ export default class Home extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { query: { investmentAbilityTabActiveKey } } = props.location;
+    const { query: { investAbilityTabActiveKey } } = props.location;
     this.state = {
       // 当前激活tab面板的key, 如果query中没有，默认取账户总体情况的key
-      activeTabKey: investmentAbilityTabActiveKey ? investmentAbilityTabActiveKey : 'accountTotalState',
+      activeTabKey: investAbilityTabActiveKey ? investAbilityTabActiveKey : 'accountTotalState',
     };
   }
 
@@ -123,7 +123,7 @@ export default class Home extends PureComponent {
     this.context.replace({
       query: {
         ...query,
-        investmentAbilityTabActiveKey: activeTabKey
+        investAbilityTabActiveKey: activeTabKey
       }
     });
   }
