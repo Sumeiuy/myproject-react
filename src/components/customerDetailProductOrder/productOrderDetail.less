@@ -1,0 +1,83 @@
+.productOrderDetailWrap {
+  :global {
+    .ant-modal {
+      width: 1090px !important;
+      height: 622px !important;
+      .ant-modal-content {
+        .ant-modal-close {
+          top: 5px;
+        }
+        .ant-modal-header {
+          height: 50px;
+          background: #fff;
+          padding: 0 20px;
+          .ant-modal-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            line-height: 50px;
+          }
+        }
+        .ant-modal-footer {
+          height: 70px;
+          background: #fff;
+          border-top: unset;
+          padding-bottom: 30px;
+          padding-right: 30px;
+          .ant-btn {
+            width: 80px;
+            height: 30px;
+          }
+        }
+      }
+    }
+  }
+
+  .serviceOrderDetailWrap {
+    height: 100%;
+    padding: 20px 30px;
+    .detailInfo {
+      font-size: 14px;
+      color: #333;
+      .detail {
+        .hint {
+          display: inline-block;
+          color: #999;
+          text-align: right;
+          width: 146px;
+        }
+        .info {
+          display: inline-block;
+          width: 190px;
+          white-space: nowrap;
+        }
+        &:first-child {
+          margin-bottom: 10px;
+        }
+      }
+    }
+    .detailTab {
+      height: calc(~"100% - 92px");
+      overflow: visible !important;
+      :global {
+        .ant-tabs-bar {
+          margin-bottom: 0;
+          border-bottom: 1px solid #ebebeb;
+        }
+        .ant-tabs-nav .ant-tabs-tab {
+          height: 40px;
+          padding: 11px 0;
+          line-height: 18px;
+          font-size: 14px;
+          color: #333;
+        }
+        .ant-tabs-tab-active.ant-tabs-tab {
+          font-weight: bold;
+        }
+        .ant-tabs-content {
+          height: calc(~"100% - 39px");
+        }
+      }
+    }
+  }
+}

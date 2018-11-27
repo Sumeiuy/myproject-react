@@ -6,10 +6,10 @@
  // 这个table只是简单的将antd的table使用的分页器换为我们自己实现的分页器，完全兼容antd原来的table
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import Table from './Table';
-import styles from './index.less';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import Table from './Table';
+import styles from './index.less';
 export default class CommonTable extends PureComponent {
   static propTypes = {
     // 分页器class
@@ -55,6 +55,8 @@ export default class CommonTable extends PureComponent {
       paginationClass,
       isNeedEmptyRow,
       dataSource,
+      isNeedNoData,
+      components,
       ...restProps
     } = this.props;
     let newDataSource = isNeedEmptyRow ? this.getFilledData() : dataSource;

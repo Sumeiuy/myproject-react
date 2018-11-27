@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-11-06 13:23:32
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-16 17:21:42
+ * @Last Modified time: 2018-11-22 09:36:55
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -38,37 +38,6 @@ export default class ServiceRelationship extends PureComponent {
      // 服务历史的弹出框
      serviceHistoryModalVisible: false,
     };
-  }
-
-  componentDidMount() {
-    const {
-      getCustServiceTeam,
-      getCustDevInfo,
-      location: { query: { custId } },
-    } = this.props;
-    getCustServiceTeam({ custId });
-    getCustDevInfo({ custId });
-  }
-
-  componentDidUpdate(prevProps) {
-    const {
-      location: {
-        query: {
-          custId: prevCustId,
-        },
-      },
-    } = prevProps;
-    const {
-      location: {
-        query: {
-          custId,
-        },
-      },
-    } = this.props;
-    // url中custId发生变化时重新请求相关数据
-    if (prevCustId !== custId) {
-      this.getCustServiceHistory(custId);
-    }
   }
 
   //打开服务历史的弹框

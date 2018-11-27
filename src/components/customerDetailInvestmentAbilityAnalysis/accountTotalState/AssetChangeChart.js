@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-23 09:25:41
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-23 19:34:46
+ * @Last Modified time: 2018-11-23 19:43:48
  * @description 资产变动报表
  */
 import React, { PureComponent } from 'react';
@@ -52,7 +52,7 @@ export default class AssetChangeChart extends PureComponent {
     const option = {
       grid: {
         left: 0,
-        right: 5,
+        right: 10,
         top: 10,
         bottom: 0,
         containLabel: true,
