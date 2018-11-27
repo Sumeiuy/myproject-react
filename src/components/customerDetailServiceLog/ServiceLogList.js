@@ -46,13 +46,15 @@ export default class ServiceLogList extends PureComponent {
     let serviceLogMap = [];
     const { serviceLogList } = this.props;
     _.each(serviceLogList, item => {
+      debugger;
+      const feedbackTime = (item.serveTime.split(' '))[0].replace(/\//g, '-');
       if(item) {
-        const currentLog = _.find(serviceLogMap, log => log.date === item.feedbackTime);
+        const currentLog = _.find(serviceLogMap, log => log.date === feedbackTime);
         if(currentLog) {
           currentLog.logList = _.concat(currentLog.logList, item);
         } else {
           serviceLogMap = _.concat(serviceLogMap, {
-            date: item.feedbackTime,
+            date: feedbackTime,
             logList: [item],
           });
         }
@@ -125,23 +127,15 @@ export default class ServiceLogList extends PureComponent {
 
   renderHeaderRight(item, defaultActiveKey) {
     const { activeKey } = this.state;
-    if (_.isEmpty(item)) {
-      return null;
-    }
-
-    if (_.isEmpty(item.subtypeCd)) {
-      // 从MOT系统来，没有活动方式
-      return (
-        <span>{item.serveChannel || '--'}</span>
-      );
-    }
-
     let type = 'down';
-
-    if(!activeKey) {
+    if (!activeKey) {
       type = defaultActiveKey === item.id ? 'up' : 'down';
     } else {
       type = activeKey === item.id ? 'up' : 'down';
+    }
+
+    if (_.isEmpty(item.actor)) {
+      type = 'down';
     }
 
     const iconCls = classnames({
@@ -149,8 +143,20 @@ export default class ServiceLogList extends PureComponent {
       [styles.disable]: _.isEmpty(item.actor),
     });
 
+    if (_.isEmpty(item)) {
+      return null;
+    }
+    if (_.isEmpty(item.subtypeCd)) {
+      // 从MOT系统来，没有活动方式
+      return (
+        <span>
+          {item.serveChannel || '--'}
+          <Icon className={iconCls} type={type} />
+        </span>
+      );
+    }
     return (
-      <span className={styles.headerRight}>
+      <span>
         {item.serveOrigin}
         <Icon className={iconCls} type={type} />
       </span>
@@ -178,11 +184,14 @@ export default class ServiceLogList extends PureComponent {
         // 如果没有实施者字段，则认为该服务记录没有实质内容，隐藏该服务记录
         disabled={_.isEmpty(item.actor)}
       >
-        <ServiceRecordContent
-          executeTypes={executeTypes}
-          item={item}
-          filesList={filesList}
-        />
+        {
+          !_.isEmpty(item.actor) ?
+            <ServiceRecordContent
+              executeTypes={executeTypes}
+              item={item}
+              filesList={filesList}
+            /> : null
+        }
       </Panel>
     );
   }
