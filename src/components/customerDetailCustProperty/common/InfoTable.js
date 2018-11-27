@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-26 16:44:23
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-27 10:22:38
+ * @Last Modified time: 2018-11-27 11:51:59
  * @description 联系方式使用的Table
  */
 import React from 'react';
@@ -17,7 +17,7 @@ import styles from './infoTable.less';
 
 function InfoTable(props) {
   // 给表格添加操作列内容
-  const { dataSource, columns, isMainEmp } = props;
+  const { dataSource, columns, isMainEmp, onEditClick, onDelClick } = props;
   const newColumns = _.map(columns, (column) => {
     const { dataIndex } = column;
     if (dataIndex === 'operate') {
@@ -27,12 +27,16 @@ function InfoTable(props) {
         render: (text, record) => {
           const { mainFlag } = record;
           // 主服务经理可以查看和编辑客户的电话信息、地址信息和其他信息
-          if (mainFlag === 'N' && isMainEmp && !isFromNoSupportUpdateSource()) {
+          if (mainFlag === 'N' && !isMainEmp && !isFromNoSupportUpdateSource()) {
             // 只有主服务经理能够修改非主要的并且来自可以修改的来源的存在操作列
             return (
               <span>
-                <span><Icon type="shenqing" /></span>
-                <span><Icon type="shanchu" /></span>
+                <span className={`${styles.operateBtn} ${styles.editBtn}`}>
+                  <Icon type="shenqing" onClick={() => onEditClick(record)}/>
+                </span>
+                <span className={styles.operateBtn}>
+                  <Icon type="shanchu" onClick={() => onDelClick(record)} />
+                </span>
               </span>
             );
           }
@@ -59,6 +63,10 @@ InfoTable.propTypes = {
   columns: PropTypes.array.isRequired,
   // 是否主服务经理
   isMainEmp: PropTypes.bool.isRequired,
+  // 点击删除回调
+  onDelClick: PropTypes.func.isRequired,
+  // 点击编辑图标回调
+  onEditClick: PropTypes.func.isRequired,
 };
 
 export default InfoTable;
