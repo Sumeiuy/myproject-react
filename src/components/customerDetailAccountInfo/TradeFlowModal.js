@@ -2,7 +2,7 @@
  * @Author: liqianwen
  * @Date: 2018-11-07 13:31:51
  * @Last Modified by: liqianwen
- * @Last Modified time: 2018-11-27 16:30:44
+ * @Last Modified time: 2018-11-27 16:33:36
  * @description 新版客户360详情的交易流水的弹出层
  */
 import React, { PureComponent } from 'react';
@@ -752,7 +752,7 @@ export default class TradeFlowModal extends PureComponent {
                       columns={standardTradeColumns}
                       className={styles.tradeFlowTable}
                       scroll={STANDARD_TRADE_FLOW_TABLE_SCROLL}
-                      />
+                    />
                   </div>
                   <Pagination
                     {...standardPage}
