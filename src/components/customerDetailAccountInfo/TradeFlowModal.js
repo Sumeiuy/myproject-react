@@ -2,7 +2,7 @@
  * @Author: liqianwen
  * @Date: 2018-11-07 13:31:51
  * @Last Modified by: liqianwen
- * @Last Modified time: 2018-11-27 15:33:29
+ * @Last Modified time: 2018-11-27 16:22:28
  * @description 新版客户360详情的交易流水的弹出层
  */
 import React, { PureComponent } from 'react';
@@ -16,7 +16,6 @@ import { data, number } from '../../helper';
 import logable, { logCommon } from '../../decorators/logable';
 import Modal from '../common/biz/CommonModal';
 import DateFilter from '../common/htFilter/dateFilter';
-import PlaceHolderImage from '../common/placeholderImage';
 import { SingleFilter, SingleFilterWithSearch } from 'lego-react-filter/src';
 import TreeFilter from 'lego-tree-filter/src';
 import Pagination from '../common/Pagination';
@@ -35,6 +34,9 @@ import {
 
 import styles from './tradeFlowModal.less';
 const NODATA_HINT = '客户暂无资金变动信息';
+const NODATA_STANDARD = '暂无普通账户交易历史信息';
+const NODATA_CREDIT = '暂无信用账户交易历史信息';
+const NODATA_OPTION = '暂无期权账户交易历史信息';
 const TabPane = Tabs.TabPane;
 const RadioGroup = Radio.Group;
 
@@ -643,7 +645,7 @@ export default class TradeFlowModal extends PureComponent {
       },
     } = this.props;
     // 判断有没有普通账户流水数据
-    const hasNoStandardData = _.isEmpty(standardTradeFlowRes.list);
+    const isRenderStandard = !_.isEmpty(standardTradeFlowRes.list);
     // 补足普通账户流水数据
     const standardData = data.padEmptyDataForList(standardTradeFlowRes.list);
     // 修改普通账户Table 的 columns
@@ -651,12 +653,12 @@ export default class TradeFlowModal extends PureComponent {
     // 获取普通账户表格的分页器信息
     const standardPage = this.getPage(standardTradeFlowRes.page);
     // 判断有没有信用账户流水数据
-    const hasNoCreditData = _.isEmpty(creditTradeFlowRes.list);
+    const isRenderCredit = !_.isEmpty(standardTradeFlowRes.list);
     const creditData = data.padEmptyDataForList(creditTradeFlowRes.list);
     const creditTradeColumns = this.transformColumnsData(CREDIT_TRADE_FLOW_COLUMNS);
     const creditPage = this.getPage(creditTradeFlowRes.page);
     // 判断有没有期权账户流水数据
-    const hasNoOptionData = _.isEmpty(optionTradeFlowRes.list);
+    const isRenderOption = !_.isEmpty(optionTradeFlowRes.list);
     const optionData = data.padEmptyDataForList(optionTradeFlowRes.list);
     const optionTradeColumns = this.transformColumnsData(OPTION_TRADE_FLOW_COLUMNS);
     const optionPage = this.getPage(optionTradeFlowRes.page);
@@ -744,27 +746,21 @@ export default class TradeFlowModal extends PureComponent {
                     />
                   </div>
                 </div>
-                {
-                  hasNoStandardData ?
-                  (<PlaceHolderImage title="暂无普通账户交易流水数据" style={nodataStyle} />)
-                  : (
-                    <div>
-                      <div className={styles.body}>
-                        <Table
-                          pagination={false}
-                          dataSource={standardData}
-                          columns={standardTradeColumns}
-                          className={styles.tradeFlowTable}
-                          scroll={STANDARD_TRADE_FLOW_TABLE_SCROLL}
-                          />
-                      </div>
-                        <Pagination
-                          {...standardPage}
-                          onChange={this.handleStandardPageChange}
-                        />
-                    </div>
-                  )
-                }
+                <IfTableWrap isRender={isRenderStandard} text={NODATA_STANDARD}>
+                  <div className={styles.body}>
+                    <Table
+                      pagination={false}
+                      dataSource={standardData}
+                      columns={standardTradeColumns}
+                      className={styles.tradeFlowTable}
+                      scroll={STANDARD_TRADE_FLOW_TABLE_SCROLL}
+                      />
+                  </div>
+                  <Pagination
+                    {...standardPage}
+                    onChange={this.handleStandardPageChange}
+                  />
+                </IfTableWrap>
               </div>
             </TabPane>
             <TabPane tab="信用账户历史交易" key="creditAccountTrade">
@@ -815,28 +811,21 @@ export default class TradeFlowModal extends PureComponent {
                     />
                   </div>
                 </div>
-                {
-                  hasNoCreditData ?
-                  (<PlaceHolderImage title="暂无信用账户交易流水数据" style={nodataStyle} />)
-                  :
-                  (
-                    <div>
-                      <div className={styles.body}>
-                        <Table
-                          pagination={false}
-                          dataSource={creditData}
-                          columns={creditTradeColumns}
-                          className={styles.tradeFlowTable}
-                          scroll={CREDIT_TRADE_FLOW_TABLE_SCROLL}
-                        />
-                      </div>
-                      <Pagination
-                        {...creditPage}
-                        onChange={this.handleCreditPageChange}
-                      />
-                    </div>
-                  )
-                }
+                <IfTableWrap isRender={isRenderCredit} text={NODATA_CREDIT}>
+                  <div className={styles.body}>
+                    <Table
+                      pagination={false}
+                      dataSource={creditData}
+                      columns={creditTradeColumns}
+                      className={styles.tradeFlowTable}
+                      scroll={CREDIT_TRADE_FLOW_TABLE_SCROLL}
+                    />
+                </div>
+                <Pagination
+                  {...creditPage}
+                  onChange={this.handleCreditPageChange}
+                />
+                </IfTableWrap>
               </div>
             </TabPane>
             <TabPane tab="期权账户历史交易" key="optionAccountTrade">
@@ -872,28 +861,21 @@ export default class TradeFlowModal extends PureComponent {
                     />
                   </div>
                 </div>
-                {
-                  hasNoOptionData ?
-                  (<PlaceHolderImage title="暂无期权账户交易流水数据" style={nodataStyle} />)
-                  :
-                  (
-                    <div>
-                      <div className={styles.body}>
-                        <Table
-                          pagination={false}
-                          dataSource={optionData}
-                          columns={optionTradeColumns}
-                          className={styles.tradeFlowTable}
-                          scroll={OPTION_TRADE_FLOW_TABLE_SCROLL}
-                        />
-                    </div>
-                    <Pagination
-                      {...optionPage}
-                      onChange={this.handleOptionPageChange}
+                <IfTableWrap isRender={isRenderOption} text={NODATA_OPTION}>
+                  <div className={styles.body}>
+                    <Table
+                      pagination={false}
+                      dataSource={optionData}
+                      columns={optionTradeColumns}
+                      className={styles.tradeFlowTable}
+                      scroll={OPTION_TRADE_FLOW_TABLE_SCROLL}
                     />
-                    </div>
-                  )
-                }
+                  </div>
+                  <Pagination
+                    {...optionPage}
+                    onChange={this.handleOptionPageChange}
+                  />
+                </IfTableWrap>
               </div>
             </TabPane>
             <TabPane tab="资金变动" key="capitalChange">
