@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-23 17:18:23
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-31 17:39:47
+ * @Last Modified time: 2018-11-27 11:28:07
  * @description 账户详情
  */
 
@@ -12,29 +12,27 @@ import { Table } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import moment from 'moment';
+import { SingleFilterWithSearch } from 'lego-react-filter/src';
 
 import {
   FUND_ACCOUNT_TABLE_COLUMNS,
   STOCK_ACCOUNT_TABLE_COLUMNS,
   ACCOUNT_CHANGE_TABLE_COLUMNS
 } from './accountDetailConfig';
-import { supplyEmptyRow } from './utils';
 import logable from '../../decorators/logable';
 import { number } from '../../helper';
-import DateFilter from '../common/htFilter/dateFilter';
-import { SingleFilterWithSearch } from 'lego-react-filter/src';
-import styles from './accountDetail.less';
 import Pagination from '../common/Pagination';
+import PlaceHolder from '../common/placeholderImage/PlaceHolder';
 import IfTableWrap from '../common/IfTableWrap';
+import DateFilter from '../common/htFilter/dateFilter';
+
+import styles from './accountDetail.less';
 
 // 默认查询日期半年
 const DEFAULT_START_DATE = moment().subtract(6, 'months');
 const DEFAULT_END_DATE = moment().subtract(1, 'day');
 // 接口请求查询日期的格式
 const DATE_FORMATE_API = 'YYYY-MM-DD';
-const NODATA_HINT = '暂无账户变动信息';
-const EMPTY_OBJECT = {};
-const EMPTY_LIST = [];
 
 export default class AccountDetail extends PureComponent {
   static propTypes = {
@@ -161,9 +159,13 @@ export default class AccountDetail extends PureComponent {
 
   // 切换账户变动页码刷新表格数据
   @autobind
-  @logable({ type: 'Click',
-payload: { name: '切换账户变动页码',
-value: '$args[0]'} })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '切换账户变动页码',
+      value: '$args[0]',
+    },
+  })
   handlePageChange(pageNum) {
     this.setState( {pageNum});
     this.getAccountChange({
@@ -187,8 +189,8 @@ value: '$args[0]'} })
       stockAccount,
       busnTypeDict,
       accountChangeRes: {
-        list = EMPTY_LIST,
-        page = EMPTY_OBJECT,
+        list = [],
+        page = {},
       },
     } = this.props;
     const {
@@ -199,10 +201,6 @@ value: '$args[0]'} })
     // 获取分页的页数
     const isRender = !_.isEmpty(list);
     const accountChangePage = this.getPage(page);
-    // 补足空白行后的资金账户数据
-    const newFundAccount = supplyEmptyRow(fundAccount);
-    // 补足空白行后的证券账户
-    const newStockAccount = supplyEmptyRow(stockAccount);
     // 修改证券账户表格的columns
     const stockAccountColumns = this.getStockTableColumns(STOCK_ACCOUNT_TABLE_COLUMNS);
     // 修改账户变动中表格columns
@@ -215,12 +213,18 @@ value: '$args[0]'} })
             <div className={styles.title}>资金账户</div>
           </div>
           <div className={styles.accountTable}>
-            <Table
-              pagination={false}
-              className={styles.tableBorder}
-              dataSource={newFundAccount}
-              columns={FUND_ACCOUNT_TABLE_COLUMNS}
-            />
+            <PlaceHolder
+              isRender={_.isEmpty(fundAccount)}
+              title="暂无资金账户"
+              size="small"
+            >
+              <Table
+                pagination={false}
+                className={styles.tableBorder}
+                dataSource={fundAccount}
+                columns={FUND_ACCOUNT_TABLE_COLUMNS}
+              />
+            </PlaceHolder>
           </div>
         </div>
         <div className={styles.accountBlock}>
@@ -228,12 +232,18 @@ value: '$args[0]'} })
             <div className={styles.title}>证券账户</div>
           </div>
           <div className={styles.accountTable}>
-            <Table
-              pagination={false}
-              className={styles.tableBorder}
-              dataSource={newStockAccount}
-              columns={stockAccountColumns}
-            />
+            <PlaceHolder
+              isRender={_.isEmpty(stockAccount)}
+              title="暂无证券账户"
+              size="small"
+            >
+              <Table
+                pagination={false}
+                className={styles.tableBorder}
+                dataSource={stockAccount}
+                columns={stockAccountColumns}
+              />
+            </PlaceHolder>
           </div>
         </div>
         <div className={styles.accountBlock}>
@@ -266,7 +276,7 @@ value: '$args[0]'} })
               />
             </div>
           </div>
-          <IfTableWrap isRender={isRender} text={NODATA_HINT}>
+          <IfTableWrap isRender={isRender} text="暂无账户变动信息">
             <div className={styles.accountTable}>
               <Table
                 pagination={false}
