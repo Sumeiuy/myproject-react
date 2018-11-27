@@ -10,13 +10,12 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { connect } from 'dva';
-import { routerRedux } from 'dva/router';
 import _ from 'lodash';
 import { Tabs } from 'antd';
 
 import { dva } from '../../../../helper';
 import withRouter from '../../../../decorators/withRouter';
-import logable, { logCommon } from '../../../../decorators/logable';
+import { logCommon } from '../../../../decorators/logable';
 import ProtocolTab from '../../../../components/customerDetailContractManage/ProtocolTab';
 import AgreementTab from '../../../../components/customerDetailContractManage/AgreementTab';
 import {
@@ -49,6 +48,7 @@ const mapStateToProps = state => ({
   empInfo: state.app.empInfo,
   // 顾客信息
   custInfo: state.customerDetail.customerBasicInfo,
+  summaryCustInfo: state.customerDetail.summaryInfo,
   // 协议列表数据
   protocolList: state.contractManage.protocolList,
   // 登陆人信息
@@ -84,6 +84,7 @@ export default class ContractManage extends PureComponent {
     location: PropTypes.object.isRequired,
     empInfo: PropTypes.object.isRequired,
     custInfo: PropTypes.object.isRequired,
+    summaryCustInfo: PropTypes.object.isRequired,
     queryProtocolList: PropTypes.func.isRequired,
     protocolList: PropTypes.object.isRequired,
     queryLoginInfo: PropTypes.func.isRequired,
@@ -138,6 +139,7 @@ export default class ContractManage extends PureComponent {
       empInfo,
       location,
       custInfo,
+      summaryCustInfo,
       protocolList,
       queryProtocolList,
       loginInfo,
@@ -160,6 +162,7 @@ export default class ContractManage extends PureComponent {
                 location={location}
                 empInfo={empInfo}
                 custInfo={custInfo}
+                summaryCustInfo={summaryCustInfo}
                 data={protocolList}
                 queryList={queryProtocolList}
                 loginInfo={loginInfo}

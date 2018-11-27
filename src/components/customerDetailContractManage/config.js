@@ -24,11 +24,11 @@ export const CONTRACT_MANAGE_TABS = {
 };
 
 // 非投顾协议的子类型
-// 高速通道协议、紫金快车道协议、套利软件
+// 紫金快车道协议、套利软件、高速通道协议
 export const NOT_TOUGU_SUBTYPE = {
-  ZJKCDAgreement: '507070',
-  TL: '507095',
-  RJAgreement: '507050',
+  RJAgreement: '0501',
+  ZJKCDAgreement: '0502',
+  TL: '0503',
 };
 
 export const CHARGING_MODE_CODE = 'T30200';
