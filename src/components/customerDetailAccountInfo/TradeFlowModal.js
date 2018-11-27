@@ -2,7 +2,7 @@
  * @Author: liqianwen
  * @Date: 2018-11-07 13:31:51
  * @Last Modified by: liqianwen
- * @Last Modified time: 2018-11-27 14:44:41
+ * @Last Modified time: 2018-11-27 15:33:29
  * @description 新版客户360详情的交易流水的弹出层
  */
 import React, { PureComponent } from 'react';
@@ -605,7 +605,10 @@ export default class TradeFlowModal extends PureComponent {
 // 修改产品下拉选项
 @autobind
   getOptionItemValue({ value: { prdtCode, prdtName, prdtSortCode } }) {
-    return <span key={prdtCode}>{`${prdtName}(${prdtSortCode})`}</span>;
+    if(!prdtSortCode){
+      return <span key={prdtCode} title={prdtName}>{prdtName}</span>;
+    }
+    return <span key={prdtCode} title={prdtName}>{`${prdtName}(${prdtSortCode})`}</span>;
   }
 
   render() {
