@@ -16,5 +16,9 @@ export default function feebback(api) {
     getAnserOfQustionList: query => api.post('/groovynoauth/feedback/querySMFeedbackRecordList', query),
     // 处理或更新反馈问题（共用）
     updateFeedback: query => api.post('/groovynoauth/feedback/updateFeedback', query),
+    // 满意度调查
+    addFeedbackEvaluation: query => api.post('/groovynoauth/feedback/addFeedbackEvaluation', query),
+    // 反馈管理 经办人列表
+    getEmpListByResp: query => api.post('/groovynoauth/emp/queryEmpListByResp', query),
   };
 }
