@@ -16,6 +16,7 @@ import {
   sourceType,
 } from '../config';
 import styles from './orderingCustomer.less';
+import logable from '../../../decorators/logable';
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
@@ -70,6 +71,7 @@ export default class OrderingCustomer extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '页码切换', value: '$args[0].current' } })
   handlePaginationChange(page) {
     const { pageChange } = this.props;
     pageChange(page);
