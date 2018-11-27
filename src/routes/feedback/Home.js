@@ -79,7 +79,7 @@ export default class FeedBackNew extends PureComponent {
     getFeedbackList(feedbackHelper.constructPostBody(query, curPageNum || 1, curPageSize || 10));
     getEmpListByResp({
       respId: '1-3PDQSG5',
-    })
+    });
   }
 
   componentWillReceiveProps(nextProps) {

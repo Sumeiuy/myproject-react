@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-23 09:51:00
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-26 20:42:36
+ * @LastEditTime: 2018-11-27 14:39:54
  * @Description: 服务订单流水详情
  */
 
@@ -19,6 +19,7 @@ import OtherCommissions from './OtherCommissions';
 import OrderApproval from './OrderApproval';
 import ServiceProductList from './ServiceProductList';
 import AttachmentList from './AttachmentList';
+import logable from '../../decorators/logable';
 
 const TabPane = Tabs.TabPane;
 
@@ -75,6 +76,11 @@ export default class ProductOrderDetail extends PureComponent {
     this.props.onClose();
   }
 
+  @autobind
+  @logable({ type: 'Click', payload: { name: '服务订单详情切换展示', value: '$args[0]' } })
+  handleTabChange(activeTabKey) {
+  }
+
   render() {
     const {
       visible,
@@ -126,6 +132,7 @@ export default class ProductOrderDetail extends PureComponent {
           </div>
           <Tabs
             className={styles.detailTab}
+            onChange={this.handleTabChange}
           >
             <TabPane tab="服务产品" key="serviceProductList">
               <IfTableWrap isRender={isServiceProductListRender} text="订单暂无服务产品信息">
