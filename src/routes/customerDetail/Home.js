@@ -191,6 +191,7 @@ export default class Home extends PureComponent {
               data={summaryInfo}
               moreLabelInfo={moreLabelInfo}
               queryAllKeyLabels={queryAllKeyLabels}
+              replace={this.context.replace}
             />
           </div>
         </div>
