@@ -45,6 +45,7 @@ export default class ProtocolTab extends PureComponent {
     location: PropTypes.object.isRequired,
     empInfo: PropTypes.object.isRequired,
     custInfo: PropTypes.object.isRequired,
+    summaryCustInfo: PropTypes.object.isRequired,
     data: PropTypes.object.isRequired,
     queryList: PropTypes.func.isRequired,
     loginInfo: PropTypes.object.isRequired,
@@ -338,18 +339,21 @@ export default class ProtocolTab extends PureComponent {
     payload: { name: '变更协议' },
   })
   handleUpdateProtocol(record) {
-    const { custInfo = EMPTY_OBJECT } = this.props;
     const {
-      custId = '',
+      custInfo = EMPTY_OBJECT,
+      summaryCustInfo = EMPTY_OBJECT,
+    } = this.props;
+    const {
       custNature = DEFAULT_PER_TYPE,
     } = custInfo;
+    const { custRowId = '' } = summaryCustInfo;
     const {
       rowId = '',
       xSubmitFlag = 'N',
       argValiDate = '',
     } = record;
     const query = {
-      rowId: custId,
+      rowId: custRowId,
       custTypeCode: custNature,
       argId: rowId,
       xSubmitFlag,
