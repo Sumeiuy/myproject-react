@@ -28,7 +28,6 @@ const EMPTY_LIST = [];
 const GETDETAIL = 'feedback/getFeedbackDetail';
 const GETRECORDLIST = 'feedback/getFeedbackRecordList';
 const UPDATEQUESTION = 'feedback/updateFeedback';
-
 const issueTypeOptions = feedbackOptions.typeOptions;
 const TabPane = Tabs.TabPane;
 
@@ -58,14 +57,12 @@ export default class Detail extends PureComponent {
     getFeedbackRecordList: PropTypes.func.isRequired,
     updateFeedback: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
-  }
-
-  static defaultProps = {
+    empRespDTOList: PropTypes.array.isRequired,
   }
 
   constructor(props) {
     super(props);
-    const { fbDetail, recordList } = this.props;
+    const { fbDetail, recordList} = this.props;
     const { resultData = EMPTY_OBJECT } = fbDetail || EMPTY_OBJECT;
     const { resultData: voResultData } = recordList || EMPTY_OBJECT;
     this.state = {
@@ -481,6 +478,7 @@ export default class Detail extends PureComponent {
       previewVisible,
       newWidth,
     } = this.state;
+    const { empRespDTOList } = this.props;
     const { resultData = EMPTY_OBJECT } = dataSource || EMPTY_OBJECT;
     const { resultData: voList = EMPTY_OBJECT } = voDataSource || EMPTY_OBJECT;
     const { remarkList = EMPTY_LIST,
@@ -548,6 +546,7 @@ export default class Detail extends PureComponent {
                         onCancel={this.remarkCancel}
                         onCreate={this.handleCreate}
                         nowStatus={nowStatus}
+                        empRespDTOList={empRespDTOList}
                       />
                     </div>
                   </div>
@@ -579,6 +578,7 @@ export default class Detail extends PureComponent {
                         onCancel={this.remarkCancel}
                         onCreate={this.handleCreate}
                         nowStatus={nowStatus}
+                        empRespDTOList={empRespDTOList}
                       />
                     </div>
                   </div>
@@ -655,6 +655,7 @@ export default class Detail extends PureComponent {
           problemDetails={feedbackDetail}
           title={messageBtnValue}
           inforTxt={inforTxt}
+          empRespDTOList={empRespDTOList}
         />
       </div>
     );

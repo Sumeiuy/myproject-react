@@ -1,8 +1,8 @@
 /*
  * @Author: zhufeiyang
  * @Date: 2018-11-21 09:35:09
- * @LastEditors: zhufeiyang
- * @LastEditTime: 2018-11-22 15:14:55
+ * @LastEditors: yuanhaojie
+ * @LastEditTime: 2018-11-26 21:29:09
  * @Description: 服务订购
  */
 
@@ -221,7 +221,7 @@ export default class ServiceOrder extends PureComponent {
     return (
       <div className={styles.tradeOrderFlowWrap}>
       {/* 只有营业部服务岗才可以显示佣金调整按钮 */}
-      <IfWrap isRender={isShowBtn}>
+      <IfWrap isRender={isShowBtn || false}>
         <Button
           type="primary"
           ghost
@@ -235,10 +235,11 @@ export default class ServiceOrder extends PureComponent {
         <Table
           className={styles.table}
           dataSource={productList}
+          rowKey="name"
           pagination={pagination}
           rowClassName={styles.tableRow}
           columns={this.transformColumnsData()}
-          indentSize="0px"
+          indentSize={0}
         />
         </IfTableWrap>
       </div>

@@ -65,7 +65,7 @@ export default class Filter extends PureComponent {
     const { onFilterChange } = this.props;
     onFilterChange({
       name: 'status',
-      value: value,
+      value: value.value,
     });
   }
 
