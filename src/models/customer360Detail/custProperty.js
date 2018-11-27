@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性
  * @Date: 2018-11-06 14:59:53
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-27 09:08:42
+ * @Last Modified time: 2018-11-27 20:02:16
  */
 import { detailCustProperty as api } from '../../api';
 
@@ -149,7 +149,7 @@ export default {
         payload: resultData,
       });
     },
-    // 查询个人客户联系方式信息数据
+    // 查询机构客户联系方式信息数据
     * queryOrgContactWay({ payload }, { put, call }) {
       const { resultData } = yield call(api.queryOrgContactWay, payload);
       yield put({

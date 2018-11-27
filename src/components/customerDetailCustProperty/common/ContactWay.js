@@ -2,14 +2,19 @@
  * @Author: XuWenKang
  * @Description: 客户360-客户属性-(普通机构, 产品机构)客户联系方式
  * @Date: 2018-11-07 14:33:00
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-11-09 09:30:54
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-11-27 20:19:48
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import { Icon } from 'antd';
+
+import logable, { logPV } from '../../../decorators/logable';
+import IFWrap from '../../common/biz/IfWrap';
 import InfoItem from '../../common/infoItem';
+import ContactWayModal from './ContactWayModal';
 import {
   DEFAULT_VALUE,
   DEFAULT_PRIVATE_VALUE,
@@ -27,6 +32,7 @@ const {
 } = LINK_WAY_TYPE;
 export default class ContactWay extends PureComponent {
   static propTypes = {
+    location: PropTypes.object.isRequired,
     // 电话列表
     phoneList: PropTypes.array.isRequired,
     // 其他联系方式列表，qq,微信，email等
@@ -34,6 +40,18 @@ export default class ContactWay extends PureComponent {
     // 地址列表
     addressList: PropTypes.array.isRequired,
     hasDuty: PropTypes.bool.isRequired,
+    // 查询机构客户联系方式
+    queryOrgContactWay: PropTypes.func.isRequired,
+    // 机构客户联系方式数据
+    orgContactWay: PropTypes.object.isRequired,
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      // 添加机构客户联系方式的的Modal
+      addOrgContactWayModal: false,
+    };
   }
 
   // 获取显示的数据，优先取mainFlag为true即主联系方式的数据，没有则任取一条
@@ -91,10 +109,39 @@ export default class ContactWay extends PureComponent {
     return this.getPrivateValue(value);
   }
 
+  // 关闭机构客户联系方式弹框
+  @autobind
+  handleContactWayModalClose() {
+    this.setState({ addOrgContactWayModal: false });
+  }
+
+  @autobind
+  @logPV({
+    pathname: '/modal/cust360PropertyAddOrgContactWayModal',
+    title: '添加客户联系方式'
+  })
+  handleContactWayEditClick() {
+    const {
+      location: {
+        query: { custId },
+      },
+    } = this.props;
+    this.props.queryOrgContactWay({
+      custId,
+    }).then(() => {
+      this.setState({ addOrgContactWayModal: true });
+    });
+  }
+
   render() {
+    const { addOrgContactWayModal } = this.state;
+    const { orgContactWay } = this.props;
+
     return (
       <div className={styles.contactWayBox}>
-        <div className={styles.title}>联系方式</div>
+        <div className={styles.title}>联系方式
+          <span className={styles.contactWayEdit} onClick={this.handleContactWayEditClick}><Icon type="edit" /></span>
+        </div>
         <div className={styles.infoItemBox}>
           <InfoItem
             width={INFO_ITEM_WITDH_110}
@@ -135,6 +182,12 @@ export default class ContactWay extends PureComponent {
             isNeedOverFlowEllipsis
           />
         </div>
+        <IFWrap isRender={addOrgContactWayModal}>
+          <ContactWayModal
+            data={orgContactWay}
+            onClose={this.handleContactWayModalClose}
+          />
+        </IFWrap>
       </div>
     );
   }

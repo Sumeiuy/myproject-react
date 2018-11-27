@@ -2,8 +2,8 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 13:52:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-27 19:21:18
- * @description 添加联系方式的Modal
+ * @Last Modified time: 2018-11-27 20:40:02
+ * @description 添加机构客户联系方式的Modal
  */
 
 import React, { Component } from 'react';
@@ -16,14 +16,13 @@ import IFWrap from '../../common/biz/IfWrap';
 import Icon from '../../common/Icon';
 import logable, { logCommon } from '../../../decorators/logable';
 import Modal from '../../common/biz/CommonModal';
-import AddPhoneContactForm from './AddPhoneContactForm';
-import AddAddressContactForm from './AddAddressContactForm';
-import AddOtherContactForm from './AddOtherContactForm';
+import AddOrgPhoneContactForm from './AddOrgPhoneContactForm';
+import AddOrgAddressContactForm from './AddOrgAddressContactForm';
 import {
-  ADD_CONTACT_TABS,
+  ORG_ADD_CONTACT_TABS,
 } from './config';
 
-import styles from './addContactModal.less';
+import styles from './addOrgContactWayModal.less';
 
 const TabPane = Tabs.TabPane;
 
@@ -73,17 +72,15 @@ export default class AddContactModal extends Component {
     logCommon({
       type: 'Click',
       payload: {
-        name: ADD_CONTACT_TABS[activeTabKey]
+        name: ORG_ADD_CONTACT_TABS[activeTabKey]
       }
     });
   }
 
   render() {
     const { activeTabKey } = this.state;
-    // 是否有主手机联系方式
-    const hasMainTellPhone = false;
-    // 是否有邮箱地址
-    const hasMainEmail = false;
+    // 是否有主要联系人信息
+    const hasMainContactor = false;
     // 是否有主地址
     const hasMainAddress = false;
 
@@ -91,9 +88,9 @@ export default class AddContactModal extends Component {
       <Modal
         size="middle"
         visible
-        title="添加联系方式"
+        title="添加客户联系方式"
         maskClosable={false}
-        modalKey="addPersonalContactWayModal"
+        modalKey="addOrgContactWayModal"
         closeModal={this.handleCloseModal}
         onOk={this.handleModalOK}
         style={{ width: '780px'}}
@@ -102,13 +99,13 @@ export default class AddContactModal extends Component {
           <Tabs onChange={this.handleTabChange} activeKey={activeTabKey}>
             <TabPane tab="电话信息" key="phone">
               <div>
-                <IFWrap isRender={!hasMainTellPhone}>
+                <IFWrap isRender={!hasMainContactor}>
                   <div className={styles.waringTip}>
                     <Icon className={styles.waringIcon} type="jingshi"/>
-                    <span className={styles.waringText}>请客户先通过线上自助或线下临柜的方式维护主联系方式</span>
+                    <span className={styles.waringText}>请客户先通过线上自助或线下临柜的方式维护主要联系人</span>
                   </div>
                 </IFWrap>
-                <AddPhoneContactForm
+                <AddOrgPhoneContactForm
                   action="CREATE"
                 />
               </div>
@@ -121,20 +118,7 @@ export default class AddContactModal extends Component {
                     <span className={styles.waringText}>请客户先通过线上自助或线下临柜的方式维护主要地址</span>
                   </div>
                 </IFWrap>
-                <AddAddressContactForm
-                  action="CREATE"
-                />
-              </div>
-            </TabPane>
-            <TabPane tab="其他信息" key="other">
-              <div>
-                <IFWrap isRender={!hasMainEmail}>
-                  <div className={styles.waringTip}>
-                    <Icon className={styles.waringIcon} type="jingshi"/>
-                    <span className={styles.waringText}>请客户先通过线上自助或线下临柜的方式维护主要邮箱</span>
-                  </div>
-                </IFWrap>
-                <AddOtherContactForm
+                <AddOrgAddressContactForm
                   action="CREATE"
                 />
               </div>

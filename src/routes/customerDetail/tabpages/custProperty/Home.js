@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性
  * @Date: 2018-11-06 16:17:28
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-27 09:28:23
+ * @Last Modified time: 2018-11-27 20:14:37
  */
 
 import React, { PureComponent } from 'react';
@@ -70,6 +70,10 @@ export default class CustProperty extends PureComponent {
     queryPersonalContactWay: PropTypes.func.isRequired,
     // 改变个人客户联系方式中的请勿发短信、请勿打电话
     changePhoneInfo: PropTypes.func.isRequired,
+    // 查询机构客户联系方式
+    queryOrgContactWay: PropTypes.func.isRequired,
+    // 机构客户联系方式数据
+    orgContactWay: PropTypes.object.isRequired,
     // 查询个人客户、机构客户的财务信息
     queryFinanceDetail: PropTypes.func.isRequired,
     // 财务信息数据
@@ -173,12 +177,18 @@ export default class CustProperty extends PureComponent {
     const {
       custInfo: {
         organization = EMPTY_OBJECT,
-      }
+      },
+      orgContactWay,
+      queryOrgContactWay,
+      location,
     } = this.props;
     return (
       <OrganizationInfo
+        location={location}
         hasDuty={this.hasDuty()}
         data={organization}
+        orgContactWay={orgContactWay}
+        queryOrgContactWay={queryOrgContactWay}
       />
     );
   }
@@ -188,12 +198,18 @@ export default class CustProperty extends PureComponent {
     const {
       custInfo: {
         product = EMPTY_OBJECT,
-      }
+      },
+      location,
+      orgContactWay,
+      queryOrgContactWay,
     } = this.props;
     return (
       <ProductInfo
+        location={location}
         hasDuty={this.hasDuty()}
         data={product}
+        orgContactWay={orgContactWay}
+        queryOrgContactWay={queryOrgContactWay}
       />
     );
   }
@@ -266,9 +282,7 @@ export default class CustProperty extends PureComponent {
     return (
       <div className={styles.custPropertyBox}>
         <div className={styles.custInfoBox}>
-          {
-            this.renderCustInfo()
-          }
+          {this.renderCustInfo()}
         </div>
         <div className={styles.tabBox}>
           <Tabs

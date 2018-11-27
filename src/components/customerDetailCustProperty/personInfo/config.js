@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-26 16:01:55
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-27 14:36:57
+ * @Last Modified time: 2018-11-27 20:32:49
  * @description 客户属性中的个人客户需要用的配置项
  */
 

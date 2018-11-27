@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 客户360，客户属性tab相关配置
  * @Date: 2018-11-07 15:17:38
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-11-23 11:01:15
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-11-27 20:32:53
  */
 
 import _ from 'lodash';
@@ -210,3 +210,20 @@ export const custPropertyTabMapData = {
 
 // 财务信息使用到的正则，第一位数组不能为0，小数点后最多两位，包含小数点最多17位
 export const FINCE_REG = /(^0\.\d{0,2}$)|(^[1-9](\d{0,16}$|(\d{0,14}\.\d$)|(\d{0,13}\.\d{0,2}$)))|^0{1}$/;
+
+// 添加联系方式的表单主要选项的下拉框
+export const MAIN_FLAG_OPTIONS = [
+  {
+    label: 'N',
+    value: 'N',
+  },
+  {
+    label: 'Y',
+    value: 'Y',
+  },
+];
+
+// Form表单的style
+export const FORM_STYLE = {
+  width: '200px',
+};
