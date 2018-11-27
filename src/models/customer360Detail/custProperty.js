@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性
  * @Date: 2018-11-06 14:59:53
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-26 15:41:06
+ * @Last Modified time: 2018-11-27 09:08:42
  */
 import { detailCustProperty as api } from '../../api';
 
@@ -27,6 +27,8 @@ export default {
     personalContactWay: {},
     // 机构客户联系方式列表数据
     orgContactWay: {},
+    // 财务信息
+    financeData: EMPTY_OBJECT,
   },
   reducers: {
     queryCustomerPropertySuccess(state, action) {
@@ -76,6 +78,13 @@ export default {
       return {
         ...state,
         orgContactWay: payload || {},
+      };
+    },
+    queryFinanceDetailSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        financeData: payload || EMPTY_OBJECT,
       };
     },
   },
@@ -148,6 +157,25 @@ export default {
         payload: resultData,
       });
     },
+    // 查询个人客户、机构客户的财务信息
+    * queryFinanceDetail({ payload }, { put, call }) {
+      const { resultData } = yield call(api.queryFinanceDetail, payload);
+      yield put({
+        type: 'queryFinanceDetailSuccess',
+        payload: resultData,
+      });
+    },
+    // 编辑个人客户的财务信息
+    * updatePerFinaceData({ payload }, { put, call }) {
+      const { resultData } = yield call(api.updatePerFinaceData, payload);
+      return resultData;
+    },
+    // 编辑机构客户的财务信息
+    * updateOrgFinaceData({ payload }, { put, call }) {
+      const { resultData } = yield call(api.updateOrgFinaceData, payload);
+      return resultData;
+    },
+
   },
   subscriptions: {
 

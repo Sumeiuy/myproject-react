@@ -2,12 +2,12 @@
  * @Author: sunweibin
  * @Date: 2018-11-26 16:44:23
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-26 17:15:40
+ * @Last Modified time: 2018-11-27 09:09:23
  * @description 联系方式使用的Table
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Table } from 'antd';
+import { Table, Icon } from 'antd';
 import _ from 'lodash';
 
 import { isFromNoSupportUpdateSource } from './utils';
@@ -27,7 +27,13 @@ function InfoTable(props) {
           const { mainFlag } = record;
           // 主服务经理可以查看和编辑客户的电话信息、地址信息和其他信息
           if (mainFlag === 'N' && isMainEmp && !isFromNoSupportUpdateSource()) {
-            // 只能修改非主要的联系方式
+            // 只有主服务经理能够修改非主要的并且来自可以修改的来源的存在操作列
+            return (
+              <span>
+                <span><Icon type="edit" /></span>
+                <span><Icon type="edit" /></span>
+              </span>
+            );
           }
           return null;
         },

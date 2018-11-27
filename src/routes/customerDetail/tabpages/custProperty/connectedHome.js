@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性相关effect,mapStateToProps,mapDispatchToProps
  * @Date: 2018-11-06 14:50:44
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-26 15:58:47
+ * @Last Modified time: 2018-11-27 09:06:47
  */
 import { connect } from 'dva';
 
@@ -31,6 +31,8 @@ const mapStateToProps = state => ({
   personalContactWay: state.detailCustProperty.personalContactWay,
   // 机构客户联系方式数据
   orgContactWay: state.detailCustProperty.orgContactWay,
+  // 财务信息
+  financeData: state.detailCustProperty.financeData,
 });
 
 const mapDispatchToProps = {
@@ -52,6 +54,12 @@ const mapDispatchToProps = {
   queryOrgContactWay: effect('detailCustProperty/queryOrgContactWay'),
   // 改变个人客户联系方式中的请勿发短信、请勿打电话
   changePhoneInfo: effect('detailCustProperty/changePhoneInfo', { loading: false }),
+  // 查询个人客户、机构客户的财务信息
+  queryFinanceDetail: effect('detailCustProperty/queryFinanceDetail', { loading: true }),
+  // 编辑个人客户的财务信息
+  updatePerFinaceData: effect('detailCustProperty/updatePerFinaceData', { loading: false }),
+  // 编辑机构客户的财务信息
+  updateOrgFinaceData: effect('detailCustProperty/updateOrgFinaceData', { loading: false }),
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

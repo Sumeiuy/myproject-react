@@ -82,6 +82,7 @@ export default class CommonUpload extends PureComponent {
     isFalseDelete: PropTypes.bool,
     // 假删除方法
     onFalseDelete: PropTypes.func,
+    popoverPlacement: PropTypes.string,
   }
 
   static defaultProps = {
@@ -102,6 +103,7 @@ export default class CommonUpload extends PureComponent {
     isFalseDelete: false,
     // 假删除方法
     onFalseDelete: _.noop,
+    popoverPlacement: 'right',
   }
 
   constructor(props) {
@@ -268,6 +270,7 @@ attachment };
       title,
       needDefaultText,
       isFalseDelete,
+      popoverPlacement,
     } = this.props;
     // 调用接口的名称，如果是假删除就调用替换文件接口ceFileReplaceUpload2，否则调用上传文件接口ceFileUpload2
     const actionName = isFalseDelete ? 'ceFileReplaceUpload2' : 'ceFileUpload2';
@@ -342,7 +345,7 @@ attachment };
               return (
                 <div key={item.attachId} className={styles.fileItem}>
                   <Popover
-                    placement="right"
+                    placement={popoverPlacement}
                     content={popoverHtml}
                     trigger="hover"
                     mouseLeaveDelay={0.3}

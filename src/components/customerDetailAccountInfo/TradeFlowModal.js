@@ -2,7 +2,7 @@
  * @Author: liqianwen
  * @Date: 2018-11-07 13:31:51
  * @Last Modified by: liqianwen
- * @Last Modified time: 2018-11-15 14:47:19
+ * @Last Modified time: 2018-11-26 12:44:09
  * @description 新版客户360详情的交易流水的弹出层
  */
 import React, { PureComponent } from 'react';
@@ -248,7 +248,10 @@ export default class TradeFlowModal extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '关闭' } })
+  @logable({
+    type: 'Click',
+    payload: { name: '关闭' },
+  })
   handleModalClose() {
     this.props.onClose();
   }
@@ -275,7 +278,10 @@ export default class TradeFlowModal extends PureComponent {
       this.queryCreditTradeFlow();
     } else if(activeTabKey === 'capitalChange') {
       // 资金变动
-      this.queryBusnTypeDict({ accountType: this.state.accountTypeRadio , queryType: 'moneyChange' });
+      this.queryBusnTypeDict({
+        accountType: this.state.accountTypeRadio ,
+        queryType: 'moneyChange',
+      });
       this.queryCapitalTradeFlow();
     }
     else {
@@ -286,7 +292,11 @@ export default class TradeFlowModal extends PureComponent {
 
   // 切换普通账户页码
   @autobind
-  @logable({ type: 'Click', payload: { name: '切换普通账户页码', value: '$args[0]'} })
+  @logable({
+    type: 'Click',
+    payload: { name: '切换普通账户页码',
+    value: '$args[0]'},
+  })
   handleStandardPageChange(pageNum) {
     this.queryStandardTradeFlow({
       pageNum,
@@ -295,7 +305,11 @@ export default class TradeFlowModal extends PureComponent {
 
   // 切换信用账户页码
   @autobind
-  @logable({ type: 'Click', payload: { name: '切换信用账户页码', value: '$args[0]'} })
+  @logable({
+    type: 'Click',
+    payload: { name: '切换信用账户页码',
+    value: '$args[0]'},
+  })
   handleCreditPageChange(pageNum) {
     this.queryCreditTradeFlow({
       pageNum,
@@ -304,7 +318,11 @@ export default class TradeFlowModal extends PureComponent {
 
   // 切换期权账户页码
   @autobind
-  @logable({ type: 'Click', payload: { name: '切换期权账户页码', value: '$args[0]'} })
+  @logable({
+    type: 'Click',
+    payload: { name: '切换期权账户页码',
+    value: '$args[0]'},
+  })
   handleOptionPageChange(pageNum) {
     this.queryOptionTradeFlow({
       pageNum,
@@ -313,7 +331,11 @@ export default class TradeFlowModal extends PureComponent {
 
   // 切换资金变动页码
   @autobind
-  @logable({ type: 'Click', payload: { name: '切换资金变动页码', value: '$args[0]'} })
+  @logable({
+    type: 'Click',
+    payload: { name: '切换资金变动页码',
+    value: '$args[0]'},
+  })
   handleCapitalPageChange(pageNum) {
     this.queryCapitalTradeFlow({
       pageNum,
@@ -451,11 +473,21 @@ export default class TradeFlowModal extends PureComponent {
 
   // 资金变动选择帐户类型,因为资金流水的业务类别和帐户类型有联动关系，这里需要再重新获取业务类别数据
   @autobind
-  @logable({ type: 'Click', payload: { name: '账户类型', value: '$args[0].target.value' } })
+  @logable({
+    type: 'Click',
+    payload: { name: '账户类型',
+    value: '$args[0].target.value' },
+  })
   handleAccountTypeRadioChange(e) {
     const {value} = e.target;
-    this.setState({ accountTypeRadio: value, currentCapitalBusnTypeValue: ''});
-    this.queryBusnTypeDict({accountType: value , queryType: 'moneyChange'});
+    this.setState({
+      accountTypeRadio: value,
+      currentCapitalBusnTypeValue: '',
+    });
+    this.queryBusnTypeDict({
+      accountType: value ,
+      queryType: 'moneyChange',
+    });
     this.queryCapitalTradeFlow({
       accountType: value,
       bussinessType: '',
@@ -634,7 +666,7 @@ export default class TradeFlowModal extends PureComponent {
           <Tabs onChange={this.handleTabChange} activeKey={activeTabKey} animated={false}>
             <TabPane tab="普通账户历史交易" key="standardAccountTrade">
               <div className={styles.tabPaneWrap}>
-                <div className={styles.header}>
+                <div className={`${styles.header} clearfix`}>
                   <div className={styles.filterArea}>
                     <DateFilter
                       filterName="查询日期"
@@ -710,7 +742,7 @@ export default class TradeFlowModal extends PureComponent {
             </TabPane>
             <TabPane tab="信用账户历史交易" key="creditAccountTrade">
               <div className={styles.tabPaneWrap}>
-                <div className={styles.header}>
+                <div className={`${styles.header} clearfix`}>
                   <div className={styles.filterArea}>
                     <DateFilter
                       filterName="查询日期"
@@ -772,7 +804,7 @@ export default class TradeFlowModal extends PureComponent {
             </TabPane>
             <TabPane tab="期权账户历史交易" key="optionAccountTrade">
               <div className={styles.tabPaneWrap}>
-                <div className={styles.header}>
+                <div className={`${styles.header} clearfix`}>
                   <div className={styles.filterArea}>
                     <DateFilter
                       filterName="查询日期"
@@ -819,7 +851,7 @@ export default class TradeFlowModal extends PureComponent {
             </TabPane>
             <TabPane tab="资金变动" key="capitalChange">
               <div className={styles.tabPaneWrap}>
-                <div className={styles.header}>
+                <div className={`${styles.header} clearfix`}>
                   <div className={styles.filterArea}>
                     <DateFilter
                       filterName="查询日期"

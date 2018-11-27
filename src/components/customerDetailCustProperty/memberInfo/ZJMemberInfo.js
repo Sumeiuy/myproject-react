@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性-会员信息-紫金积分会员信息
  * @Date: 2018-11-08 18:59:50
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-16 17:17:30
+ * @Last Modified time: 2018-11-23 14:47:08
  */
 
 import React, { PureComponent } from 'react';
@@ -23,6 +23,7 @@ import ZJMemeberInfoModal from './ZJMemberInfoModal';
 
 const INFO_ITEM_WITDH_110 = '110px';
 const INFO_ITEM_WITDH = '126px';
+const PAGE_SIZE = 10;
 export default class ZJMemberInfo extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -48,7 +49,21 @@ export default class ZJMemberInfo extends PureComponent {
     title: '积分兑换流水弹框',
   })
   handleIntegralFlowModalOpen() {
-    this.setState({ integralFlowModalVisible: true });
+    const {
+      queryZjPointExchangeFlow,
+      location: {
+        query: {
+          custId,
+        },
+      },
+    } = this.props;
+    queryZjPointExchangeFlow({
+      custId,
+      pageSize: PAGE_SIZE,
+      pageNum: 1,
+    }).then(() => {
+      this.setState({ integralFlowModalVisible: true });
+    });
   }
 
   // 关闭积分兑换流水弹框

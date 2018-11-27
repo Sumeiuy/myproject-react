@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性相关api
  * @Date: 2018-11-07 10:00:46
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-26 15:40:38
+ * @Last Modified time: 2018-11-27 09:09:09
  */
 export default function detailCustProperty(api) {
   return {
@@ -25,5 +25,11 @@ export default function detailCustProperty(api) {
     queryOrgContactWay: query => api.post('/groovynoauth/fsp/cust/custdetail/queryContactWayForOrg', query),
     // 修改个人客户的联系方式中的请勿发短信，请勿打电话
     changePhoneInfo: query => api.post('/groovynoauth/fsp/cust/custdetail/changePersonalContactWayPhone', query),
+    // 查询个人客户、机构客户的财务信息
+    queryFinanceDetail: query => api.post('/groovynoauth/fsp/cust/custdetail/queryFinanceDetail', query),
+    // 编辑个人客户的财务信息
+    updatePerFinaceData: query => api.post('/groovynoauth/fsp/cust/custdetail/updatePerFinaceData', query),
+    // 编辑机构客户的财务信息
+    updateOrgFinaceData: query => api.post('/groovynoauth/fsp/cust/custdetail/updateOrgFinaceData', query),
   };
 }
