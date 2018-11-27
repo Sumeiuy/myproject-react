@@ -40,6 +40,7 @@ export default class ProblemHandling extends PureComponent {
     width: PropTypes.string,
     problemDetails: PropTypes.object.isRequired,
     inforTxt: PropTypes.string,
+    empRespDTOList: PropTypes.array.isRequired,
   }
   static defaultProps = {
     popContent: ' ',
@@ -152,6 +153,7 @@ export default class ProblemHandling extends PureComponent {
       title,
       width,
       form,
+      empRespDTOList,
     } = this.props;
     const {
       popQuestionTagOptions,
@@ -173,6 +175,9 @@ export default class ProblemHandling extends PureComponent {
     const allOperatorOptions = feedbackOptions.allOperatorOptions;
     // processer 值为 “请选择”，是脏数据（线上有）
     const initProcessValue = processer === EMPTY_TEXT ? EMPTY_VALUE : processer;
+    const renderEmpOption = item => item.map(i =>
+      <Option key={i.loginName} value={i.loginName}>{i.lastName}</Option>,
+    );
     return (
       <Modal
         title={title}
@@ -226,14 +231,14 @@ export default class ProblemHandling extends PureComponent {
                   <FormItem>
                     {/* initialValue 值为 undefined时，才展示 placeholder */}
                     {getFieldDecorator('processer', {
-                      initialValue: initProcessValue || undefined,
-                    })(
+                      initialValue: initProcessValue || undefined,}
+                    )(
                       <Select
                         placeholder="请选择"
                         style={{ width: 220 }}
                         onChange={this.handleProcesserChange}
                       >
-                        {getSelectOption(allOperatorOptions)}
+                      {renderEmpOption(empRespDTOList)}
                       </Select>,
                     )}
                   </FormItem>

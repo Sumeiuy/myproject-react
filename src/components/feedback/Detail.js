@@ -61,10 +61,8 @@ export default class Detail extends PureComponent {
   }
 
   constructor(props) {
-
     super(props);
-    const { fbDetail, recordList, empRespDTOList} = this.props;
-    // console.warn(empRespDTOList)
+    const { fbDetail, recordList} = this.props;
     const { resultData = EMPTY_OBJECT } = fbDetail || EMPTY_OBJECT;
     const { resultData: voResultData } = recordList || EMPTY_OBJECT;
     this.state = {
@@ -548,6 +546,7 @@ export default class Detail extends PureComponent {
                         onCancel={this.remarkCancel}
                         onCreate={this.handleCreate}
                         nowStatus={nowStatus}
+                        empRespDTOList={empRespDTOList}
                       />
                     </div>
                   </div>
@@ -656,6 +655,7 @@ export default class Detail extends PureComponent {
           problemDetails={feedbackDetail}
           title={messageBtnValue}
           inforTxt={inforTxt}
+          empRespDTOList={empRespDTOList}
         />
       </div>
     );
