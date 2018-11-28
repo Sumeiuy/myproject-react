@@ -54,6 +54,11 @@ export default class Person extends PureComponent {
   }
 
   @autobind
+  getViewData(value) {
+    return !_.isEmpty(value) ? number.thousandFormat(value) : DEFAULT_VALUE;
+  }
+
+  @autobind
   refreshData() {
     const {
       location: {
@@ -188,9 +193,9 @@ export default class Person extends PureComponent {
           <InfoItem
             width={INFO_ITEM_WITDH}
             label="家庭年收入"
-            value={data.householdIncome || DEFAULT_VALUE}
+            value={this.getViewData(data.householdIncome)}
             className={styles.infoItem}
-            isNeedValueTitle={checkIsNeedTitle(data.householdIncome)}
+            isNeedValueTitle={checkIsNeedTitle(this.getViewData(data.householdIncome))}
             isNeedOverFlowEllipsis
           />
         </div>

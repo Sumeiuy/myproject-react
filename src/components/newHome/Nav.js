@@ -10,7 +10,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
-import Tooltip from '../common/Tooltip';
 import { getFilter } from '../customerPool/helper';
 import { openRctTab } from '../../utils';
 import { url as urlHelper, number } from '../../helper';

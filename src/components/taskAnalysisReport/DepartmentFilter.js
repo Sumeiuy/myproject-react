@@ -130,7 +130,7 @@ export default class DepartmentFilter extends PureComponent {
     return (
       <div className={styles.departmentFilter}>
         <div className={styles.breadcrumbHeader}>
-          <span className={styles.reportTitle}>任务统计报表</span>
+          <span className={styles.reportTitle}>任务分析报表</span>
           <span className={styles.separator}>/</span>
         </div>
         <div className={styles.department}>

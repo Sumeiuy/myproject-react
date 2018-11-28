@@ -126,6 +126,13 @@ export default class MajorAssetsList extends PureComponent {
 
   // 类型切换事件
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '切换类型',
+      value: '$args[0]',
+    },
+  })
   handleTypeChange(value) {
     this.setState({
       type: value,
@@ -134,6 +141,13 @@ export default class MajorAssetsList extends PureComponent {
 
   // 资产大类切换事件
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '切换资产大类',
+      value: '$args[0]',
+    },
+  })
   handleCategoryChange(value) {
     this.setState({
       category: value,
