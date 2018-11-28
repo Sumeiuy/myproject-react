@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-23 09:25:41
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-23 19:43:48
+ * @Last Modified time: 2018-11-28 16:51:06
  * @description 资产变动报表
  */
 import React, { PureComponent } from 'react';
@@ -11,10 +11,10 @@ import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import IfWrap from '../../common/biz/IfWrap';
-import { number } from '../../../helper';
+import { number, data } from '../../../helper';
 import IECharts from '../../IECharts';
 import { filterData, filterXAxisDate } from '../utils';
-import { FUND_INVEST, ASSET_MARKET, assetChangeChartTip } from '../config';
+import { FUND_INVEST, ASSET_MARKET, assetChangeChartTip, chartOption } from '../config';
 
 import styles from './assetChangeChart.less';
 
@@ -49,46 +49,17 @@ export default class AssetChangeChart extends PureComponent {
     const fundInvestData = filterData(assetChangeReportData, 'inflowFund');
     // 资产市值数据
     const assetMarketData = filterData(assetChangeReportData, 'fundMarket');
+    const { xAxis, tooltip } = chartOption;
     const option = {
-      grid: {
-        left: 0,
-        right: 10,
-        top: 10,
-        bottom: 0,
-        containLabel: true,
-      },
+      ...chartOption,
       xAxis: {
-        type: 'category',
+        ...xAxis,
         boundaryGap: false,
-        axisTick: {
-          show: false,
-        },
         data: xAxisData,
       },
-      yAxis: {
-        type: 'value',
-        axisLine: {
-          show: false,
-        },
-        axisTick: {
-          show: false,
-        },
-        splitLine: {
-          lineStyle: {
-            color: '#ccc',
-            type: 'dotted',
-          }
-        }
-      },
-      smooth: true,
       color: ['#485a7b', '#fe5f03'],
       tooltip: {
-        trigger: 'axis',
-        backgroundColor: 'rgba(2, 22, 55, 0.8)',
-        padding: 10,
-        textStyle: {
-          fontSize: 12,
-        },
+        ...tooltip,
         formatter: this.tooltipFormat,
       },
       series: [
@@ -113,7 +84,7 @@ export default class AssetChangeChart extends PureComponent {
     const option = this.getChartOption();
     const fundInvestValueCls = classnames([styles.value, styles.fundInvestValue]);
     const assetMarketValueCls = classnames([styles.value, styles.assetMarketValue]);
-    const assetChangeTipData = _.map(assetChangeChartTip, item => <p>{item}</p>);
+    const assetChangeTipData = _.map(assetChangeChartTip, item => <p key={data.uuid()}>{item}</p>);
     return (
       <div className={styles.assetChangeChart}>
         <IfWrap isRender={!_.isEmpty(assetChangeReportData)}>
