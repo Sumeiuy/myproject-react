@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-11-19 16:27:30
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-26 17:52:30
+ * @Last Modified time: 2018-11-28 14:52:51
  */
 import React from 'react';
 import _ from 'lodash';
@@ -76,6 +76,12 @@ const config = {
       key: 'openConditions',
       className: 'maxStyle',
     },
+    {
+      title: '操作',
+      dataIndex: 'operation',
+      key: 'operation',
+      className: 'lastStyle',
+    }
   ],
   operationColumns: [
     {
