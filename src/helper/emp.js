@@ -58,6 +58,7 @@ const emp = {
       this.curPostion = _.find(empPostnList, item => item.isMainPostn);
     }
     this.curEmpId = empInfo.empNum;
+    window.curUserCode = empInfo.empNum;
     this.mocker = mocker;
   },
   /**
