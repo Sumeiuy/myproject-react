@@ -125,7 +125,7 @@ export default class ToDo extends PureComponent {
         this.getApplyData({
           startTime,
           endTime,
-          pageSize: pageSize,
+          pageSize,
           pageNum: curPageNum,
           category,
         });
@@ -134,7 +134,7 @@ export default class ToDo extends PureComponent {
         this.getApproveData({
           startTime,
           endTime,
-          pageSize: pageSize,
+          pageSize,
           pageNum: curPageNum,
           category,
           originator,
@@ -190,7 +190,7 @@ export default class ToDo extends PureComponent {
   })
   handleApplySearch(value) {
     this.getApplyData({
-      pageSize: pageSize,
+      pageSize,
       pageNum: curPageNum,
       subject: value
     });
@@ -208,7 +208,7 @@ export default class ToDo extends PureComponent {
   handleApproveSearch(value) {
     const { location: { query: { pageSize = 10, pageNum = 1 } } } = this.props;
     this.getApproveData({
-      pageSize: pageSize,
+      pageSize,
       pageNum: curPageNum,
       subject: value
     });
@@ -264,7 +264,7 @@ export default class ToDo extends PureComponent {
           applyType: [key, value],
         }, () => {
           this.getApplyData({
-            pageSize: pageSize,
+            pageSize,
             pageNum: curPageNum,
             category: key,
             startTime,
@@ -277,7 +277,7 @@ export default class ToDo extends PureComponent {
           approveType: [key, value],
         }, () => {
           this.getApproveData({
-            pageSize: pageSize,
+            pageSize,
             pageNum: curPageNum,
             category: key,
             startTime,
@@ -321,7 +321,7 @@ export default class ToDo extends PureComponent {
             endTime,
           } = this.state;
           this.getApplyData({
-            pageSize: pageSize,
+            pageSize,
             pageNum: curPageNum,
             startTime,
             endTime,
@@ -339,7 +339,7 @@ export default class ToDo extends PureComponent {
             endTime,
           } = this.state;
           this.getApproveData({
-            pageSize: pageSize,
+            pageSize,
             pageNum: curPageNum,
             startTime,
             endTime,
@@ -369,7 +369,7 @@ export default class ToDo extends PureComponent {
       initiatorValue: [id, name]
     }, () => {
       this.getApproveData({
-        pageSize: pageSize,
+        pageSize,
         pageNum: curPageNum,
         originator: id,
         startTime,
@@ -412,7 +412,7 @@ export default class ToDo extends PureComponent {
         this.getApplyData({
           startTime,
           endTime,
-          pageSize: pageSize,
+          pageSize,
           pageNum: curPageNum,
           category,
         });
@@ -421,7 +421,7 @@ export default class ToDo extends PureComponent {
         this.getApproveData({
           startTime,
           endTime,
-          pageSize: pageSize,
+          pageSize,
           pageNum: curPageNum,
           category,
           originator,
