@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-23 09:51:00
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-28 14:36:33
+ * @LastEditTime: 2018-11-28 15:39:13
  * @Description: 服务订单流水详情-服务产品
  */
 
@@ -11,6 +11,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import Table from '../common/table';
 import Tooltip from '../common/Tooltip';
+import { isNull } from '../../helper/check';
 import {
   SERVICE_PRODUCT_LIST_COLUMNS,
 } from './config';
@@ -39,7 +40,7 @@ function transformColumnsData(columns) {
       default:
         newColumn = {
           ...column,
-          render: text => <span>{_.isEmpty(text) && !_.isNumber(text) ? '--' : text}</span>
+          render: text => <span>{isNull(text) ? '--' : text}</span>
         };
     }
     return newColumn;
@@ -48,19 +49,10 @@ function transformColumnsData(columns) {
 
 // 检查children为空数组的情况
 function checkChildren(list) {
-  return _.map(list, item => {
-    if (_.isEmpty(item.children)) {
-      return {
-        ...item,
-        children: null,
-      };
-    } else {
-      return {
-        ...item,
-        children: checkChildren(item.children),
-      };
-    }
-  });
+  return _.map(list, item => ({
+    ...item,
+    children: _.isEmpty(item.children) ? null : checkChildren(item.children),
+  }));
 }
 
 export default function ServiceProductList(props) {

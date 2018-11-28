@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-21 09:35:09
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-28 13:16:24
+ * @LastEditTime: 2018-11-28 15:43:08
  * @Description: 交易订单流水
  */
 
@@ -14,6 +14,7 @@ import moment from 'moment';
 import Table from '../common/table';
 import Tooltip from '../common/Tooltip';
 import IfTableWrap from '../common/IfTableWrap';
+import { isNull } from '../../helper/check';
 import {
   TRADE_ORDER_FLOW_COLUMNS,
   DATE_FORMATE_STR,
@@ -91,7 +92,7 @@ export default class TradeOrderFlow extends PureComponent {
           newColumn = {
             ...column,
             render: content => (
-              <span>{_.isEmpty(content) && !_.isNumber(content) ? '--' : content}</span>
+              <span>{isNull(content) ? '--' : content}</span>
             )
           };
       }
