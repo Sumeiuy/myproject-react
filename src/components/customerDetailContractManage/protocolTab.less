@@ -1,3 +1,4 @@
+@import "../../css/util.less";
 .protocolTab {
   padding: 12px 22px;
   .btnWrapper {
@@ -13,5 +14,15 @@
         margin-right: 13px;
       }
     }
+  }
+  :global {
+    table {
+      table-layout: fixed;
+      width: 100%;
+    }
+  }
+  .ellipsis {
+    position: relative;
+    .one-line-ellipsis;
   }
 }
