@@ -1,8 +1,8 @@
 /**
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-11-23 13:22:19
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-11-27 17:21:21
  */
 
 import React, { PureComponent } from 'react';
@@ -20,7 +20,7 @@ import CustProperty from './tabpages/custProperty/connectedHome';
 import DiscountCoupon from './tabpages/discountCoupon/connectedHome';
 import logable, { logCommon } from '../../decorators/logable';
 import ProductOrder from './tabpages/productOrder/Home';
-import InvestmentAbilityAnalysis from './tabpages/investmentAbilityAnalysis/Home';
+import InvestmentAbilityAnalysis from './tabpages/investmentAbilityAnalysis/connectedHome';
 import {
   ACCOUNT_INFO_TAB_KEY,
   CUSTOMER_INFO_TAB_KEY,
@@ -211,7 +211,7 @@ export default class Home extends PureComponent {
               <CustProperty location={location} />
             </TabPane>
             <TabPane tab="投资能力分析" key={INVEST_ANALYZE_TAB_KEY}>
-              <InvestmentAbilityAnalysis />
+              <InvestmentAbilityAnalysis location={location} />
             </TabPane>
             <TabPane tab="业务办理" key={BUNESSINESS_PROCESS_TAB_KEY}>
             </TabPane>

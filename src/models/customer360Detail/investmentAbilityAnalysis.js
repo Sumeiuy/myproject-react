@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-20 16:01:36
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-27 12:11:46
+ * @Last Modified time: 2018-11-28 10:58:20
  * @description 新版客户360详情下的账户信息Tab页面的model
  */
 import { detailInvestmentAbilityAnalysis as api } from '../../api';
@@ -23,6 +23,8 @@ export default {
     assetChangeReportData: EMPTY_ARRAY,
     // 账户收益走势数据
     profitTrendData: EMPTY_OBJECT,
+    // brinson归因数据
+    attributionData: EMPTY_OBJECT,
   },
   reducers: {
     // 获取客户盈利能力成功
@@ -49,7 +51,7 @@ export default {
         assetChangeList: payload || EMPTY_ARRAY,
       };
     },
-    // 获取账户资产变动图表数据
+    // 获取账户资产变动图表数据成功
     getAssetChangeReportSuccess(state, action) {
       const { payload } = action;
       return {
@@ -57,12 +59,20 @@ export default {
         assetChangeReportData: payload || EMPTY_ARRAY,
       };
     },
-    // 获取账户收益走势数据
+    // 获取账户收益走势数据成功
     getProfitTrendReportSuccess(state, action) {
       const { payload } = action;
       return {
         ...state,
         profitTrendData: payload || EMPTY_OBJECT,
+      };
+    },
+    // 获取brinson归因分析成功
+    getAttributionAnalysisSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        attributionData: payload || EMPTY_OBJECT,
       };
     },
   },
@@ -101,9 +111,17 @@ export default {
     },
     // 获取账户收益走势图表数据
     * getProfitTrendReport({ payload }, { call, put }) {
-      const { resultData = EMPTY_ARRAY } = yield call(api.queryProfitTrendReport, payload);
+      const { resultData } = yield call(api.queryProfitTrendReport, payload);
       yield put({
         type: 'getProfitTrendReportSuccess',
+        payload: resultData,
+      });
+    },
+    // 获取brinson归因分析
+    * getAttributionAnalysis({ payload }, { call, put }) {
+      const { resultData } = yield call(api.queryAttributionAnalysis, payload);
+      yield put({
+        type: 'getAttributionAnalysisSuccess',
         payload: resultData,
       });
     },

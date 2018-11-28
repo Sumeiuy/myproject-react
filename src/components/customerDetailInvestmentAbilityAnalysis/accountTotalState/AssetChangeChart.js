@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-23 09:25:41
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-27 13:35:58
+ * @Last Modified time: 2018-11-28 16:51:06
  * @description 资产变动报表
  */
 import React, { PureComponent } from 'react';
@@ -14,7 +14,7 @@ import IfWrap from '../../common/biz/IfWrap';
 import { number, data } from '../../../helper';
 import IECharts from '../../IECharts';
 import { filterData, filterXAxisDate } from '../utils';
-import { FUND_INVEST, ASSET_MARKET, assetChangeChartTip } from '../config';
+import { FUND_INVEST, ASSET_MARKET, assetChangeChartTip, chartOption } from '../config';
 
 import styles from './assetChangeChart.less';
 
@@ -49,46 +49,17 @@ export default class AssetChangeChart extends PureComponent {
     const fundInvestData = filterData(assetChangeReportData, 'inflowFund');
     // 资产市值数据
     const assetMarketData = filterData(assetChangeReportData, 'fundMarket');
+    const { xAxis, tooltip } = chartOption;
     const option = {
-      grid: {
-        left: 0,
-        right: 10,
-        top: 10,
-        bottom: 0,
-        containLabel: true,
-      },
+      ...chartOption,
       xAxis: {
-        type: 'category',
+        ...xAxis,
         boundaryGap: false,
-        axisTick: {
-          show: false,
-        },
         data: xAxisData,
       },
-      yAxis: {
-        type: 'value',
-        axisLine: {
-          show: false,
-        },
-        axisTick: {
-          show: false,
-        },
-        splitLine: {
-          lineStyle: {
-            color: '#ccc',
-            type: 'dotted',
-          }
-        }
-      },
-      smooth: true,
       color: ['#485a7b', '#fe5f03'],
       tooltip: {
-        trigger: 'axis',
-        backgroundColor: 'rgba(2, 22, 55, 0.8)',
-        padding: 10,
-        textStyle: {
-          fontSize: 12,
-        },
+        ...tooltip,
         formatter: this.tooltipFormat,
       },
       series: [

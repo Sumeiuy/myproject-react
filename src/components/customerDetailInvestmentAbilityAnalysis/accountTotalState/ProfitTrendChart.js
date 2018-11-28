@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-25 11:31:40
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-27 13:35:07
+ * @Last Modified time: 2018-11-28 16:55:41
  * @description 账户收益走势图表
  */
 import React, { PureComponent } from 'react';
@@ -14,7 +14,7 @@ import IfWrap from '../../common/biz/IfWrap';
 import IECharts from '../../IECharts';
 import { data } from '../../../helper';
 import { filterData, filterXAxisDate } from '../utils';
-import { ACCOUNT_DAILY_RATE, HS300_DAILY_RATE, ACCOUNT_CUMULATIVE_RATE, HS300_CUMULATIVE_RATE, profitTrendChartTip, NOT_EXCESS_BENEFIT_TEXT, EXCESS_BENEFIT_TEXT } from '../config';
+import { ACCOUNT_DAILY_RATE, HS300_DAILY_RATE, ACCOUNT_CUMULATIVE_RATE, HS300_CUMULATIVE_RATE, profitTrendChartTip, NOT_EXCESS_BENEFIT_TEXT, EXCESS_BENEFIT_TEXT, chartOption } from '../config';
 import styles from './profitTrendChart.less';
 
 export default class ProfitTrendChart extends PureComponent {
@@ -62,54 +62,16 @@ export default class ProfitTrendChart extends PureComponent {
     const accountCumulativeRateData = filterData(profitTrendChartData, 'accountCumulativeRate');
     // 沪深300累计收益率数据
     const HS300CumulativeRateData = filterData(profitTrendChartData, 'HS300CumulativeRate');
+    const { xAxis, tooltip } = chartOption;
     const option = {
-      grid: {
-        left: 10,
-        right: 10,
-        top: 10,
-        bottom: 0,
-        containLabel: true,
-      },
+      ...chartOption,
       xAxis: {
-        type: 'category',
-        axisTick: {
-          show: false,
-        },
+        ...xAxis,
         data: xAxisData,
-        axisLabel: {
-          color: '#666',
-          fontSize: 12,
-        },
       },
-      yAxis: {
-        type: 'value',
-        axisLine: {
-          show: false,
-        },
-        axisTick: {
-          show: false,
-        },
-        splitLine: {
-          lineStyle: {
-            color: '#ccc',
-            type: 'dotted',
-          }
-        },
-        axisLabel: {
-          color: '#666',
-          formatter: '{value} %',
-          fontSize: 12,
-        },
-      },
-      smooth: true,
       color: ['#485a7b', '#fe5f03', '#485a7b', '#fe5f03'],
       tooltip: {
-        trigger: 'axis',
-        backgroundColor: 'rgba(2, 22, 55, 0.8)',
-        padding: 10,
-        textStyle: {
-          fontSize: 12,
-        },
+        ...tooltip,
         formatter: this.tooltipFormat,
       },
       series: [
@@ -204,7 +166,7 @@ export default class ProfitTrendChart extends PureComponent {
                 <span className={HS300CumulativeRateCls}>{HS300_CUMULATIVE_RATE}</span>
               </div>
             </div>
-             <IECharts
+            <IECharts
               option={option}
               style={{ height: '260px' }}
             />
