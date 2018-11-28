@@ -61,7 +61,7 @@ export default class ServiceOrder extends PureComponent {
         sortType,
         sortValue,
         pageNum: 1,
-        pageSize: 5,
+        pageSize: 10,
         ...options,
       });
     }
@@ -204,7 +204,7 @@ export default class ServiceOrder extends PureComponent {
 
     const {
       pageNum = 1,
-      pageSize = 5,
+      pageSize = 10,
       totalCount = 1,
     } = page;
 
