@@ -95,7 +95,7 @@ export default class LabelModals extends PureComponent {
 
   // tab切换
   @autobind
-  @logable({ type: 'Click', payload: { name: '瞄准镜标签/普通标签切换' } })
+  @logable({ type: 'Click', payload: { name: '瞄准镜标签/普通标签切换', value: '$args[0]' } })
   handleTabChange(activeKey) {
     const { queryCustLabelList } = this.props;
     queryCustLabelList({
