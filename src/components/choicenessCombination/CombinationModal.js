@@ -310,7 +310,7 @@ export default class CombinationModal extends PureComponent {
   // 根据关键字查询客户
   @autobind
   @logable({
-    type: 'ButtonClick',
+    type: 'Click',
     payload: {
       name: '证券名称/证券代码/证券简称',
       value: '$args[0]',
