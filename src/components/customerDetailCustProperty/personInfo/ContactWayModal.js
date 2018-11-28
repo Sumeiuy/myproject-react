@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-26 13:58:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-27 19:22:58
+ * @Last Modified time: 2018-11-28 19:01:15
  * @description 联系方式弹框-个人客户联系方式修改
  */
 import React, { Component } from 'react';
@@ -17,13 +17,14 @@ import logable from '../../../decorators/logable';
 import Modal from '../../common/biz/CommonModal';
 import IfWrap from '../../common/biz/IfWrap';
 import AddContactWayModal from './AddContactModal';
+import EditContactWayModal from '../common/EditContactWayModal';
 import {
   PHONE_COLUMNS,
   ADDRESS_COLUMNS,
   OTHER_COLUMNS,
 } from './config';
 
-import styles from './contactWayModal.less';
+import styles from '../common/contactWayModal.less';
 
 export default class ContactWayModal extends Component {
   static propTypes = {
@@ -65,6 +66,12 @@ export default class ContactWayModal extends Component {
       noCall: false,
       // 添加联系方式Modal
       addContactModal: false,
+      // 编辑联系方式的Modal
+      editContactModal: false,
+      // 编辑的数据
+      editData: {},
+      // 编辑何种信息电话信息为phone,地址信息为address,其他信息为other
+      contactType: '',
     };
     // 判断是否是主服务经理
     this.isMainEmp = _.get(context.custBasic, 'isMainEmp');
@@ -135,7 +142,11 @@ export default class ContactWayModal extends Component {
     payload: { name: '编辑个人客户电话信息'}
   })
   handlePhoneEditClick(record) {
-    console.warn('EDIT', record);
+    this.setState({
+      editContactModal: true,
+      editData: record,
+      contactType: 'phone',
+    });
   }
 
   @autobind
@@ -153,7 +164,11 @@ export default class ContactWayModal extends Component {
     payload: { name: '编辑个人客户地址信息'}
   })
   handleAddressEditClick(record) {
-    console.warn('EDIT', record);
+    this.setState({
+      editContactModal: true,
+      editData: record,
+      contactType: 'address',
+    });
   }
 
   @autobind
@@ -171,7 +186,11 @@ export default class ContactWayModal extends Component {
     payload: { name: '编辑个人客户其他信息'}
   })
   handleOtherEditClick(record) {
-    console.warn('EDIT', record);
+    this.setState({
+      editContactModal: true,
+      editData: record,
+      contactType: 'other',
+    });
   }
 
   @autobind
@@ -192,6 +211,21 @@ export default class ContactWayModal extends Component {
     this.setState({ addContactModal: false });
   }
 
+  @autobind
+  @logable({
+    type: 'Click',
+    payload: { name: '关闭' }
+  })
+  handleEditContactModalClose() {
+    this.setState({ editContactModal: false });
+  }
+
+  // 确认修改
+  @autobind
+  handleEditModalOK() {
+    this.setState({ editContactModal: false });
+  }
+
   // 添加联系方式弹框点击确认按钮
   @autobind
   handleAddContactModalOK() {
@@ -200,7 +234,14 @@ export default class ContactWayModal extends Component {
 
   render() {
     const { data } = this.props;
-    const { noMessage, noCall, addContactModal } = this.state;
+    const {
+      noMessage,
+      noCall,
+      addContactModal,
+      editContactModal,
+      editData,
+      contactType,
+    } = this.state;
     // 有无电话信息数据
     const hasNoPhoneInfo = _.isEmpty(data.tellphoneInfo);
     // 有无地址信息
@@ -295,6 +336,15 @@ export default class ContactWayModal extends Component {
           <AddContactWayModal
             onClose={this.handleAddContactModalClose}
             onOK={this.handleAddContactModalOK}
+          />
+        </IfWrap>
+        <IfWrap isRender={editContactModal}>
+          <EditContactWayModal
+            custNature="per"
+            data={editData}
+            contactType={contactType}
+            onClose={this.handleEditContactModalClose}
+            onOK={this.handleEditModalOK}
           />
         </IfWrap>
       </Modal>

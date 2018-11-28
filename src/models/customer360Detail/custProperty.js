@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性
  * @Date: 2018-11-06 14:59:53
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-27 20:02:16
+ * @Last Modified time: 2018-11-28 18:40:54
  */
 import { detailCustProperty as api } from '../../api';
 
@@ -175,9 +175,7 @@ export default {
       const { resultData } = yield call(api.updateOrgFinaceData, payload);
       return resultData;
     },
-
   },
   subscriptions: {
-
   },
 };

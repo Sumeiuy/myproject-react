@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 19:41:38
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-27 20:46:30
+ * @Last Modified time: 2018-11-28 15:33:50
  * @description 机构客户联系方式配置项
  */
 // 机构客户电话信息表格columns
@@ -110,8 +110,27 @@ export const ORG_ADDRESS_COLUMNS = [
     width: 100,
   },
 ];
-// 机构客户添加联系方式的Tabs
-export const ORG_ADD_CONTACT_TABS = {
+// 个人客户|机构客户添加联系方式的Tabs
+export const ADD_CONTACT_TABS = {
   phone: '电话信息',
   address: '地址信息',
+  other: '其他信息'
+};
+// 添加|编辑联系方式弹出框的styles
+export const MODAL_STYLE = {
+  width: '780px',
+};
+// 添加联系方式的提示
+export const WARNING_MESSAGE = {
+  per_phone: '请客户先通过线上自助或线下临柜的方式维护主联系方式',
+  per_address: '请客户先通过线上自助或线下临柜的方式维护主要地址',
+  per_other: '请客户先通过线上自助或线下临柜的方式维护主要邮箱',
+  org_phone: '请客户先通过线上自助或线下临柜的方式维护主要联系人',
+  org_address: '请客户先通过线上自助或线下临柜的方式维护主要地址',
+};
+// 编辑Modal的标题集合
+export const MODAL_TITLES = {
+  phone: '编辑电话信息',
+  address: '编辑地址信息',
+  other: '编辑其他信息',
 };

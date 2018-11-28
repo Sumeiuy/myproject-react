@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性相关api
  * @Date: 2018-11-07 10:00:46
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-27 09:09:09
+ * @Last Modified time: 2018-11-28 20:09:16
  */
 export default function detailCustProperty(api) {
   return {
@@ -25,6 +25,18 @@ export default function detailCustProperty(api) {
     queryOrgContactWay: query => api.post('/groovynoauth/fsp/cust/custdetail/queryContactWayForOrg', query),
     // 修改个人客户的联系方式中的请勿发短信，请勿打电话
     changePhoneInfo: query => api.post('/groovynoauth/fsp/cust/custdetail/changePersonalContactWayPhone', query),
+    // 新增，修改个人客户联系方式电话信息
+    updatePerPhone: query => api.post('/groovynoauth/fsp/cust/custdetail/operateContactWayForPhone', query),
+    // 新增，修改个人客户联系方式地址信息
+    updatePerAddress: query => api.post('/groovynoauth/fsp/cust/custdetail/operateContactWayForAddress', query),
+    // 新增，修改个人客户联系方式其他信息
+    updatePerOther: query => api.post('/groovynoauth/fsp/cust/custdetail/operateContactWayForOther', query),
+    // 新增，修改机构客户联系方式电话信息
+    updateOrgPhone: query => api.post('/groovynoauth/fsp/cust/custdetail/operateOrgContactWayForPhone', query),
+    // 新增，修改机构客户联系方式地址信息
+    updateOrgAddress: query => api.post('/groovynoauth/fsp/cust/custdetail/operateOrgContactWayForAddress', query),
+    // 删除个人客户、机构客户的联系方式
+    delContact: query => api.post('/groovynoauth/fsp/cust/custdetail/deleteContact', query),
     // 查询个人客户、机构客户的财务信息
     queryFinanceDetail: query => api.post('/groovynoauth/fsp/cust/custdetail/queryFinanceDetail', query),
     // 编辑个人客户的财务信息

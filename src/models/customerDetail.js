@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-09 15:38:02
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-16 17:33:58
+ * @Last Modified time: 2018-11-28 18:45:26
  * @description 新版客户360详情的model
  */
 import { customerDetail as api } from '../api';
@@ -16,6 +16,8 @@ export default {
     moreLabelInfo: {},
     // 客户概要信息基本数据
     customerBasicInfo: {},
+    // 客户360客户属性字典
+    cust360Dict: {},
   },
   reducers: {
     queryCustSummaryInfoSuccess(state, action) {
@@ -45,6 +47,13 @@ export default {
       return {
         ...state,
         customerBasicInfo: resultData,
+      };
+    },
+    queryCust360DictSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        cust360Dict: payload || {},
       };
     },
   },
@@ -80,8 +89,24 @@ export default {
         payload: response,
       });
     },
+    // 查询客户属性字典接口
+    * queryCust360Dict({ payload }, { put, call }) {
+      const { resultData } = yield call(api.queryCust360Dict, payload);
+      yield put({
+        type: 'queryCust360DictSuccess',
+        payload: resultData,
+      });
+    },
+    // 查询省市城市
+    * queryProvinceCity({ payload = {} }, { put, call }) {
+      const { resultData } = yield call(api.queryProvinceCity, payload);
+      return resultData;
+    },
   },
   subscriptions: {
+    setup({ dispatch }) {
+      dispatch({ type: 'queryCust360Dict' });
+    },
   },
 };
 

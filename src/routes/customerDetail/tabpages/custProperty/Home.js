@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性
  * @Date: 2018-11-06 16:17:28
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-27 20:14:37
+ * @Last Modified time: 2018-11-28 18:39:43
  */
 
 import React, { PureComponent } from 'react';

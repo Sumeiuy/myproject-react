@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性相关effect,mapStateToProps,mapDispatchToProps
  * @Date: 2018-11-06 14:50:44
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-27 09:06:47
+ * @Last Modified time: 2018-11-28 18:41:04
  */
 import { connect } from 'dva';
 
@@ -33,6 +33,8 @@ const mapStateToProps = state => ({
   orgContactWay: state.detailCustProperty.orgContactWay,
   // 财务信息
   financeData: state.detailCustProperty.financeData,
+  // 字典
+  cust360Dict: state.detailCustProperty.cust360Dict,
 });
 
 const mapDispatchToProps = {

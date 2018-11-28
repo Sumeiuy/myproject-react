@@ -2,26 +2,30 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 13:52:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-27 19:21:18
+ * @Last Modified time: 2018-11-28 11:15:54
  * @description 添加联系方式的Modal
  */
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { Tabs } from 'antd';
+import { Tabs, Button } from 'antd';
 import _ from 'lodash';
+
 
 import IFWrap from '../../common/biz/IfWrap';
 import Icon from '../../common/Icon';
 import logable, { logCommon } from '../../../decorators/logable';
 import Modal from '../../common/biz/CommonModal';
-import AddPhoneContactForm from './AddPhoneContactForm';
-import AddAddressContactForm from './AddAddressContactForm';
-import AddOtherContactForm from './AddOtherContactForm';
+import PerPhoneContactForm from './PerPhoneContactForm';
+import PerAddressContactForm from './PerAddressContactForm';
+import PerOtherContactForm from './PerOtherContactForm';
+
 import {
   ADD_CONTACT_TABS,
-} from './config';
+  MODAL_STYLE,
+  WARNING_MESSAGE,
+} from '../common/config';
 
 import styles from './addContactModal.less';
 
@@ -45,10 +49,8 @@ export default class AddContactModal extends Component {
 
   @autobind
   @logable({
-    type: 'Click',
-    payload: {
-      name: '关闭',
-    },
+    type: 'ButtonClick',
+    payload: { name: '取消' },
   })
   handleCloseModal() {
     this.props.onClose();
@@ -73,9 +75,23 @@ export default class AddContactModal extends Component {
     logCommon({
       type: 'Click',
       payload: {
-        name: ADD_CONTACT_TABS[activeTabKey]
+        name: ADD_CONTACT_TABS[activeTabKey],
       }
     });
+  }
+
+  // 渲染警告提示
+  @autobind
+  renderWarning(hasData) {
+    const { activeTabKey } = this.state;
+    return (
+      <IFWrap isRender={!hasData}>
+        <div className={styles.waringTip}>
+          <Icon className={styles.waringIcon} type="jingshi"/>
+          <span className={styles.waringText}>{WARNING_MESSAGE[`per_${activeTabKey}`]}</span>
+        </div>
+     </IFWrap>
+    );
   }
 
   render() {
@@ -86,58 +102,42 @@ export default class AddContactModal extends Component {
     const hasMainEmail = false;
     // 是否有主地址
     const hasMainAddress = false;
+    // Modal的底部按钮
+    const footBtns = [
+      <Button onClick={this.handleCloseModal}>取消</Button>,
+      <Button type="primary" onClick={this.handleModalOK}>确认</Button>,
+    ];
 
     return (
       <Modal
-        size="middle"
         visible
+        size="middle"
         title="添加联系方式"
         maskClosable={false}
         modalKey="addPersonalContactWayModal"
         closeModal={this.handleCloseModal}
-        onOk={this.handleModalOK}
-        style={{ width: '780px'}}
+        style={MODAL_STYLE}
+        selfBtnGroup={footBtns}
       >
         <div className={styles.addContactWrap}>
           <Tabs onChange={this.handleTabChange} activeKey={activeTabKey}>
             <TabPane tab="电话信息" key="phone">
-              <div>
-                <IFWrap isRender={!hasMainTellPhone}>
-                  <div className={styles.waringTip}>
-                    <Icon className={styles.waringIcon} type="jingshi"/>
-                    <span className={styles.waringText}>请客户先通过线上自助或线下临柜的方式维护主联系方式</span>
-                  </div>
-                </IFWrap>
-                <AddPhoneContactForm
-                  action="CREATE"
-                />
-              </div>
+              {this.renderWarning(hasMainTellPhone)}
+              <PerPhoneContactForm
+                action="CREATE"
+              />
             </TabPane>
             <TabPane tab="地址信息" key="address">
-              <div>
-                <IFWrap isRender={!hasMainAddress}>
-                  <div className={styles.waringTip}>
-                    <Icon className={styles.waringIcon} type="jingshi"/>
-                    <span className={styles.waringText}>请客户先通过线上自助或线下临柜的方式维护主要地址</span>
-                  </div>
-                </IFWrap>
-                <AddAddressContactForm
-                  action="CREATE"
-                />
-              </div>
+              {this.renderWarning(hasMainAddress)}
+              <PerAddressContactForm
+                action="CREATE"
+              />
             </TabPane>
             <TabPane tab="其他信息" key="other">
-              <div>
-                <IFWrap isRender={!hasMainEmail}>
-                  <div className={styles.waringTip}>
-                    <Icon className={styles.waringIcon} type="jingshi"/>
-                    <span className={styles.waringText}>请客户先通过线上自助或线下临柜的方式维护主要邮箱</span>
-                  </div>
-                </IFWrap>
-                <AddOtherContactForm
-                  action="CREATE"
-                />
-              </div>
+              {this.renderWarning(hasMainEmail)}
+              <PerOtherContactForm
+                action="CREATE"
+              />
             </TabPane>
           </Tabs>
         </div>

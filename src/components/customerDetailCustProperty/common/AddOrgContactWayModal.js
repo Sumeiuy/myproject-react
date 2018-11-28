@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 13:52:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-27 20:40:02
+ * @Last Modified time: 2018-11-28 13:12:26
  * @description 添加机构客户联系方式的Modal
  */
 
@@ -16,10 +16,12 @@ import IFWrap from '../../common/biz/IfWrap';
 import Icon from '../../common/Icon';
 import logable, { logCommon } from '../../../decorators/logable';
 import Modal from '../../common/biz/CommonModal';
-import AddOrgPhoneContactForm from './AddOrgPhoneContactForm';
-import AddOrgAddressContactForm from './AddOrgAddressContactForm';
+import OrgPhoneContactForm from './OrgPhoneContactForm';
+import OrgAddressContactForm from './OrgAddressContactForm';
 import {
-  ORG_ADD_CONTACT_TABS,
+  ADD_CONTACT_TABS,
+  MODAL_STYLE,
+  WARNING_MESSAGE,
 } from './config';
 
 import styles from './addOrgContactWayModal.less';
@@ -72,9 +74,23 @@ export default class AddContactModal extends Component {
     logCommon({
       type: 'Click',
       payload: {
-        name: ORG_ADD_CONTACT_TABS[activeTabKey]
+        name: ADD_CONTACT_TABS[activeTabKey]
       }
     });
+  }
+
+  // 渲染警告提示
+  @autobind
+  renderWarning(hasData) {
+    const { activeTabKey } = this.state;
+    return (
+      <IFWrap isRender={!hasData}>
+        <div className={styles.waringTip}>
+          <Icon className={styles.waringIcon} type="jingshi"/>
+          <span className={styles.waringText}>{WARNING_MESSAGE[`org_${activeTabKey}`]}</span>
+        </div>
+      </IFWrap>
+    );
   }
 
   render() {
@@ -93,35 +109,21 @@ export default class AddContactModal extends Component {
         modalKey="addOrgContactWayModal"
         closeModal={this.handleCloseModal}
         onOk={this.handleModalOK}
-        style={{ width: '780px'}}
+        style={MODAL_STYLE}
       >
         <div className={styles.addContactWrap}>
           <Tabs onChange={this.handleTabChange} activeKey={activeTabKey}>
             <TabPane tab="电话信息" key="phone">
-              <div>
-                <IFWrap isRender={!hasMainContactor}>
-                  <div className={styles.waringTip}>
-                    <Icon className={styles.waringIcon} type="jingshi"/>
-                    <span className={styles.waringText}>请客户先通过线上自助或线下临柜的方式维护主要联系人</span>
-                  </div>
-                </IFWrap>
-                <AddOrgPhoneContactForm
-                  action="CREATE"
-                />
-              </div>
+              {this.renderWarning(hasMainContactor)}
+              <OrgPhoneContactForm
+                action="CREATE"
+              />
             </TabPane>
             <TabPane tab="地址信息" key="address">
-              <div>
-                <IFWrap isRender={!hasMainAddress}>
-                  <div className={styles.waringTip}>
-                    <Icon className={styles.waringIcon} type="jingshi"/>
-                    <span className={styles.waringText}>请客户先通过线上自助或线下临柜的方式维护主要地址</span>
-                  </div>
-                </IFWrap>
-                <AddOrgAddressContactForm
-                  action="CREATE"
-                />
-              </div>
+              {this.renderWarning(hasMainAddress)}
+              <OrgAddressContactForm
+                action="CREATE"
+              />
             </TabPane>
           </Tabs>
         </div>

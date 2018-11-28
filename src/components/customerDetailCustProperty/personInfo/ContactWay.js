@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性-个人客户联系方式
  * @Date: 2018-11-07 14:33:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-26 15:43:07
+ * @Last Modified time: 2018-11-28 15:59:55
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -23,11 +23,10 @@ import {
   checkIsNeedTitle,
 } from '../config';
 
-import styles from './contactWay.less';
+import styles from '../common/contactWay.less';
 
 const INFO_ITEM_WITDH_110 = '110px';
 const INFO_ITEM_WITDH = '126px';
-const EMPTY_OBJECT = {};
 const {
   // 手机号码的标识
   MOBILE_TYPE_CODE,
@@ -85,7 +84,7 @@ export default class ContactWay extends PureComponent {
   @autobind
   getViewData(list) {
     const data = _.filter(list, item => !!item.mainFlag);
-    return _.isEmpty(data) ? (list[0] || EMPTY_OBJECT) : data[0];
+    return _.isEmpty(data) ? (list[0] || {}) : data[0];
   }
 
   // 获取手机号码
@@ -149,6 +148,7 @@ export default class ContactWay extends PureComponent {
     });
   }
 
+  // 关闭个人客户添加联系方式的Modal
   @autobind
   handleContactWayModalClose() {
     this.setState({ personalContactWayModal: false });
