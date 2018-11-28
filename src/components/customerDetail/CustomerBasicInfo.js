@@ -284,7 +284,7 @@ export default class CustomerBasicInfo extends PureComponent {
                   renderCustomerBasicInfo.custNature === 'per' ? (
                     <span>
                       <span>{renderCustomerBasicInfo.genderValue && `${renderCustomerBasicInfo.genderValue} | `}</span>
-                      <span>{renderCustomerBasicInfo.age && `${renderCustomerBasicInfo.age} | `}</span>
+                      <span>{renderCustomerBasicInfo.age && `${renderCustomerBasicInfo.age}岁 | `}</span>
                     </span>
                   ) : null
 
