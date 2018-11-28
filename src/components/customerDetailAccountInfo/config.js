@@ -117,7 +117,6 @@ export const OPTION_HISTORY_HOLDING_TABLE_SCROLL = { x: 2500 };
 export const STANDARD_TRADE_FLOW_TABLE_SCROLL = { x: 2100 };
 export const CREDIT_TRADE_FLOW_TABLE_SCROLL= { x: 1800 };
 export const OPTION_TRADE_FLOW_TABLE_SCROLL = { x: 2500 };
-export const CAPITAL_CHANGE_TABLE_SCROLL = { x: 1300 };
 
 // 证券历史持仓表格显示的columns
 export const STOCK_HISTORY_HOLDING_COLUMNS = [
@@ -707,32 +706,35 @@ export const CAPITAL_CHANGE_COLUMNS = [
     dataIndex: 'tradeDate',
     key: 'tradeDate',
     className: 'tradeDate',
-    fixed: 'left',
+    width: '14%' ,
   },
   {
     title: '资金账号',
     dataIndex: 'accountNumber',
     key: 'accountNumber',
     className:'accountNumber',
-    fixed: 'left',
+    width: '14%' ,
   },
   {
     title: '币种',
     dataIndex: 'currency',
     key: 'currency',
-    className:'currency'
+    className:'currency',
+    width: '20%',
   },
   {
     title: '交易渠道',
     dataIndex: 'tradeChannel',
     key: 'tradeChannel',
-    className:'tradeChannel'
+    className:'tradeChannel',
+    width: '14%',
   },
   {
     title: '业务标志',
     dataIndex: 'serviceIndication',
     key: 'serviceIndication',
-    className:'serviceIndication'
+    className:'serviceIndication',
+    width: '4%' ,
   },
   {
     title: '交易金额(元)',
@@ -741,6 +743,7 @@ export const CAPITAL_CHANGE_COLUMNS = [
     align: 'right',
     className:'ammount',
     isNumber: true,
+    width: '14%',
   },
   {
     title: '余额(元)',
@@ -749,6 +752,7 @@ export const CAPITAL_CHANGE_COLUMNS = [
     align: 'right',
     className: 'balance',
     isNumber: true,
+    width: '14%',
   },
 ];
 
