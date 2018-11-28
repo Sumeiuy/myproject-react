@@ -19,6 +19,6 @@ export default function feebback(api) {
     // 满意度调查
     addFeedbackEvaluation: query => api.post('/groovynoauth/feedback/addFeedbackEvaluation', query),
     // 反馈管理 经办人列表
-    getEmpListByResp: query => api.post('/groovynoauth/emp/queryEmpListByResp1', query),
+    getEmpListByResp: query => api.post('/groovynoauth/emp/queryEmpListByResp', query),
   };
 }
