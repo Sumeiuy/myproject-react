@@ -78,6 +78,13 @@ export default class Breadcrumb extends PureComponent {
 
   @autobind
   handleBtnClick() {
+    logCommon({
+      type: 'NavClick',
+      payload: {
+        name: '客户360切换回新版',
+        value: '/customerPool/list/detail',
+      },
+    });
     this.props.push({
       pathname: '/fsp/customerCenter/customer360',
       state: this.props.location.state || sessionStore.get('jspState'),
