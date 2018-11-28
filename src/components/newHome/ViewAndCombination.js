@@ -144,7 +144,8 @@ title: '资讯' };
     sendLog({
       type: 'ButtonClick',
       payload: {
-        name: `${item.name}`,
+        name: '首席观点/组合推荐切换',
+        value: `${item.name}`,
       },
     });
   };
