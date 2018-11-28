@@ -163,6 +163,25 @@ export default class Main extends PureComponent {
       document.documentElement.removeEventListener(eventType, this.handleMousewheel));
   }
 
+  getCustomerDetailSearch(location) {
+    let finalQuery = {};
+    const { state } = location;
+    if (state) {
+      if (state.url) {
+        // fsp请求的url查询字符串
+        const urlQuery = qs.parse(`?${state.url.split('?')[1]}`);
+        finalQuery.custId = urlQuery && urlQuery.id;
+      }
+      if (state.query) {
+        finalQuery = {
+          ...finalQuery,
+          ...state.query,
+        };
+      }
+    }
+    return qs.stringify(finalQuery);
+  }
+
   @autobind
   setWinLocationSearch(postnId) {
     let newSearchStr = '';
@@ -185,10 +204,10 @@ export default class Main extends PureComponent {
       .map(key => `${key}=${encodeURIComponent(rsp[key])}`)
       .join('&');
     api
-      .postFspData(fullUrl,
+      .postFspData(
+        fullUrl,
         {},
-        { isFullUrl: true,
-ignoreCatch: true },
+        { isFullUrl: true, ignoreCatch: true },
       )
       .then(() => this.setWinLocationSearch(rsp.pstnId));
   }
@@ -207,8 +226,7 @@ ignoreCatch: true },
   }
 
   @autobind
-  @logable({ type: 'Click',
-payload: { name: '返回顶部' } })
+  @logable({ type: 'Click', payload: { name: '返回顶部' } })
   handleBackToTopClick() {
     document.documentElement.scrollTop = 0;
     this.setState({
@@ -282,6 +300,20 @@ payload: { name: '返回顶部' } })
         }
         {this.handleOutSystemJumpIn(FSP_JUMP_STRING)}
         {this.handleOutSystemJumpIn(JUMP_STRING)}
+        {/* 有灰度权限的人才能进入新版首页，新版首页下访问新版的客户360 */}
+        <Route
+          path="/fsp/customerCenter/customer360"
+          exact
+          component={({ location }) => (
+            <Redirect
+              to={{
+                pathname: '/customerPool/list/detail',
+                search: this.getCustomerDetailSearch(location),
+                state: location.state,
+              }}
+            />
+          )}
+        />
         <Route path="/fsp/(.*)" component={FSPComponent} />
         <Route path="*" render={() => (<Redirect to="/empty" />)} />
       </Switch>

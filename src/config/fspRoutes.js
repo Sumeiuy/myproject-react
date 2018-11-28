@@ -352,13 +352,6 @@ const fspRoutes = [
     containerId: 'FSP_M_K_CENTER',
     url: '/knowledge/initmain',
   },
-  // 专项业务知识
-  {
-    path: '/fsp/knowledge',
-    action: 'loadInTab',
-    containerId: 'FSP_M_K_CENTER',
-    url: '/knowledge/initmain',
-  },
   // 业务知识信息
   {
     path: '/fsp/showKnowledgeDetail',

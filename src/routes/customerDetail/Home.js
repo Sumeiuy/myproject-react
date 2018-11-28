@@ -164,7 +164,7 @@ export default class Home extends PureComponent {
 
     const breadCrumbProps = {
       push: this.context.push,
-      url: location.state && location.state.url,
+      state: location.state,
     };
 
     // 客户基本信息组件props

@@ -215,11 +215,16 @@ export default class CustomerRow extends PureComponent {
     openFspTab({
       routerAction: push,
       url,
-      pathname: '/customerPool/list/detail',
-      query: {
-        custId,
-      },
+      pathname: '/fsp/customerCenter/customer360',
       param,
+      state: {
+        url,
+        param,
+        query: {
+          activeTabKey: 'customerInfo',
+        },
+        backPath: window.location.hash.slice(1),
+      },
     });
   }
 

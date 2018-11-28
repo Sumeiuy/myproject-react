@@ -56,12 +56,12 @@ const newOpenTabConfig = [
     path: '/fsp/motTaskHandle',
     pid: 'FSP_CUST_M_360',
   },
-  {
+/*   {
     name: '客户360',
     id: 'FSP_CUST_M_360',
     path: '/fsp/customerCenter/customer360',
     pid: 'FSP_CUST_M_CENTER_MANAGE',
-  },
+  }, */
   {
     name: '投顾签约向导',
     id: 'utb-stockcontract-wizard',
@@ -529,6 +529,15 @@ const locationNeedBreadcrumb = [
     parent: {
       name: '精选组合',
       path: '/strategyCenter/choicenessCombination',
+      type: 'link',
+    }
+  },
+  {
+    name: '客户360',
+    path: '/fsp/customerPool/list/customerDetail',
+    parent: {
+      name: '客户列表',
+      path: '/customerPool/list',
       type: 'link',
     }
   },

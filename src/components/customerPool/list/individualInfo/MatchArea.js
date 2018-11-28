@@ -718,8 +718,7 @@ searchText });
     const { searchText = '' } = this.getFilters();
     if (listItem.serviceRecord
       && listItem.serviceRecord.indexOf(searchText) > -1) {
-      const markedEle = replaceWord({ value: listItem.serviceRecord,
-searchText });
+      const markedEle = replaceWord({ value: listItem.serviceRecord, searchText });
       // 接口返回的接口数据是截断过的，需要前端在后面手动加...
       return (
         <li key={listItem.serviceRecord}>

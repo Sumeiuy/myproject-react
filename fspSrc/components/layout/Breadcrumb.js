@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
+import { Button } from 'antd';
 import { logCommon } from '../../../src/decorators/logable';
 import {
   tabNotUseGlobalBreadcrumb,
@@ -10,6 +11,8 @@ import {
   findParentBreadcrumb,
   getAllBreadcrumbItem,
 } from '../../../src/config/tabMenu';
+
+import { sessionStore } from '../../../src/config';
 
 import styles from './breadcrumb.less';
 
@@ -28,7 +31,7 @@ function getFinalBreadcrumbRoutes(location, breadcrumbRoutes, routerHistory) {
   }
 
   newBreadcrumbRoutes = _.map(newBreadcrumbRoutes, (item) => {
-    const matchHistoryItem = _.find(routerHistory, item => item.pathname === item.path);
+    const matchHistoryItem = _.find(routerHistory, record => record.pathname === item.path);
     if(matchHistoryItem) {
       return {
         ...item,
@@ -62,11 +65,23 @@ export default class Breadcrumb extends PureComponent {
           url: breadcrumbItem.path,
         },
       });
+      // 客户管理菜单上有权限判断, 必须设置?source=leftMenu
+      const currentQuery =
+        _.isEmpty(breadcrumbItem.query) ? { source: 'leftMenu' } : breadcrumbItem.query;
+
       this.props.push({
         pathname: breadcrumbItem.path,
-        query: breadcrumbItem.query,
+        query: breadcrumbItem.path === '/customerPool/list' ? currentQuery: breadcrumbItem.query,
       });
     }
+  }
+
+  @autobind
+  handleBtnClick() {
+    this.props.push({
+      pathname: '/fsp/customerCenter/customer360',
+      state: this.props.location.state || sessionStore.get('jspState'),
+    });
   }
 
   renderBreadcrumbItem(breadcrumbItem, index, breadcrumbItemCount) {
@@ -109,11 +124,21 @@ export default class Breadcrumb extends PureComponent {
 
     return (
       !_.isEmpty(finalBreadcrumbRoutes) ?
-      <div className={styles.breadcrumb}>
+      <div className={styles.breadcrumbContainer}>
+        <div className={styles.breadcrumb}>
+          {
+            _.map(
+              finalBreadcrumbRoutes,
+              (item, index) => this.renderBreadcrumbItem(item, index, breadcrumbItemCount))
+          }
+        </div>
         {
-          _.map(
-            finalBreadcrumbRoutes,
-            (item, index) => this.renderBreadcrumbItem(item, index, breadcrumbItemCount))
+          location.pathname === '/fsp/customerPool/list/customerDetail' ?
+            <div className={styles.actionBtn}>
+              <Button ghost type="primary" onClick={this.handleBtnClick}>
+                回到新版
+              </Button>
+            </div> : null
         }
       </div> : null
     );
