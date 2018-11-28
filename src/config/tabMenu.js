@@ -536,7 +536,7 @@ const locationNeedBreadcrumb = [
     name: '客户360',
     path: '/fsp/customerPool/list/customerDetail',
     parent: {
-      name: '客户列表',
+      name: '客户管理',
       path: '/customerPool/list',
       type: 'link',
     }
