@@ -143,7 +143,7 @@ export default class Breadcrumb extends PureComponent {
           location.pathname === '/fsp/customerPool/list/customerDetail' ?
             <div className={styles.actionBtn}>
               <Button ghost type="primary" onClick={this.handleBtnClick}>
-                回到新版
+                切回新版
               </Button>
             </div> : null
         }
