@@ -14,6 +14,7 @@ import moment from 'moment';
 
 import Table from '../common/table';
 import Tooltip from '../common/Tooltip';
+import IfTableWrap from '../common/IfTableWrap';
 import logable from '../../decorators/logable';
 import { url as urlHelper } from '../../helper';
 import {
@@ -139,14 +140,17 @@ export default class AgreementTab extends PureComponent {
       data: { list = EMPTY_ARRAY },
     } = this.props;
     const titleList = this.getProtocolColumns(AGREEMENT_COLUMNS);
+    const isRender = !_.isEmpty(list);
     return (
       <div className={styles.protocolTab}>
-        <Table
-          columns={titleList}
-          dataSource={list}
-          rowKey="id"
-          pagination={false}
-        />
+        <IfTableWrap isRender={isRender} text="暂无合同信息">
+          <Table
+            columns={titleList}
+            dataSource={list}
+            rowKey="id"
+            pagination={false}
+          />
+        </IfTableWrap>
       </div>
     );
   }
