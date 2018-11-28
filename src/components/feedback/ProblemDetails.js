@@ -276,9 +276,7 @@ export default class ProblemDetail extends PureComponent {
       <Option key={`optionKey${OPTIONKEY++}`} value={i.value}>{i.label}</Option>,
     );
     const channel = _.flattenDeep(_.map(feedbackChannel, obj => obj.children));
-    // const renderEmpOption = item => item.map(i =>
-    //   <Option key={`EmpResp${OPTIONKEY++}`} value={i.loginName}>{i.lastName}</Option>,
-    // );
+    
     return (
       <div>
         <Form layout="vertical">
