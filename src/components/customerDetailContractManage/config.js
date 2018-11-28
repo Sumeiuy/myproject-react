@@ -31,6 +31,17 @@ export const NOT_TOUGU_SUBTYPE = {
   TL: '0503',
 };
 
+export const AGREEMENT_TYPE_MAP = {
+  '739001': '生效',
+  '739004': '已处理',
+  '736003': '生效',
+  '736007': '购回申报',
+  '273010': '开仓未归还',
+  '273020': '部分归还',
+  '2': '生效',
+  '3': '已处理',
+};
+
 export const CHARGING_MODE_CODE = 'T30200';
 
 export const TOUGU_SUBTYPE = 'TG Agreement';
@@ -190,17 +201,17 @@ export const AGREEMENT_COLUMNS = [
     key: 'amount',
     dataIndex: 'amount',
     title: '合同金额(万元)',
-    render: text => _.isFinite(Number(text)) ? (text / 10000).toFixed(2) : '--',
   },
   {
-    key: 'status',
-    dataIndex: 'status',
+    key: 'statusCode',
+    dataIndex: 'statusCode',
     title: '合同状态',
+    render: text => AGREEMENT_TYPE_MAP[text],
   },
   {
     key: 'startTime',
     dataIndex: 'startTime',
-    title: '生效事件',
+    title: '生效时间',
   },
   {
     key: 'endTime',
