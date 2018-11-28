@@ -38,7 +38,13 @@ export default class ProductSaleHome extends PureComponent {
     return (
       <div className={styles.productSaleWrapper}>
         <Loading loading={loading} />
-        <iframe src={iframePath} className={styles.productSale} onLoad={this.handleLoad} frameBorder="no" />
+        <iframe
+          src={iframePath}
+          className={styles.productSale}
+          onLoad={this.handleLoad}
+          frameBorder="no"
+          title="productSaleHome"
+        />
       </div>
     );
   }

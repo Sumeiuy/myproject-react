@@ -2,7 +2,7 @@
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-27 17:21:21
+ * @Last Modified time: 2018-11-28 17:30:09
  */
 
 import React, { PureComponent } from 'react';
@@ -16,11 +16,14 @@ import BreadCrumb from '../../components/customerDetail/Breadcrumb';
 import SummaryInfo from '../../components/customerDetail/SummaryInfo';
 import CustomerBasicInfo from '../../components/customerDetail/CustomerBasicInfo';
 import ServiceRelationship from './tabpages/serviceRelationship/Home';
+import BusinessHand from './tabpages/businessHand/Home';
 import CustProperty from './tabpages/custProperty/connectedHome';
+import ServiceRecord from './tabpages/serviceRecord/Home';
 import DiscountCoupon from './tabpages/discountCoupon/connectedHome';
-import logable, { logCommon } from '../../decorators/logable';
+import { logCommon } from '../../decorators/logable';
 import ProductOrder from './tabpages/productOrder/Home';
 import InvestmentAbilityAnalysis from './tabpages/investmentAbilityAnalysis/connectedHome';
+import ContractManage from './tabpages/contractManage/Home';
 import {
   ACCOUNT_INFO_TAB_KEY,
   CUSTOMER_INFO_TAB_KEY,
@@ -38,7 +41,6 @@ import {
 import styles from './home.less';
 
 const TabPane = Tabs.TabPane;
-
 
 @withRouter
 export default class Home extends PureComponent {
@@ -75,7 +77,12 @@ export default class Home extends PureComponent {
     replace: PropTypes.func.isRequired,
   }
 
-  static defaultProps = {
+  constructor(props) {
+    super(props);
+    this.state = {
+      // 当前的tab页面, 默认展示 账户信息 Tab页
+      activeTabKey: 'contractManagement',
+    };
   }
 
   componentDidMount() {
@@ -102,27 +109,26 @@ export default class Home extends PureComponent {
   }
 
   componentDidUpdate(prevProps) {
-    const { location: { query: prevQuery } } = prevProps;
+    const { location: { query: { custId: prevCustId } } } = prevProps;
     const {
-      location: { query },
+      location: { query: { custId } },
       getCustomerBasicInfo,
       queryCustSummaryInfo,
     } = this.props;
-    if(query && query.custId) {
-      if(prevQuery && prevQuery.custId) {
-        if(query.custId !== prevQuery.custId) {
-          // 查询基本信息
-          getCustomerBasicInfo({ custId: query.custId });
-          // 查询概要信息
-          queryCustSummaryInfo({ custId: query.custId });
-        }
-      } else {
-        // 查询基本信息
-        getCustomerBasicInfo({ custId: query.custId });
-        // 查询概要信息
-        queryCustSummaryInfo({ custId: query.custId });
-      }
+
+    if(custId && custId !== prevCustId) {
+      // 查询基本信息
+      getCustomerBasicInfo({ custId });
+      // 查询概要信息
+      queryCustSummaryInfo({ custId });
     }
+  }
+
+  // 获取客户360页面当前的tabKey
+  getActiveTabKey() {
+    const { location: { query: { custDetailTabKey } } } = this.props;
+    // 默认显示客户信息tab
+    return custDetailTabKey || 'accountInfo';
   }
 
   // 切换客户360详情页的Tab
@@ -166,7 +172,7 @@ export default class Home extends PureComponent {
 
     const breadCrumbProps = {
       push: this.context.push,
-      url: location.state && location.state.url,
+      state: location.state,
     };
 
     // 客户基本信息组件props
@@ -193,6 +199,7 @@ export default class Home extends PureComponent {
               data={summaryInfo}
               moreLabelInfo={moreLabelInfo}
               queryAllKeyLabels={queryAllKeyLabels}
+              replace={this.context.replace}
             />
           </div>
         </div>
@@ -214,13 +221,16 @@ export default class Home extends PureComponent {
               <InvestmentAbilityAnalysis location={location} />
             </TabPane>
             <TabPane tab="业务办理" key={BUNESSINESS_PROCESS_TAB_KEY}>
+              <BusinessHand location={location} />
             </TabPane>
             <TabPane tab="服务记录" key={SERVICE_RECORD_TAB_KEY}>
+              <ServiceRecord location={location} />
             </TabPane>
             <TabPane tab="服务关系" key={SERVICE_RELATION_TAB_KEY}>
               <ServiceRelationship location={location} />
             </TabPane>
             <TabPane tab="合约管理" key={CONTRACT_MANAGE_TAB_KEY}>
+              <ContractManage location={location} />
             </TabPane>
             <TabPane tab="投资者评估" key={INVESTOR_ASSESSMENT_TAB_KEY}>
             </TabPane>

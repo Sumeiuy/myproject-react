@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-11-06 13:23:32
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-16 17:21:42
+ * @Last Modified time: 2018-11-27 17:11:11
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -15,7 +15,9 @@ import { number } from '../../helper';
 import logable, { logPV } from '../../decorators/logable';
 import ServiceHistoryModal from './serviceHistoryModal';
 import { serviceTeamColumns, introduceColumns } from './config';
+import IfTableWrap from '../common/IfTableWrap';
 
+const NODATA_HINT = '没有符合条件的记录';
 export default class ServiceRelationship extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -38,37 +40,6 @@ export default class ServiceRelationship extends PureComponent {
      // 服务历史的弹出框
      serviceHistoryModalVisible: false,
     };
-  }
-
-  componentDidMount() {
-    const {
-      getCustServiceTeam,
-      getCustDevInfo,
-      location: { query: { custId } },
-    } = this.props;
-    getCustServiceTeam({ custId });
-    getCustDevInfo({ custId });
-  }
-
-  componentDidUpdate(prevProps) {
-    const {
-      location: {
-        query: {
-          custId: prevCustId,
-        },
-      },
-    } = prevProps;
-    const {
-      location: {
-        query: {
-          custId,
-        },
-      },
-    } = this.props;
-    // url中custId发生变化时重新请求相关数据
-    if (prevCustId !== custId) {
-      this.getCustServiceHistory(custId);
-    }
   }
 
   //打开服务历史的弹框
@@ -103,6 +74,8 @@ export default class ServiceRelationship extends PureComponent {
       serviceHistory,
       getCustServiceHistory,
     } = this.props;
+    const isRenderServiceTeam = !_.isEmpty(serviceTeam);
+    const isRenderIntroduce = !_.isEmpty(introduce);
     //将数据百分比化
     const newIntroduceDatas = _.map(introduce, (items) => {
       const { weight } = items;
@@ -134,30 +107,32 @@ export default class ServiceRelationship extends PureComponent {
                   onClose={this.handleServiceHistoryModalClose}
                 />
               </div>
-              <div className={styles.accountTable}>
-                <Table
-                  pagination={false}
-                  className={styles.tableBorder}
-                  isNeedEmptyRow
-                  dataSource={serviceTeam}
-                  columns={serviceTeamColumns}
-                />
-              </div>
+              <IfTableWrap isRender={isRenderServiceTeam} text={NODATA_HINT}>
+                <div className={styles.accountTable}>
+                  <Table
+                    pagination={false}
+                    className={styles.tableBorder}
+                    dataSource={serviceTeam}
+                    columns={serviceTeamColumns}
+                  />
+                </div>
+              </IfTableWrap>
             </div>
             <div className={styles.accountBlock}>
               <div className={styles.header}>
                 <div className={styles.title}>介绍信息</div>
               </div>
-              <div className={styles.accountTable}>
-                <Table
-                  pagination={false}
-                  className={styles.tableBorder}
-                  isNeedEmptyRow
-                  dataSource={newIntroduceDatas}
-                  columns={introduceColumns}
-                />
+              <IfTableWrap isRender={isRenderIntroduce} text={NODATA_HINT}>
+                <div className={styles.accountTable}>
+                  <Table
+                    pagination={false}
+                    className={styles.tableBorder}
+                    dataSource={newIntroduceDatas}
+                    columns={introduceColumns}
+                  />
+                </div>
+              </IfTableWrap>
               </div>
-            </div>
           </div>
         </div>
       </div>

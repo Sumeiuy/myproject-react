@@ -79,6 +79,7 @@ export default class ReportFormIframe extends React.Component {
         src={srcUrl}
         width={width}
         height={height}
+        title="reportFormIframe"
       />
     );
   }

@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性-会员信息-涨乐财富通会员信息
  * @Date: 2018-11-08 18:59:50
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-16 15:50:19
+ * @Last Modified time: 2018-11-23 14:47:07
  */
 
 import React, { PureComponent } from 'react';
@@ -22,6 +22,7 @@ import ZLMemeberInfoModal from './ZLMemeberInfoModal';
 
 const INFO_ITEM_WITDH_110 = '110px';
 const INFO_ITEM_WITDH = '126px';
+const PAGE_SIZE = 10;
 export default class ZLMemberInfo extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -47,7 +48,21 @@ export default class ZLMemberInfo extends PureComponent {
     title: '涨乐会员变更弹框',
   })
   handleMemberGradeModalOpen() {
-    this.setState({ memberGradeModalVisible: true });
+    const {
+      queryZLUmemberLevelChangeRecords,
+      location: {
+        query: {
+          custId,
+        },
+      },
+    } = this.props;
+    queryZLUmemberLevelChangeRecords({
+      custId,
+      pageSize: PAGE_SIZE,
+      pageNum: 1,
+    }).then(() => {
+      this.setState({ memberGradeModalVisible: true });
+    });
   }
 
   // 关闭会员变更弹出框
@@ -79,8 +94,8 @@ export default class ZLMemberInfo extends PureComponent {
           <span className={styles.colorBlock} />
           <span className={styles.titleText}>涨乐U会员</span>
           <span className={styles.iconButton}>
-            <Icon type='huiyuandengjibiangeng' />
-            <span onClick={this.handleMemberGradeModalOpen}>会员等级变更</span>
+            <Icon type='dengjibiangenglishi' />
+            <span onClick={this.handleMemberGradeModalOpen}>等级变更历史</span>
             <ZLMemeberInfoModal
               location={location}
               visible={memberGradeModalVisible}

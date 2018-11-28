@@ -11,17 +11,23 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import InfoItem from '../../common/infoItem';
 import BasicEditorCell from '../common/BasiceEditorCell';
-import { number } from '../../../helper';
+import { number, regxp } from '../../../helper';
 import {
   DEFAULT_VALUE,
   checkIsNeedTitle,
-  FINCE_REG,
 } from '../config';
 import styles from './common.less';
+
+const {
+  noFirstZero,
+  positiveNumber,
+  twoDecimals,
+} = regxp;
 
 const INFO_ITEM_WITDH_110 = '110px';
 const INFO_ITEM_WITDH = '126px';
 const MAX_STRING_LENGTH = 30;
+const MAX_NUM_LENGTH_17 = 17;
 // const EMPTY_OBJECT = {};
 // 收入水平
 const INCOME_NAME  = 'income';
@@ -54,8 +60,8 @@ export default class Person extends PureComponent {
   }
 
   @autobind
-  getViewDataByNum(value) {
-    return _.isNumber(value) ? number.thousandFormat(value) : DEFAULT_VALUE;
+  getViewData(value) {
+    return !_.isEmpty(value) ? number.thousandFormat(value) : DEFAULT_VALUE;
   }
 
   @autobind
@@ -132,10 +138,28 @@ export default class Person extends PureComponent {
         msg: '数据不能为空',
       };
     }
-    if (!FINCE_REG.test(value)) {
+    if (value.length > MAX_NUM_LENGTH_17) {
       return {
         validate: false,
-        msg: '请输入合法的数据',
+        msg: '长度不能超过17',
+      };
+    }
+    if (!positiveNumber.test(value)) {
+      return {
+        validate: false,
+        msg: '只能输入正整数或小数',
+      };
+    }
+    if (!noFirstZero.test(value)) {
+      return {
+        validate: false,
+        msg: '第一位数字不能为0',
+      };
+    }
+    if (!twoDecimals.test(value)) {
+      return {
+        validate: false,
+        msg: '小数位不能超过2位',
       };
     }
     return {
@@ -193,9 +217,9 @@ export default class Person extends PureComponent {
           <InfoItem
             width={INFO_ITEM_WITDH}
             label="家庭年收入"
-            value={data.householdIncome || DEFAULT_VALUE}
+            value={this.getViewData(data.householdIncome)}
             className={styles.infoItem}
-            isNeedValueTitle={checkIsNeedTitle(data.householdIncome)}
+            isNeedValueTitle={checkIsNeedTitle(this.getViewData(data.householdIncome))}
             isNeedOverFlowEllipsis
           />
         </div>
@@ -223,9 +247,9 @@ export default class Person extends PureComponent {
           <InfoItem
             width={INFO_ITEM_WITDH}
             label="可投资资产占比"
-            value={this.getViewDataByNum(data.investableAssetsCycle)}
+            value={data.investableAssetsCycle || DEFAULT_VALUE}
             className={styles.infoItem}
-            isNeedValueTitle={checkIsNeedTitle(this.getViewDataByNum(data.investableAssetsCycle))}
+            isNeedValueTitle={checkIsNeedTitle(data.investableAssetsCycle)}
             isNeedOverFlowEllipsis
           />
         </div>
@@ -350,7 +374,7 @@ export default class Person extends PureComponent {
             this.checkIsEditable()
               ? (
                 <BasicEditorCell
-                  label="投入成本收益率"
+                  label="投入成本收益率%"
                   width={INFO_ITEM_WITDH}
                   className={styles.infoItem}
                   editorId="person_insured"
@@ -365,7 +389,7 @@ export default class Person extends PureComponent {
               : (
                 <InfoItem
                   width={INFO_ITEM_WITDH}
-                  label="投入成本收益率"
+                  label="投入成本收益率%"
                   value={this.getYieldValue(data.yieldRate) || DEFAULT_VALUE}
                   className={styles.infoItem}
                   isNeedValueTitle={checkIsNeedTitle(this.getYieldValue(data.yieldRate))}

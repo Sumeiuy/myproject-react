@@ -52,6 +52,7 @@
   .editContent {
     flex: 0 0 auto;
     height: 32px;
+    max-width: calc(~"100% - 20px");
   }
 
   .selectArrow {
@@ -111,7 +112,7 @@
       flex: 1 1 auto;
       line-height: 24px;
       color: red;
-      font-size: 14px;
+      font-size: 12px;
     }
   }
 
@@ -138,10 +139,12 @@
       font-size: 16px;
 
       &.OKBtn {
+        cursor: pointer;
         color: #299c64;
       }
 
       &.cancelBtn {
+        cursor: pointer;
         color: #ea001c;
       }
     }
@@ -176,7 +179,7 @@
     padding-right: 30px;
   }
   .editorForm {
-    display: initial;
+    display: block;
   }
   :global {
     & .ant-form {

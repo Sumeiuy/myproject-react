@@ -192,9 +192,6 @@ pageNum } });
   }
 
   @autobind
-  @logable({ type: 'Click',
-payload: { name: '搜索列表',
-value: '$args[0]' } })
   handleQueryList(param) {
     const { replace } = this.context;
     const {

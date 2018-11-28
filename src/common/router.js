@@ -203,13 +203,13 @@ export const getRouterData = (app) => {
     '/customerPool/todo': {
       component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist'], () =>
         import('../routes/customerPool/ToDo' /* webpackChunkName: "customerPool_todo" */)),
-      isPrimary: true,      
+      isPrimary: true,
     },
     // 从 customerPool 页面中上部的搜索框输入搜索条件、或搜索框下方--猜你感兴趣进入
     '/customerPool/list': {
       component: dynamicWrapper(app, ['customerPool', 'customerLabel'], () =>
         import('../routes/customerPool/CustomerList__' /* webpackChunkName: "customerPool_list" */ )),
-      isPrimary: true,      
+      isPrimary: true,
     },
     // 从其他地方跳转到新版客户360详情页面，
     '/customerPool/list/detail': {
@@ -224,78 +224,80 @@ export const getRouterData = (app) => {
           'customer360Detail/serviceRelationship',
           'customer360Detail/discountCoupon',
           'customer360Detail/productOrder',
-          'customer360Detail/investmentAbilityAnalysis'
+          'customer360Detail/investmentAbilityAnalysis',
+          'customer360Detail/businessHand',
+          'customer360Detail/contractManage',
         ],
         () => import('../routes/customerDetail/connectHome' /* webpackChunkName: "customerPool_customerDetail" */),
       ),
-      isPrimary: true, 
+      isPrimary: true,
     },
     // customerPool/customerGroup 直接进入，所需数据未知
     '/customerPool/customerGroup': {
       component: dynamicWrapper(app, ['customerPool'], () =>
         import('../routes/customerPool/CustomerGroup' /* webpackChunkName: "customerPool_customerGroup" */)),
-      isPrimary: true,      
+      isPrimary: true,
     },
     // 分组管理发起任务
     // customerPool/createTaskFromCustGroup 直接进入，所需数据未知
     '/customerPool/createTaskFromCustGroup': {
       component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist', 'taskFeedback'], () =>
         import('../routes/customerPool/CreateTask' /* webpackChunkName: "customerPool_createTask" */)),
-      isPrimary: true,      
+      isPrimary: true,
     },
     // 管理者视图进度条发起任务
     '/customerPool/createTaskFromProgress': {
       component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist', 'taskFeedback'], () =>
         import('../routes/customerPool/CreateTask' /* webpackChunkName: "customerPool_createTask" */)),
-      isPrimary: true,      
+      isPrimary: true,
     },
     // 管理者视图饼图发起任务
     '/customerPool/createTaskFromPie': {
       component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist', 'taskFeedback'], () =>
         import('../routes/customerPool/CreateTask' /* webpackChunkName: "customerPool_createTask" */)),
-      isPrimary: true,      
+      isPrimary: true,
     },
     // 从代办流程进去，任务驳回修改
     '/customerPool/createTaskFromTaskRejection1': {
       component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist', 'taskFeedback'], () =>
         import('../routes/customerPool/CreateTask' /* webpackChunkName: "customerPool_createTask" */)),
-      isPrimary: true,      
+      isPrimary: true,
     },
     // 从任务管理，创建者视图驳回中的任务，进行任务驳回修改
     '/customerPool/createTaskFromTaskRejection2': {
       component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist', 'taskFeedback'], () =>
         import('../routes/customerPool/CreateTask' /* webpackChunkName: "customerPool_createTask" */)),
-      isPrimary: true,      
+      isPrimary: true,
     },
     // 从管理者视图服务经理维度发起任务
     '/customerPool/createTaskFromCustScope': {
       component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist', 'taskFeedback'], () =>
         import('../routes/customerPool/CreateTask' /* webpackChunkName: "customerPool_createTask" */)),
-      isPrimary: true,      
+      isPrimary: true,
     },
     // 客户列表发起任务
     '/customerPool/createTask': {
       component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist', 'taskFeedback'], () =>
         import('../routes/customerPool/CreateTask' /* webpackChunkName: "customerPool_createTask" */)),
-      isPrimary: true,      
+      isPrimary: true,
     },
     // 执行者视图服务结果客户明细的地方发起任务
     '/customerPool/createTaskFromServiceResultCust': {
       component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist', 'taskFeedback'], () =>
         import('../routes/customerPool/CreateTask' /* webpackChunkName: "customerPool_createTask" */)),
-      isPrimary: true,      
+      isPrimary: true,
     },
     // 标签管理页面发起任务
     '/customerPool/createTaskFromLabelManagement': {
       component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist', 'taskFeedback'], () =>
         import('../routes/customerPool/CreateTask' /* webpackChunkName: "customerPool_createTask" */)),
-      isPrimary: true,      
+      isPrimary: true,
     },
     // 客户分组管理
     '/customerPool/customerGroupManage': {
       component: dynamicWrapper(app, [], () =>
         import('../routes/customerPool/CustomerGroupManage' /* webpackChunkName: "customerGroupManage" */)),
-      isPrimary: true,      
+      isPrimary: true,
     },
     '/customerPool/serviceLog': {
       component: dynamicWrapper(app, ['customerPool'], () =>

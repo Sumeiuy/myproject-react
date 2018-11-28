@@ -2,7 +2,12 @@
   padding: 19px;
 
   .header {
+    height: 25px;
+    margin-bottom: 16px;
     .filterItem {
+      padding-bottom: 16px;
+      font-size: 14px;
+      color: #333;
       float: left;
       margin-right: 30px;
     }
@@ -11,13 +16,35 @@
   .body {
     .table {
       :global {
+        .ant-table table {
+          table-layout: fixed;
+        }
         .ant-table-thead > tr > th {
-          padding: 10px 16px;
           white-space: nowrap;
           font-size: 14px;
-          font-weight: bold;
           color: #666;
+          font-weight: bold;
+          padding-bottom: 0;
+          padding-top: 0;
         }
+        .ant-table-tbody > tr > td {
+          font-size: 14px;
+          color: #333;
+          padding-right: 0;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+        }
+        .orderNumber {
+          padding-left: 20px;
+        }
+        .executiveCondition {
+          padding-right: 20px !important;
+        }
+      }
+      .tableRow {
+        height: 38px;
+        white-space: nowrap;
       }
     }
   }
