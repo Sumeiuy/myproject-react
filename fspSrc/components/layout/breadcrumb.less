@@ -1,39 +1,52 @@
-.breadcrumb {
+ .breadcrumbContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   max-width: 1536px;
   margin: 0 auto;
   background: #fff;
   height: 40px;
   padding-left: 30px;
-  .breadcrumbItem {
-    font-size: 14px;
-    display: inline-block;
-    line-height: 40px;
-    height: 40px;
-    .breadcrumbName {
-      color: #999;
-      font-weight: bold;
-    }
-    .breadcrumbDivide {
-      color: #999;
-      margin: 0 8px;
-    }
-    &.lastBreadcrumbItem {
+  .breadcrumb {
+    flex: 0 0 auto;
+    .breadcrumbItem {
+      font-size: 14px;
+      display: inline-block;
+      line-height: 40px;
+      height: 40px;
       .breadcrumbName {
-        color: #333;
-        font-weight: normal;
+        color: #999;
+        font-weight: bold;
       }
       .breadcrumbDivide {
-        color: #333;
+        color: #999;
         margin: 0 8px;
       }
-    }
-    &.canClick {
-      .breadcrumbName {
-        cursor: pointer;
-        &:hover {
-          color: #108ee9;
+      &.lastBreadcrumbItem {
+        .breadcrumbName {
+          color: #333;
+          font-weight: normal;
+        }
+        .breadcrumbDivide {
+          color: #333;
+          margin: 0 8px;
+        }
+      }
+      &.canClick {
+        .breadcrumbName {
+          cursor: pointer;
+          &:hover {
+            color: #108ee9;
+          }
         }
       }
     }
   }
+  .actionBtn {
+    flex: 0 0 auto;
+    color: #108ee9;
+    font-size: 14px;
+    margin-right: 30px;
+  }
 }
+

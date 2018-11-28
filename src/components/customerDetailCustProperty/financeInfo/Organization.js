@@ -12,13 +12,18 @@ import _ from 'lodash';
 import InfoItem from '../../common/infoItem';
 import IfWrap from '../../common/biz/IfWrap';
 import BasicEditorCell from '../common/BasiceEditorCell';
-import { number } from '../../../helper';
+import { number, regxp } from '../../../helper';
 import {
   DEFAULT_VALUE,
   checkIsNeedTitle,
-  FINCE_REG,
 } from '../config';
 import styles from './common.less';
+
+const {
+  noFirstZero,
+  positiveNumber,
+  twoDecimals,
+} = regxp;
 
 const INFO_ITEM_WITDH_110 = '110px';
 const INFO_ITEM_WITDH = '126px';
@@ -30,7 +35,7 @@ const TOTAL_ASSETS_NAME  = 'totalAssets';
 const MASS_PROFIT_NAME  = 'massProfit';
 // 净利润
 const NET_MARGIN_NAME  = 'netMargin';
-
+const MAX_NUM_LENGTH = 17;
 export default class Organization extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -58,6 +63,7 @@ export default class Organization extends PureComponent {
       },
     } = this.props;
     return isMainEmp && !isQuoteComp;
+    // return true;
   }
 
   @autobind
@@ -88,10 +94,28 @@ export default class Organization extends PureComponent {
         msg: '数据不能为空',
       };
     }
-    if (!FINCE_REG.test(value)) {
+    if (value.length > MAX_NUM_LENGTH) {
       return {
         validate: false,
-        msg: '请输入合法的数据',
+        msg: '长度不能超过17',
+      };
+    }
+    if (!positiveNumber.test(value)) {
+      return {
+        validate: false,
+        msg: '只能输入正整数或小数',
+      };
+    }
+    if (!noFirstZero.test(value)) {
+      return {
+        validate: false,
+        msg: '第一位数字不能为0',
+      };
+    }
+    if (!twoDecimals.test(value)) {
+      return {
+        validate: false,
+        msg: '小数位不能超过2位',
       };
     }
     return {

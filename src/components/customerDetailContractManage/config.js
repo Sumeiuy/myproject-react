@@ -31,6 +31,17 @@ export const NOT_TOUGU_SUBTYPE = {
   TL: '0503',
 };
 
+export const AGREEMENT_TYPE_MAP = {
+  '739001': '生效',
+  '739004': '已处理',
+  '736003': '生效',
+  '736007': '购回申报',
+  '273010': '开仓未归还',
+  '273020': '部分归还',
+  '2': '生效',
+  '3': '已处理',
+};
+
 export const CHARGING_MODE_CODE = 'T30200';
 
 export const TOUGU_SUBTYPE = 'TG Agreement';
@@ -41,6 +52,7 @@ export const PROTOCOL_COLUMNS = [
     key: 'id',
     dataIndex: 'id',
     title: '协议编号',
+    width: 150,
   },
   {
     key: 'type',
@@ -51,6 +63,7 @@ export const PROTOCOL_COLUMNS = [
     key: 'subType',
     dataIndex: 'subType',
     title: '子类型',
+    width: 140,
   },
   {
     key: 'status',
@@ -66,6 +79,7 @@ export const PROTOCOL_COLUMNS = [
     key: 'node',
     dataIndex: 'node',
     title: '当前处理节点',
+    render: text => _.isEmpty(text) ? '--' : text,
   },
   {
     key: 'handlerName',
@@ -180,6 +194,7 @@ export const AGREEMENT_COLUMNS = [
     key: 'id',
     dataIndex: 'id',
     title: '合同编号',
+    width: 180,
   },
   {
     key: 'name',
@@ -190,31 +205,35 @@ export const AGREEMENT_COLUMNS = [
     key: 'amount',
     dataIndex: 'amount',
     title: '合同金额(万元)',
-    render: text => _.isFinite(Number(text)) ? (text / 10000).toFixed(2) : '--',
   },
   {
-    key: 'status',
-    dataIndex: 'status',
+    key: 'statusCode',
+    dataIndex: 'statusCode',
     title: '合同状态',
+    render: text => AGREEMENT_TYPE_MAP[text],
   },
   {
     key: 'startTime',
     dataIndex: 'startTime',
-    title: '生效事件',
+    title: '生效时间',
+    width: 110,
   },
   {
     key: 'endTime',
     dataIndex: 'endTime',
     title: '结束时间',
+    width: 110,
   },
   {
     key: 'content',
     dataIndex: 'content',
     title: '合同内容',
+    width: 220,
   },
   {
     key: 'remark',
     dataIndex: 'remark',
     title: '备注',
+    width: 220,
   },
 ];

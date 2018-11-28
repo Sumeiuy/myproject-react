@@ -163,6 +163,9 @@ export default class DiscountCoupon extends PureComponent {
   })
   handleTableItemClick(dataItem) {
     const { ticketId } = dataItem;
+    if (_.isEmpty(ticketId)) {
+      return;
+    }
     const {
       location: {
         query: {
