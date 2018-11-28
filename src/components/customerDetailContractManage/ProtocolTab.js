@@ -17,6 +17,7 @@ import Icon from '../common/Icon';
 import Table from '../common/table';
 import Tooltip from '../common/Tooltip';
 import Button from '../common/Button';
+import IfTableWrap from '../common/IfTableWrap';
 import logable from '../../decorators/logable';
 import { url as urlHelper } from '../../helper';
 import {
@@ -490,15 +491,18 @@ export default class ProtocolTab extends PureComponent {
       loginInfo,
     } = this.props;
     const titleList = this.getProtocolColumns(PROTOCOL_COLUMNS);
+    const isRender = !_.isEmpty(list);
     return (
       <div className={styles.protocolTab}>
         {this.renderTouGuBtn(loginInfo)}
-        <Table
-          columns={titleList}
-          dataSource={list}
-          pagination={false}
-          rowKey="id"
-        />
+        <IfTableWrap isRender={isRender} text="暂无协议信息">
+          <Table
+            columns={titleList}
+            dataSource={list}
+            pagination={false}
+            rowKey="id"
+          />
+        </IfTableWrap>
       </div>
     );
   }

@@ -158,13 +158,21 @@ export default class ProblemDetail extends PureComponent {
     return '无';
   }
   // 显示经办人
-  renderEmpResp(st, options) {
-    if (st && !_.isEmpty(st)) {
-      const nowStatus = options.filter(item =>
-        item.loginName === st) || EMPTY_OBJECT;
-      return nowStatus[0].lastName || '无';
+  renderEmpResp(st, empRespList) {
+    if (!_.isEmpty(st) && !_.isEmpty(empRespList)) {
+      const nowStatus = _.find(empRespList, item =>
+        item.loginName === st);
+      return nowStatus.lastName || '无';
     }
     return '无';
+  }
+
+  // 点击编辑打开经办人下拉框
+  renderEmpOption(empRespDTOList) {
+      const empListOption = _.map(empRespDTOList, i =>
+        <Option key={`empOptionKey${OPTIONKEY++}`} value={i.loginName}>{i.lastName}</Option>,
+      );
+      return empListOption;
   }
 
   /*
@@ -197,7 +205,12 @@ export default class ProblemDetail extends PureComponent {
   }
 
   render() {
-    const { form, problemDetails,empRespDTOList } = this.props;
+    const {
+      form,
+      problemDetails,
+      empRespDTOList,
+    } = this.props;
+
     const {
       qtab,
       jira,
@@ -263,9 +276,7 @@ export default class ProblemDetail extends PureComponent {
       <Option key={`optionKey${OPTIONKEY++}`} value={i.value}>{i.label}</Option>,
     );
     const channel = _.flattenDeep(_.map(feedbackChannel, obj => obj.children));
-    const renderEmpOption = item => item.map(i =>
-      <Option key={`EmpResp${OPTIONKEY++}`} value={i.loginName}>{i.lastName}</Option>,
-    );
+
     return (
       <div>
         <Form layout="vertical">
@@ -369,7 +380,7 @@ export default class ProblemDetail extends PureComponent {
                     {getFieldDecorator('processer', { initialValue: `${this.dataNull(processer)}` })(
                       <Select style={{ width: 110 }} className="qtSelect" getPopupContainer={() => document.getElementById('select-processer')}>
                         {
-                         renderEmpOption(empRespDTOList)
+                         this.renderEmpOption(empRespDTOList)
                           }
                       </Select>,
                     )}

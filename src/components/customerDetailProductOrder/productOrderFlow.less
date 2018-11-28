@@ -16,6 +16,9 @@
   .body {
     .table {
       :global {
+        .ant-table table {
+          table-layout: fixed;
+        }
         .ant-table-thead > tr > th {
           white-space: nowrap;
           font-size: 14px;
@@ -24,13 +27,19 @@
           padding-bottom: 0;
           padding-top: 0;
         }
-        .ant-table-tbody > tr > th {
-          padding: 0;
+        .ant-table-tbody > tr > td {
           font-size: 14px;
           color: #333;
+          padding-right: 0;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
         }
         .orderNumber {
           padding-left: 20px;
+        }
+        .executiveCondition {
+          padding-right: 20px !important;
         }
       }
       .tableRow {
