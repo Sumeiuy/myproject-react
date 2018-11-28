@@ -173,7 +173,7 @@ export default class ProblemDetail extends PureComponent {
     if (!_.isEmpty(empRespDTOList)) {
       const empListOption = _.map(empRespDTOList, i =>
         <Option key={`empOptionKey${OPTIONKEY++}`} value={i.loginName}>{i.lastName}</Option>,
-      ); 
+      );
       return empListOption;
     }
     return '无';
