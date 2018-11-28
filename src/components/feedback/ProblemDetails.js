@@ -19,7 +19,6 @@ import logable from '../../decorators/logable';
 const FormItem = Form.Item;
 const Option = Select.Option;
 const EMPTY_OBJECT = {};
-const EMPTY_ARRAY = [];
 const feedbackChannel = feedbackOptions.feedbackChannel;
 let OPTIONKEY = 0;
 
@@ -170,13 +169,10 @@ export default class ProblemDetail extends PureComponent {
 
   // 点击编辑打开经办人下拉框
   renderEmpOption(empRespDTOList) {
-    if (!_.isEmpty(empRespDTOList)) {
       const empListOption = _.map(empRespDTOList, i =>
         <Option key={`empOptionKey${OPTIONKEY++}`} value={i.loginName}>{i.lastName}</Option>,
       );
       return empListOption;
-    }
-    return '无';
   }
 
   /*
@@ -212,7 +208,7 @@ export default class ProblemDetail extends PureComponent {
     const {
       form,
       problemDetails,
-      empRespDTOList = EMPTY_ARRAY,
+      empRespDTOList,
     } = this.props;
 
     const {
@@ -280,6 +276,9 @@ export default class ProblemDetail extends PureComponent {
       <Option key={`optionKey${OPTIONKEY++}`} value={i.value}>{i.label}</Option>,
     );
     const channel = _.flattenDeep(_.map(feedbackChannel, obj => obj.children));
+    // const renderEmpOption = item => item.map(i =>
+    //   <Option key={`EmpResp${OPTIONKEY++}`} value={i.loginName}>{i.lastName}</Option>,
+    // );
     return (
       <div>
         <Form layout="vertical">
