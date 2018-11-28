@@ -219,6 +219,10 @@ export default class CustomerRow extends PureComponent {
       param,
       state: {
         url,
+        param,
+        query: {
+          activeTabKey: 'customerInfo',
+        },
       },
     });
   }

@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-23 09:51:00
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-26 20:42:36
+ * @LastEditTime: 2018-11-28 14:32:05
  * @Description: 服务订单流水详情
  */
 
@@ -19,6 +19,7 @@ import OtherCommissions from './OtherCommissions';
 import OrderApproval from './OrderApproval';
 import ServiceProductList from './ServiceProductList';
 import AttachmentList from './AttachmentList';
+import logable from '../../decorators/logable';
 
 const TabPane = Tabs.TabPane;
 
@@ -75,6 +76,11 @@ export default class ProductOrderDetail extends PureComponent {
     this.props.onClose();
   }
 
+  @autobind
+  @logable({ type: 'Click', payload: { name: '服务订单详情切换展示', value: '$args[0]' } })
+  handleTabChange(activeTabKey) {
+  }
+
   render() {
     const {
       visible,
@@ -85,10 +91,10 @@ export default class ProductOrderDetail extends PureComponent {
       attachmentList,
     } = this.props;
     const {
-      originalCommission = '',
-      newCommission = '',
-      approveFlow = '',
-      executiveCondition = '',
+      originalCommission = '--',
+      newCommission = '--',
+      approveFlow = '--',
+      executiveCondition = '--',
     } = serviceOrderDetail;
     const closeButton = (
       <Button onClick={this.handleModalClose}>关闭</Button>
@@ -115,7 +121,9 @@ export default class ProductOrderDetail extends PureComponent {
               <span className={styles.hint}>客户新佣金（‰）：</span>
               <span className={styles.info}>{newCommission}</span>
               <span className={styles.hint}>审批流程：</span>
-              <span className={styles.info}>{approveFlow}</span>
+              <span className={styles.info}>
+                <Tooltip title={approveFlow}>{approveFlow}</Tooltip>
+              </span>
             </div>
             <div className={styles.detail}>
               <span className={styles.hint}>执行情况：</span>
@@ -126,6 +134,7 @@ export default class ProductOrderDetail extends PureComponent {
           </div>
           <Tabs
             className={styles.detailTab}
+            onChange={this.handleTabChange}
           >
             <TabPane tab="服务产品" key="serviceProductList">
               <IfTableWrap isRender={isServiceProductListRender} text="订单暂无服务产品信息">

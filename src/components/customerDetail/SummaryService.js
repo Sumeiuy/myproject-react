@@ -16,6 +16,8 @@ export default function SummaryService(props) {
     openBusiness,
     recentServe,
     recentLoginZL,
+    replace,
+    location,
   } = props;
   // 最近一次服务的文本
   const {
@@ -33,19 +35,47 @@ export default function SummaryService(props) {
   } else {
     recentServeText = `${serviceDate} ${serviceRecordTitle}-${serviceRecordType}`;
   }
+
+  // 定位到服务记录
+  const handleLastServiceDateClick = () => {
+    navToTabPane({
+      activeTabKey: 'serviceRecord',
+    });
+  };
+
+  // 定位到业务办理
+  const handleOpendServiceDetailClick = () => {
+    navToTabPane({
+      activeTabKey: 'businessProcessing',
+    });
+  };
+
+  // 定位到具体的tabPane
+  const navToTabPane = (options) => {
+    const { query } = location;
+    replace({
+      query: {
+        ...query,
+        ...options,
+      }
+    });
+    // 页面定位到tabPane的位置
+    document.documentElement.scrollTop = 335;
+  };
+
   return (
     <div className={styles.wrap}>
       <div className={styles.serviceCell}>
         <div className={styles.header}>
           <span className={styles.title}>可开通业务</span>
-          <span className={styles.detail}>详情</span>
+          <span className={styles.detail} onClick={handleOpendServiceDetailClick}>详情</span>
         </div>
         <div className={styles.content} title={openBusiness || '暂无'}>{openBusiness || '暂无'}</div>
       </div>
       <div className={styles.serviceCell}>
         <div className={styles.header}>
           <span className={styles.title}>最近一次服务</span>
-          <span className={styles.detail}>详情</span>
+          <span className={styles.detail} onClick={handleLastServiceDateClick}>详情</span>
         </div>
         <div className={styles.content}>{recentServeText}</div>
       </div>
@@ -63,6 +93,8 @@ SummaryService.propTypes = {
   openBusiness: PropTypes.string,
   recentServe: PropTypes.object,
   recentLoginZL: PropTypes.string,
+  replace: PropTypes.func.isRequired,
+  location: PropTypes.object.isRequired,
 };
 SummaryService.defaultProps = {
   openBusiness: '',

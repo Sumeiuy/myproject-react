@@ -101,7 +101,7 @@ export default class ZJMemberInfo extends PureComponent {
           <span className={styles.colorBlock} />
           <span className={styles.titleText}>紫金积分会员</span>
           <span className={styles.iconButton}>
-            <Icon type='jifenduihuanliushui' />
+            <Icon type='jifenduihuanliushui1' />
             <span onClick={this.handleIntegralFlowModalOpen}>积分兑换流水</span>
             <ZJMemeberInfoModal
               location={location}

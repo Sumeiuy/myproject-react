@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-20 15:24:26
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-26 18:26:36
+ * @LastEditTime: 2018-11-28 12:23:37
  * @Description: 新版客户360详情的产品订单T配置项
  */
 
@@ -58,61 +58,73 @@ export const TRADE_ORDER_FLOW_COLUMNS = [
     dataIndex: 'productCode',
     key: 'productCode',
     className: 'productCode',
+    width: '8%',
   },
   {
     title: '产品名称',
     dataIndex: 'productName',
     key: 'productName',
+    width: '12%',
   },
   {
     title: '产品类型',
     dataIndex: 'productType',
     key: 'productType',
+    width: '7%',
   },
   {
     title: '操作类型',
     dataIndex: 'operationType',
     key: 'operationType',
+    width: '6%',
   },
   {
     title: '订单状态',
     dataIndex: 'orderStatus',
     key: 'orderStatus',
+    width: '7%',
   },
   {
     title: '金额（元）',
     dataIndex: 'money',
     key: 'money',
+    width: '7%',
   },
   {
     title: '风险是否匹配',
-    dataIndex: 'isRiskMatched',
-    key: 'isRiskMatched',
+    dataIndex: 'riskMatched',
+    key: 'riskMatched',
+    width: '8%',
   },
   {
     title: '期限是否匹配',
-    dataIndex: 'isTimeMacthed',
-    key: 'isTimeMacthed',
+    dataIndex: 'timeMacthed',
+    key: 'timeMacthed',
+    width: '8%',
   },
   {
     title: '投资品种是否匹配',
-    dataIndex: 'isVarietyMatched',
-    key: 'isVarietyMatched',
+    dataIndex: 'varietyMatched',
+    key: 'varietyMatched',
+    width: '10%',
   },
   {
     title: '签署确认书类型',
     dataIndex: 'confirmationType',
     key: 'confirmationType',
+    width: '10%',
   },
   {
     title: '受理渠道',
     dataIndex: 'channel',
     key: 'channel',
+    width: '8%',
   },
   {
     title: '订单时间',
     dataIndex: 'orderTime',
     key: 'orderTime',
+    width: '9%',
   },
 ];
 
@@ -122,46 +134,55 @@ export const SERVICE_PRODUCT_LIST_COLUMNS = [
     dataIndex: 'productCode',
     key: 'productCode',
     className: 'productCode',
+    width: '11%',
   },
   {
     title: '产品名称',
     dataIndex: 'productName',
     key: 'productName',
+    width: '13%',
   },
   {
     title: '操作类型',
     dataIndex: 'operateType',
     key: 'operateType',
+    width: '8%',
   },
   {
     title: '产品类型',
     dataIndex: 'productType',
     key: 'productType',
+    width: '10%',
   },
   {
     title: '产品佣金(%)',
     dataIndex: 'productCommission',
     key: 'productCommission',
+    width: '10%',
   },
   {
     title: '风险是否匹配',
     dataIndex: 'matchRisk',
     key: 'matchRisk',
+    width: '10%',
   },
   {
     title: '期限是否匹配',
     dataIndex: 'matchTime',
     key: 'matchTime',
+    width: '10%',
   },
   {
     title: '投资品牌是否匹配',
     dataIndex: 'matchInvestmentBrand',
     key: 'matchInvestmentBrand',
+    width: '12%',
   },
   {
     title: '签署确认书类型',
     dataIndex: 'confirmationType',
     key: 'confirmationType',
+    width: '16%',
   },
 ];
 

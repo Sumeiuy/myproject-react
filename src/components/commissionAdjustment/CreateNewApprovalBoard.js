@@ -791,6 +791,14 @@ export default class CreateNewApprovalBoard extends PureComponent {
           pathname: '/fsp/customerCenter/customer360',
           url,
           param,
+          state: {
+            url,
+            param,
+            query: {
+              activeTabKey: 'productOrder',
+              productOrderTabActiveKey: 'serviceOrderFlow',
+            },
+          },
         });
         // 关闭当前tab
         closeRctTab({ id: 'FSP_BUSINESS_APPLYMENT_COMMISSION' });

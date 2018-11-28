@@ -209,6 +209,10 @@ export default class KeyMonitorAccountHome extends Component {
       param,
       state: {
         url,
+        param,
+        query: {
+          activeTabKey: 'investorAssessment',
+        },
       },
     });
   }
