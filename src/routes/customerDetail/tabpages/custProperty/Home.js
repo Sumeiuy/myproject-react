@@ -42,9 +42,6 @@ const {
   PRODUCT_CUST_TYPE,
 } = CUST_TYPE;
 
-// 表格每页显示数据
-const PAGE_SIZE = 10;
-
 export default class CustProperty extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,

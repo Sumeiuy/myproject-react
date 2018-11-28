@@ -14,7 +14,6 @@ import _ from 'lodash';
 import ReportTitle from '../ReportTitle';
 import ReportFilter from '../ReportFilter';
 import EventAnalysisChart from './EventAnalysisChart';
-import { env } from '../../../helper';
 import { defaultStartTime,
   defaultEndTime,
   taskOption,
