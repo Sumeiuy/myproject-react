@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-11-12 19:25:08
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-27 20:39:28
+ * @Last Modified time: 2018-11-28 14:19:20
  */
 
 import React, { PureComponent } from 'react';
@@ -209,6 +209,7 @@ export default class TaskList extends PureComponent {
             title: '提交时间',
             dataIndex: 'startTime',
             key: 'startTime',
+            render: (item, record) => (<span>{moment(Number(record.startTime)).format('YYYY-MM-DD')}</span>),
           },
         ];
         break;
@@ -248,11 +249,13 @@ export default class TaskList extends PureComponent {
             title: '提交时间',
             dataIndex: 'startTime',
             key: 'startTime',
+            render: (item, record) => (<span>{moment(Number(record.startTime)).format('YYYY-MM-DD')}</span>),
           },
           {
             title: '审批时间',
             dataIndex: 'endTime',
             key: 'endTime',
+            render: (item, record) => (<span>{moment(Number(record.endTime)).format('YYYY-MM-DD')}</span>),
           },
         ];
         break;
@@ -275,17 +278,9 @@ export default class TaskList extends PureComponent {
         totalRecordNum,
       }
     } = this.props;
-    const newData = _.map(data, item => {
-      const { startTime, endTime } = item;
-      return {
-        ...item,
-        startTime: startTime && moment(Number(startTime)).format('YYYY-MM-DD'),
-        endTime: endTime && moment(Number(endTime)).format('YYYY-MM-DD'),
-      };
-    });
 
     //数据为空
-    if (_.isEmpty(newData)) {
+    if (_.isEmpty(data)) {
       return (
         <div className={styles.empty}>
             <div className={styles.emptyContainer}>
@@ -301,7 +296,7 @@ export default class TaskList extends PureComponent {
           className={className}
           rowKey='id'
           columns={this.columns}
-          dataSource={newData}
+          dataSource={data}
           pagination={false}
         />
         <Pagination
