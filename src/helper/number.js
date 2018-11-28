@@ -178,7 +178,7 @@ const number = {
       result.unit = UNIT;
     }
     // 对小数做处理
-    result.number = formatRound(result.number, 1, isRound);
+    result.number = formatRound(result.number, floatLength, isRound);
     // 千位符处理
     if (isThousandFormat) {
       result.number = thousandFormat(Number(String(result.number)), true, ',', false );
