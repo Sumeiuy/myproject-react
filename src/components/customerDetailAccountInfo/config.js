@@ -720,7 +720,7 @@ export const CAPITAL_CHANGE_COLUMNS = [
     dataIndex: 'currency',
     key: 'currency',
     className:'currency',
-    width: '20%',
+    width: '14%',
   },
   {
     title: '交易渠道',
@@ -734,7 +734,7 @@ export const CAPITAL_CHANGE_COLUMNS = [
     dataIndex: 'serviceIndication',
     key: 'serviceIndication',
     className:'serviceIndication',
-    width: '4%' ,
+    width: '15%',
   },
   {
     title: '交易金额(元)',
