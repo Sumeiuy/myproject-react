@@ -101,36 +101,43 @@ export const ACCOUNT_CHANGE_TABLE_COLUMNS = [
     title: '日期',
     dataIndex: 'date',
     key: 'date',
+    width: '16%',
   },
   {
     title: '资金账户',
     dataIndex: 'assetAccount',
     key: 'assetAccount',
+    width: '16%',
   },
   {
     title: '股东账户',
     dataIndex: 'shareholderAccount',
     key: 'shareholderAccount',
+    width: '16%',
   },
   {
     title: '业务类别',
     dataIndex: 'bussinessType',
     key: 'bussinessType',
+    width: '16%',
   },
   {
     title: '办理机构',
     dataIndex: 'agency',
     key: 'agency',
+    width: '16%',
   },
   {
     title: '办理时间',
     dataIndex: 'handleTime',
     key: 'handleTime',
+    width: '16%',
   },
   {
     title: '单费收入(元)',
     dataIndex: 'singleFeeIncome',
     key: 'singleFeeIncome',
     align: 'right',
+    width: '16%',
   },
 ];

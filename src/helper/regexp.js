@@ -82,6 +82,14 @@ const regexp = {
    * @desc: 匹配所有的html标签
    */
   htmlTags: /<[^>]*>/g,
+  /**
+   * @desc: 第一位数字不能为0
+   */
+  noFirstZero: /^[1-9]/,
+  /**
+   * @desc: 正数，小数位不能超过两位
+   */
+  twoDecimals: /^\d+(\.\d{1,2})?$/,
 };
 
 export default regexp;
@@ -103,4 +111,7 @@ export const {
  idNo15Digit,
  onlyAlphabetAndNumber,
  onlyWordNumAlphabet,
+ htmlTags,
+ noFirstZero,
+ twoDecimals,
 } = regexp;
