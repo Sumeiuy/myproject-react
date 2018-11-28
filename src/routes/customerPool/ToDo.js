@@ -10,6 +10,7 @@ import { connect } from 'dva';
 import { Input, Tabs } from 'antd';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
+import moment from 'moment';
 
 import withRouter from '../../decorators/withRouter';
 import ToDoList from '../../components/customerPool/todo/ToDoList';
@@ -101,8 +102,6 @@ export default class ToDo extends PureComponent {
         pathname,
         query: {
           taskType,
-          pageSize = 10,
-          pageNum = 1,
         },
       }
     } = this.props;
@@ -127,7 +126,7 @@ export default class ToDo extends PureComponent {
           startTime,
           endTime,
           pageSize,
-          pageNum,
+          pageNum: curPageNum,
           category,
         });
         break;
@@ -136,7 +135,7 @@ export default class ToDo extends PureComponent {
           startTime,
           endTime,
           pageSize,
-          pageNum,
+          pageNum: curPageNum,
           category,
           originator,
         });
@@ -190,10 +189,11 @@ export default class ToDo extends PureComponent {
     },
   })
   handleApplySearch(value) {
-    const { location: { query: { pageSize = 10, pageNum = 1 } } } = this.props;
-    this.getApplyData({pageSize,
-pageNum,
-subject: value});
+    this.getApplyData({
+      pageSize,
+      pageNum: curPageNum,
+      subject: value
+    });
   }
 
   // 审批搜索
@@ -207,9 +207,11 @@ subject: value});
   })
   handleApproveSearch(value) {
     const { location: { query: { pageSize = 10, pageNum = 1 } } } = this.props;
-    this.getApproveData({ pageSize,
-pageNum,
-subject: value });
+    this.getApproveData({
+      pageSize,
+      pageNum: curPageNum,
+      subject: value
+    });
   }
 
   @autobind
@@ -243,8 +245,6 @@ subject: value });
       location: {
         query: {
           taskType,
-          pageSize = 10,
-          pageNum = 1,
         }
       }
     } = this.props;
@@ -265,7 +265,7 @@ subject: value });
         }, () => {
           this.getApplyData({
             pageSize,
-            pageNum,
+            pageNum: curPageNum,
             category: key,
             startTime,
             endTime,
@@ -278,7 +278,7 @@ subject: value });
         }, () => {
           this.getApproveData({
             pageSize,
-            pageNum,
+            pageNum: curPageNum,
             category: key,
             startTime,
             endTime,
@@ -298,8 +298,6 @@ subject: value });
       location: {
         query: {
           taskType,
-          pageSize = 10,
-          pageNum = 1,
         }
       }
     } = this.props;
@@ -315,12 +313,16 @@ subject: value });
     switch (taskType) {
       case 'MY_APPLY':
         this.setState({
-          startTime,
-          endTime,
+          startTime: moment(startTime).valueOf(),
+          endTime: moment(endTime).valueOf(),
         }, () => {
+          const {
+            startTime,
+            endTime,
+          } = this.state;
           this.getApplyData({
             pageSize,
-            pageNum,
+            pageNum: curPageNum,
             startTime,
             endTime,
             category,
@@ -329,12 +331,16 @@ subject: value });
         break;
       case 'MY_APPROVE':
         this.setState({
-          startTime,
-          endTime,
+          startTime: moment(startTime).valueOf(),
+          endTime: moment(endTime).valueOf(),
         }, () => {
+          const {
+            startTime,
+            endTime,
+          } = this.state;
           this.getApproveData({
             pageSize,
-            pageNum,
+            pageNum: curPageNum,
             startTime,
             endTime,
             category,
@@ -351,14 +357,6 @@ subject: value });
   @autobind
   handleInitiatorCallback(obj) {
     const {
-      location: {
-        query: {
-          pageSize = 10,
-          pageNum = 1,
-        }
-      }
-    } = this.props;
-    const {
       name,
       id,
     } = obj;
@@ -372,7 +370,7 @@ subject: value });
     }, () => {
       this.getApproveData({
         pageSize,
-        pageNum,
+        pageNum: curPageNum,
         originator: id,
         startTime,
         endTime,
@@ -414,8 +412,8 @@ subject: value });
         this.getApplyData({
           startTime,
           endTime,
-          pageSize: '10',
-          pageNum: '1',
+          pageSize,
+          pageNum: curPageNum,
           category,
         });
         break;
@@ -423,8 +421,8 @@ subject: value });
         this.getApproveData({
           startTime,
           endTime,
-          pageSize: '10',
-          pageNum: '1',
+          pageSize,
+          pageNum: curPageNum,
           category,
           originator,
         });
@@ -441,7 +439,6 @@ subject: value });
       location: {
         query: {
           taskType,
-          pageSize,
         }
       }
     } = this.props;
@@ -455,8 +452,8 @@ subject: value });
     switch (taskType) {
       case 'MY_APPLY':
         this.getApplyData({
-          pageSize,
-          pageNum: page.toString(),
+          pageSize: 10,
+          pageNum: page,
           startTime,
           endTime,
           category,
@@ -464,8 +461,8 @@ subject: value });
         break;
       case 'MY_APPROVE':
         this.getApproveData({
-          pageSize,
-          pageNum: page.toString(),
+          pageSize: 10,
+          pageNum: page,
           startTime,
           endTime,
           category,
@@ -514,8 +511,8 @@ subject: value });
     } = location;
     return (
       <div className={styles.todo}>
-        <Tabs defaultActiveKey="MY_TODO" activeKey={taskType} type='card' onChange={this.handleTabsChange}>
-          <TabPane key='MY_TODO' tab='我的待办'>
+        <Tabs defaultActiveKey="MY_TODO" activeKey={taskType} type="card" onChange={this.handleTabsChange}>
+          <TabPane key="MY_TODO" tab="我的待办">
             <div className="search-box">
               <Input.Search
                 className="search-input"
@@ -539,7 +536,7 @@ subject: value });
               clearCreateTaskData={clearCreateTaskData}
             />
           </TabPane>
-          <TabPane key='MY_APPLY' tab='我的申请'>
+          <TabPane key="MY_APPLY" tab="我的申请">
             <div>
               <TodoFilter
                 filterCallback={this.handlefilterCallback}
@@ -555,15 +552,15 @@ subject: value });
                 className="todoList"
                 data={applyListData}
                 location={location}
-                listType='apply'
+                listType="apply"
                 clearCreateTaskData={clearCreateTaskData}
-                emptyText='您名下没有符合条件的申请'
+                emptyText="您名下没有符合条件的申请"
                 page={applyPage}
                 onPageChange={this.onPageChange}
               />
             </div>
           </TabPane>
-          <TabPane key='MY_APPROVE' tab='我的审批'>
+          <TabPane key="MY_APPROVE" tab="我的审批">
             <div>
               <TodoFilter
                 filterCallback={this.handlefilterCallback}
@@ -583,9 +580,9 @@ subject: value });
                 className="todoList"
                 data={approveListData}
                 location={location}
-                listType='approve'
+                listType="approve"
                 clearCreateTaskData={clearCreateTaskData}
-                emptyText='您名下没有符合条件的审批'
+                emptyText="您名下没有符合条件的审批"
                 page={approvePage}
                 onPageChange={this.onPageChange}
               />
