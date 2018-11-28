@@ -72,7 +72,7 @@ export default function CustDetailBreadcrumb(props) {
     <div className={styles.breadcrumbContiner}>
       <Breadcrumb className={styles.breadcrumb}>
         <Breadcrumb.Item>
-          <span className={styles.link} onClick={handleItemClick}>客户列表</span>
+          <span className={styles.link} onClick={handleItemClick}>客户管理</span>
         </Breadcrumb.Item>
         <Breadcrumb.Item><span className={styles.text}>客户360</span></Breadcrumb.Item>
       </Breadcrumb>
