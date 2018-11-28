@@ -78,7 +78,7 @@ export default function CustDetailBreadcrumb(props) {
       </Breadcrumb>
       <div className={styles.actionBtn}>
         <Button ghost type="primary" onClick={handleBtnClick}>
-          切换到旧版
+          切回旧版
         </Button>
       </div>
     </div>
