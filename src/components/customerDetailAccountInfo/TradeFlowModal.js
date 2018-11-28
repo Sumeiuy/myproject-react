@@ -20,13 +20,13 @@ import { SingleFilter, SingleFilterWithSearch } from 'lego-react-filter/src';
 import TreeFilter from 'lego-tree-filter/src';
 import Pagination from '../common/Pagination';
 import IfTableWrap from '../common/IfTableWrap';
+import Tooltip from '../common/Tooltip';
 import {
   STANDARD_TRADE_FLOW_COLUMNS,
   CREDIT_TRADE_FLOW_COLUMNS,
   OPTION_TRADE_FLOW_COLUMNS,
   CAPITAL_CHANGE_COLUMNS,
   STANDARD_TRADE_FLOW_TABLE_SCROLL,
-  CAPITAL_CHANGE_TABLE_SCROLL,
   CREDIT_TRADE_FLOW_TABLE_SCROLL,
   OPTION_TRADE_FLOW_TABLE_SCROLL,
   TRADE_FLOW_TABS,
@@ -591,9 +591,19 @@ export default class TradeFlowModal extends PureComponent {
   @autobind
   transformColumnsData(columns) {
     return _.map(columns, column => {
-      const { isNumber = false, isAmount = false, width } = column;
+      const { isNumber = false, isAmount = false, width, dataIndex } = column;
       if (isNumber || isAmount) {
         return this.updateMoneyColumn(column);
+      }
+      if (dataIndex === 'serviceIndication') {
+       return {
+          ...column,
+          render: content => (
+            <span>
+              <Tooltip title={content}>{content}</Tooltip>
+            </span>
+          )
+        };
       }
       if (!width) {
         column.width = 150;
@@ -919,7 +929,6 @@ export default class TradeFlowModal extends PureComponent {
                       dataSource={capitalData}
                       columns={capitalChangeColumns}
                       className={styles.tradeFlowTable}
-                      scroll={CAPITAL_CHANGE_TABLE_SCROLL}
                     />
                   </div>
                   <Pagination

@@ -25,7 +25,7 @@ import Pagination from '../common/Pagination';
 import PlaceHolder from '../common/placeholderImage/PlaceHolder_';
 import IfTableWrap from '../common/IfTableWrap';
 import DateFilter from '../common/htFilter/dateFilter';
-
+import Tooltip from '../common/Tooltip';
 import styles from './accountDetail.less';
 
 // 默认查询日期半年
@@ -114,6 +114,15 @@ export default class AccountDetail extends PureComponent {
             }
             return number.thousandFormat(text, false);
           },
+        };
+      } else if (dataIndex === 'bussinessType' || dataIndex === 'agency') {
+        return {
+          ...column,
+          render: text => (
+            <span>
+              <Tooltip title={text}>{text}</Tooltip>
+            </span>
+          )
         };
       }
       return column;
