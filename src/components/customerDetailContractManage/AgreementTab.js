@@ -28,18 +28,15 @@ const KEY_START_TIME = 'startTime';
 const KEY_END_TIME = 'endTime';
 const KEY_CONTENT = 'content';
 
+const EMPTY_OBJECT = {};
+const EMPTY_ARRAY = [];
+
 export default class AgreementTab extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
     empInfo: PropTypes.object.isRequired,
     data: PropTypes.object.isRequired,
     queryList: PropTypes.func.isRequired,
-  }
-
-  constructor(props) {
-    super(props);
-    this.state = {
-    };
   }
 
   componentDidMount() {
@@ -113,10 +110,13 @@ export default class AgreementTab extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'ViewItem', payload: { name: '合同内容' } })
+  @logable({
+    type: 'ViewItem',
+    payload: { name: '合同内容' },
+  })
   handleJumpAgreementReport(record) {
     const {
-      empInfo: { empInfo = {} },
+      empInfo: { empInfo = EMPTY_OBJECT },
     } = this.props;
     const { login = ''  } = empInfo;
     const {
@@ -136,7 +136,7 @@ export default class AgreementTab extends PureComponent {
 
   render() {
     const {
-      data: { list = [] },
+      data: { list = EMPTY_ARRAY },
     } = this.props;
     const titleList = this.getProtocolColumns(AGREEMENT_COLUMNS);
     return (

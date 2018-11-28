@@ -164,7 +164,7 @@ export default class DetailModal extends PureComponent {
               <div className={styles.infoItemBox}>
                 <InfoItem
                   width={INFO_ITEM_WITDH}
-                  label="收益率"
+                  label="收益率%"
                   value={this.getYield(data.yield)}
                   className={styles.infoItem}
                   isNeedValueTitle={checkIsNeedTitle(this.getYield(data.yield))}

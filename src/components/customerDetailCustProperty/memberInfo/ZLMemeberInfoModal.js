@@ -2,22 +2,24 @@
  * @Author: wangyikai
  * @Date: 2018-11-15 13:53:47
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-26 15:59:56
+ * @Last Modified time: 2018-11-27 19:57:59
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import Icon from '../../common/Icon';
 import Table from '../../../components/common/table';
 import Modal from '../../../components/common/biz/CommonModal';
 import { newMemberGradeColumns } from '../config';
 import styles from './zlMemberInfo.less';
 import logable from '../../../decorators/logable';
+import IfTableWrap from '../../common/IfTableWrap';
 
 const PAGE_SIZE = 10;
+const TABLENUM = 10;
 const EMPTY_ARRAY = [];
 const EMPTY_OBJECT = {};
+const NODATA_HINT = '没有符合历史条件的记录';
 export default class ZLMemeberInfoModal extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -69,6 +71,8 @@ export default class ZLMemeberInfoModal extends PureComponent {
   render() {
     const { dataSource, onClose, visible } = this.props;
     const { list = EMPTY_ARRAY, page = EMPTY_OBJECT } = dataSource;
+    console.warn(list);
+    const isRender = !_.isEmpty(list);
     const PaginationOption = {
       current: page.pageNum || 1,
       total: page.totalRecordNum || 0,
@@ -90,25 +94,19 @@ export default class ZLMemeberInfoModal extends PureComponent {
           modalKey="memberGrade"
           maskClosable={false}
         >
-          {
-            _.isEmpty(list)
-            ? (
-              <div className={styles.noDataContainer}>
-                <Icon type="wushujuzhanweitu-" className={styles.noDataIcon} />
-                <div className={styles.noDataText}>没有符合条件的记录</div>
-              </div>
-              )
-            : (
-              <div className={styles.tabContainer}>
-                <Table
-                  pagination={showMemberGradePagination}
-                  dataSource={list}
-                  columns={newMemberGradeColumns}
-                  scroll={{ x: '1024px' }}
-                />
-              </div>
-            )
-          }
+          <IfTableWrap isRender={isRender} text={NODATA_HINT} noDataStyle={{'paddingTop': '200px'}}>
+            <div className={styles.tabContainer}>
+              <Table
+                pagination={showMemberGradePagination}
+                dataSource={list}
+                isNeedEmptyRow
+                rowNumber={TABLENUM}
+                columns={newMemberGradeColumns}
+                scroll={{ x: '1024px' }}
+                rowKey="time"
+              />
+            </div>
+          </IfTableWrap>
         </Modal>
       </div>
     );

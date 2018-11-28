@@ -13,7 +13,6 @@ import { Button } from 'antd';
 import DetailWrap from '../common/detailWrap';
 import InfoTitle from '../common/InfoTitle';
 import InfoItem from '../common/infoItem';
-import { advisorSpace } from './config';
 
 import styles from './detail_.less';
 

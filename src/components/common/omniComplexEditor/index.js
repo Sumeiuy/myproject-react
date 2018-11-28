@@ -301,6 +301,7 @@ export default class OmniComplexEditor extends PureComponent {
     this.setState({
       editing: false,
       loading: false,
+      validateResult: DEFAULT_VALIDATE,
     });
     if (this.isSelectMode()) {
       this.setState({ selectState: false });
