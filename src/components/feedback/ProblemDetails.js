@@ -258,7 +258,6 @@ export default class ProblemDetail extends PureComponent {
       edit_show: canBeEdited,
     });
 
-    const allOperatorOptions = feedbackOptions.allOperatorOptions;
     const questionTagOptions = feedbackOptions.questionTagOptions;
     const getSelectOption = item => item.map(i =>
       <Option key={`optionKey${OPTIONKEY++}`} value={i.value}>{i.label}</Option>,

@@ -172,7 +172,6 @@ export default class ProblemHandling extends PureComponent {
     const getSelectOption = item => item.map(i =>
       <Option key={i.value} value={i.value}>{i.label}</Option>,
     );
-    const allOperatorOptions = feedbackOptions.allOperatorOptions;
     // processer 值为 “请选择”，是脏数据（线上有）
     const initProcessValue = processer === EMPTY_TEXT ? EMPTY_VALUE : processer;
     const renderEmpOption = item => item.map(i =>

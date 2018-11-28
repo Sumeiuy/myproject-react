@@ -23,6 +23,7 @@ import DiscountCoupon from './tabpages/discountCoupon/connectedHome';
 import { logCommon } from '../../decorators/logable';
 import ProductOrder from './tabpages/productOrder/Home';
 import InvestmentAbilityAnalysis from './tabpages/investmentAbilityAnalysis/Home';
+import ContractManage from './tabpages/contractManage/Home';
 import {
   ACCOUNT_INFO_TAB_KEY,
   CUSTOMER_INFO_TAB_KEY,
@@ -40,7 +41,6 @@ import {
 import styles from './home.less';
 
 const TabPane = Tabs.TabPane;
-
 
 @withRouter
 export default class Home extends PureComponent {
@@ -75,6 +75,14 @@ export default class Home extends PureComponent {
   static contextTypes = {
     push: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      // 当前的tab页面, 默认展示 账户信息 Tab页
+      activeTabKey: 'contractManagement',
+    };
   }
 
   componentDidMount() {
@@ -191,6 +199,7 @@ export default class Home extends PureComponent {
               data={summaryInfo}
               moreLabelInfo={moreLabelInfo}
               queryAllKeyLabels={queryAllKeyLabels}
+              replace={this.context.replace}
             />
           </div>
         </div>
@@ -221,6 +230,7 @@ export default class Home extends PureComponent {
               <ServiceRelationship location={location} />
             </TabPane>
             <TabPane tab="合约管理" key={CONTRACT_MANAGE_TAB_KEY}>
+              <ContractManage location={location} />
             </TabPane>
             <TabPane tab="投资者评估" key={INVESTOR_ASSESSMENT_TAB_KEY}>
             </TabPane>
