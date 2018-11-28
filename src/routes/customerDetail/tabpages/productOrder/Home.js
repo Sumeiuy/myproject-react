@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-19 10:17:54
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-27 10:58:23
+ * @LastEditTime: 2018-11-28 12:48:39
  * @Description: 产品订单
  */
 
@@ -16,11 +16,13 @@ import { generateEffect as effect } from '../../../../helper/dva';
 import ProductOrderFlow from '../../../../components/customerDetailProductOrder/ProductOrderFlow';
 import TradeOrderFlow from '../../../../components/customerDetailProductOrder/TradeOrderFlow';
 import ServiceOrder from '../../../../components/customerDetailProductOrder/ServiceOrder';
+import {
+  DEFAULT_PAGE_SIZE,
+} from '../../../../components/customerDetailProductOrder/config';
 
 import styles from './home.less';
 
 const TabPane = Tabs.TabPane;
-const TRADE_ORDER_FLOW_PAGE_SIZE = 10;
 
 const mapStateToProps = state => ({
   serviceOrderFlow: state.productOrder.serviceOrderFlow,
@@ -37,10 +39,10 @@ const mapDispatchToProps = {
   queryServiceOrderFlow: effect('productOrder/queryServiceOrderFlow'),
   queryTradeOrderFlow: effect('productOrder/queryTradeOrderFlow'),
   queryJxGroupProduct: effect('customerPool/queryJxGroupProduct', { loading: false }),
-  queryServiceOrderDetail: effect('productOrder/queryServiceOrderDetail'),
-  queryServiceProductList: effect('productOrder/queryServiceProductList'),
-  queryOrderApproval: effect('productOrder/queryOrderApproval'),
-  getAttachmentList: effect('productOrder/getAttachmentList'),
+  queryServiceOrderDetail: effect('productOrder/queryServiceOrderDetail', { forceFull: true }),
+  queryServiceProductList: effect('productOrder/queryServiceProductList', { forceFull: true }),
+  queryOrderApproval: effect('productOrder/queryOrderApproval', { forceFull: true }),
+  getAttachmentList: effect('productOrder/getAttachmentList', { forceFull: true }),
   // 查询是否可发起佣金调整
   queryCustCanChangeCommission: effect('productOrder/queryCustCanChangeCommission', { loading: false }),
   // 查询服务订购订单
@@ -112,7 +114,7 @@ export default class ProductOrder extends PureComponent {
   getActiveTabInfo() {
     const activeTabKey = this.getTabActiveKeyByUrl();
     const {
-      // queryServiceOrderFlow,
+      queryServiceOrderFlow,
       queryTradeOrderFlow,
       location: {
         query: {
@@ -121,12 +123,20 @@ export default class ProductOrder extends PureComponent {
       },
     } = this.props;
     if (activeTabKey === 'serviceOrderFlow') {
-      // TODO
+      queryServiceOrderFlow({
+        custId,
+        serviceProductCode: '',
+        type: '',
+        createTimeFrom: '',
+        createTimeTo: '',
+        pageSize: DEFAULT_PAGE_SIZE,
+        curPageNum: 1,
+      });
     } else if (activeTabKey === 'tradeOrderFlow') {
       queryTradeOrderFlow({
         custId,
         pageNum: 1,
-        pageSize: TRADE_ORDER_FLOW_PAGE_SIZE,
+        pageSize: DEFAULT_PAGE_SIZE,
       });
     }
   }
