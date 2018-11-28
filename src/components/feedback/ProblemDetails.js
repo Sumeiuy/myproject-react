@@ -159,7 +159,7 @@ export default class ProblemDetail extends PureComponent {
   }
   // 显示经办人
   renderEmpResp(st, empRespList) {
-    if (!_.isEmpty(st)) {
+    if (!_.isEmpty(st) && !_.isEmpty(empRespList)) {
       const nowStatus = _.find(empRespList, item =>
         item.loginName === st);
       return nowStatus.lastName || '无';
@@ -276,7 +276,7 @@ export default class ProblemDetail extends PureComponent {
       <Option key={`optionKey${OPTIONKEY++}`} value={i.value}>{i.label}</Option>,
     );
     const channel = _.flattenDeep(_.map(feedbackChannel, obj => obj.children));
-    
+
     return (
       <div>
         <Form layout="vertical">
