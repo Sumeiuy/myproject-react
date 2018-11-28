@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-21 09:35:09
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-27 18:27:29
+ * @LastEditTime: 2018-11-28 13:16:24
  * @Description: 交易订单流水
  */
 
@@ -49,9 +49,9 @@ export default class TradeOrderFlow extends PureComponent {
     return _.map(columns, column => {
       let newColumn;
       switch(column.dataIndex) {
-        case 'isRiskMatched':
-        case 'isTimeMacthed':
-        case 'isVarietyMatched':
+        case 'riskMatched':
+        case 'timeMacthed':
+        case 'varietyMatched':
           newColumn = {
             ...column,
             render: isBool => isBool ? '是' : '否',
@@ -63,7 +63,11 @@ export default class TradeOrderFlow extends PureComponent {
             ...column,
             render: content => (
               <span>
-                <Tooltip title={content}>{content}</Tooltip>
+                {
+                  _.isEmpty(content)
+                  ? '--'
+                  : <Tooltip title={content}>{content}</Tooltip>
+                }
               </span>
             )
           };
@@ -84,7 +88,12 @@ export default class TradeOrderFlow extends PureComponent {
           };
           break;
         default:
-          newColumn = { ...column };
+          newColumn = {
+            ...column,
+            render: content => (
+              <span>{_.isEmpty(content) && !_.isNumber(content) ? '--' : content}</span>
+            )
+          };
       }
       return newColumn;
     });
