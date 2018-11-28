@@ -3,7 +3,7 @@
  * @Description: 客户360-业务办理
  * @Date: 2018-11-19 16:20:49
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-27 20:19:15
+ * @Last Modified time: 2018-11-28 17:53:14
  */
 import React,{ PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -91,9 +91,10 @@ export default class BusinessHand extends PureComponent {
           num: text,
           isThousandFormat: true,
           floatLength: 2,
-          isRound: false,
+          isRound: true,
         });
-        return newData.substring(0, newData.length-1);
+        const standardAssetsData = newData.substring(0, newData.length-1);
+        return (<span title={`${text}元`}>{standardAssetsData}</span>);
       }
     };
     return openList;
