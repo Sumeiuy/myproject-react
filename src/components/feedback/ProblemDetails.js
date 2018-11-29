@@ -2,7 +2,7 @@
  * @Author: yangquanjian
  * @Date: 2018-10-22 09:13:51
  * @LastEditors: li-ke
- * @LastEditTime: 2018-11-29 17:40:16
+ * @LastEditTime: 2018-11-29 19:24:00
  * @Description: 问题反馈-问题详情
  */
 
@@ -161,11 +161,12 @@ export default class ProblemDetail extends PureComponent {
   }
   // 显示经办人
   renderEmpResp(processerID, operatorList) {
+    // 如果经办人是无就显示defaultName 马珂
+    const defaultName = _.find(operatorList, item => item.loginName === '001423');
     if (!_.isEmpty(processerID) && !_.isEmpty(operatorList)) {
       const nowStatus = _.find(operatorList, item =>
         item.loginName === processerID) || {};
-        // 如果没有匹配到经办人 默认显示马珂 1-E6W8
-      return nowStatus.lastName || '1-E6W8';
+      return nowStatus.lastName || defaultName.lastName;
     }
     return '无';
   }
@@ -381,9 +382,8 @@ export default class ProblemDetail extends PureComponent {
                 </div>
                 <div className={processerHiddenValue} id="select-processer">
                   <FormItem>
-                    {getFieldDecorator('processer',{
-                        initialValue: `${this.renderEmpResp(processer, operatorList)}`
-                      })(
+                    {getFieldDecorator('processer', {initialValue: this.renderEmpResp(processer, operatorList)})
+                    (
                       <Select style={{ width: 110 }} className="qtSelect" getPopupContainer={() => document.getElementById('select-processer')}>
                         {
                          this.renderEmpOption(operatorList)

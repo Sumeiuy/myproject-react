@@ -160,6 +160,7 @@ export default class LeftPanel extends PureComponent {
    */
   @autobind
   constructTableColumns() {
+    const { operatorList } =this.props;
     const columns = [{
       dataIndex: 'issueType.feedId.description.feedEmpInfo',
       width: '80%',
@@ -202,11 +203,14 @@ export default class LeftPanel extends PureComponent {
           statusLabel = STATUS_MAP.filter(item => item.value === record.status);
         }
         if (!_.isEmpty(record.processer)
-          && record.processer !== '无'
-          && record.processer !== 'null') {
-          processerLabel = this.props.operatorList.filter(item =>
-            item.loginName === record.processer);
+            && record.processer !== '无'
+            && record.processer !== 'null') {
+              processerLabel = _.filter(operatorList,item =>
+              item.loginName === record.processer);
         }
+
+        // 如果经办人是无就显示defaultName 马珂
+        const defaultName = _.find(operatorList, item => item.loginName === '001423');
         // 如果有满意度
         if (record.evaluation) {
           // 根据满意度不同状态显示不同颜色
@@ -235,8 +239,8 @@ export default class LeftPanel extends PureComponent {
             </div>
             <div className="name">
               {
-                // 如果没有匹配到经办人 默认显示马珂 1-E6W8
-                (!_.isEmpty(processerLabel) && processerLabel[0].lastName) || '1-E6W8'
+                // 如果没有匹配到经办人 默认显示defaultName.lastName 马珂
+                (!_.isEmpty(processerLabel) && processerLabel[0].lastName) || defaultName.lastName
               }
             </div>
             <div className="date">

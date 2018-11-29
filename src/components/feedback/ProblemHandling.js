@@ -2,7 +2,7 @@
  * @Author: yangquanjian
  * @Date: 2018-10-22 09:13:51
  * @LastEditors: li-ke
- * @LastEditTime: 2018-11-29 17:39:20
+ * @LastEditTime: 2018-11-29 19:22:18
  * @Description: 问题反馈-解决弹窗
  */
 
@@ -147,15 +147,16 @@ export default class ProblemHandling extends PureComponent {
   fileCustomRequest(option) {
     return uploadRequest(option);
   }
-  
+
   // 显示经办人
   @autobind
   renderEmpResp(processerID, operatorList) {
+    // 如果经办人是无就显示defaultName 马珂
+    const defaultName = _.find(operatorList, item => item.loginName === '001423');
     if (!_.isEmpty(processerID) && !_.isEmpty(operatorList)) {
       const nowStatus = _.find(operatorList, item =>
         item.loginName === processerID) || {};
-      // 如果没有匹配到经办人 默认显示马珂 1-E6W8
-      return nowStatus.lastName || '1-E6W8';
+      return nowStatus.lastName || defaultName.lastName;
     }
     return '无';
   }
@@ -213,7 +214,7 @@ export default class ProblemHandling extends PureComponent {
                 <Col span="4"><div className={styles.amLabel}>问题标签：</div></Col>
                 <Col span="19" offset={1}>
                   <FormItem>
-                    {getFieldDecorator('tag', { initialValue: `${tag || '无'}` })(
+                    {getFieldDecorator('tag', { initialValue: tag || '无' })(
                       <Select style={{ width: 220 }}>
                         {getSelectOption(popQuestionTagOptions)}
                       </Select>,
@@ -244,7 +245,7 @@ export default class ProblemHandling extends PureComponent {
                   <FormItem>
                     {getFieldDecorator(
                       'processer', {
-                        initialValue: `${this.renderEmpResp(processer, operatorList)}`
+                        initialValue: this.renderEmpResp(processer, operatorList)
                       }
                     )(
                       <Select
