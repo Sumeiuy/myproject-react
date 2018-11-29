@@ -111,6 +111,7 @@ export default class ServiceRelationship extends PureComponent {
                 <div className={styles.accountTable}>
                   <Table
                     pagination={false}
+                    bordered
                     className={styles.tableBorder}
                     dataSource={serviceTeam}
                     columns={serviceTeamColumns}
@@ -126,6 +127,7 @@ export default class ServiceRelationship extends PureComponent {
                 <div className={styles.accountTable}>
                   <Table
                     pagination={false}
+                    bordered
                     className={styles.tableBorder}
                     dataSource={newIntroduceDatas}
                     columns={introduceColumns}
