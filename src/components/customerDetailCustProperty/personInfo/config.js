@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-26 16:01:55
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-28 09:12:42
+ * @Last Modified time: 2018-11-29 17:06:14
  * @description 客户属性中的个人客户需要用的配置项
  */
 
@@ -121,4 +121,3 @@ export const OTHER_COLUMNS = [
     width: 100,
   },
 ];
-

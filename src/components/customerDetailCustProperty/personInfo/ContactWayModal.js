@@ -2,13 +2,13 @@
  * @Author: sunweibin
  * @Date: 2018-11-26 13:58:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-28 19:01:15
+ * @Last Modified time: 2018-11-29 17:29:07
  * @description 联系方式弹框-个人客户联系方式修改
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { Button, Switch } from 'antd';
+import { Button, Switch, message } from 'antd';
 import _ from 'lodash';
 
 import Table from '../common/InfoTable';
@@ -78,7 +78,7 @@ export default class ContactWayModal extends Component {
   }
 
   @autobind
-  changeSwitch() {
+  changeSwitch(callback) {
     const {
       location: {
         query: { custId },
@@ -89,6 +89,34 @@ export default class ContactWayModal extends Component {
       noMessage,
       noCall,
       custId,
+    }).then(callback);
+  }
+
+  // 修改请勿发短信
+  @autobind
+  changeNoMessage() {
+    const { noMessage } = this.state;
+    this.changeSwitch((resultData)=> {
+      const { result } = resultData;
+      if (result !== 'success') {
+        message.error('修改请勿发短息失败');
+        // 失败了要回退到原来状态
+        this.setState({ noMessage: !noMessage });
+      }
+    });
+  }
+
+  // 修改请勿打电话
+  @autobind
+  changeNoCall() {
+    const { noCall } = this.state;
+    this.changeSwitch((resultData)=> {
+      const { result } = resultData;
+      if (result !== 'success') {
+        message.error('修改请勿打电话失败');
+        // 失败了要回退到原来状态
+        this.setState({ noCall: !noCall });
+      }
     });
   }
 
@@ -101,7 +129,7 @@ export default class ContactWayModal extends Component {
     },
   })
   handleNoMessageSwitchChange(noMessage) {
-    this.setState({ noMessage }, this.changeSwitch);
+    this.setState({ noMessage }, this.changeNoMessage);
   }
 
   @autobind
@@ -113,7 +141,7 @@ export default class ContactWayModal extends Component {
     },
   })
   handleNocallSwitchChange(noCall) {
-    this.setState({ noCall }, this.changeSwitch);
+    this.setState({ noCall }, this.changeNoCall);
   }
 
   @autobind
@@ -334,6 +362,7 @@ export default class ContactWayModal extends Component {
         </div>
         <IfWrap isRender={addContactModal}>
           <AddContactWayModal
+            contactWayData={data}
             onClose={this.handleAddContactModalClose}
             onOK={this.handleAddContactModalOK}
           />
