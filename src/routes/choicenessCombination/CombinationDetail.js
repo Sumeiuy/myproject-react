@@ -311,6 +311,15 @@ export default class CombinationDetail extends PureComponent {
 
   // 查看持仓客户
   @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '进入客户列表',
+      type: '组合详情',
+      subType: '订购客户',
+      value: '$args[0]'
+    },
+  })
   openCustomerListPage(obj) {
     const { push } = this.context;
     const { name, code, type, source, combinationCode } = obj;
