@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-23 09:51:00
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-29 13:52:39
+ * @LastEditTime: 2018-11-29 16:56:56
  * @Description: 服务订单流水详情
  */
 
@@ -59,6 +59,7 @@ export default class ProductOrderDetail extends PureComponent {
             attachmentId = '',
           } = res;
           queryOrderApproval({
+            orderNumber,
             orderRowId: rowId,
             workFlowNumber,
           });
@@ -121,10 +122,29 @@ export default class ProductOrderDetail extends PureComponent {
     const isServiceProductListRender = serviceProductList.length !== 0;
     const isApprovalRender = !_.isEmpty(serviceOrderDetail)
       && !_.isEmpty(serviceOrderDetail.rowId)
-      && !_.isEmpty(orderApproval);
+      && this.isValidValue(orderApproval);
     const isAttachmentListRender = !_.isEmpty(serviceOrderDetail)
       && !_.isEmpty(serviceOrderDetail.attachmentId)
       && !_.isEmpty(attachmentList);
+    const otherCommissions = _.pick(serviceOrderDetail, [
+      'zqCommission', // 债券
+      'hCommission', // 回购
+      'oCommission', // 场内基金
+      'qCommission', // 权证
+      'stkCommission', // 担保股基
+      'dzCommission', // 担保债券
+      'doCommission', // 担保场内基金
+      'dqCommission', // 担保权证
+      'creditCommission', // 信用股基
+      'coCommission', // 信用场内基金
+      'hkCommission', // 港股通（净佣金）
+      'opCommission', // 个股期权
+      'ddCommission', // 担保品大宗
+      'stbCommission', // 股转
+      'bgCommission', // B股
+      'dCommission', // 大宗交易
+    ]);
+    const isOtherCommissionsRender = this.isValidValue(otherCommissions);
 
     return (
       <Modal
@@ -181,9 +201,11 @@ export default class ProductOrderDetail extends PureComponent {
               </IfTableWrap>
             </TabPane>
             <TabPane tab="其他佣金" key="otherCommissions">
-              <OtherCommissions
-                commissions={serviceOrderDetail}
-              />
+              <IfTableWrap isRender={isOtherCommissionsRender} text="订单暂无其他佣金信息">
+                <OtherCommissions
+                  commissions={serviceOrderDetail}
+                />
+              </IfTableWrap>
             </TabPane>
           </Tabs>
         </div>
