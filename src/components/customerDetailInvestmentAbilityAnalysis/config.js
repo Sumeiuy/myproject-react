@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-20 14:30:09
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-28 16:44:40
+ * @Last Modified time: 2018-11-29 10:02:01
  */
 
 import moment from 'moment';
@@ -141,6 +141,7 @@ const CURRENCY_TYPE = '货币类';
 const attributionTableColumns = [
   {
     dataIndex: 'type',
+    width: 125,
   },
   {
     title: EQUITY_TYPE,
