@@ -23,7 +23,7 @@ const newOpenTabConfig = [
   {
     name: '发起任务',
     id: 'FSP_SELFBUILDTASK_CREATETASK',
-    path: '/taskCenter/selfbuildTask/createTask',
+    path: '/customerPool/createTaskFromDetail',
     pid: 'FSP_MOT_SELFBUILT_TASK',
   },
   {
