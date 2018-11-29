@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-23 09:51:00
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-28 20:46:08
+ * @LastEditTime: 2018-11-29 11:39:31
  * @Description: 服务订单流水详情-其他佣金
  */
 
@@ -12,7 +12,7 @@ import _ from 'lodash';
 import styles from './otherCommissions.less';
 
 function transformCommission(commission) {
-  return commission === null || commission === undefined ? '--' : `${commission}‰`;
+  return commission === null || commission === undefined ? '--' : `${commission}`;
 }
 
 export default function OtherCommissions(props) {

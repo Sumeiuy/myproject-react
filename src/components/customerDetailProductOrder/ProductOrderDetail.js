@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-23 09:51:00
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-28 20:53:16
+ * @LastEditTime: 2018-11-29 10:14:29
  * @Description: 服务订单流水详情
  */
 
@@ -80,16 +80,13 @@ export default class ProductOrderDetail extends PureComponent {
 
   // 当值为空时，设置默认显示
   @autobind
-  setDefaultValue(item) {
+  ensureShow(item) {
     return isNull(item) ? DEFAULT_SHOW_VALUE : item;
   }
 
   @autobind
   isValidValue(checked) {
-    if (_.isEmpty(checked) || _.every(checked, item => item === null)) {
-      return false;
-    }
-    return true;
+    return !(_.isEmpty(checked) || _.every(checked, item => item === null));
   }
 
   @autobind
@@ -139,18 +136,18 @@ export default class ProductOrderDetail extends PureComponent {
           <div className={styles.detailInfo}>
             <div className={styles.detail}>
               <span className={styles.hint}>客户原佣金（‰）：</span>
-              <span className={styles.info}>{this.setDefaultValue(originalCommission)}</span>
+              <span className={styles.info}>{this.ensureShow(originalCommission)}</span>
               <span className={styles.hint}>客户新佣金（‰）：</span>
-              <span className={styles.info}>{this.setDefaultValue(newCommission)}</span>
+              <span className={styles.info}>{this.ensureShow(newCommission)}</span>
               <span className={styles.hint}>审批流程：</span>
               <span className={styles.info}>
-                <Tooltip title={approveFlow}>{this.setDefaultValue(approveFlow)}</Tooltip>
+                <Tooltip title={approveFlow}>{this.ensureShow(approveFlow)}</Tooltip>
               </span>
             </div>
             <div className={styles.detail}>
               <span className={styles.hint}>执行情况：</span>
               <span>
-                <Tooltip title={executiveCondition}>{this.setDefaultValue(executiveCondition)}</Tooltip>
+                <Tooltip title={executiveCondition}>{this.ensureShow(executiveCondition)}</Tooltip>
               </span>
             </div>
           </div>
