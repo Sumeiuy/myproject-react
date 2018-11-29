@@ -20,7 +20,6 @@ import { url as urlHelper } from '../../helper';
 import {
   AGREEMENT_COLUMNS,
   FORMAT_TIME,
-  FORMAT_TIME_ALL,
   AGREEMENT_LIST,
 } from './config';
 import styles from './protocolTab.less';
@@ -28,6 +27,7 @@ import styles from './protocolTab.less';
 const KEY_START_TIME = 'startTime';
 const KEY_END_TIME = 'endTime';
 const KEY_CONTENT = 'content';
+const KEY_REMARK = 'remark';
 
 const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
@@ -85,18 +85,30 @@ export default class AgreementTab extends PureComponent {
     // 内容
     const contentColumn = _.find(newList, o => o.key === KEY_CONTENT);
     contentColumn.render = (text, record) => this.renderContentColumn(text, record);
+    const remarkColumn = _.find(newList, o => o.key === KEY_REMARK);
+    remarkColumn.render = text => this.renderTooltipColumn(text);
     return newList;
+  }
+
+  @autobind
+  renderTooltipColumn(text) {
+    if (!_.isEmpty(text)) {
+      return (
+        <Tooltip title={text}>
+          <div className={styles.ellipsis}>
+            {text}
+          </div>
+        </Tooltip>
+      );
+    }
+    return '--';
   }
 
   // 生成时间渲染列
   @autobind
   renderTimeColumn(text) {
     if (!_.isEmpty(text)) {
-      return (
-        <Tooltip title={moment(text).format(FORMAT_TIME_ALL)}>
-          {moment(text).format(FORMAT_TIME)}
-        </Tooltip>
-      );
+      return moment(text).format(FORMAT_TIME);
     }
     return null;
   }
@@ -104,8 +116,10 @@ export default class AgreementTab extends PureComponent {
   @autobind
   renderContentColumn(text, record) {
     return (
-      <div>
-        <a onClick={() => this.handleJumpAgreementReport(record)}>{text}</a>
+      <div className={styles.ellipsis}>
+        <Tooltip title={text}>
+          <a onClick={() => this.handleJumpAgreementReport(record)}>{text}</a>
+        </Tooltip>
       </div>
     );
   }
