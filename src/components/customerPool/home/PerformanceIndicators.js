@@ -330,7 +330,7 @@ export default class PerformanceIndicators extends PureComponent {
     );
   }
 
-  // 业务开通数（投顾绩效）
+  // 业务开通数
   renderBusinessIndicator(param) {
     const argument = this.getNameAndValue(param.data, filterEmptyToInteger);
     const { newUnit, items } = getClientsNumber(argument);
@@ -347,7 +347,7 @@ export default class PerformanceIndicators extends PureComponent {
               option={items}
               resizable
               style={{
-                height: '153px',
+                height: '180px',
               }}
             />
           </IfEmpty>
