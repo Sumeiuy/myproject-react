@@ -299,8 +299,7 @@ title: '猜你感兴趣-更多-可用客户标签弹窗' })
 
   // 跳转到投顾业务能力竞赛页面
   @autobind
-  @logable({ type: 'ButtonClick',
-payload: { name: '点击投顾能力竞赛' } })
+  @logable({ type: 'ButtonClick', payload: { name: '点击投顾能力竞赛' } })
   toInvestmentConsultantCompetenceRacePage() {
     const { push } = this.props;
     const url = '/investmentConsultantRace';
