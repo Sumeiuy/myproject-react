@@ -163,7 +163,7 @@ export default class Organization extends PureComponent {
                   className={styles.infoItem}
                   editorId="total_assets"
                   onEditOK={value => this.updateData(TOTAL_ASSETS_NAME, value)}
-                  value={data.totalAssets}
+                  value={data.totalAssets || ''}
                   displayValue={this.getViewData(data.totalAssets)}
                   checkable
                   onCheck={this.checkNormalValue}
@@ -202,7 +202,7 @@ export default class Organization extends PureComponent {
                   className={styles.infoItem}
                   editorId="mass_profit"
                   onEditOK={value => this.updateData(MASS_PROFIT_NAME, value)}
-                  value={data.massProfit}
+                  value={data.massProfit || ''}
                   displayValue={this.getViewData(data.massProfit)}
                   checkable
                   onCheck={this.checkNormalValue}
@@ -231,7 +231,7 @@ export default class Organization extends PureComponent {
                 className={styles.infoItem}
                 editorId="net_margin"
                 onEditOK={value => this.updateData(NET_MARGIN_NAME, value)}
-                value={data.netMargin}
+                value={data.netMargin || ''}
                 displayValue={this.getViewData(data.netMargin)}
                 checkable
                 onCheck={this.checkNormalValue}
