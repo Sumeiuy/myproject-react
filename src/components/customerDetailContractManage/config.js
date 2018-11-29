@@ -16,6 +16,8 @@ export const FORMAT_TIME = 'YYYY-MM-DD';
 // 格式化的长日期格式
 export const FORMAT_TIME_ALL = 'YYYY-MM-DD HH:mm:ss';
 
+export const DEFAULT_TEXT = '--';
+
 // tab 选项
 export const CONTRACT_MANAGE_TABS = {
   protocol: '协议',
@@ -52,7 +54,7 @@ export const PROTOCOL_COLUMNS = [
     key: 'id',
     dataIndex: 'id',
     title: '协议编号',
-    width: 150,
+    width: 120,
   },
   {
     key: 'type',
@@ -79,7 +81,7 @@ export const PROTOCOL_COLUMNS = [
     key: 'node',
     dataIndex: 'node',
     title: '当前处理节点',
-    render: text => _.isEmpty(text) ? '--' : text,
+    render: text => _.isEmpty(text) ? DEFAULT_TEXT : text,
   },
   {
     key: 'handlerName',
@@ -90,11 +92,13 @@ export const PROTOCOL_COLUMNS = [
     key: 'startTime',
     dataIndex: 'startTime',
     title: '开始日期',
+    width: 110,
   },
   {
     key: 'endTime',
     dataIndex: 'endTime',
     title: '结束日期',
+    width: 110,
   },
   {
     key: 'orgName',
