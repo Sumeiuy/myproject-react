@@ -126,9 +126,12 @@ export default class Organization extends PureComponent {
 
   @autobind
   getViewData(value) {
-    // 后端返回数据可能是字符串可能是数字类型
-    return (_.isEmpty(value) && !_.isNumber(value))
-      ? '' : number.thousandFormat(number.toFixed(Number(value)));
+    let displayValue = value;
+    // 是数字类型
+    if (_.isNumber(value)) {
+      displayValue = `${number.thousandFormat(number.toFixed(value))}(元)`;
+    }
+    return _.isEmpty(displayValue) ? DEFAULT_VALUE : displayValue;
   }
 
   @autobind
@@ -171,7 +174,7 @@ export default class Organization extends PureComponent {
                 <InfoItem
                   width={INFO_ITEM_WITDH_110}
                   label="总资产"
-                  value={this.getViewData(data.totalAssets) || DEFAULT_VALUE}
+                  value={this.getViewData(data.totalAssets)}
                   className={styles.infoItem}
                   isNeedValueTitle={checkIsNeedTitle(this.getViewData(data.totalAssets))}
                   isNeedOverFlowEllipsis
@@ -183,7 +186,7 @@ export default class Organization extends PureComponent {
           <InfoItem
             width={INFO_ITEM_WITDH}
             label="净资产"
-            value={this.getViewData(data.netAsset) || DEFAULT_VALUE}
+            value={this.getViewData(data.netAsset)}
             className={styles.infoItem}
             isNeedValueTitle={checkIsNeedTitle(this.getViewData(data.netAsset))}
             isNeedOverFlowEllipsis
@@ -210,7 +213,7 @@ export default class Organization extends PureComponent {
                 <InfoItem
                   width={INFO_ITEM_WITDH}
                   label="利润总额"
-                  value={this.getViewData(data.massProfit) || DEFAULT_VALUE}
+                  value={this.getViewData(data.massProfit)}
                   className={styles.infoItem}
                   isNeedValueTitle={checkIsNeedTitle(this.getViewData(data.massProfit))}
                   isNeedOverFlowEllipsis
@@ -239,7 +242,7 @@ export default class Organization extends PureComponent {
               <InfoItem
                 width={INFO_ITEM_WITDH}
                 label="净利润"
-                value={this.getViewData(data.netMargin) || DEFAULT_VALUE}
+                value={this.getViewData(data.netMargin)}
                 className={styles.infoItem}
                 isNeedValueTitle={checkIsNeedTitle(this.getViewData(data.netMargin))}
                 isNeedOverFlowEllipsis
@@ -251,7 +254,7 @@ export default class Organization extends PureComponent {
           <InfoItem
             width={INFO_ITEM_WITDH_110}
             label="企业负债"
-            value={this.getViewData(data.enterpriseDebt) || DEFAULT_VALUE}
+            value={this.getViewData(data.enterpriseDebt)}
             className={styles.infoItem}
             isNeedValueTitle={checkIsNeedTitle(this.getViewData(data.enterpriseDebt))}
             isNeedOverFlowEllipsis
@@ -261,7 +264,7 @@ export default class Organization extends PureComponent {
           <InfoItem
             width={INFO_ITEM_WITDH}
             label="年营业收入"
-            value={this.getViewData(data.annualIncome) || DEFAULT_VALUE}
+            value={this.getViewData(data.annualIncome)}
             className={styles.infoItem}
             isNeedValueTitle={checkIsNeedTitle(this.getViewData(data.annualIncome))}
             isNeedOverFlowEllipsis
@@ -272,7 +275,7 @@ export default class Organization extends PureComponent {
             <InfoItem
               width={INFO_ITEM_WITDH}
               label="证券账户总资产"
-              value={this.getViewData(data.securityAssets) || DEFAULT_VALUE}
+              value={this.getViewData(data.securityAssets)}
               className={styles.infoItem}
               isNeedValueTitle={checkIsNeedTitle(this.getViewData(data.securityAssets))}
               isNeedOverFlowEllipsis
@@ -280,7 +283,7 @@ export default class Organization extends PureComponent {
           </div>
         </IfWrap>
         <div className={styles.latestTime}>
-          近期风险承受能力评估问卷日期：{data.latestSurveyTime || DEFAULT_VALUE}
+          近期风险承受能力评估问卷日期：{this.getViewData(data.latestSurveyTime)}
         </div>
       </div>
     );
