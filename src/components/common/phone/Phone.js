@@ -2,8 +2,8 @@
  * @Description: PC电话拨号页面
  * @Author: maoquan
  * @Date: 2018-04-11 20:22:50
- * @Last Modified by: zhangmei
- * @Last Modified time: 2018-11-12 13:26:28
+ * @Last Modified by: liqianwen
+ * @Last Modified time: 2018-11-29 12:03:55
  */
 
 import React, { PureComponent } from 'react';
@@ -83,8 +83,11 @@ export default class Phone extends PureComponent {
     number: PropTypes.string,
     // 客户类型
     custType: PropTypes.string,
-    // 点击号码回调
-    onClick: PropTypes.func,
+    // 点击号码回调 如果要传回调函数的话，回调函数中必须传个promise
+    onClick: PropTypes.oneOfType([
+      PropTypes.func,
+      PropTypes.object,
+    ]),
     // 接通电话回调
     onConnected: PropTypes.func,
     // 挂断电话回调
@@ -111,7 +114,7 @@ export default class Phone extends PureComponent {
     headless: false,
     disable: false,
     style: {},
-    onClick: _.noop,
+    onClick: null,
     onEnd: _.noop,
     onConnected: _.noop,
     name: '',
@@ -148,9 +151,14 @@ export default class Phone extends PureComponent {
                 return;
               }
             }
-            this.prepareCall(number);
             // 点击打电话
-            this.props.onClick();
+            if(this.props.onClick) {
+              this.props.onClick().then(() => {
+                this.prepareCall(number);
+              });
+            } else {
+              this.prepareCall(number);
+            }
             // 显示通话蒙版
             this.showMask();
           }
@@ -222,15 +230,19 @@ payload: { name: '拨打电话' } })
         return;
       }
     }
-    onClick({
-      number,
-      custType,
-     }).then(() => {
+    if(onClick) {
+      onClick({
+        number,
+        custType,
+       }).then(() => {
+        this.prepareCall(number);
+      });
+    } else {
       this.prepareCall(number);
-    });
-    this.prepareCall(number);
+    }
     this.showMask();
   }
+
 
   // 显示通话蒙版
   @autobind
