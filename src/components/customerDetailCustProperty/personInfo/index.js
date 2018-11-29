@@ -3,15 +3,16 @@
  * @Description: 客户360-客户属性-个人属性
  * @Date: 2018-11-07 14:39:15
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-26 15:42:54
+ * @Last Modified time: 2018-11-29 16:15:21
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+
 import BasicInfo from './BasicInfo';
 import ContactWay from './ContactWay';
+import IfWrap from '../../common/biz/IfWrap';
 
-const EMPTY_ARRAY = [];
 export default class PersonInfo extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -40,9 +41,9 @@ export default class PersonInfo extends PureComponent {
       changePhoneInfo,
     } = this.props;
     const {
-      phones = EMPTY_ARRAY,
-      others = EMPTY_ARRAY,
-      addresses = EMPTY_ARRAY,
+      phones = [],
+      others = [],
+      addresses = [],
       noMessage,
       noCall,
     } = data;
@@ -55,18 +56,20 @@ export default class PersonInfo extends PureComponent {
           updateCustBasicInfo={updateCustBasicInfo}
           queryCustomerProperty={queryCustomerProperty}
         />
-        <ContactWay
-          location={location}
-          phoneList={phones}
-          otherList={others}
-          addressList={addresses}
-          hasDuty={hasDuty}
-          noMessage={noMessage}
-          noCall={noCall}
-          personalContactWay={personalContactWay}
-          queryPersonalContactWay={queryPersonalContactWay}
-          changePhoneInfo={changePhoneInfo}
-        />
+        <IfWrap isRender={hasDuty}>
+          <ContactWay
+            location={location}
+            phoneList={phones}
+            otherList={others}
+            addressList={addresses}
+            hasDuty={hasDuty}
+            noMessage={noMessage}
+            noCall={noCall}
+            personalContactWay={personalContactWay}
+            queryPersonalContactWay={queryPersonalContactWay}
+            changePhoneInfo={changePhoneInfo}
+          />
+        </IfWrap>
       </div>
     );
   }

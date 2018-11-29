@@ -3,13 +3,15 @@
  * @Description: 客户360-客户属性-产品机构客户属性
  * @Date: 2018-11-07 14:39:15
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-27 20:14:01
+ * @Last Modified time: 2018-11-29 16:14:38
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+
 import BasicInfo from './BasicInfo';
 import ContactWay from '../common/ContactWay';
+import IfWrap from '../../common/biz/IfWrap';
 
 export default class ProductInfo extends PureComponent {
   static propTypes = {
@@ -41,15 +43,17 @@ export default class ProductInfo extends PureComponent {
           data={data}
           hasDuty={hasDuty}
         />
-        <ContactWay
-          location={location}
-          phoneList={phones}
-          otherList={others}
-          addressList={addresses}
-          hasDuty={hasDuty}
-          orgContactWay={orgContactWay}
-          queryOrgContactWay={queryOrgContactWay}
-        />
+        <IfWrap isRender={hasDuty}>
+          <ContactWay
+            location={location}
+            phoneList={phones}
+            otherList={others}
+            addressList={addresses}
+            hasDuty={hasDuty}
+            orgContactWay={orgContactWay}
+            queryOrgContactWay={queryOrgContactWay}
+          />
+        </IfWrap>
       </div>
     );
   }
