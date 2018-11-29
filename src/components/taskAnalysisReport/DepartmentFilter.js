@@ -130,7 +130,7 @@ export default class DepartmentFilter extends PureComponent {
     return (
       <div className={styles.departmentFilter}>
         <div className={styles.breadcrumbHeader}>
-          <span className={styles.reportTitle}>任务分析报表</span>
+          <span className={styles.reportTitle}>任务分析图表</span>
           <span className={styles.separator}>/</span>
         </div>
         <div className={styles.department}>
@@ -143,9 +143,7 @@ export default class DepartmentFilter extends PureComponent {
             treeNodeFilterProp='title'
             searchPlaceholder='搜索'
             dropdownMatchSelectWidth={false}
-            dropdownStyle={{ width: 250,
-maxHeight: 300,
-overflow: 'auto' }}
+            dropdownStyle={{ width: 250, maxHeight: 300, overflow: 'auto' }}
             labelInValue
             showSearch
             treeDefaultExpandAll

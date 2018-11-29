@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-20 15:24:26
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-28 12:23:37
+ * @LastEditTime: 2018-11-29 10:57:35
  * @Description: 新版客户360详情的产品订单T配置项
  */
 
@@ -24,13 +24,13 @@ export const SERVICE_ORDER_FLOW_COLUMNS = [
     title: '状态',
     dataIndex: 'statusName',
     key: 'statusName',
-    width: 85,
+    width: 113,
   },
   {
     title: '创建者',
     dataIndex: 'creatorName',
     key: 'creatorName',
-    width: 211,
+    width: 180,
   },
   {
     title: '创建时间',
@@ -155,7 +155,7 @@ export const SERVICE_PRODUCT_LIST_COLUMNS = [
     width: '10%',
   },
   {
-    title: '产品佣金(%)',
+    title: '产品佣金(‰)',
     dataIndex: 'productCommission',
     key: 'productCommission',
     width: '10%',

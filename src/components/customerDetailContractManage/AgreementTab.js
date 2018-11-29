@@ -21,6 +21,7 @@ import {
   AGREEMENT_COLUMNS,
   FORMAT_TIME,
   AGREEMENT_LIST,
+  DEFAULT_TEXT,
 } from './config';
 import styles from './protocolTab.less';
 
@@ -101,7 +102,7 @@ export default class AgreementTab extends PureComponent {
         </Tooltip>
       );
     }
-    return '--';
+    return DEFAULT_TEXT;
   }
 
   // 生成时间渲染列
@@ -110,7 +111,7 @@ export default class AgreementTab extends PureComponent {
     if (!_.isEmpty(text)) {
       return moment(text).format(FORMAT_TIME);
     }
-    return null;
+    return DEFAULT_TEXT;
   }
 
   @autobind

@@ -19,8 +19,8 @@ import {
   CUST_TYPE,
   custPropertyTabMapData,
   FINANCE_INFO_KEY,
-  COOPERATION_KEY,
-  MARKETING_KEY,
+  // COOPERATION_KEY,
+  // MARKETING_KEY,
   MEMBER_INFO_KEY,
   RELATION_INFO_KEY,
 } from '../../../../components/customerDetailCustProperty/config';
@@ -280,10 +280,10 @@ export default class CustProperty extends PureComponent {
                 updateOrgFinaceData={updateOrgFinaceData}
               />
             </TabPane>
-            <TabPane tab="合作业务" key={COOPERATION_KEY}>
+            {/* <TabPane tab="合作业务" key={COOPERATION_KEY}>
             </TabPane>
             <TabPane tab="营销与服务" key={MARKETING_KEY}>
-            </TabPane>
+            </TabPane> */}
             <TabPane tab="会员信息" key={MEMBER_INFO_KEY}>
               <MemberInfo
                 location={location}
