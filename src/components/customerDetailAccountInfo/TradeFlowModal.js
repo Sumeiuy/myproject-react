@@ -414,6 +414,7 @@ export default class TradeFlowModal extends PureComponent {
   // 当初始化时，需求要求日期组件需要有初始值
   // 开始值是六个月前，结束值是今天
   // 这是可筛选的最大范围
+  @autobind
   getDefaultDate(startDate, endDate) {
     const defaultStartDate = startDate || beforeSixDate;
     const defaultEndDate = endDate || today;
@@ -435,9 +436,10 @@ export default class TradeFlowModal extends PureComponent {
   })
   handleChangeCapitalDate(date) {
     const [startDate, endDate] = date.value;
+    const { capitalStartDate, capitalEndDate } = this.state;
     // 如果时间没有发生改变, 直接return
-    if (startDate === this.state.capitalStartDate &&
-      endDate === this.state.capitalEndDate) {
+    if (startDate === capitalStartDate &&
+      endDate === capitalEndDate) {
       return;
     }
     this.setState({
@@ -916,9 +918,9 @@ export default class TradeFlowModal extends PureComponent {
                 <div className={`${styles.header} clearfix`}>
                   <div className={styles.filterArea}>
                     <DateRangePick
-                      type='date'
-                      filterId='filterDate'
-                      filterName='查询日期'
+                      type="date"
+                      filterId="filterDate"
+                      filterName="查询日期"
                       filterValue={[defaultStartDate, defaultEndDate]}
                       onChange={this.handleChangeCapitalDate}
                       disabledRange={SIX_MONTH_DAYS}
