@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-20 16:16:41
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-26 21:09:37
+ * @LastEditTime: 2018-11-29 10:34:39
  * @Description: 新版客户360详情下的产品订单Tab页面的model
  */
 import { detailProductOrder as api } from '../../api';
@@ -20,6 +20,7 @@ export default {
     orderApproval: EMPTY_OBJECT,
     attachmentList: EMPTY_ARRAY,
     serviceOrderData: EMPTY_OBJECT,
+    serviceProductData: EMPTY_ARRAY, // 服务产品搜索结果
   },
   reducers: {
     queryServiceOrderFlowSuccess(state, action) {
@@ -69,6 +70,13 @@ export default {
       return {
         ...state,
         serviceOrderData: payload || EMPTY_OBJECT,
+      };
+    },
+    queryServiceProductBySearchSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        serviceProductData: payload || EMPTY_ARRAY,
       };
     }
   },
@@ -127,6 +135,13 @@ export default {
         payload: resultData,
       });
     },
+    * queryServiceProductBySearch({ payload }, { put, call }) {
+      const { resultData } = yield call(api.queryServiceProduct, payload);
+      yield put({
+        type: 'queryServiceProductBySearchSuccess',
+        payload: resultData,
+      });
+    }
   },
   subscriptions: {
   },
