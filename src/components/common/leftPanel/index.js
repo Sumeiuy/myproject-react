@@ -235,7 +235,8 @@ export default class LeftPanel extends PureComponent {
             </div>
             <div className="name">
               {
-                (!_.isEmpty(processerLabel) && processerLabel[0].lastName) || '无'
+                // 如果没有匹配到经办人 默认显示马珂 1-E6W8
+                (!_.isEmpty(processerLabel) && processerLabel[0].lastName) || '1-E6W8'
               }
             </div>
             <div className="date">

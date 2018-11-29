@@ -2,7 +2,7 @@
  * @Author: yangquanjian
  * @Date: 2018-10-22 09:13:51
  * @LastEditors: li-ke
- * @LastEditTime: 2018-11-29 10:30:22
+ * @LastEditTime: 2018-11-29 17:39:20
  * @Description: 问题反馈-解决弹窗
  */
 
@@ -147,6 +147,18 @@ export default class ProblemHandling extends PureComponent {
   fileCustomRequest(option) {
     return uploadRequest(option);
   }
+  
+  // 显示经办人
+  @autobind
+  renderEmpResp(processerID, operatorList) {
+    if (!_.isEmpty(processerID) && !_.isEmpty(operatorList)) {
+      const nowStatus = _.find(operatorList, item =>
+        item.loginName === processerID) || {};
+      // 如果没有匹配到经办人 默认显示马珂 1-E6W8
+      return nowStatus.lastName || '1-E6W8';
+    }
+    return '无';
+  }
 
   render() {
     const {
@@ -230,9 +242,10 @@ export default class ProblemHandling extends PureComponent {
                 </Col>
                 <Col span="19" offset={1}>
                   <FormItem>
-                    {/* initialValue 值为 undefined时，才展示 placeholder */}
-                    {getFieldDecorator('processer', {
-                      initialValue: initProcessValue || undefined}
+                    {getFieldDecorator(
+                      'processer', {
+                        initialValue: `${this.renderEmpResp(processer, operatorList)}`
+                      }
                     )(
                       <Select
                         placeholder="请选择"
