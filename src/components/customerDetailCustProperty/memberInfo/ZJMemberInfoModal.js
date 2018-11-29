@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-11-15 16:54:09
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-27 19:45:54
+ * @Last Modified time: 2018-11-29 16:53:10
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -14,6 +14,7 @@ import styles from './zjMemberInfo.less';
 import Modal from '../../../components/common/biz/CommonModal';
 import Table from '../../../components/common/table';
 import { integralFlowColumns } from '../config';
+import Tooltip from '../../common/Tooltip';
 import logable from '../../../decorators/logable';
 import IfTableWrap from '../../common/IfTableWrap';
 
@@ -68,12 +69,20 @@ export default class ZJMemeberInfoModal extends PureComponent {
     const integralFlowColumn = _.find(integralFlowList, o => o.key === TRANDE_DATE);
     integralFlowColumn.render = text => {
       const date = text && moment(text).format(DATE_FORMAT);
-      return (<span title={text}>{date || '--'}</span>);
+      return (
+        <Tooltip title={text}>
+          {date || '--'}
+        </Tooltip>
+      );
     };
     const processDateColumns = _.find(integralFlowList, o => o.key === PROCESS_DATE);
     processDateColumns.render = text => {
       const date = text && moment(text).format(DATE_FORMAT);
-      return (<span title={text}>{date || '--'}</span>);
+      return (
+        <Tooltip title={text}>
+          {date || '--'}
+        </Tooltip>
+      );
     };
     const productQuantityList = _.find(integralFlowList, o => o.key === PRODUCT);
     productQuantityList.render = text => {

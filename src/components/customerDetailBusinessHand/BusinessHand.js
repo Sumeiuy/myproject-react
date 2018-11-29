@@ -3,7 +3,7 @@
  * @Description: 客户360-业务办理
  * @Date: 2018-11-19 16:20:49
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-29 11:52:42
+ * @Last Modified time: 2018-11-29 16:53:12
  */
 import React,{ PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -11,6 +11,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import moment from 'moment';
 import Table from '../common/table';
+import Tooltip from '../common/Tooltip';
 import styles from './businessHand.less';
 import IfTableWrap from '../common/IfTableWrap';
 import { openBusinessColumns, notOpenBusinessColumns } from './config';
@@ -89,7 +90,11 @@ export default class BusinessHand extends PureComponent {
     standardAssetsColumn.render = (text, record) => {
       if(!_.isEmpty(record.businessType)) {
         const newTexts =(text / WAN).toFixed(2);
-        return (<span title={`${text}元`}>{newTexts}</span>);
+        return (
+          <Tooltip title={`${text}元`}>
+            {newTexts}
+          </Tooltip>
+        );
       }
     };
     return openList;
