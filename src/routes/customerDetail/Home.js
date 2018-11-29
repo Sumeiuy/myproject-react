@@ -1,8 +1,8 @@
 /**
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
- * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-26 17:03:19
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-11-29 10:07:40
  */
 
 import React, { PureComponent } from 'react';
@@ -22,7 +22,7 @@ import ServiceRecord from './tabpages/serviceRecord/Home';
 import DiscountCoupon from './tabpages/discountCoupon/connectedHome';
 import { logCommon } from '../../decorators/logable';
 import ProductOrder from './tabpages/productOrder/Home';
-import InvestmentAbilityAnalysis from './tabpages/investmentAbilityAnalysis/Home';
+import InvestmentAbilityAnalysis from './tabpages/investmentAbilityAnalysis/connectedHome';
 import ContractManage from './tabpages/contractManage/Home';
 import {
   ACCOUNT_INFO_TAB_KEY,
@@ -172,7 +172,7 @@ export default class Home extends PureComponent {
 
     const breadCrumbProps = {
       push: this.context.push,
-      url: location.state && location.state.url,
+      state: location.state,
     };
 
     // 客户基本信息组件props
@@ -217,9 +217,11 @@ export default class Home extends PureComponent {
             <TabPane tab="客户属性" key={CUSTOMER_INFO_TAB_KEY}>
               <CustProperty location={location} />
             </TabPane>
-            <TabPane tab="投资能力分析" key={INVEST_ANALYZE_TAB_KEY}>
-              <InvestmentAbilityAnalysis />
-            </TabPane>
+            {/*  1130上线分支不放开投资能力分析，所以暂时隐藏
+              <TabPane tab="投资能力分析" key={INVEST_ANALYZE_TAB_KEY}>
+                <InvestmentAbilityAnalysis location={location} />
+              </TabPane>
+            */}
             <TabPane tab="业务办理" key={BUNESSINESS_PROCESS_TAB_KEY}>
               <BusinessHand location={location} />
             </TabPane>

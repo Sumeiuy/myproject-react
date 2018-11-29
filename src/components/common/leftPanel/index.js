@@ -1,8 +1,8 @@
 /*
  * @Author: LiuJianShu
  * @Date: 2017-09-12 10:39:48
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-04-16 20:27:35
+ * @Last Modified by: li-ke
+ * @Last Modified time: 2018-11-29 10:24:05
  */
 
 import React, { PureComponent } from 'react';
@@ -30,7 +30,7 @@ export default class LeftPanel extends PureComponent {
   static propTypes = {
     list: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
-    empRespDTOList: PropTypes.array.isRequired,
+    operatorList: PropTypes.array.isRequired,
     replace: PropTypes.func.isRequired,
   };
 
@@ -204,7 +204,7 @@ export default class LeftPanel extends PureComponent {
         if (!_.isEmpty(record.processer)
           && record.processer !== '无'
           && record.processer !== 'null') {
-          processerLabel = this.props.empRespDTOList.filter(item =>
+          processerLabel = this.props.operatorList.filter(item =>
             item.loginName === record.processer);
         }
         // 如果有满意度

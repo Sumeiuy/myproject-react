@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-22 14:49:12
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-23 09:14:53
+ * @Last Modified time: 2018-11-27 13:30:37
  * @description 资产变动表格
  */
 import React from 'react';
@@ -20,6 +20,7 @@ export default function AssetChangeTable(props) {
       title: '期初资产 (万元)',
       dataIndex: 'initialAsset',
       render: text => (thousandFormat(text)),
+      width: 180,
     },
     {
       title: '资金投入 (万元)',

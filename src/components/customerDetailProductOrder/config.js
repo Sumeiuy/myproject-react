@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-20 15:24:26
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-27 18:10:06
+ * @LastEditTime: 2018-11-29 10:57:35
  * @Description: 新版客户360详情的产品订单T配置项
  */
 
@@ -24,13 +24,13 @@ export const SERVICE_ORDER_FLOW_COLUMNS = [
     title: '状态',
     dataIndex: 'statusName',
     key: 'statusName',
-    width: 85,
+    width: 113,
   },
   {
     title: '创建者',
     dataIndex: 'creatorName',
     key: 'creatorName',
-    width: 211,
+    width: 180,
   },
   {
     title: '创建时间',
@@ -92,20 +92,20 @@ export const TRADE_ORDER_FLOW_COLUMNS = [
   },
   {
     title: '风险是否匹配',
-    dataIndex: 'isRiskMatched',
-    key: 'isRiskMatched',
+    dataIndex: 'riskMatched',
+    key: 'riskMatched',
     width: '8%',
   },
   {
     title: '期限是否匹配',
-    dataIndex: 'isTimeMacthed',
-    key: 'isTimeMacthed',
+    dataIndex: 'timeMacthed',
+    key: 'timeMacthed',
     width: '8%',
   },
   {
     title: '投资品种是否匹配',
-    dataIndex: 'isVarietyMatched',
-    key: 'isVarietyMatched',
+    dataIndex: 'varietyMatched',
+    key: 'varietyMatched',
     width: '10%',
   },
   {
@@ -134,7 +134,7 @@ export const SERVICE_PRODUCT_LIST_COLUMNS = [
     dataIndex: 'productCode',
     key: 'productCode',
     className: 'productCode',
-    width: '13%',
+    width: '11%',
   },
   {
     title: '产品名称',
@@ -152,10 +152,10 @@ export const SERVICE_PRODUCT_LIST_COLUMNS = [
     title: '产品类型',
     dataIndex: 'productType',
     key: 'productType',
-    width: '8%',
+    width: '10%',
   },
   {
-    title: '产品佣金(%)',
+    title: '产品佣金(‰)',
     dataIndex: 'productCommission',
     key: 'productCommission',
     width: '10%',

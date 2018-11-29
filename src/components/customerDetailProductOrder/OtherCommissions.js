@@ -2,109 +2,118 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-23 09:51:00
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-23 22:41:09
+ * @LastEditTime: 2018-11-29 11:39:31
  * @Description: 服务订单流水详情-其他佣金
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 import styles from './otherCommissions.less';
+
+function transformCommission(commission) {
+  return commission === null || commission === undefined ? '--' : `${commission}`;
+}
 
 export default function OtherCommissions(props) {
   const {
     commissions: {
-      zqCommission = '--', // 债券
-      hCommission = '--', // 回购
-      coCommission = '--', // 场内基金
-      qCommission = '--', // 权证
-      stkCommission = '--', // 担保股基
-      dzCommission = '--', // 担保债券
-      doCommission = '--', // 担保场内基金
-      dqCommission = '--', // 担保权证
-      creditCommission = '--', // 信用股基
-      hkCommission = '--', // 港股通（净佣金）
-      opCommission = '--', // 个股期权
-      ddCommission = '--', // 担保品大宗
-      stbCommission = '--', // 股转
-      bgCommission = '--', // B股
-      dCommission = '--', // 大宗交易
+      zqCommission, // 债券
+      hCommission, // 回购
+      oCommission, // 场内基金
+      qCommission, // 权证
+      stkCommission, // 担保股基
+      dzCommission, // 担保债券
+      doCommission, // 担保场内基金
+      dqCommission, // 担保权证
+      creditCommission, // 信用股基
+      coCommission, // 信用场内基金
+      hkCommission, // 港股通（净佣金）
+      opCommission, // 个股期权
+      ddCommission, // 担保品大宗
+      stbCommission, // 股转
+      bgCommission, // B股
+      dCommission, // 大宗交易
     },
   } = props;
 
+  const commissions = [
+    {
+      name: '债券',
+      value: zqCommission,
+    },
+    {
+      name: '回购',
+      value: hCommission,
+    },
+    {
+      name: '场内基金',
+      value: oCommission,
+    },
+    {
+      name: '权证',
+      value: qCommission,
+    },
+    {
+      name: '担保股基',
+      value: stkCommission,
+    },
+    {
+      name: '担保债券',
+      value: dzCommission,
+    },
+    {
+      name: '担保场内基金',
+      value: doCommission,
+    },
+    {
+      name: '担保权证',
+      value: dqCommission,
+    },
+    {
+      name: '信用股基',
+      value: creditCommission,
+    },
+    {
+      name: '信用场内基金',
+      value: coCommission,
+    },
+    {
+      name: '港股通(净佣金)',
+      value: hkCommission,
+    },
+    {
+      name: '个股期权',
+      value: opCommission,
+    },
+    {
+      name: '担保品大宗',
+      value: ddCommission,
+    },
+    {
+      name: '股转',
+      value: stbCommission,
+    },
+    {
+      name: 'B股',
+      value: bgCommission,
+    },
+    {
+      name: '大宗交易',
+      value: dCommission,
+    },
+  ];
+
   return (
     <div className={styles.otherCommissionsWrap}>
-      <div className={styles.line}>
-        <div className={styles.column}>
-          <span className={styles.hint}>债券：</span>
-          <span>{zqCommission}‰</span>
-        </div>
-        <div className={styles.column}>
-          <span className={styles.hint}>回购：</span>
-          <span>{hCommission}‰</span>
-        </div>
-        <div className={styles.column}>
-          <span className={styles.hint}>场内基金：</span>
-          <span>{coCommission}‰</span>
-        </div>
-        <div className={styles.column}>
-          <span className={styles.hint}>权证：</span>
-          <span>{qCommission}‰</span>
-        </div>
-      </div>
-      <div className={styles.line}>
-        <div className={styles.column}>
-          <span className={styles.hint}>担保股基：</span>
-          <span>{stkCommission}‰</span>
-        </div>
-        <div className={styles.column}>
-          <span className={styles.hint}>担保债券：</span>
-          <span>{dzCommission}‰</span>
-        </div>
-        <div className={styles.column}>
-          <span className={styles.hint}>担保场内基金：</span>
-          <span>{doCommission}‰</span>
-        </div>
-        <div className={styles.column}>
-          <span className={styles.hint}>担保权证：</span>
-          <span>{dqCommission}‰</span>
-        </div>
-      </div>
-      <div className={styles.line}>
-        <div className={styles.column}>
-          <span className={styles.hint}>信用股基：</span>
-          <span>{creditCommission}‰</span>
-        </div>
-        <div className={styles.column}>
-          <span className={styles.hint}>信用场内基金：</span>
-          <span>{coCommission}‰</span>
-        </div>
-        <div className={styles.column}>
-          <span className={styles.hint}>港股通(净佣金)：</span>
-          <span>{hkCommission}‰</span>
-        </div>
-        <div className={styles.column}>
-          <span className={styles.hint}>个股期权：</span>
-          <span>{opCommission}‰</span>
-        </div>
-      </div>
-      <div className={styles.line}>
-        <div className={styles.column}>
-          <span className={styles.hint}>担保品大宗：</span>
-          <span>{ddCommission}‰</span>
-        </div>
-        <div className={styles.column}>
-          <span className={styles.hint}>股转：</span>
-          <span>{stbCommission}‰</span>
-        </div>
-        <div className={styles.column}>
-          <span className={styles.hint}>B股：</span>
-          <span>{bgCommission}‰</span>
-        </div>
-        <div className={styles.column}>
-          <span className={styles.hint}>大宗交易：</span>
-          <span>{dCommission}‰</span>
-        </div>
-      </div>
+      {
+        _.map(commissions, commission => (
+          <div className={styles.commission}>
+            <span className={styles.hint}>{commission.name}：</span>
+            <span>{transformCommission(commission.value)}</span>
+          </div>
+        ))
+      }
     </div>
   );
 }
