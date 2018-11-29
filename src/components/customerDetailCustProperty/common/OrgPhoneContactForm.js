@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 20:29:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-28 20:12:10
+ * @Last Modified time: 2018-11-29 10:31:08
  * @description 添加机构客户电话信息Form
  */
 import React, { PureComponent } from 'react';
@@ -13,7 +13,7 @@ import { Row, Col, Select, Input } from 'antd';
 
 import logable from '../../../decorators/logable';
 import { isCreateContact } from './utils';
-import { FORM_STYLE } from '../config';
+import { FORM_STYLE } from './config';
 import styles from '../contactForm.less';
 
 const Option = Select.Option;

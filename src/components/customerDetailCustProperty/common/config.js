@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 19:41:38
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-28 15:33:50
+ * @Last Modified time: 2018-11-29 10:30:42
  * @description 机构客户联系方式配置项
  */
 // 机构客户电话信息表格columns
@@ -119,6 +119,9 @@ export const ADD_CONTACT_TABS = {
 // 添加|编辑联系方式弹出框的styles
 export const MODAL_STYLE = {
   width: '780px',
+};
+export const FORM_STYLE = {
+  width: '200px',
 };
 // 添加联系方式的提示
 export const WARNING_MESSAGE = {

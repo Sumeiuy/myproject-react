@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 19:10:24
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-28 19:25:08
+ * @Last Modified time: 2018-11-29 10:31:58
  * @description 个人客户添加其他信息
  */
 
@@ -13,7 +13,7 @@ import _ from 'lodash';
 import { Row, Col, Select, Input } from 'antd';
 
 import logable from '../../../decorators/logable';
-import { FORM_STYLE } from '../config';
+import { FORM_STYLE } from '../common/config';
 import { isCreateContact } from '../common/utils';
 import styles from '../contactForm.less';
 
