@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-11-06 13:23:32
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-28 17:18:41
+ * @Last Modified time: 2018-11-29 11:52:38
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -92,7 +92,7 @@ export default class ServiceRelationship extends PureComponent {
             <div className={styles.accountBlock}>
               <div className={styles.header}>
                 <div className={styles.title}>服务团队</div>
-                <Icon type="dengjibiangenglishi" className={styles.serviceHistoryIcon}/>
+                <Icon type="dengjibiangenglishi" className={styles.serviceHistoryIcon} />
                 <div
                   className={styles.serviceHistory}
                   onClick={this.handleServiceHistoryModalOpen}
