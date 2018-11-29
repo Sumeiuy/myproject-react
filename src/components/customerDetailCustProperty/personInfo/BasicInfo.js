@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性-个人客户基本信息
  * @Date: 2018-11-07 14:33:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-29 15:04:53
+ * @Last Modified time: 2018-11-29 15:48:36
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -139,7 +139,7 @@ export default class BasicInfo extends PureComponent {
   // 修改爱好
   @autobind
   upadateHobby(value) {
-    this.updateBasicInfo({
+    return this.updateBasicInfo({
       hobby: value,
     });
   }
@@ -281,7 +281,7 @@ export default class BasicInfo extends PureComponent {
           </div>
           <div className={styles.infoItemBox}>
            {
-             isMainEmp
+             !isMainEmp
               ? (
                 <InfoItem
                   width={INFO_ITEM_WITDH}
@@ -309,7 +309,7 @@ export default class BasicInfo extends PureComponent {
           </div>
           <div className={styles.infoItemBox}>
             {
-              isMainEmp
+              !isMainEmp
                 ? (
                   <InfoItem
                     width={INFO_ITEM_WITDH}
@@ -327,7 +327,7 @@ export default class BasicInfo extends PureComponent {
                     className={styles.infoItem}
                     editorId="person_hobby"
                     onEditOK={this.upadateHobby}
-                    value={data.hobby || DEFAULT_VALUE}
+                    value={data.hobby || ''}
                     displayValue={data.hobby || DEFAULT_VALUE}
                     checkable
                     onCheck={this.checkHobby}
