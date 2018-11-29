@@ -19,6 +19,18 @@
     table {
       table-layout: fixed;
       width: 100%;
+      .ant-table-thead > tr > th, .ant-table-tbody > tr > td {
+        padding-left: 6px;
+        padding-right: 6px;
+      }
+      .ant-table-thead > tr > th:first-child,
+      .ant-table-tbody > tr > td:first-child {
+        padding-left: 16px;
+      }
+      td {
+        position: relative;
+        .one-line-ellipsis;
+      }
     }
   }
   .ellipsis {
