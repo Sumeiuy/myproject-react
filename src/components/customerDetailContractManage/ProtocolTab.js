@@ -15,18 +15,18 @@ import { message } from 'antd';
 
 import Icon from '../common/Icon';
 import Table from '../common/table';
-import Tooltip from '../common/Tooltip';
 import Button from '../common/Button';
+import commonConfirm from '../common/confirm_';
 import IfTableWrap from '../common/IfTableWrap';
 import logable from '../../decorators/logable';
 import { url as urlHelper } from '../../helper';
 import {
   PROTOCOL_COLUMNS,
   FORMAT_TIME,
-  FORMAT_TIME_ALL,
   NOT_TOUGU_SUBTYPE,
   CHARGING_MODE_CODE,
   TOUGU_SUBTYPE,
+  DEFAULT_TEXT,
 } from './config';
 import styles from './protocolTab.less';
 
@@ -118,7 +118,7 @@ export default class ProtocolTab extends PureComponent {
     handlerNameColumn.render = (text, record) => {
       return !_.isEmpty(text)
       ? `${text} (${record.handlerId})`
-      : '--';
+      : DEFAULT_TEXT;
     };
     // 开始日期
     const startTimeColumn = this.findColumn(newList, KEY_START_TIME);
@@ -159,13 +159,9 @@ export default class ProtocolTab extends PureComponent {
   @autobind
   renderTimeColumn(text) {
     if (!_.isEmpty(text)) {
-      return (
-        <Tooltip title={moment(text).format(FORMAT_TIME_ALL)}>
-          {moment(text).format(FORMAT_TIME)}
-        </Tooltip>
-      );
+      return moment(text).format(FORMAT_TIME);
     }
-    return '--';
+    return DEFAULT_TEXT;
   }
 
   // 渲染操作列表
@@ -403,23 +399,28 @@ export default class ProtocolTab extends PureComponent {
     payload: { name: '删除协议' },
   })
   handleDeleteProtocol(record) {
-    const {
-      deleteProtocol,
-      location: { query: { custId } },
-    } = this.props;
-    deleteProtocol({
-      custId,
-      rowId: record.rowId || '',
-    }).then(() => {
-      message.success('删除成功');
-      const {
-        queryList,
-        location: { query: { custId } },
-      } = this.props;
-      // 查询列表数据
-      queryList({
-        custId,
-      });
+    commonConfirm({
+      shortCut: 'delete',
+      onOk: () => {
+        const {
+          deleteProtocol,
+          location: { query: { custId } },
+        } = this.props;
+        deleteProtocol({
+          custId,
+          rowId: record.rowId || '',
+        }).then(() => {
+          message.success('删除成功');
+          const {
+            queryList,
+            location: { query: { custId } },
+          } = this.props;
+          // 查询列表数据
+          queryList({
+            custId,
+          });
+        });
+      },
     });
   }
 

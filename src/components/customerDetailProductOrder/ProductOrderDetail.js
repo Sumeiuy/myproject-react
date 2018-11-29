@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-23 09:51:00
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-29 10:14:29
+ * @LastEditTime: 2018-11-29 13:52:39
  * @Description: 服务订单流水详情
  */
 
@@ -119,8 +119,12 @@ export default class ProductOrderDetail extends PureComponent {
       <Button onClick={this.handleModalClose}>关闭</Button>
     );
     const isServiceProductListRender = serviceProductList.length !== 0;
-    const isApprovalRender = this.isValidValue(serviceOrderDetail) && this.isValidValue(orderApproval);
-    const isAttachmentListRender = this.isValidValue(serviceOrderDetail) && attachmentList.length !== 0;
+    const isApprovalRender = !_.isEmpty(serviceOrderDetail)
+      && !_.isEmpty(serviceOrderDetail.rowId)
+      && !_.isEmpty(orderApproval);
+    const isAttachmentListRender = !_.isEmpty(serviceOrderDetail)
+      && !_.isEmpty(serviceOrderDetail.attachmentId)
+      && !_.isEmpty(attachmentList);
 
     return (
       <Modal

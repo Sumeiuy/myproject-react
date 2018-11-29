@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-23 09:51:00
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-29 10:09:36
+ * @LastEditTime: 2018-11-29 13:38:00
  * @Description: 服务订单流水详情-审批
  */
 
@@ -16,7 +16,7 @@ const DATE_FORMAT_STR = 'YYYY/MM/DD';
 const DEFAULT_SHOW_VALUE = '--';
 // 当值为空时，设置默认显示
 function ensureShow(item) {
-  return item === null || item === undefined ? DEFAULT_SHOW_VALUE : item;
+  return _.isEmpty(item) ? DEFAULT_SHOW_VALUE : item;
 }
 
 export default function OrderApproval(props) {
