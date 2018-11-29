@@ -158,10 +158,10 @@ export default class ProblemDetail extends PureComponent {
     return '无';
   }
   // 显示经办人
-  renderEmpResp(st, empRespList) {
-    if (!_.isEmpty(st) && !_.isEmpty(empRespList)) {
-      const nowStatus = _.find(empRespList, item =>
-        item.loginName === st);
+  renderEmpResp(st, empRespDTOList) {
+    if (!_.isEmpty(st) && !_.isEmpty(empRespDTOList)) {
+      const nowStatus = _.find(empRespDTOList, item =>
+        item.loginName === st) || {};
       return nowStatus.lastName || '无';
     }
     return '无';
