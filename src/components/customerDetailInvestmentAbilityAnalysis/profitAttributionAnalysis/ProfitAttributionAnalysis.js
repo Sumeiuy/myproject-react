@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-27 14:00:51
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-28 16:37:30
+ * @Last Modified time: 2018-11-29 09:15:43
  * @description 收益归因分析
  */
 import React, { PureComponent } from 'react';
@@ -54,7 +54,6 @@ export default class ProfitAttributionAnalysis extends PureComponent {
     } = this.props;
     const attributionSummaryData = _.map(attributionSummary, item => (
         <p key={data.uuid()}>
-          <i/>
           <span>{item}</span>
         </p>
       )

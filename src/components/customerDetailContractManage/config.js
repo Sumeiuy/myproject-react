@@ -52,6 +52,7 @@ export const PROTOCOL_COLUMNS = [
     key: 'id',
     dataIndex: 'id',
     title: '协议编号',
+    width: 150,
   },
   {
     key: 'type',
@@ -62,6 +63,7 @@ export const PROTOCOL_COLUMNS = [
     key: 'subType',
     dataIndex: 'subType',
     title: '子类型',
+    width: 140,
   },
   {
     key: 'status',
@@ -77,6 +79,7 @@ export const PROTOCOL_COLUMNS = [
     key: 'node',
     dataIndex: 'node',
     title: '当前处理节点',
+    render: text => _.isEmpty(text) ? '--' : text,
   },
   {
     key: 'handlerName',
@@ -191,6 +194,7 @@ export const AGREEMENT_COLUMNS = [
     key: 'id',
     dataIndex: 'id',
     title: '合同编号',
+    width: 180,
   },
   {
     key: 'name',
@@ -212,20 +216,24 @@ export const AGREEMENT_COLUMNS = [
     key: 'startTime',
     dataIndex: 'startTime',
     title: '生效时间',
+    width: 110,
   },
   {
     key: 'endTime',
     dataIndex: 'endTime',
     title: '结束时间',
+    width: 110,
   },
   {
     key: 'content',
     dataIndex: 'content',
     title: '合同内容',
+    width: 220,
   },
   {
     key: 'remark',
     dataIndex: 'remark',
     title: '备注',
+    width: 220,
   },
 ];
