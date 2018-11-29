@@ -14,8 +14,12 @@ import Filter from '../../../../components/customerDetailDiscount/Filter';
 import DetailModal from '../../../../components/customerDetailDiscount/DetailModal';
 import Table from '../../../../components/common/table';
 import IfTableWrap from '../../../../components/common/IfTableWrap';
+import Tooltip from '../../../../components/common/Tooltip';
 import logable, { logPV } from '../../../../decorators/logable';
-import { couponTitleList } from '../../../../components/customerDetailDiscount/config';
+import {
+  couponTitleList,
+  COUPON_LIST_NEED_TOOLTIP,
+} from '../../../../components/customerDetailDiscount/config';
 
 import styles from './home.less';
 
@@ -23,7 +27,6 @@ import styles from './home.less';
 const EMPTY_ARRAY = [];
 const EMPTY_OBJECT = {};
 const PAGE_SIZE = 10;
-
 
 export default class DiscountCoupon extends PureComponent {
   static propTypes = {
@@ -215,24 +218,43 @@ export default class DiscountCoupon extends PureComponent {
       if (item.dataIndex === 'ticketId') {
         return {
           ...item,
-          render: (text, record) => (
-            <span
-              title={text}
-              className={styles.ticketId}
-            >{text}</span>
+          render: text => (
+            this.renderTooltipColumn(text, styles.ticketId)
           ),
           onCell: record => ({
             onClick: () => this.handleTableItemClick(record),
           })
         };
       }
+      if (_.includes(COUPON_LIST_NEED_TOOLTIP, item.dataIndex)) {
+        return {
+          ...item,
+          render: text => (
+            this.renderTooltipColumn(text)
+          ),
+        };
+      }
       return {
         ...item,
         render: text => (
-          <span title={text}>{text}</span>
+          <span>{text}</span>
         )
       };
     });
+  }
+
+  @autobind
+  renderTooltipColumn(text, className = '') {
+    if (!_.isEmpty(text)) {
+      return (
+        <Tooltip title={text}>
+          <span className={className}>
+            {text}
+          </span>
+        </Tooltip>
+      );
+    }
+    return null;
   }
 
   render() {
@@ -269,7 +291,7 @@ export default class DiscountCoupon extends PureComponent {
                 pagination={paginationData}
                 dataSource={list}
                 isNeedEmptyRow
-                isNeedNoDataStyle
+                rowKey="ticketId"
                 rowNumber={10}
                 columns={this.getTitleList()}
                 scroll={{ x: '1024px' }}
