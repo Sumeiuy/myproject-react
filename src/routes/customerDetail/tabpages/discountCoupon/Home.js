@@ -290,9 +290,7 @@ export default class DiscountCoupon extends PureComponent {
               <Table
                 pagination={paginationData}
                 dataSource={list}
-                isNeedEmptyRow
                 rowKey="ticketId"
-                rowNumber={10}
                 columns={this.getTitleList()}
                 scroll={{ x: '1024px' }}
               />
