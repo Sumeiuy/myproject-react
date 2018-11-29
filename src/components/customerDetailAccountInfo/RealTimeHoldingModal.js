@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-06 17:44:38
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-29 16:48:48
+ * @Last Modified time: 2018-11-29 17:20:40
  * @description 实时持仓的弹出层
  */
 import React, { PureComponent } from 'react';
@@ -109,7 +109,7 @@ export default class RealTimeHoldingModal extends PureComponent {
               )
             : null
           }
-      </div>
+        </div>
       );
     };
     return creditList;

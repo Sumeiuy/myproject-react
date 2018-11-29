@@ -3,7 +3,7 @@
  * @Description: 客户360-业务办理
  * @Date: 2018-11-19 16:20:49
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-29 16:53:12
+ * @Last Modified time: 2018-11-29 17:21:42
  */
 import React,{ PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -89,7 +89,7 @@ export default class BusinessHand extends PureComponent {
     const standardAssetsColumn = _.find(openList, o => o.key === STANDARD_ASSETS);
     standardAssetsColumn.render = (text, record) => {
       if(!_.isEmpty(record.businessType)) {
-        const newTexts =(text / WAN).toFixed(2);
+        const newTexts = (text / WAN).toFixed(2);
         return (
           <Tooltip title={`${text}元`}>
             {newTexts}
