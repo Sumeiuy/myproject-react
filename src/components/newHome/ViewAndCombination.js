@@ -36,11 +36,6 @@ export default function ViewAndCombination(props, context) {
     },
   ];
 
-  // 发送日志
-  const sendLog = (payload) => {
-    logCommon(payload);
-  };
-
   const openNewTab = (url, query, editPane) => {
     const param = { id: 'RTC_TAB_VIEWPOINT',
 title: '资讯' };
@@ -56,11 +51,12 @@ title: '资讯' };
   };
 
   const handleDetailClick = (id) => {
-    sendLog({
-      type: '$pageview',
+    logCommon({
+      type: 'ViewItem',
       payload: {
-        title: '打开资讯详情页面',
-        name: '详情',
+        title: '资讯详情页面',
+        name: '首席观点详情',
+        value: id
       },
     });
     // 跳转到资讯详情界面
@@ -141,10 +137,11 @@ title: '资讯' };
         activeTab: item.key,
       }
     });
-    sendLog({
+    logCommon({
       type: 'ButtonClick',
       payload: {
-        name: `${item.name}`,
+        name: '首席观点/组合推荐切换',
+        value: item.name,
       },
     });
   };
