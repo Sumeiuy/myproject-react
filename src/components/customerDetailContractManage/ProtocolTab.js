@@ -38,6 +38,8 @@ const KEY_END_TIME = 'endTime';
 const KEY_HANDLER_NAME = 'handlerName';
 const KEY_ORGNAME = 'orgName';
 const KEY_OPERATION = 'operation';
+const KEY_STATUS = 'status';
+const KEY_NODE = 'node';
 // 个人类别默认值
 const DEFAULT_PER_TYPE = 'per';
 
@@ -120,12 +122,19 @@ export default class ProtocolTab extends PureComponent {
     // 协议名称
     const nameColumn = this.findColumn(newList, KEY_NAME);
     nameColumn.render = text => this.renderTooltipColumn(text);
+    // 状态
+    const statusColumn = this.findColumn(newList, KEY_STATUS);
+    statusColumn.render = text => this.renderTooltipColumn(text);
+    // 当前节点
+    const nodeColumn = this.findColumn(newList, KEY_NODE);
+    nodeColumn.render = text => this.renderTooltipColumn(text);
     // 处理人
     const handlerNameColumn = this.findColumn(newList, KEY_HANDLER_NAME);
     handlerNameColumn.render = (text, record) => {
-      return !_.isEmpty(text)
+      const showValue = !_.isEmpty(text)
       ? `${text} (${record.handlerId})`
-      : DEFAULT_TEXT;
+      : null;
+      return this.renderTooltipColumn(showValue);
     };
     // 开始日期
     const startTimeColumn = this.findColumn(newList, KEY_START_TIME);
