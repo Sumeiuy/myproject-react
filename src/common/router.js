@@ -245,6 +245,12 @@ export const getRouterData = (app) => {
         import('../routes/customerPool/CreateTask' /* webpackChunkName: "customerPool_createTask" */)),
       isPrimary: true,
     },
+    // 管理者视图详情发起任务
+    '/customerPool/createTaskFromDetail': {
+      component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist', 'taskFeedback'], () =>
+        import('../routes/customerPool/CreateTask' /* webpackChunkName: "customerPool_createTask" */)),
+      isPrimary: true,    
+    },
     // 管理者视图进度条发起任务
     '/customerPool/createTaskFromProgress': {
       component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist', 'taskFeedback'], () =>
