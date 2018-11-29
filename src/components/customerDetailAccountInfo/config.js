@@ -104,11 +104,12 @@ export const HISTORY_HOLDING_TABS = {
   optionHistoryHolding: '期权持仓明细',
 };
 
-// 交易流水下3个Tab的显示配置
+// 交易流水下4个Tab的显示配置
 export const TRADE_FLOW_TABS = {
   standardAccountTrade: '普通账户历史交易',
   creditAccountTrade: '信用账户历史交易',
   optionAccountTrade: '期权账户历史交易',
+  capitalChange: '资金变动',
 };
 
 export const STOCK_HISTORY_HOLDING_TABLE_SCROLL = { x: 2000 };
