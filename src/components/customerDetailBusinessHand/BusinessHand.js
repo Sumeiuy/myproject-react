@@ -22,7 +22,8 @@ const OPEN_DATAE = 'openDate';
 const TRANSACTION_DATE = 'transactionDate';
 const BLACK_LIST= 'blackList';
 const STANDARD_ASSETS = 'standardAssets';
-const NODATA_HINT = '没有符合条件的记录';
+const OPEN_NODATA_HINT = '暂无已开通业务';
+const NOT_OPEN_NODATA_HINT = '暂无未开通业务';
 export default class BusinessHand extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -114,7 +115,7 @@ export default class BusinessHand extends PureComponent {
               <div className={styles.header}>
                 <div className={styles.title}>已开通业务</div>
               </div>
-              <IfTableWrap isRender={isRenderOpen} text={NODATA_HINT}>
+              <IfTableWrap isRender={isRenderOpen} text={OPEN_NODATA_HINT}>
                 <div className={styles.openAccountTable}>
                   <Table
                     pagination={false}
@@ -129,7 +130,7 @@ export default class BusinessHand extends PureComponent {
               <div className={styles.header}>
                 <div className={styles.title}>未开通业务</div>
               </div>
-              <IfTableWrap isRender={isRenderNotOpen} text={NODATA_HINT}>
+              <IfTableWrap isRender={isRenderNotOpen} text={NOT_OPEN_NODATA_HINT}>
                 <div className={styles.noOpenAccountTable}>
                   <Table
                     pagination={false}

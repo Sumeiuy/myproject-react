@@ -259,6 +259,13 @@ export default class KeyMonitorAccountHome extends Component {
 
 
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '交易所',
+      value: '$args[1]'
+    }
+  })
   handleExchangeTypeSelectChange(select, value) {
     this.setState({
       exchangeType: value,
@@ -313,6 +320,7 @@ export default class KeyMonitorAccountHome extends Component {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '分页', value: '$args[0]' } })
   handlePaginationChange(pageNum) {
     const query = this.getQueryFromLocation(this.props.location);
     this.setState({ pageNum });

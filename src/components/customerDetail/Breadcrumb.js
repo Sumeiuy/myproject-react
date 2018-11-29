@@ -34,7 +34,7 @@ export default function CustDetailBreadcrumb(props) {
   // 本地缓存state
   const state = _.isEmpty(props.state) ? sessionStore.get('jspState') : props.state;
   sessionStore.set('jspState', state);
-  const url = state.backPath || '/customerPool/list?source=leftMenu';
+  const url = (state && state.backPath) || '/customerPool/list?source=leftMenu';
   // 点击面包屑回到客户列表
   function handleItemClick() {
     logCommon({
