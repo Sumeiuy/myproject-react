@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-11 18:37:20
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-23 11:52:38
+ * @Last Modified time: 2018-11-29 10:40:53
  * @description 新版客户360详情的账户信息Tab下页面的配置项
  */
 
@@ -104,11 +104,12 @@ export const HISTORY_HOLDING_TABS = {
   optionHistoryHolding: '期权持仓明细',
 };
 
-// 交易流水下3个Tab的显示配置
+// 交易流水下4个Tab的显示配置
 export const TRADE_FLOW_TABS = {
   standardAccountTrade: '普通账户历史交易',
   creditAccountTrade: '信用账户历史交易',
   optionAccountTrade: '期权账户历史交易',
+  capitalChange: '资金变动',
 };
 
 export const STOCK_HISTORY_HOLDING_TABLE_SCROLL = { x: 2000 };
@@ -138,7 +139,7 @@ export const STOCK_HISTORY_HOLDING_COLUMNS = [
     title: '名称',
   },
   {
-    width: 160,
+    width: 80,
     key: 'code',
     dataIndex: 'code',
     title: '代码',
@@ -232,7 +233,7 @@ export const PRODUCT_HISTORY_HOLDING_COLUMNS = [
     dataIndex: 'name',
   },
   {
-    width: 160,
+    width: 80,
     title: '产品代码',
     key: 'code',
     dataIndex: 'code',
@@ -312,7 +313,7 @@ export const OPTION_HISTORY_HOLDING_COLUMNS = [
     dataIndex: 'optionName',
   },
   {
-    width: 180,
+    width: 100,
     title: '期权代码',
     key: 'optionCode',
     dataIndex: 'optionCode',
@@ -324,7 +325,7 @@ export const OPTION_HISTORY_HOLDING_COLUMNS = [
     dataIndex: 'optionKind',
   },
   {
-    width: 160,
+    width: 80,
     title: '证劵代码',
     key: 'stockCode',
     dataIndex: 'stockCode',
