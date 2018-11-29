@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 19:02:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-29 10:28:49
+ * @Last Modified time: 2018-11-29 19:51:06
  * @description 添加个人客户地址信息联系方式的Form
  */
 import React, { PureComponent } from 'react';
@@ -34,6 +34,7 @@ export default class PerAddressContactForm extends PureComponent {
 
   static contextTypes = {
     queryProvinceCity: PropTypes.func.isRequired,
+    cust360Dict: PropTypes.object.isRequired,
   };
 
   constructor(props) {

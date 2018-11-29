@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-09 15:33:02
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-28 18:41:25
+ * @Last Modified time: 2018-11-29 19:20:18
  * @description 此处使用dva的connect包装下新版customer360Detail首页
  */
 import { connect } from 'dva';
@@ -46,7 +46,7 @@ const mapDispatchToProps = {
   getCustomerBasicInfo: effect('customerDetail/getCustomerBasicInfo', {loading: true}),
   addCallRecord: effect('customerPool/addCallRecord', {loading: true}),
   // 查询省市城市
-  queryProvinceCity: effect('customerPool/queryProvinceCity', { loading: false }),
+  queryProvinceCity: effect('customerDetail/queryProvinceCity', { loading: false }),
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

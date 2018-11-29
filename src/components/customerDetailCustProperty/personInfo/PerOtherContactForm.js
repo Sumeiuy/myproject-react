@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 19:10:24
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-29 10:31:58
+ * @Last Modified time: 2018-11-29 19:39:30
  * @description 个人客户添加其他信息
  */
 
@@ -32,6 +32,10 @@ export default class PerOtherContactForm extends PureComponent {
   static defaultProps = {
     data: {},
   }
+
+  static contextTypes = {
+    cust360Dict: PropTypes.object.isRequired,
+  };
 
   constructor(props) {
     super(props);

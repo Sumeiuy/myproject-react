@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性-个人客户联系方式
  * @Date: 2018-11-07 14:33:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-29 16:39:17
+ * @Last Modified time: 2018-11-29 20:32:50
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -58,6 +58,14 @@ export default class ContactWay extends PureComponent {
     queryPersonalContactWay: PropTypes.func.isRequired,
     // 改变个人客户联系方式中的请勿发短信、请勿打电话
     changePhoneInfo: PropTypes.func.isRequired,
+    // 新增|修改个人客户电话信息
+    updatePerPhone: PropTypes.func.isRequired,
+    // 新增|修改个人客户地址信息
+    updatePerAddress: PropTypes.func.isRequired,
+    // 新增|修改个人客户其他信息
+    updatePerOther: PropTypes.func.isRequired,
+    // 删除个人|机构客户的非主要联系方式
+    delContact: PropTypes.func.isRequired,
   }
 
   static defaultPropTypes = {
@@ -166,6 +174,10 @@ export default class ContactWay extends PureComponent {
       queryPersonalContactWay,
       personalContactWay,
       changePhoneInfo,
+      updatePerPhone,
+      updatePerAddress,
+      updatePerOther,
+      delContact,
     } = this.props;
     const { personalContactWayModal } = this.state;
     // 是否主服务经理
@@ -261,6 +273,10 @@ export default class ContactWay extends PureComponent {
             queryPersonalContactWay={queryPersonalContactWay}
             onClose={this.handleContactWayModalClose}
             changePhoneInfo={changePhoneInfo}
+            updatePerPhone={updatePerPhone}
+            updatePerAddress={updatePerAddress}
+            updatePerOther={updatePerOther}
+            delContact={delContact}
           />
         </IFWrap>
       </div>

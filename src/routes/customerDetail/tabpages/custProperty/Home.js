@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性
  * @Date: 2018-11-06 16:17:28
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-28 18:39:43
+ * @Last Modified time: 2018-11-29 20:31:26
  */
 
 import React, { PureComponent } from 'react';
@@ -82,6 +82,14 @@ export default class CustProperty extends PureComponent {
     updatePerFinaceData: PropTypes.func.isRequired,
     // 编辑机构客户的财务信息
     updateOrgFinaceData: PropTypes.func.isRequired,
+    // 新增|修改个人客户电话信息
+    updatePerPhone: PropTypes.func.isRequired,
+    // 新增|修改个人客户地址信息
+    updatePerAddress: PropTypes.func.isRequired,
+    // 新增|修改个人客户其他信息
+    updatePerOther: PropTypes.func.isRequired,
+    // 删除个人|机构客户的非主要联系方式
+    delContact: PropTypes.func.isRequired,
   }
 
   static contextTypes = {
@@ -157,6 +165,10 @@ export default class CustProperty extends PureComponent {
       personalContactWay,
       queryPersonalContactWay,
       changePhoneInfo,
+      updatePerAddress,
+      updatePerOther,
+      updatePerPhone,
+      delContact,
     } = this.props;
     return (
       <PersonInfo
@@ -168,6 +180,10 @@ export default class CustProperty extends PureComponent {
         queryCustomerProperty={queryCustomerProperty}
         updateCustBasicInfo={updateCustBasicInfo}
         changePhoneInfo={changePhoneInfo}
+        updatePerPhone={updatePerPhone}
+        updatePerAddress={updatePerAddress}
+        updatePerOther={updatePerOther}
+        delContact={delContact}
       />
     );
   }

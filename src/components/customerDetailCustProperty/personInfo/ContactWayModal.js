@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-26 13:58:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-29 17:29:07
+ * @Last Modified time: 2018-11-29 20:35:29
  * @description 联系方式弹框-个人客户联系方式修改
  */
 import React, { Component } from 'react';
@@ -37,6 +37,14 @@ export default class ContactWayModal extends Component {
     queryPersonalContactWay: PropTypes.func.isRequired,
     // 改变个人客户联系方式中的请勿发短信、请勿打电话
     changePhoneInfo: PropTypes.func.isRequired,
+    // 新增|修改个人客户电话信息
+    updatePerPhone: PropTypes.func.isRequired,
+    // 新增|修改个人客户地址信息
+    updatePerAddress: PropTypes.func.isRequired,
+    // 新增|修改个人客户其他信息
+    updatePerOther: PropTypes.func.isRequired,
+    // 删除个人|机构客户的非主要联系方式
+    delContact: PropTypes.func.isRequired,
   }
 
   static contextTypes = {
@@ -183,7 +191,17 @@ export default class ContactWayModal extends Component {
     payload: { name: '删除个人客户电话信息'}
   })
   handlePhoneDelClick(record) {
-    console.warn('DEL', record);
+    const {
+      location: {
+        query: { custId },
+      },
+    } = this.props;
+    this.props.delContact({
+      id: record.id,
+      custId,
+      custNature: 'per',
+      contactType: 'phone',
+    });
   }
 
   @autobind
@@ -205,7 +223,17 @@ export default class ContactWayModal extends Component {
     payload: { name: '删除个人客户地址信息'}
   })
   handleAddressDelClick(record) {
-    console.warn('DEL', record);
+    const {
+      location: {
+        query: { custId },
+      },
+    } = this.props;
+    this.props.delContact({
+      id: record.id,
+      custId,
+      custNature: 'per',
+      contactType: 'address',
+    });
   }
 
   @autobind
@@ -227,7 +255,17 @@ export default class ContactWayModal extends Component {
     payload: { name: '删除个人客户其他信息'}
   })
   handleOtherDelClick(record) {
-    console.warn('DEL', record);
+    const {
+      location: {
+        query: { custId },
+      },
+    } = this.props;
+    this.props.delContact({
+      id: record.id,
+      custId,
+      custNature: 'per',
+      contactType: 'other',
+    });
   }
 
   @autobind
@@ -256,7 +294,17 @@ export default class ContactWayModal extends Component {
 
   // 添加联系方式弹框点击确认按钮
   @autobind
-  handleAddContactModalOK() {
+  handleAddContactModalOK(type, data) {
+    if (type === 'phone') {
+      // 新增|修改电话信息
+      this.props.updatePerPhone(data);
+    } else if (type === 'address') {
+      // 新增|修改地址信息
+      this.props.updatePerAddress(data);
+    } else if (type === 'other') {
+      // 新增|修改其他信息
+      this.props.updatePerOther(data);
+    }
     this.setState({ addContactModal: false });
   }
 

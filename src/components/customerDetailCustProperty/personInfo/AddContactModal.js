@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 13:52:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-29 17:50:46
+ * @Last Modified time: 2018-11-29 20:42:27
  * @description 添加联系方式的Modal
  */
 
@@ -58,12 +58,12 @@ export default class AddContactModal extends Component {
       addressData: {},
       // 新增的其他信息数据
       otherData: {},
-      // 存在主手机联系方式不
-      hasMainMobile: true,
-      // 存在主电子邮件
-      hasMainEmail: true,
-      // 存在主地址
-      hasMainAddress: true,
+      // 显示主手机联方式提示
+      showMainMobile: false,
+      // 显示主电子邮件记录提示
+      showMainEmail: false,
+      // 显示主地址提示
+      showMainAddress: false,
     };
   }
 
@@ -76,26 +76,86 @@ export default class AddContactModal extends Component {
     this.props.onClose();
   }
 
+  // 校验电话信息
+  @autobind
+  checkPerPhoneForSubmit() {
+    // 1. 如果添加的是个人客户的电话信息，则判断是否有主手机联系方式
+    const { phoneData } = this.state;
+    const {
+      contactWayData: { tellphoneInfo },
+      location: {
+        query: { custId },
+      },
+    } = this.props;
+    if(hasMainMobile(tellphoneInfo)) {
+      this.setState({ showMainMobile: false });
+      // TODO 此处需要校验选择的数据
+      // 校验完后,提交电话数据
+      // 新增id值为空
+      this.props.onOK('phone', {
+        data: phoneData,
+        id: '',
+        custId,
+      });
+    } else {
+      this.setState({ showMainMobile: true });
+    }
+  }
+
+  // 校验地址信息
+  @autobind
+  checkPerAddressForSubmit() {
+    const { addressData } = this.state;
+    // 2. 如果添加的是个人客户的地址信息，则判断存在主地址不
+    const {
+      contactWayData: { addressInfo },
+      location: {
+        query: { custId },
+      },
+     } = this.props;
+    if (hasMainContact(addressInfo)) {
+      this.setState({ showMainAddress: false });
+      // TODO 此处需要校验选择的数据
+      // 校验完后,提交地址数据
+      this.props.onOK('address', {
+        data: addressData,
+        id: '',
+        custId,
+      });
+    } else {
+      this.setState({ showMainAddress: true });
+    }
+  }
+
   // 新建时进行添加联系方式的能力校验
   @autobind
-  checkBeforSubmit() {
-    const { activeTabKey } = this.state;
-    const { data } = this.props;
-    if (activeTabKey === 'phone') {
-      // 1. 如果添加的是个人客户的电话信息，则判断是否有主手机联系方式
-      return hasMainMobile(data.tellphoneInfo);
-    } else if (activeTabKey === 'address') {
-      // 2. 如果添加的是个人客户的地址信息，则判断存在主地址不
-      return hasMainContact(data.addressInfo);
-    } else if (activeTabKey === 'other') {
-      const { otherData } = this.state;
-      // 3. 如果添加的是个人客户的其他信息的电子邮件，则判断存在主电子邮件不
-      if (isEmailContactWay(otherData.contactWayCode)) {
-        return hasMainEmail(data.otherInfo);
-      }
-      return true;
+  checkPerOtherForSubmit() {
+    const { otherData } = this.state;
+    // 3. 如果添加的是个人客户的其他信息的电子邮件，则判断存在主电子邮件不
+    const {
+      contactWayData: { otherInfo },
+      location: {
+        query: { custId },
+      },
+    } = this.props;
+    if (
+      !hasMainEmail(otherInfo)
+      && !_.isEmpty(otherData.contactWayCode)
+      && isEmailContactWay(otherData.contactWayCode)
+      ) {
+      // 不存在主电子邮件,但是选择的是电子邮件
+      this.setState({ showMainEmail: true });
+    } else  {
+      this.setState({ showMainEmail: false });
+      // TODO 此处需要校验选择的数据格式
+      // 校验完后,提交地址数据
+      this.props.onOK('other', {
+        data: otherData,
+        id: '',
+        custId,
+      });
     }
-    return true;
+
   }
 
   @autobind
@@ -106,9 +166,13 @@ export default class AddContactModal extends Component {
     },
   })
   handleModalOK() {
-    if (this.checkBeforSubmit()) {
-      // 校验通过之后，判断当前是哪个Tab提交哪个数据
-      this.props.onOK();
+    const { activeTabKey } = this.state;
+    if (activeTabKey === 'phone') {
+      this.checkPerPhoneForSubmit();
+    } else if (activeTabKey === 'address') {
+      this.checkPerAddressForSubmit();
+    } else if (activeTabKey === 'other') {
+      this.checkPerOtherForSubmit();
     }
   }
 
@@ -145,10 +209,11 @@ export default class AddContactModal extends Component {
 
   // 渲染警告提示
   @autobind
-  renderWarning(hasData) {
+  renderWarning(show) {
     const { activeTabKey } = this.state;
+    // 如果没有规定的数据，则显示该提示信息
     return (
-      <IFWrap isRender={!hasData}>
+      <IFWrap isRender={show}>
         <div className={styles.waringTip}>
           <Icon className={styles.waringIcon} type="jingshi"/>
           <span className={styles.waringText}>{WARNING_MESSAGE[`per_${activeTabKey}`]}</span>
@@ -160,9 +225,9 @@ export default class AddContactModal extends Component {
   render() {
     const {
       activeTabKey,
-      hasMainMobile,
-      hasMainAddress,
-      hasMainEmail,
+      showMainAddress,
+      showMainMobile,
+      showMainEmail,
     } = this.state;
     // Modal的底部按钮
     const footBtns = [
@@ -184,21 +249,21 @@ export default class AddContactModal extends Component {
         <div className={styles.addContactWrap}>
           <Tabs onChange={this.handleTabChange} activeKey={activeTabKey}>
             <TabPane tab="电话信息" key="phone">
-              {this.renderWarning(hasMainMobile)}
+              {this.renderWarning(showMainMobile)}
               <PerPhoneContactForm
                 action="CREATE"
                 onChange={this.handlePhoneChange}
               />
             </TabPane>
             <TabPane tab="地址信息" key="address">
-              {this.renderWarning(hasMainAddress)}
+              {this.renderWarning(showMainAddress)}
               <PerAddressContactForm
                 action="CREATE"
-                onChange={this.handleOtherChange}
+                onChange={this.handleAddressChange}
               />
             </TabPane>
             <TabPane tab="其他信息" key="other">
-              {this.renderWarning(hasMainEmail)}
+              {this.renderWarning(showMainEmail)}
               <PerOtherContactForm
                 action="CREATE"
                 onChange={this.handleOtherChange}

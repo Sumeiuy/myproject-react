@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 16:14:23
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-29 10:28:35
+ * @Last Modified time: 2018-11-29 19:50:39
  * @description 添加个人客户电话信息联系方式的Form
  */
 import React, { PureComponent } from 'react';
@@ -20,7 +20,7 @@ const Option = Select.Option;
 
 export default class PerPhoneContactForm extends PureComponent {
   static propTypes = {
-    // 操作类型
+    // 操作类型, 如果是UPDATE,则不管hasMainMobile
     action: PropTypes.oneOf(['CREATE', 'UPDATE']).isRequired,
     // 数据
     data: PropTypes.object,

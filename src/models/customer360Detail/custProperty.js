@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性
  * @Date: 2018-11-06 14:59:53
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-28 18:40:54
+ * @Last Modified time: 2018-11-29 20:30:07
  */
 import { detailCustProperty as api } from '../../api';
 
@@ -171,8 +171,28 @@ export default {
       return resultData;
     },
     // 编辑机构客户的财务信息
-    * updateOrgFinaceData({ payload }, { put, call }) {
+    * updateOrgFinaceData({ payload }, { call }) {
       const { resultData } = yield call(api.updateOrgFinaceData, payload);
+      return resultData;
+    },
+    // 新增|修改个人客户电话信息
+    * updatePerPhone({ payload }, { call }) {
+      const { resultData } = yield call(api.updatePerPhone, payload);
+      return resultData;
+    },
+    // 新增|修改个人客户地址信息
+    * updatePerAddress({ payload }, { call }) {
+      const { resultData } = yield call(api.updatePerAddress, payload);
+      return resultData;
+    },
+    // 新增|修改个人客户其他信息
+    * updatePerOther({ payload }, { call }) {
+      const { resultData } = yield call(api.updatePerOther, payload);
+      return resultData;
+    },
+    // 删除个人客户|机构客户的非主要联系方式
+    * delContact({ payload }, { call }) {
+      const { resultData } = yield call(api.delContact, payload);
       return resultData;
     },
   },
