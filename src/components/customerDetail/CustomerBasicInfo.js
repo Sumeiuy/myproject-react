@@ -4,6 +4,7 @@ import { Affix } from 'antd';
 import { autobind } from 'core-decorators';
 
 import ConnectCustomer from '../common/connectCustomer/ConnectCustomer';
+import Tooltip from '../common/Tooltip';
 import { dva, url as urlHelper, emp } from '../../helper';
 import { openRctTab } from '../../utils';
 import styles from './customerBasicInfo.less';
@@ -289,8 +290,10 @@ export default class CustomerBasicInfo extends PureComponent {
                   ) : null
 
                 }
-                <span title={renderCustomerBasicInfo.accountOpenDate}>
-                  {this.getAccountOpenDate()}
+                <span>
+                  <Tooltip title={`激活日期：${renderCustomerBasicInfo.accountOpenDate}`}>
+                    {this.getAccountOpenDate()}
+                  </Tooltip>
                 </span>
               </div>
               {
