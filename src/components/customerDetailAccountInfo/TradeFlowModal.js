@@ -2,7 +2,7 @@
  * @Author: liqianwen
  * @Date: 2018-11-07 13:31:51
  * @Last Modified by: liqianwen
- * @Last Modified time: 2018-11-27 16:33:36
+ * @Last Modified time: 2018-11-28 09:35:25
  * @description 新版客户360详情的交易流水的弹出层
  */
 import React, { PureComponent } from 'react';
@@ -719,7 +719,7 @@ export default class TradeFlowModal extends PureComponent {
                       onChange={this.handleFilterStandardBussinessType}
                     />
                   </div>
-                  <div className={styles.filterArea}>
+                  <div className={`${styles.filterArea} ${styles.mr30}`}>
                     <SingleFilter
                       filterName="产品代码"
                       filterId="productCode"

@@ -177,7 +177,10 @@ export default class ToDoList extends PureComponent {
       url: `/userCenter/userInfoApproval?flowId=${flowId}`,
       param,
       pathname: '/userCenter/userInfoApproval',
-      query,
+      query: {
+        ...query,
+        flowId,
+      },
     });
   }
   // 请求基本信息成功，页面跳转
@@ -199,7 +202,11 @@ export default class ToDoList extends PureComponent {
         url: `/customerPool/createTaskFromTaskRejection1?source=${RETURN_TASK_FROM_TODOLIST}&flowId=${flowId}`,
         param,
         pathname: '/customerPool/createTaskFromTaskRejection1',
-        query,
+        query: {
+          ...query,
+          flowId,
+          source: RETURN_TASK_FROM_TODOLIST,
+        },
       });
     }
   }

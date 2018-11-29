@@ -127,6 +127,16 @@ const helper = {
     const type = (!pOrO || pOrO === PER_CODE) ? PER_CODE : ORG_CODE;
     const url = `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}&keyword=${keyword}`;
     const pathname = '/fsp/customerCenter/customer360';
+    const param = {
+      id: 'FSP_360VIEW_M_TAB',
+      title: '客户360视图-客户信息',
+      forceRefresh: true,
+      activeSubTab: ['服务记录'],
+      // 服务记录搜索
+      serviceRecordKeyword: keyword,
+      // 服务渠道
+      serviceRecordChannel: encodeURIComponent('理财服务平台'),
+    };
     openFspTab({
       routerAction,
       url,
@@ -137,18 +147,13 @@ const helper = {
         keyword,
       },
       pathname,
-      param: {
-        id: 'FSP_360VIEW_M_TAB',
-        title: '客户360视图-客户信息',
-        forceRefresh: true,
-        activeSubTab: ['服务记录'],
-        // 服务记录搜索
-        serviceRecordKeyword: keyword,
-        // 服务渠道
-        serviceRecordChannel: encodeURIComponent('理财服务平台'),
-      },
+      param,
       state: {
         url,
+        param,
+        query: {
+          activeTabKey: 'serviceRecord',
+        },
       },
     });
   },
