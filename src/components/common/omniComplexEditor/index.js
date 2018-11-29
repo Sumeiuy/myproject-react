@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-19 11:11:19
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-26 10:17:07
+ * @Last Modified time: 2018-11-29 11:34:55
  * @description 多功能复合编辑框
  */
 
@@ -88,10 +88,11 @@ export default class OmniComplexEditor extends PureComponent {
     const { prevValue } = prevState;
     if (!_.isEqual(value, prevValue)) {
       // 一般情况如果props中的value值变化了则需要相应的变化state
+      // 判断传入的值是否是无值的情况，因为无值的情况是使用'--'表示
       return {
-        prevValue: value,
+        prevValue: value === '--' ? '': value,
         originalValue: displayValue,
-        editorValue: value,
+        editorValue: value === '--' ? '': value,
         loading: false,
         editing: false,
       };
@@ -105,11 +106,11 @@ export default class OmniComplexEditor extends PureComponent {
     this.state = {
       loading: false,
       // 保存原始的props
-      prevValue: value,
+      prevValue: value === '--' ? '': value,
       // 原始值
       originalValue: displayValue,
       // 用户修改的值
-      editorValue: value,
+      editorValue: value === '--' ? '' : value,
       // 编辑状态
       editing: false,
       // select下拉框的展开状态

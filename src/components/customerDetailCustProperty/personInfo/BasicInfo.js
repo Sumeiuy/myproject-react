@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性-个人客户基本信息
  * @Date: 2018-11-07 14:33:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-29 10:57:05
+ * @Last Modified time: 2018-11-29 13:23:47
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -59,25 +59,16 @@ export default class BasicInfo extends PureComponent {
     const {
       location: { query: { custId }}
     } = this.props;
+    //接口访问成功的时候
+    // 使用这种方式为了让原地编辑组件能够控制loading的状态
+    // 必须添加一个reject的函数用于判断接口失败状态
     return this.props.updateCustBasicInfo({
       custNature: 'per',
       custId,
       ...param,
     }).then(
-      (resultData) => {
-      //接口访问成功的时候
-      // 使用这种方式为了让原地编辑组件能够控制loading的状态
-      if (!_.isEmpty(resultData)) {
-        const flag = resultData.result === 'success';
-        if (!flag) {
-          // 如果成功
-          message.error(resultData.message || '失败');
-        }
-        return flag;
-      }
-      return false;
-    },
-    () => false
+      resultData => resultData,
+      () => false
     );
   }
 
@@ -97,8 +88,7 @@ export default class BasicInfo extends PureComponent {
   updateChildNum(value) {
     // 此处为修改个人客户信息的子女数量信息，所以
     return this.updateBasicInfo({
-      infoKey: 'childNum',
-      infoValue: Number(value),
+      childNum: Number(value),
     });
   }
 
@@ -125,11 +115,25 @@ export default class BasicInfo extends PureComponent {
 
   // 修改婚姻状态
   @autobind
-  updateMarryState(value) {
-    this.updateBasicInfo({
-      infoKey: 'maritalCode',
-      infoValue: value,
+  updateMarryState(marryStatus) {
+    return this.updateBasicInfo({
+      marryStatus,
     });
+  }
+
+  // 校验婚姻状态
+  @autobind
+  checkMarry(value) {
+    if (_.isEmpty(value)) {
+      return {
+        validate: false,
+        msg: '数据不能为空',
+      };
+    }
+    return {
+      validate: true,
+      msg: '',
+    };
   }
 
   // 修改爱好
@@ -144,7 +148,7 @@ export default class BasicInfo extends PureComponent {
   render() {
     const { data } = this.props;
     // 是否主服务经理
-    const { custBasic: { isMainEmp }, cust360Dict: { } } = this.context;
+    const { custBasic: { isMainEmp }, cust360Dict: { marriageList } } = this.context;
 
     return (
       <div className={styles.basicInfoBox}>
@@ -246,14 +250,17 @@ export default class BasicInfo extends PureComponent {
                 : (
                   <BasicEditorCell
                     label="婚姻状况"
+                    editorId="person_children_num"
+                    mode="select"
                     width={INFO_ITEM_WITDH_110}
                     className={styles.infoItem}
-                    editorId="person_children_num"
-                    onEditOK={_.noop}
-                    mode="select"
-                    value={data.maritalText || DEFAULT_VALUE}
+                    checkable
+                    value={data.maritalCode || ''}
                     displayValue={data.maritalText || DEFAULT_VALUE}
-                    options={[]}
+                    options={marriageList}
+                    onEditOK={this.updateMarryState}
+                    onCheck={this.checkMarry}
+                    onSuccess={this.refreshCustProperty}
                   />
                 )
             }
