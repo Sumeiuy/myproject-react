@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-19 10:17:54
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-28 12:48:39
+ * @LastEditTime: 2018-11-29 10:33:58
  * @Description: 产品订单
  */
 
@@ -27,7 +27,7 @@ const TabPane = Tabs.TabPane;
 const mapStateToProps = state => ({
   serviceOrderFlow: state.productOrder.serviceOrderFlow,
   tradeOrderFlow: state.productOrder.tradeOrderFlow,
-  jxGroupProductList: state.customerPool.jxGroupProductList, // 产品搜索结果
+  serviceProductData: state.productOrder.serviceProductData, // 服务产品搜索结果
   serviceOrderDetail: state.productOrder.serviceOrderDetail,
   serviceProductList: state.productOrder.serviceProductList,
   orderApproval: state.productOrder.orderApproval,
@@ -38,7 +38,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   queryServiceOrderFlow: effect('productOrder/queryServiceOrderFlow'),
   queryTradeOrderFlow: effect('productOrder/queryTradeOrderFlow'),
-  queryJxGroupProduct: effect('customerPool/queryJxGroupProduct', { loading: false }),
+  queryServiceProductBySearch: effect('productOrder/queryServiceProductBySearch', { loading: false }),
   queryServiceOrderDetail: effect('productOrder/queryServiceOrderDetail', { forceFull: true }),
   queryServiceProductList: effect('productOrder/queryServiceProductList', { forceFull: true }),
   queryOrderApproval: effect('productOrder/queryOrderApproval', { forceFull: true }),
@@ -58,8 +58,8 @@ export default class ProductOrder extends PureComponent {
     serviceOrderData: PropTypes.object.isRequired,
     queryServiceOrderFlow: PropTypes.func.isRequired,
     queryTradeOrderFlow: PropTypes.func.isRequired,
-    jxGroupProductList: PropTypes.array.isRequired,
-    queryJxGroupProduct: PropTypes.func.isRequired,
+    serviceProductData: PropTypes.array.isRequired,
+    queryServiceProductBySearch: PropTypes.func.isRequired,
     serviceOrderDetail: PropTypes.object.isRequired,
     serviceProductList: PropTypes.array.isRequired,
     orderApproval: PropTypes.object.isRequired,
@@ -190,14 +190,14 @@ export default class ProductOrder extends PureComponent {
     const {
       serviceOrderFlow,
       tradeOrderFlow,
-      jxGroupProductList,
+      serviceProductData,
       serviceOrderDetail,
       serviceProductList,
       orderApproval,
       queryServiceOrderDetail,
       queryServiceProductList,
       queryOrderApproval,
-      queryJxGroupProduct,
+      queryServiceProductBySearch,
       attachmentList,
       getAttachmentList,
       location,
@@ -227,8 +227,8 @@ export default class ProductOrder extends PureComponent {
           <TabPane tab="服务订单流水" key="serviceOrderFlow">
             <div className={styles.tabPaneWrap}>
               <ProductOrderFlow
-                productListBySearch={jxGroupProductList}
-                queryJxGroupProduct={queryJxGroupProduct}
+                productListBySearch={serviceProductData}
+                queryServiceProductBySearch={queryServiceProductBySearch}
                 serviceOrderFlow={serviceOrderFlow}
                 onProductOrderFlowChange={this.handleProductOrderFlowChanged}
                 serviceOrderDetail={serviceOrderDetail}
