@@ -1,7 +1,9 @@
-/**
- * @file feedback/ProblemHandling.js
- *  问题反馈-解决弹窗
- * @author yangquanjian
+/*
+ * @Author: yangquanjian
+ * @Date: 2018-10-22 09:13:51
+ * @LastEditors: li-ke
+ * @LastEditTime: 2018-11-29 10:30:22
+ * @Description: 问题反馈-解决弹窗
  */
 
 import React, { PureComponent } from 'react';
@@ -40,7 +42,7 @@ export default class ProblemHandling extends PureComponent {
     width: PropTypes.string,
     problemDetails: PropTypes.object.isRequired,
     inforTxt: PropTypes.string,
-    empRespDTOList: PropTypes.array.isRequired,
+    operatorList: PropTypes.array.isRequired,
   }
   static defaultProps = {
     popContent: ' ',
@@ -153,7 +155,7 @@ export default class ProblemHandling extends PureComponent {
       title,
       width,
       form,
-      empRespDTOList,
+      operatorList,
     } = this.props;
     const {
       popQuestionTagOptions,
@@ -237,7 +239,7 @@ export default class ProblemHandling extends PureComponent {
                         style={{ width: 220 }}
                         onChange={this.handleProcesserChange}
                       >
-                      {renderEmpOption(empRespDTOList)}
+                      {renderEmpOption(operatorList)}
                       </Select>,
                     )}
                   </FormItem>
