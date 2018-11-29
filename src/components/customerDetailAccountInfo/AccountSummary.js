@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-23 13:38:45
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-29 13:46:21
+ * @Last Modified time: 2018-11-29 15:07:55
  * @desription 账户概览
  */
 import React from 'react';
@@ -93,7 +93,7 @@ export default function AccountSummary(props) {
           <AccountSummaryCell label="资金余额" content={fundBalance} />
           <AccountSummaryCell label="资产峰值" content={assetsPeak} />
           <AccountSummaryCell label="年日均资产" content={yearDailyAssets} />
-          <AccountSummaryCell label="本年收益率(%)" type="RATE" content={yearProfitRate} />
+          <AccountSummaryCell label="本年收益率" type="RATE" content={yearProfitRate} />
         </div>
       </div>
       <div className={styles.summaryBlock}>
