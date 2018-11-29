@@ -296,6 +296,7 @@ export default class CustDetail extends PureComponent {
         param,
         state: {
           url,
+          param,
         },
       });
     } else {

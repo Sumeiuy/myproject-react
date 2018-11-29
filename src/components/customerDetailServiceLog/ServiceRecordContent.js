@@ -65,14 +65,6 @@ export default function ServiceRecordContent(props) {
             content={item.handlerTimeLimit}
             title={'处理期限'}
           />
-          <IfWrap isRender={!_.isEmpty(item.uuid)}>
-            <ServiceRecordItem
-              content={item.uuid}
-              title={'附件'}
-              filesList={filesList}
-              isHaveFileList
-            />
-          </IfWrap>
           <IfWrap isRender={isMOTReturnVisitTask}>
             <ServiceRecordItem
               content={workResult}
@@ -83,6 +75,14 @@ export default function ServiceRecordContent(props) {
             <ServiceRecordItem
               content={item.custFeedback}
               title={'失败原因'}
+            />
+          </IfWrap>
+          <IfWrap isRender={!_.isEmpty(item.uuid)}>
+            <ServiceRecordItem
+              content={item.uuid}
+              title={'附件'}
+              filesList={filesList}
+              isHaveFileList
             />
           </IfWrap>
         </div>

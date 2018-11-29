@@ -32,13 +32,13 @@ const check = {
     return str.indexOf('J') === 0;
   },
   /**
-   * 判断一个值是否为空，null || undefined || 'null' || ''
+   * 判断一个值是否为空，null || undefined || 'null' || '' || NaN
    * @author sunweibin
    * @param {*} v 传递的值
    * @returns {Boolean}
    */
   isNull(v) {
-    if (v === null || v === 'null' || v === '' || v === undefined || v === 'undefined') {
+    if (v === null || v === 'null' || v === '' || v === undefined || v === 'undefined' || Number.isNaN(v)) {
       return true;
     }
     return false;

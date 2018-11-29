@@ -52,6 +52,19 @@ export default class ServiceRecordItem extends PureComponent {
     feedbackStatus: null,
   }
 
+  getShouldRenderItem(content) {
+    const { isHaveFileList, filesList, feedbackStatus } = this.props;
+    // 如果传了feedbackStatus
+    if (!_.isEmpty(feedbackStatus)) {
+      return true;
+    }
+    // 附件
+    if (isHaveFileList) {
+      return !_.isEmpty(filesList);
+    }
+    return !isNullOrNullString(content);
+  }
+
   // 空方法，用于日志上传
   @logable({ type: 'Click', payload: { name: '下载' } })
   handleDownloadClick() {}
@@ -102,26 +115,29 @@ export default class ServiceRecordItem extends PureComponent {
    */
   renderContentString(content) {
     const { feedbackStatus, title } = this.props;
+    if (title === '客户反馈') {
+      if (!_.isEmpty(feedbackStatus)) {
+        // 如果是feedbackStatus不为空，则表示是涨乐财富通服务方式，
+        // 因为只有涨乐财富通才有feedbackStatus
+        return this.renderZLContent(feedbackStatus);
+      }
+    }
     // 显示的时间格式进行转换
     // 2018/07/16-2018/11/16  => 2018-07-16 ~ 2018-11-16
     if(title === '处理期限') {
       let newContent = content.replace('-', '~').replace(/\//g, '-').split('~');
       return `${newContent[0]} ~ ${newContent[1]}`;
     }
+
     if(title === '反馈时间') {
       return content.replace(/\//g, '-');
-    }
-    if (!_.isEmpty(feedbackStatus)) {
-      // 如果是feedbackStatus不为空，则表示是涨乐财富通服务方式，
-      // 因为只有涨乐财富通才有feedbackStatus
-      return this.renderZLContent(feedbackStatus);
     }
     return content;
   }
 
   renderContent(content) {
     const { isNeedTooltip } = this.props;
-    const newContent = this.renderContentString(content);
+    const newContent = this.renderContentString(content || '');
     if (!isNeedTooltip) {
       return (
         <span title={newContent}>
@@ -166,8 +182,11 @@ export default class ServiceRecordItem extends PureComponent {
       newContent = newContent.value;
     }
 
+    // 是否可以渲染该item
+    const isShouleRender = this.getShouldRenderItem(newContent);
+
     return (
-      <IfWrap isRender={!isNullOrNullString(newContent)}>
+      <IfWrap isRender={isShouleRender}>
         <div className={styles.serviceItem}>
           <span className={styles.serviceTitle}>
             {title}<span className={styles.serviceDivide}>:</span>

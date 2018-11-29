@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-20 14:30:09
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-26 14:02:57
+ * @Last Modified time: 2018-11-28 16:44:40
  */
 
 import moment from 'moment';
@@ -82,25 +82,80 @@ const NOT_EXCESS_BENEFIT_TEXT = '客户投资收益未能战胜基准，未取�
 // 超额收益文本
 const EXCESS_BENEFIT_TEXT = '客户投资收益战胜基准收益，取得超额收益。';
 
-const investmentAbilityAnalysis = {
-  endDateOfLastMonth,
-  lastYearDataOfLastMonth,
-  profitAbilityLevelList,
-  FUND_INVEST,
-  ASSET_MARKET,
-  assetChangeChartTip,
-  ACCOUNT_DAILY_RATE,
-  HS300_DAILY_RATE,
-  ACCOUNT_CUMULATIVE_RATE,
-  HS300_CUMULATIVE_RATE,
-  profitTrendChartTip,
-  NOT_EXCESS_BENEFIT_TEXT,
-  EXCESS_BENEFIT_TEXT,
+// 图表通用配置项
+const chartOption = {
+  grid: {
+    left: 10,
+    right: 10,
+    top: 10,
+    bottom: 0,
+    containLabel: true,
+  },
+  xAxis: {
+    type: 'category',
+    axisTick: {
+      show: false,
+    },
+    axisLabel: {
+      color: '#666',
+      fontSize: 12,
+    },
+  },
+  yAxis: {
+    type: 'value',
+    axisLine: {
+      show: false,
+    },
+    axisTick: {
+      show: false,
+    },
+    splitLine: {
+      lineStyle: {
+        color: '#ccc',
+        type: 'dotted',
+      }
+    },
+    axisLabel: {
+      color: '#666',
+      formatter: '{value}%',
+      fontSize: 12,
+    },
+  },
+  smooth: true,
+  tooltip: {
+    trigger: 'axis',
+    backgroundColor: 'rgba(2, 22, 55, 0.8)',
+    padding: 10,
+    textStyle: {
+      fontSize: 12,
+    },
+  },
 };
 
+// 归因收益类型
+const EQUITY_TYPE = '权益类';
+const SOLID_RECOVERY_TYPE = '固收类';
+const CURRENCY_TYPE = '货币类';
 
+// 归因表格列
+const attributionTableColumns = [
+  {
+    dataIndex: 'type',
+  },
+  {
+    title: EQUITY_TYPE,
+    dataIndex: 'equityRate',
+  },
+  {
+    title: SOLID_RECOVERY_TYPE,
+    dataIndex: 'solidRecoveryRate',
+  },
+  {
+    title: CURRENCY_TYPE,
+    dataIndex: 'currencyRate',
+  },
+];
 
-export default investmentAbilityAnalysis;
 export {
   endDateOfLastMonth,
   lastYearDataOfLastMonth,
@@ -115,4 +170,9 @@ export {
   profitTrendChartTip,
   NOT_EXCESS_BENEFIT_TEXT,
   EXCESS_BENEFIT_TEXT,
+  chartOption,
+  EQUITY_TYPE,
+  SOLID_RECOVERY_TYPE,
+  CURRENCY_TYPE,
+  attributionTableColumns,
 };

@@ -125,7 +125,7 @@ function initFspMethod({ store, history, isInReact }) {
     window.eb.app = {
       // 加载fsp页面
       loadPageInTab: {
-        run(url, { reactShouldRemove }) {
+        run(url, options = {}) {
           const { path } = findRoute(url);
           const searchString = url.split('?')[1];
           push({
@@ -133,7 +133,8 @@ function initFspMethod({ store, history, isInReact }) {
             search: searchString && `?${searchString}`,
             state: {
               url,
-              shouldRemove: reactShouldRemove,
+              param: options,
+              shouldRemove: options && options.reactShouldRemove,
             },
           });
         },

@@ -45,7 +45,7 @@ export default class ProgressSelect  extends PureComponent {
             <Progress percent={item.progressNumber}/>
           </div>
       </Option>);
-    })
+    });
     return options;
   }
 

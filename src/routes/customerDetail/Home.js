@@ -2,7 +2,7 @@
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-28 18:42:28
+ * @Last Modified time: 2018-11-29 09:02:42
  */
 
 import React, { PureComponent } from 'react';
@@ -22,7 +22,8 @@ import ServiceRecord from './tabpages/serviceRecord/Home';
 import DiscountCoupon from './tabpages/discountCoupon/connectedHome';
 import { logCommon } from '../../decorators/logable';
 import ProductOrder from './tabpages/productOrder/Home';
-import InvestmentAbilityAnalysis from './tabpages/investmentAbilityAnalysis/Home';
+import InvestmentAbilityAnalysis from './tabpages/investmentAbilityAnalysis/connectedHome';
+import ContractManage from './tabpages/contractManage/Home';
 import {
   ACCOUNT_INFO_TAB_KEY,
   CUSTOMER_INFO_TAB_KEY,
@@ -40,7 +41,6 @@ import {
 import styles from './home.less';
 
 const TabPane = Tabs.TabPane;
-
 
 @withRouter
 export default class Home extends PureComponent {
@@ -86,6 +86,14 @@ export default class Home extends PureComponent {
     cust360Dict: PropTypes.object,
     queryProvinceCity: PropTypes.func,
   };
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      // 当前的tab页面, 默认展示 账户信息 Tab页
+      activeTabKey: 'contractManagement',
+    };
+  }
 
   @autobind
   getChildContext() {
@@ -188,7 +196,7 @@ export default class Home extends PureComponent {
 
     const breadCrumbProps = {
       push: this.context.push,
-      url: location.state && location.state.url,
+      state: location.state,
     };
 
     // 客户基本信息组件props
@@ -215,6 +223,7 @@ export default class Home extends PureComponent {
               data={summaryInfo}
               moreLabelInfo={moreLabelInfo}
               queryAllKeyLabels={queryAllKeyLabels}
+              replace={this.context.replace}
             />
           </div>
         </div>
@@ -233,7 +242,7 @@ export default class Home extends PureComponent {
               <CustProperty location={location} />
             </TabPane>
             <TabPane tab="投资能力分析" key={INVEST_ANALYZE_TAB_KEY}>
-              <InvestmentAbilityAnalysis />
+              <InvestmentAbilityAnalysis location={location} />
             </TabPane>
             <TabPane tab="业务办理" key={BUNESSINESS_PROCESS_TAB_KEY}>
               <BusinessHand location={location} />
@@ -245,6 +254,7 @@ export default class Home extends PureComponent {
               <ServiceRelationship location={location} />
             </TabPane>
             <TabPane tab="合约管理" key={CONTRACT_MANAGE_TAB_KEY}>
+              <ContractManage location={location} />
             </TabPane>
             <TabPane tab="投资者评估" key={INVESTOR_ASSESSMENT_TAB_KEY}>
             </TabPane>

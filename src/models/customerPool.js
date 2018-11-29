@@ -696,8 +696,7 @@ groupId },
         const { resultData: fileResultData } = fileListRes;
         yield put({
           type: 'getServiceLogSuccess',
-          payload: { resultData,
-fileResultData },
+          payload: { resultData, fileResultData },
         });
       } else {
         yield put({
@@ -1459,10 +1458,14 @@ level: resultData.level },
     // 360服务记录查询成功
     getServiceLogSuccess(state, action) {
       const { payload: { resultData, fileResultData } } = action;
+      let responseList = [];
+      if (!_.isEmpty(resultData)) {
+        responseList = resultData;
+      }
       return {
         ...state,
         serviceLogData: resultData,
-        serviceLogList: resultData,
+        serviceLogList: responseList,
         filesList: fileResultData,
         isLastServiceLog: false,
       };
@@ -1484,9 +1487,13 @@ level: resultData.level },
     // 360服务记录查询更多服务成功, 这里的代码需要修正
     getServiceLogMoreSuccess(state, action) {
       const { payload: { resultData } } = action;
+      let responseList = [];
+      if (!_.isEmpty(resultData)) {
+        responseList = resultData;
+      }
       return {
         ...state,
-        serviceLogList: _.concat(state.serviceLogList, resultData),
+        serviceLogList: _.concat(state.serviceLogList, responseList),
         serviceLogMoreData: resultData,
         isLastServiceLog: _.isEmpty(resultData),
       };

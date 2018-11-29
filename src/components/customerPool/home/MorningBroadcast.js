@@ -8,7 +8,6 @@ import React, { PureComponent } from 'react';
 import { Icon } from 'antd';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import Marquee from '../../morningBroadcast/Marquee';
 import Audio from '../../common/audio/Audio';
 import { openRctTab } from '../../../utils';
 import withRouter from '../../../decorators/withRouter';

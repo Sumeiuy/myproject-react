@@ -4,7 +4,6 @@
  * @Last Modified by: wangyikai
  * @Last Modified time: 2018-11-12 00:13:38
  */
-import _ from 'lodash';
  const config = {
    //服务团队表格数据
    serviceTeamColumns: [

@@ -3,7 +3,7 @@
  * @Description: 客户360-业务办理
  * @Date: 2018-11-19 16:20:49
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-26 17:51:43
+ * @Last Modified time: 2018-11-27 20:19:15
  */
 import React,{ PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -13,6 +13,7 @@ import moment from 'moment';
 import Table from '../common/table';
 import styles from './businessHand.less';
 import { number } from '../../helper';
+import IfTableWrap from '../common/IfTableWrap';
 import { openBusinessColumns, notOpenBusinessColumns } from './config';
 
 const DATE_FORMAT = 'YYYY-MM-DD';
@@ -21,7 +22,8 @@ const OPEN_DATAE = 'openDate';
 const TRANSACTION_DATE = 'transactionDate';
 const BLACK_LIST= 'blackList';
 const STANDARD_ASSETS = 'standardAssets';
-const TABLENUM = 2;
+const OPEN_NODATA_HINT = '暂无已开通业务';
+const NOT_OPEN_NODATA_HINT = '暂无未开通业务';
 export default class BusinessHand extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -56,7 +58,7 @@ export default class BusinessHand extends PureComponent {
   @autobind
   renderOpenColumns() {
     const openList = [...openBusinessColumns];
-    // 开通日期,首次交易日期
+    // 黑名单
     const blackColumn = _.find(openList, o => o.key === BLACK_LIST);
     blackColumn.render = (text, record) => {
       if(!_.isEmpty(record.businessType)) {
@@ -65,10 +67,18 @@ export default class BusinessHand extends PureComponent {
         return null;
       }
     };
-    // 黑名单
-    const dateColumn = _.find(openList, o => o.key === OPEN_DATAE || o.key === TRANSACTION_DATE);
+    // 开通日期,首次交易日期
+    const dateColumn = _.find(openList, o => o.key === OPEN_DATAE );
     dateColumn.render = (text, record) => {
-      if(!_.isEmpty(record.businessType)) {
+      if(!_.isEmpty(record.businessType) && text!== null) {
+        return moment(text).format(DATE_FORMAT);
+      }else {
+        return null;
+      }
+    };
+    const transactionDateColumn = _.find(openList, o => o.key === TRANSACTION_DATE);
+    transactionDateColumn.render = (text, record) => {
+      if(!_.isEmpty(record.businessType) && text!== null) {
         return moment(text).format(DATE_FORMAT);
       }else {
         return null;
@@ -95,6 +105,8 @@ export default class BusinessHand extends PureComponent {
       openBusinessData,
       notOpenBusinessData,
     } = this.props;
+    const isRenderOpen = !_.isEmpty(openBusinessData);
+    const isRenderNotOpen = !_.isEmpty(notOpenBusinessData);
     return (
       <div className={styles.tabsContainer}>
         <div className={styles.tabPaneWrap}>
@@ -103,31 +115,31 @@ export default class BusinessHand extends PureComponent {
               <div className={styles.header}>
                 <div className={styles.title}>已开通业务</div>
               </div>
-              <div className={styles.openAccountTable}>
-                <Table
-                  pagination={false}
-                  className={styles.tableBorder}
-                  isNeedEmptyRow
-                  rowNumber={TABLENUM}
-                  dataSource={openBusinessData}
-                  columns={this.renderOpenColumns()}
-                />
-              </div>
+              <IfTableWrap isRender={isRenderOpen} text={OPEN_NODATA_HINT}>
+                <div className={styles.openAccountTable}>
+                  <Table
+                    pagination={false}
+                    className={styles.tableBorder}
+                    dataSource={openBusinessData}
+                    columns={this.renderOpenColumns()}
+                  />
+                </div>
+              </IfTableWrap>
             </div>
             <div className={styles.accountBlock}>
               <div className={styles.header}>
                 <div className={styles.title}>未开通业务</div>
               </div>
-              <div className={styles.noOpenAccountTable}>
-                <Table
-                  pagination={false}
-                  className={styles.tableBorder}
-                  isNeedEmptyRow
-                  rowNumber={TABLENUM}
-                  dataSource={notOpenBusinessData}
-                  columns={this.renderNotOpenColumns()}
-                />
-              </div>
+              <IfTableWrap isRender={isRenderNotOpen} text={NOT_OPEN_NODATA_HINT}>
+                <div className={styles.noOpenAccountTable}>
+                  <Table
+                    pagination={false}
+                    className={styles.tableBorder}
+                    dataSource={notOpenBusinessData}
+                    columns={this.renderNotOpenColumns()}
+                  />
+                </div>
+              </IfTableWrap>
             </div>
           </div>
         </div>
