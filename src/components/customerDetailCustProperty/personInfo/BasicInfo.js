@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性-个人客户基本信息
  * @Date: 2018-11-07 14:33:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-23 16:15:13
+ * @Last Modified time: 2018-11-29 10:57:05
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -12,7 +12,7 @@ import _ from 'lodash';
 import { message } from 'antd';
 
 import InfoItem from '../../common/infoItem';
-// import BasicEditorCell from '../common/BasiceEditorCell';
+import BasicEditorCell from '../common/BasiceEditorCell';
 import {
   DEFAULT_VALUE,
   DEFAULT_PRIVATE_VALUE,
@@ -34,6 +34,11 @@ export default class BasicInfo extends PureComponent {
     // 用于刷新客户基本信息
     queryCustomerProperty: PropTypes.func.isRequired,
   }
+
+  static contextTypes = {
+    custBasic: PropTypes.object.isRequired,
+    cust360Dict: PropTypes.object.isRequired,
+  };
 
   // 获取需要隐私控制的数据，有权限则展示字段，有权限没有数据则展示--，无权限则展示***
   @autobind
@@ -138,6 +143,9 @@ export default class BasicInfo extends PureComponent {
 
   render() {
     const { data } = this.props;
+    // 是否主服务经理
+    const { custBasic: { isMainEmp }, cust360Dict: { } } = this.context;
+
     return (
       <div className={styles.basicInfoBox}>
         <div className={styles.title}>基本信息</div>
@@ -223,27 +231,32 @@ export default class BasicInfo extends PureComponent {
             />
           </div>
           <div className={styles.infoItemBox}>
-            <InfoItem
-              width={INFO_ITEM_WITDH_110}
-              label="婚姻状况"
-              value={data.maritalText || DEFAULT_VALUE}
-              className={styles.infoItem}
-              isNeedValueTitle={checkIsNeedTitle(data.maritalText || DEFAULT_VALUE)}
-              isNeedOverFlowEllipsis
-            />
-           {/* 本迭代中先关闭
-            <BasicEditorCell
-              label="婚姻状况"
-              width={INFO_ITEM_WITDH_110}
-              className={styles.infoItem}
-              editorId="person_children_num"
-              onEditOK={_.noop}
-              mode="select"
-              value={data.maritalText || DEFAULT_VALUE}
-              displayValue={data.maritalText || DEFAULT_VALUE}
-              options={[]}
-            />
-            */}
+            { /**如果是主服务经理才能编辑 */
+              isMainEmp
+                ? (
+                  <InfoItem
+                    width={INFO_ITEM_WITDH_110}
+                    label="婚姻状况"
+                    value={data.maritalText || DEFAULT_VALUE}
+                    className={styles.infoItem}
+                    isNeedValueTitle={checkIsNeedTitle(data.maritalText || DEFAULT_VALUE)}
+                    isNeedOverFlowEllipsis
+                  />
+                )
+                : (
+                  <BasicEditorCell
+                    label="婚姻状况"
+                    width={INFO_ITEM_WITDH_110}
+                    className={styles.infoItem}
+                    editorId="person_children_num"
+                    onEditOK={_.noop}
+                    mode="select"
+                    value={data.maritalText || DEFAULT_VALUE}
+                    displayValue={data.maritalText || DEFAULT_VALUE}
+                    options={[]}
+                  />
+                )
+            }
           </div>
           <div className={styles.infoItemBox}>
            <InfoItem

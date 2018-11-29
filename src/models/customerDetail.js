@@ -2,10 +2,12 @@
  * @Author: sunweibin
  * @Date: 2018-10-09 15:38:02
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-28 18:45:26
+ * @Last Modified time: 2018-11-29 11:07:29
  * @description 新版客户360详情的model
  */
 import { customerDetail as api } from '../api';
+
+import _ from 'lodash';
 
 export default {
   namespace: 'customerDetail',
@@ -92,9 +94,14 @@ export default {
     // 查询客户属性字典接口
     * queryCust360Dict({ payload }, { put, call }) {
       const { resultData } = yield call(api.queryCust360Dict, payload);
+      // 此处的地点接口，需要做一些特殊处理，比如给某些字段添加请选择选项
+      const newResultData = _.mapValues(
+        resultData,
+        item => ([{ key: '', value: '请选择'}, ...item]),
+      );
       yield put({
         type: 'queryCust360DictSuccess',
-        payload: resultData,
+        payload: newResultData,
       });
     },
     // 查询省市城市

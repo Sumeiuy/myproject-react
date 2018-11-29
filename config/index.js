@@ -51,13 +51,6 @@ module.exports = {
       {
         target: 'http://168.61.8.82:5086', // uat
       },
-      prefix + '/groovynoauth/fsp/common/queryEcifDict',
-      {
-        // target: 'http://168.61.8.82:5086', // uat
-        // target: 'http://160.9.228.98:8082', // xzx
-        // target: 'http://168.61.8.81:5087', // SIT
-        target: 'http://168.61.8.81:5090', // DOClever
-      },
       prefix + '/groovynoauth/fsp/cust/custdetail/queryContactWayForOrg',
       {
         // target: 'http://168.61.8.82:5086', // uat
