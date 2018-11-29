@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-23 09:51:00
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-26 13:29:42
+ * @LastEditTime: 2018-11-29 13:38:00
  * @Description: 服务订单流水详情-审批
  */
 
@@ -13,6 +13,11 @@ import moment from 'moment';
 import styles from './orderApproval.less';
 
 const DATE_FORMAT_STR = 'YYYY/MM/DD';
+const DEFAULT_SHOW_VALUE = '--';
+// 当值为空时，设置默认显示
+function ensureShow(item) {
+  return _.isEmpty(item) ? DEFAULT_SHOW_VALUE : item;
+}
 
 export default function OrderApproval(props) {
   const {
@@ -27,9 +32,9 @@ export default function OrderApproval(props) {
     <div className={styles.orderApprovalWrap}>
       <div className={styles.current}>
         <span className={styles.hint}>当前步骤：</span>
-        <span>{currStep}</span>
+        <span>{ensureShow(currStep)}</span>
         <span className={styles.hint}>当前审批人：</span>
-        <span>{currHandlerName}</span>
+        <span>{ensureShow(currHandlerName)}</span>
       </div>
       <div className={styles.approvalList}>
         {
@@ -48,7 +53,7 @@ export default function OrderApproval(props) {
                   {basicInfo}
                 </div>
                 <div>
-                  {comments}
+                  {ensureShow(comments)}
                 </div>
               </div>
             );

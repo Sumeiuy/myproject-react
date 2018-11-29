@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-06 17:44:38
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-23 15:54:55
+ * @Last Modified time: 2018-11-29 11:17:33
  * @description 实时持仓的弹出层
  */
 import React, { PureComponent } from 'react';
@@ -188,7 +188,7 @@ export default class RealTimeHoldingModal extends PureComponent {
                   <Radio value="credit">信用</Radio>
                 </RadioGroup>
               </div>
-              <IfTableWrap isRender={hasNoStockData} text="暂无证券实时持仓数据">
+              <IfTableWrap isRender={!hasNoStockData} text="暂无证券实时持仓数据">
                 <Table
                   className={styles.tableContainer}
                   columns={STOCK_REALTIME_COLUMNS}
@@ -199,7 +199,7 @@ export default class RealTimeHoldingModal extends PureComponent {
               </IfTableWrap>
             </TabPane>
             <TabPane tab="产品实时持仓" key="productRealTimeHolding">
-              <IfTableWrap isRender={hasNoProductData} text="暂无产品实时持仓数据">
+              <IfTableWrap isRender={!hasNoProductData} text="暂无产品实时持仓数据">
                 <Table className={styles.tableContainer}
                   columns={PRODUCT_REALTIME_COLUMNS}
                   dataSource={newProductData}

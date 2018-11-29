@@ -3,7 +3,7 @@
  * @Description: 客户360-业务办理
  * @Date: 2018-11-19 16:20:49
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-27 20:19:15
+ * @Last Modified time: 2018-11-29 11:52:42
  */
 import React,{ PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -12,7 +12,6 @@ import _ from 'lodash';
 import moment from 'moment';
 import Table from '../common/table';
 import styles from './businessHand.less';
-import { number } from '../../helper';
 import IfTableWrap from '../common/IfTableWrap';
 import { openBusinessColumns, notOpenBusinessColumns } from './config';
 
@@ -22,6 +21,7 @@ const OPEN_DATAE = 'openDate';
 const TRANSACTION_DATE = 'transactionDate';
 const BLACK_LIST= 'blackList';
 const STANDARD_ASSETS = 'standardAssets';
+const WAN = 10000;
 const OPEN_NODATA_HINT = '暂无已开通业务';
 const NOT_OPEN_NODATA_HINT = '暂无未开通业务';
 export default class BusinessHand extends PureComponent {
@@ -88,13 +88,8 @@ export default class BusinessHand extends PureComponent {
     const standardAssetsColumn = _.find(openList, o => o.key === STANDARD_ASSETS);
     standardAssetsColumn.render = (text, record) => {
       if(!_.isEmpty(record.businessType)) {
-        const newData = number.formatToUnit({
-          num: text,
-          isThousandFormat: true,
-          floatLength: 2,
-          isRound: false,
-        });
-        return newData.substring(0, newData.length-1);
+        const newTexts =(text / WAN).toFixed(2);
+        return (<span title={`${text}元`}>{newTexts}</span>);
       }
     };
     return openList;

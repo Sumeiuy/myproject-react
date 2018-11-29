@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-11-12 19:25:08
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-28 14:19:20
+ * @Last Modified time: 2018-11-28 18:59:48
  */
 
 import React, { PureComponent } from 'react';
@@ -203,13 +203,13 @@ export default class TaskList extends PureComponent {
             title: '类型',
             dataIndex: 'workFlowName',
             key: 'workFlowName',
-            render: (item, record) => (<span className={styles.applyWorkFlowName}>{record.workFlowName}</span>),
+            render: (item, record) => (<span className={styles.tableItem}>{record.workFlowName}</span>),
           },
           {
             title: '提交时间',
             dataIndex: 'startTime',
             key: 'startTime',
-            render: (item, record) => (<span>{moment(Number(record.startTime)).format('YYYY-MM-DD')}</span>),
+            render: (item, record) => (<span className={styles.tableItem}>{moment(Number(record.startTime)).format('YYYY-MM-DD')}</span>),
           },
         ];
         break;
@@ -234,28 +234,31 @@ export default class TaskList extends PureComponent {
             title: '类型',
             dataIndex: 'workFlowName',
             key: 'workFlowName',
+            render: (item, record) => (<span className={styles.tableItem}>{record.workFlowName}</span>),
           },
           {
             title: '提交人工号',
             dataIndex: 'originator',
             key: 'originator',
+            render: (item, record) => (<span className={styles.tableItem}>{record.originator}</span>),
           },
           {
             title: '提交人姓名',
             dataIndex: 'originatorName',
             key: 'originatorName',
+            render: (item, record) => (<span className={styles.tableItem}>{record.originatorName}</span>),
           },
           {
             title: '提交时间',
             dataIndex: 'startTime',
             key: 'startTime',
-            render: (item, record) => (<span>{moment(Number(record.startTime)).format('YYYY-MM-DD')}</span>),
+            render: (item, record) => (<span className={styles.tableItem}>{moment(Number(record.startTime)).format('YYYY-MM-DD')}</span>),
           },
           {
             title: '审批时间',
             dataIndex: 'endTime',
             key: 'endTime',
-            render: (item, record) => (<span>{moment(Number(record.endTime)).format('YYYY-MM-DD')}</span>),
+            render: (item, record) => (<span className={styles.tableItem}>{moment(Number(record.endTime)).format('YYYY-MM-DD')}</span>),
           },
         ];
         break;
