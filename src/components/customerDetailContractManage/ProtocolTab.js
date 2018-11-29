@@ -13,6 +13,7 @@ import _ from 'lodash';
 import moment from 'moment';
 import { message } from 'antd';
 
+import Tooltip from '../common/Tooltip';
 import Icon from '../common/Icon';
 import Table from '../common/table';
 import Button from '../common/Button';
@@ -31,9 +32,11 @@ import {
 import styles from './protocolTab.less';
 
 const KEY_ID = 'id';
+const KEY_NAME = 'name';
 const KEY_START_TIME = 'startTime';
 const KEY_END_TIME = 'endTime';
 const KEY_HANDLER_NAME = 'handlerName';
+const KEY_ORGNAME = 'orgName';
 const KEY_OPERATION = 'operation';
 // 个人类别默认值
 const DEFAULT_PER_TYPE = 'per';
@@ -114,6 +117,10 @@ export default class ProtocolTab extends PureComponent {
     // 协议编号列 render
     const idColumn = this.findColumn(newList, KEY_ID);
     idColumn.render = (text, record) => this.renderIdColumn(text, record);
+    // 协议名称
+    const nameColumn = this.findColumn(newList, KEY_NAME);
+    nameColumn.render = text => this.renderTooltipColumn(text);
+    // 处理人
     const handlerNameColumn = this.findColumn(newList, KEY_HANDLER_NAME);
     handlerNameColumn.render = (text, record) => {
       return !_.isEmpty(text)
@@ -126,6 +133,9 @@ export default class ProtocolTab extends PureComponent {
     // 结束日期
     const endTimeColumn = this.findColumn(newList, KEY_END_TIME);
     endTimeColumn.render = text => this.renderTimeColumn(text);
+    // 服务营业部
+    const orgColumn = this.findColumn(newList, KEY_ORGNAME);
+    orgColumn.render = text => this.renderTooltipColumn(text);
     // 操作列
     const operationColumn = this.findColumn(newList, KEY_OPERATION);
     operationColumn.render = (text, record) => this.renderOperationColumn(text, record);
@@ -153,6 +163,21 @@ export default class ProtocolTab extends PureComponent {
         <a onClick={linkHandle}>{text}</a>
       </div>
     );
+  }
+
+  // 渲染 tooltip 列
+  @autobind
+  renderTooltipColumn(text) {
+    if (!_.isEmpty(text)) {
+      return (
+        <Tooltip title={text}>
+          <div className={styles.ellipsis}>
+            {text}
+          </div>
+        </Tooltip>
+      );
+    }
+    return DEFAULT_TEXT;
   }
 
   // 渲染时间渲染列
