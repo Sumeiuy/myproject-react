@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-21 09:35:09
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-28 15:43:08
+ * @LastEditTime: 2018-11-28 20:59:19
  * @Description: 交易订单流水
  */
 
@@ -13,6 +13,7 @@ import _ from 'lodash';
 import moment from 'moment';
 import Table from '../common/table';
 import Tooltip from '../common/Tooltip';
+import { thousandFormat } from '../../helper/number';
 import IfTableWrap from '../common/IfTableWrap';
 import { isNull } from '../../helper/check';
 import {
@@ -56,6 +57,12 @@ export default class TradeOrderFlow extends PureComponent {
           newColumn = {
             ...column,
             render: isBool => isBool ? '是' : '否',
+          };
+          break;
+        case 'money':
+          newColumn = {
+            ...column,
+            render: content => thousandFormat(content),
           };
           break;
         case 'productName':

@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-23 09:51:00
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-28 14:32:05
+ * @LastEditTime: 2018-11-28 20:53:16
  * @Description: 服务订单流水详情
  */
 
@@ -20,8 +20,10 @@ import OrderApproval from './OrderApproval';
 import ServiceProductList from './ServiceProductList';
 import AttachmentList from './AttachmentList';
 import logable from '../../decorators/logable';
+import { isNull } from '../../helper/check';
 
 const TabPane = Tabs.TabPane;
+const DEFAULT_SHOW_VALUE = '--';
 
 export default class ProductOrderDetail extends PureComponent {
   static propsTypes = {
@@ -76,8 +78,28 @@ export default class ProductOrderDetail extends PureComponent {
     this.props.onClose();
   }
 
+  // 当值为空时，设置默认显示
   @autobind
-  @logable({ type: 'Click', payload: { name: '服务订单详情切换展示', value: '$args[0]' } })
+  setDefaultValue(item) {
+    return isNull(item) ? DEFAULT_SHOW_VALUE : item;
+  }
+
+  @autobind
+  isValidValue(checked) {
+    if (_.isEmpty(checked) || _.every(checked, item => item === null)) {
+      return false;
+    }
+    return true;
+  }
+
+  @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '服务订单详情切换展示',
+      value: '$args[0]',
+    },
+  })
   handleTabChange(activeTabKey) {
   }
 
@@ -91,17 +113,17 @@ export default class ProductOrderDetail extends PureComponent {
       attachmentList,
     } = this.props;
     const {
-      originalCommission = '--',
-      newCommission = '--',
-      approveFlow = '--',
-      executiveCondition = '--',
+      originalCommission,
+      newCommission,
+      approveFlow,
+      executiveCondition,
     } = serviceOrderDetail;
     const closeButton = (
       <Button onClick={this.handleModalClose}>关闭</Button>
     );
     const isServiceProductListRender = serviceProductList.length !== 0;
-    const isApprovalRender = !_.isEmpty(serviceOrderDetail) && !_.isEmpty(orderApproval);
-    const isAttachmentListRender = !_.isEmpty(serviceOrderDetail) && attachmentList.length !== 0;
+    const isApprovalRender = this.isValidValue(serviceOrderDetail) && this.isValidValue(orderApproval);
+    const isAttachmentListRender = this.isValidValue(serviceOrderDetail) && attachmentList.length !== 0;
 
     return (
       <Modal
@@ -117,18 +139,18 @@ export default class ProductOrderDetail extends PureComponent {
           <div className={styles.detailInfo}>
             <div className={styles.detail}>
               <span className={styles.hint}>客户原佣金（‰）：</span>
-              <span className={styles.info}>{originalCommission}</span>
+              <span className={styles.info}>{this.setDefaultValue(originalCommission)}</span>
               <span className={styles.hint}>客户新佣金（‰）：</span>
-              <span className={styles.info}>{newCommission}</span>
+              <span className={styles.info}>{this.setDefaultValue(newCommission)}</span>
               <span className={styles.hint}>审批流程：</span>
               <span className={styles.info}>
-                <Tooltip title={approveFlow}>{approveFlow}</Tooltip>
+                <Tooltip title={approveFlow}>{this.setDefaultValue(approveFlow)}</Tooltip>
               </span>
             </div>
             <div className={styles.detail}>
               <span className={styles.hint}>执行情况：</span>
               <span>
-                <Tooltip title={executiveCondition}>{executiveCondition}</Tooltip>
+                <Tooltip title={executiveCondition}>{this.setDefaultValue(executiveCondition)}</Tooltip>
               </span>
             </div>
           </div>
