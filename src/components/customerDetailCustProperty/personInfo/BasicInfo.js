@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性-个人客户基本信息
  * @Date: 2018-11-07 14:33:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-29 13:23:47
+ * @Last Modified time: 2018-11-29 15:04:53
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -140,9 +140,23 @@ export default class BasicInfo extends PureComponent {
   @autobind
   upadateHobby(value) {
     this.updateBasicInfo({
-      infoKey: 'hobby',
-      infoValue: value,
+      hobby: value,
     });
+  }
+
+  // 校验爱好
+  @autobind
+  checkHobby(value) {
+    if (_.isEmpty(value)) {
+      return {
+        validate: false,
+        msg: '数据不能为空',
+      };
+    }
+    return {
+      validate: true,
+      msg: '',
+    };
   }
 
   render() {
@@ -236,7 +250,7 @@ export default class BasicInfo extends PureComponent {
           </div>
           <div className={styles.infoItemBox}>
             { /**如果是主服务经理才能编辑 */
-              isMainEmp
+              !isMainEmp
                 ? (
                   <InfoItem
                     width={INFO_ITEM_WITDH_110}
@@ -266,49 +280,61 @@ export default class BasicInfo extends PureComponent {
             }
           </div>
           <div className={styles.infoItemBox}>
-           <InfoItem
-              width={INFO_ITEM_WITDH}
-              label="子女数量"
-              value={this.getChildNumText(data.childNum)}
-              className={styles.infoItem}
-              isNeedValueTitle={checkIsNeedTitle(this.getChildNumText(data.childNum))}
-              isNeedOverFlowEllipsis
-           />
-           {/* 本迭代中先关闭
-             <BasicEditorCell
-               label="子女数量"
-               width={INFO_ITEM_WITDH}
-               className={styles.infoItem}
-               editorId="person_children_num"
-               onEditOK={this.updateChildNum}
-               value={data.childNum}
-               displayValue={data.childNum}
-               checkable
-               onCheck={this.checkChildNumValue}
-               onSuccess={this.refreshCustProperty}
-             />
-              */}
+           {
+             isMainEmp
+              ? (
+                <InfoItem
+                  width={INFO_ITEM_WITDH}
+                  label="子女数量"
+                  value={this.getChildNumText(data.childNum)}
+                  className={styles.infoItem}
+                  isNeedValueTitle={checkIsNeedTitle(this.getChildNumText(data.childNum))}
+                  isNeedOverFlowEllipsis
+              />)
+              : (
+                <BasicEditorCell
+                  label="子女数量"
+                  width={INFO_ITEM_WITDH}
+                  className={styles.infoItem}
+                  editorId="person_children_num"
+                  onEditOK={this.updateChildNum}
+                  value={data.childNum}
+                  displayValue={data.childNum}
+                  checkable
+                  onCheck={this.checkChildNumValue}
+                  onSuccess={this.refreshCustProperty}
+                />
+              )
+           }
           </div>
           <div className={styles.infoItemBox}>
-            <InfoItem
-              width={INFO_ITEM_WITDH}
-              label="爱好"
-              value={data.hobby || DEFAULT_VALUE}
-              className={styles.infoItem}
-              isNeedValueTitle={checkIsNeedTitle(data.hobby || DEFAULT_VALUE)}
-              isNeedOverFlowEllipsis
-            />
-            {/* 本迭代中先关闭
-              <BasicEditorCell
-              label="爱好"
-              width={INFO_ITEM_WITDH}
-              className={styles.infoItem}
-              editorId="person_children_num"
-              onEditOK={_.noop}
-              value={data.hobby || DEFAULT_VALUE}
-              displayValue={data.hobby || DEFAULT_VALUE}
-            />
-            */}
+            {
+              isMainEmp
+                ? (
+                  <InfoItem
+                    width={INFO_ITEM_WITDH}
+                    label="爱好"
+                    value={data.hobby || DEFAULT_VALUE}
+                    className={styles.infoItem}
+                    isNeedValueTitle={checkIsNeedTitle(data.hobby || DEFAULT_VALUE)}
+                    isNeedOverFlowEllipsis
+                  />
+                )
+                : (
+                  <BasicEditorCell
+                    label="爱好"
+                    width={INFO_ITEM_WITDH}
+                    className={styles.infoItem}
+                    editorId="person_hobby"
+                    onEditOK={this.upadateHobby}
+                    value={data.hobby || DEFAULT_VALUE}
+                    displayValue={data.hobby || DEFAULT_VALUE}
+                    checkable
+                    onCheck={this.checkHobby}
+                    onSuccess={this.refreshCustProperty}
+                  />
+                )
+            }
           </div>
         </div>
       </div>
