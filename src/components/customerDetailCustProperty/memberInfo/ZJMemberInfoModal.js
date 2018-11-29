@@ -127,8 +127,8 @@ export default class ZJMemeberInfoModal extends PureComponent {
           modalKey="integralFlow"
           maskClosable={false}
         >
-          <IfTableWrap isRender={isRender} text={NODATA_HINT} noDataStyle={{'paddingTop': '200px'}}>
-           <div className={styles.tabContainer}>
+          <IfTableWrap isRender={isRender} text={NODATA_HINT}>
+            <div className={styles.tabContainer}>
               <Table
                 pagination={showIntegralFlowPagination}
                 dataSource={tradeFlow}

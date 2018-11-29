@@ -94,7 +94,7 @@ export default class ZLMemeberInfoModal extends PureComponent {
           modalKey="memberGrade"
           maskClosable={false}
         >
-          <IfTableWrap isRender={isRender} text={NODATA_HINT} noDataStyle={{'paddingTop': '200px'}}>
+          <IfTableWrap isRender={isRender} text={NODATA_HINT}>
             <div className={styles.tabContainer}>
               <Table
                 pagination={showMemberGradePagination}
