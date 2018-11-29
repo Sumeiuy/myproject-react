@@ -148,7 +148,7 @@ export default class ProgressList extends PureComponent {
     };
     // 动态设置progress间距
     const length = dataSource.length;
-    const style = { marginTop: `${(180 - (length * 25)) / (length + 1)}px` };
+    const style = { marginTop: `${(172 - (length * 25)) / (length + 1)}px` };
     return dataSource.map(
       (item, index) => {
         const rowId = `row${index}`;

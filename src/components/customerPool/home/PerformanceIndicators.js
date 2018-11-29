@@ -347,7 +347,7 @@ export default class PerformanceIndicators extends PureComponent {
               option={items}
               resizable
               style={{
-                height: '180px',
+                height: '153px',
               }}
             />
           </IfEmpty>
