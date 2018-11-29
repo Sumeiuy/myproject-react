@@ -5,9 +5,6 @@
  * @Last Modified by: XuWenKang
  * @Last Modified time: 2018-11-23 13:27:38
  */
-import React from 'react';
-import { time } from '../../helper';
-
 export const DEFAULT_VALUE = '--';
 
 export const couponTitleList = [
@@ -61,9 +58,6 @@ export const productTitleList = [
     key: 'productCode',
     className: 'firstStyle',
     width: 110,
-    render: text => (
-      <span title={text}>{text}</span>
-    ),
   },
   {
     title: '产品名称',
@@ -71,9 +65,6 @@ export const productTitleList = [
     key: 'productText',
     className: '',
     width: 192,
-    render: text => (
-      <span title={text}>{text}</span>
-    ),
   },
   {
     title: '产品简称',
@@ -81,9 +72,6 @@ export const productTitleList = [
     key: 'introduce',
     className: '',
     width: 304,
-    render: text => (
-      <span title={text}>{text}</span>
-    ),
   },
   {
     title: '到期日',
@@ -91,9 +79,6 @@ export const productTitleList = [
     key: 'endTime',
     className: '',
     width: 130,
-    render: text => (
-      <span title={time.format(text)}>{time.format(text)}</span>
-    ),
   },
   {
     title: '产品活动标签',
@@ -101,10 +86,21 @@ export const productTitleList = [
     key: 'label',
     className: '',
     width: 270,
-    render: text => (
-      <span title={text}>{text}</span>
-    ),
   },
 ];
 // 根据传入的参数判断是否需要显示title，如果值等于默认值则不显示
 export const checkIsNeedTitle = value => (value !== DEFAULT_VALUE);
+// 优惠券列表需要tooltip的dataindex
+export const COUPON_LIST_NEED_TOOLTIP = [
+  'ticketName',
+  'ticketTypeText',
+  'sourceName',
+];
+// 优惠券详情需要tooltip的dataindex
+export const COUPON_DETAIL_NEED_TOOLTIP = [
+  'productCode',
+  'productText',
+  'introduce',
+  'label',
+];
+

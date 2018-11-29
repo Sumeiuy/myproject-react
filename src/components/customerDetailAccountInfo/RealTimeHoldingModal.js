@@ -1,8 +1,8 @@
 /*
  * @Author: sunweibin
  * @Date: 2018-11-06 17:44:38
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-29 11:17:33
+ * @Last Modified by: wangyikai
+ * @Last Modified time: 2018-11-29 17:20:40
  * @description 实时持仓的弹出层
  */
 import React, { PureComponent } from 'react';
@@ -28,7 +28,7 @@ import styles from './realTimeHoldingModal.less';
 
 const TabPane = Tabs.TabPane;
 const RadioGroup = Radio.Group;
-
+const PRODUCT_CODE = 'productCode';
 export default class RealTimeHoldingModal extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -91,6 +91,28 @@ export default class RealTimeHoldingModal extends PureComponent {
         profitAndLoss: newProfitAndLoss
       };
     });
+  }
+
+  // 类型为信用显示融的标识
+  @autobind
+  renderSecuritPositionColumns() {
+    const creditList = [...STOCK_REALTIME_COLUMNS];
+    const custNameColumn = _.find(creditList, o => o.key === PRODUCT_CODE);
+    custNameColumn.render = (text, record) => {
+      return (
+        <div className={styles.nameCell}>
+          <span>{text}</span>
+          {
+            record.accountType === 'credit'
+            ? (
+                <span className={styles.rongIcon}>融</span>
+              )
+            : null
+          }
+        </div>
+      );
+    };
+    return creditList;
   }
 
   @autobind
@@ -191,7 +213,7 @@ export default class RealTimeHoldingModal extends PureComponent {
               <IfTableWrap isRender={!hasNoStockData} text="暂无证券实时持仓数据">
                 <Table
                   className={styles.tableContainer}
-                  columns={STOCK_REALTIME_COLUMNS}
+                  columns={this.renderSecuritPositionColumns()}
                   dataSource={stockData}
                   pagination={false}
                   scroll={{ x: '1026px' }}
