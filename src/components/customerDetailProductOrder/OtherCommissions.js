@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-23 09:51:00
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-29 11:39:31
+ * @LastEditTime: 2018-11-29 13:37:28
  * @Description: 服务订单流水详情-其他佣金
  */
 
@@ -12,7 +12,7 @@ import _ from 'lodash';
 import styles from './otherCommissions.less';
 
 function transformCommission(commission) {
-  return commission === null || commission === undefined ? '--' : `${commission}`;
+  return _.isElement(commission) ? '--' : `${commission}`;
 }
 
 export default function OtherCommissions(props) {
@@ -110,7 +110,7 @@ export default function OtherCommissions(props) {
         _.map(commissions, commission => (
           <div className={styles.commission}>
             <span className={styles.hint}>{commission.name}：</span>
-            <span>{transformCommission(commission.value)}</span>
+            <span title={commission.value}>{transformCommission(commission.value)}</span>
           </div>
         ))
       }
