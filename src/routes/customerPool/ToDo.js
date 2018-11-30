@@ -22,8 +22,8 @@ import TodoFilter from '../../components/customerPool/todo/TodoFilter';
 import { defaultStartTime, defaultEndTime, typeOption } from '../../components/customerPool/todo/config';
 
 const effect = dva.generateEffect;
-const curPageNum = 1;
-const pageSize = 10;
+const DEFAULT_PAGENUM = 1;
+const DEFAULT_PAGESIZE = 10;
 const TabPane = Tabs.TabPane;
 
 const mapStateToProps = state => ({
@@ -125,8 +125,8 @@ export default class ToDo extends PureComponent {
         this.getApplyData({
           startTime,
           endTime,
-          pageSize,
-          pageNum: curPageNum,
+          pageSize: DEFAULT_PAGESIZE,
+          pageNum: DEFAULT_PAGENUM,
           category,
         });
         break;
@@ -134,8 +134,8 @@ export default class ToDo extends PureComponent {
         this.getApproveData({
           startTime,
           endTime,
-          pageSize,
-          pageNum: curPageNum,
+          pageSize: DEFAULT_PAGESIZE,
+          pageNum: DEFAULT_PAGENUM,
           category,
           originator,
         });
@@ -173,8 +173,8 @@ export default class ToDo extends PureComponent {
       query: {
         ...query,
         keyword: value,
-        curPageNum,
-        pageSize,
+        pageNum: DEFAULT_PAGENUM,
+        pageSize: DEFAULT_PAGESIZE,
       },
     });
   }
@@ -190,8 +190,8 @@ export default class ToDo extends PureComponent {
   })
   handleApplySearch(value) {
     this.getApplyData({
-      pageSize,
-      pageNum: curPageNum,
+      pageSize: DEFAULT_PAGESIZE,
+      pageNum: DEFAULT_PAGENUM,
       subject: value
     });
   }
@@ -206,10 +206,9 @@ export default class ToDo extends PureComponent {
     },
   })
   handleApproveSearch(value) {
-    const { location: { query: { pageSize = 10 } } } = this.props;
     this.getApproveData({
-      pageSize,
-      pageNum: curPageNum,
+      pageSize: DEFAULT_PAGESIZE,
+      pageNum: DEFAULT_PAGENUM,
       subject: value
     });
   }
@@ -264,8 +263,8 @@ export default class ToDo extends PureComponent {
           applyType: [key, value],
         }, () => {
           this.getApplyData({
-            pageSize,
-            pageNum: curPageNum,
+            pageSize: DEFAULT_PAGESIZE,
+            pageNum: DEFAULT_PAGENUM,
             category: key,
             startTime,
             endTime,
@@ -277,8 +276,8 @@ export default class ToDo extends PureComponent {
           approveType: [key, value],
         }, () => {
           this.getApproveData({
-            pageSize,
-            pageNum: curPageNum,
+            pageSize: DEFAULT_PAGESIZE,
+            pageNum: DEFAULT_PAGENUM,
             category: key,
             startTime,
             endTime,
@@ -321,8 +320,8 @@ export default class ToDo extends PureComponent {
             endTime,
           } = this.state;
           this.getApplyData({
-            pageSize,
-            pageNum: curPageNum,
+            pageSize: DEFAULT_PAGESIZE,
+            pageNum: DEFAULT_PAGENUM,
             startTime,
             endTime,
             category,
@@ -339,8 +338,8 @@ export default class ToDo extends PureComponent {
             endTime,
           } = this.state;
           this.getApproveData({
-            pageSize,
-            pageNum: curPageNum,
+            pageSize: DEFAULT_PAGESIZE,
+            pageNum: DEFAULT_PAGENUM,
             startTime,
             endTime,
             category,
@@ -369,8 +368,8 @@ export default class ToDo extends PureComponent {
       initiatorValue: [id, name]
     }, () => {
       this.getApproveData({
-        pageSize,
-        pageNum: curPageNum,
+        pageSize: DEFAULT_PAGESIZE,
+        pageNum: DEFAULT_PAGENUM,
         originator: id,
         startTime,
         endTime,
@@ -410,19 +409,19 @@ export default class ToDo extends PureComponent {
     switch (obj) {
       case 'MY_APPLY':
         this.getApplyData({
-          startTime,
-          endTime,
-          pageSize,
-          pageNum: curPageNum,
+          startTime: defaultStartTime,
+          endTime: defaultEndTime,
+          pageSize: DEFAULT_PAGESIZE,
+          pageNum: DEFAULT_PAGENUM,
           category,
         });
         break;
       case 'MY_APPROVE':
         this.getApproveData({
-          startTime,
-          endTime,
-          pageSize,
-          pageNum: curPageNum,
+          startTime: defaultStartTime,
+          endTime: defaultEndTime,
+          pageSize: DEFAULT_PAGESIZE,
+          pageNum: DEFAULT_PAGENUM,
           category,
           originator,
         });
@@ -452,7 +451,7 @@ export default class ToDo extends PureComponent {
     switch (taskType) {
       case 'MY_APPLY':
         this.getApplyData({
-          pageSize: 10,
+          pageSize: DEFAULT_PAGESIZE,
           pageNum: page,
           startTime,
           endTime,
@@ -461,7 +460,7 @@ export default class ToDo extends PureComponent {
         break;
       case 'MY_APPROVE':
         this.getApproveData({
-          pageSize: 10,
+          pageSize: DEFAULT_PAGESIZE,
           pageNum: page,
           startTime,
           endTime,
@@ -567,8 +566,8 @@ export default class ToDo extends PureComponent {
                 initiatorCallback={this.handleInitiatorCallback}
                 onSearch={this.handleApproveSearch}
                 InputChange={this.handleInitiatorInputChange}
-                startTime={defaultStartTime}
-                endTime={defaultEndTime}
+                startTime={startTime}
+                endTime={endTime}
                 typeData={typeOption}
                 type={approveType}
                 initiatorData={initiator}

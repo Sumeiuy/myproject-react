@@ -264,22 +264,24 @@ export default class Home extends PureComponent {
     return (
       <div className={styles.container}>
         <div className={styles.breadCrumb}><BreadCrumb {...breadCrumbProps} /></div>
-        <IfWrap isRender={basicInfoPermission}>
           <div className={styles.custInfo}>
             <div className={styles.custBasicInfo}>
-              <CustomerBasicInfo {...CustomerBasicInfoProps}/>
+              <IfWrap isRender={basicInfoPermission}>
+                <CustomerBasicInfo {...CustomerBasicInfoProps}/>
+              </IfWrap>
             </div>
             <div className={styles.custDetailInfo}>
-              <SummaryInfo
-                location={location}
-                data={summaryInfo}
-                moreLabelInfo={moreLabelInfo}
-                queryAllKeyLabels={queryAllKeyLabels}
-                replace={this.context.replace}
-              />
+              <IfWrap isRender={basicInfoPermission}>
+                <SummaryInfo
+                  location={location}
+                  data={summaryInfo}
+                  moreLabelInfo={moreLabelInfo}
+                  queryAllKeyLabels={queryAllKeyLabels}
+                  replace={this.context.replace}
+                />
+              </IfWrap>
             </div>
           </div>
-        </IfWrap>
         <div className={styles.tabContainer}>
           <Tabs
             activeKey={activeTabKey}
