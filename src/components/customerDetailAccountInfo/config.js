@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-11 18:37:20
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-30 14:32:07
+ * @Last Modified time: 2018-11-30 15:40:34
  * @description 新版客户360详情的账户信息Tab下页面的配置项
  */
 
@@ -764,18 +764,18 @@ export const STOCK_REALTIME_COLUMNS = [
     dataIndex: 'productCode',
     key: 'productCode',
     className: 'productCode',
-    render: (text,record) => {
+    render: (text, record) => {
       return text === 'null' ? '' : text;
-     }
+     },
   },
   {
     title: '产品名称',
     dataIndex: 'productName',
     key: 'productName',
     className: 'productCode',
-    render: (text,record) => {
+    render: (text, record) => {
       return text === 'null' ? '' : text;
-     }
+     },
   },
   {
     title: '持仓数',
@@ -783,9 +783,9 @@ export const STOCK_REALTIME_COLUMNS = [
     key: 'holdingNumber',
     align: 'right',
     className: 'dataInterval',
-    render: (text,record) => {
+    render: (text, record) => {
       return text === 'null' ? '' : text;
-     }
+     },
   },
   {
     title: '可用数',
@@ -793,9 +793,9 @@ export const STOCK_REALTIME_COLUMNS = [
     key: 'availableNumber',
     align: 'right',
     className: 'dataInterval',
-    render: (text,record) => {
+    render: (text, record) => {
       return text === 'null' ? '' : text;
-     }
+     },
   },
   {
     title: '成本',
@@ -803,9 +803,9 @@ export const STOCK_REALTIME_COLUMNS = [
     key: 'cost',
     align: 'right',
     className: 'dataInterval',
-    render: (text,record) => {
+    render: (text, record) => {
      return text === 'null' ? '' : text;
-    }
+    },
   },
   {
     title: '现价',
@@ -813,9 +813,9 @@ export const STOCK_REALTIME_COLUMNS = [
     key: 'presentPrice',
     align: 'right',
     className: 'dataInterval',
-    render: (text,record) => {
+    render: (text, record) => {
       return text === 'null' ? '' : text;
-     }
+     },
   },
   {
     title: '市值',
@@ -823,9 +823,9 @@ export const STOCK_REALTIME_COLUMNS = [
     key: 'marketValue',
     align: 'right',
     className: 'dataInterval',
-    render: (text,record) => {
+    render: (text, record) => {
       return text === 'null' ? '' : text;
-     }
+     },
   },
   {
     title: '盈亏',
@@ -833,18 +833,18 @@ export const STOCK_REALTIME_COLUMNS = [
     key: 'profitAndLoss',
     align: 'right',
     className: 'dataInterval',
-    render: (text,record) => {
+    render: (text, record) => {
       return text === 'null' ? '' : text;
-     }
+     },
   },
   {
     title: '货币类型',
     dataIndex: 'currencyType',
     key: 'currencyType',
     className: 'currencyType',
-    render: (text,record) => {
+    render: (text, record) => {
       return text === 'null' ? '' : text;
-     }
+     },
   },
 ];
 // 产品实时持仓columns
@@ -854,18 +854,18 @@ export const PRODUCT_REALTIME_COLUMNS = [
     dataIndex: 'productCode',
     key: 'productCode',
     className: 'productCode',
-    render: (text,record) => {
+    render: (text, record) => {
       return text === 'null' ? '' : text;
-     }
+     },
   },
   {
     title: '产品名称',
     dataIndex: 'productName',
     key: 'productName',
     className:'productName',
-    render: (text,record) => {
+    render: (text, record) => {
       return text === 'null' ? '' : text;
-     }
+     },
   },
   {
     title: '份额',
@@ -873,9 +873,9 @@ export const PRODUCT_REALTIME_COLUMNS = [
     key: 'share',
     align: 'right',
     className:'share',
-    render: (text,record) => {
+    render: (text, record) => {
       return text === 'null' ? '' : text;
-     }
+     },
   },
   {
     title: '收益率/净值',
@@ -883,9 +883,9 @@ export const PRODUCT_REALTIME_COLUMNS = [
     key: 'netWorth',
     align: 'right',
     className:'netWorth',
-    render: (text,record) => {
+    render: (text, record) => {
       return text === 'null' ? '' : text;
-     }
+     },
   },
   {
     title: '市值',
@@ -893,9 +893,9 @@ export const PRODUCT_REALTIME_COLUMNS = [
     key: 'marketValue',
     align: 'right',
     className:'marketValue',
-    render: (text,record) => {
+    render: (text, record) => {
       return text === 'null' ? '' : text;
-     }
+     },
   },
   {
     title: '盈亏',
@@ -903,18 +903,18 @@ export const PRODUCT_REALTIME_COLUMNS = [
     key: 'profitAndLoss',
     align: 'right',
     className:'profitAndLoss',
-    render: (text,record) => {
+    render: (text, record) => {
       return text === 'null' ? '' : text;
-     }
+     },
   },
   {
     title: '货币类型',
     dataIndex: 'currencyType',
     key: 'currencyType',
     className: 'currencyType',
-    render: (text,record) => {
+    render: (text, record) => {
       return text === 'null' ? '' : text;
-     }
+     },
   },
 ];
 

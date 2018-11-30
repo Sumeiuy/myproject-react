@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-06 17:44:38
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-30 14:19:18
+ * @Last Modified time: 2018-11-30 15:39:40
  * @description 实时持仓的弹出层
  */
 import React, { PureComponent } from 'react';
