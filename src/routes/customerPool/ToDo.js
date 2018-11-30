@@ -408,6 +408,11 @@ export default class ToDo extends PureComponent {
     });
     switch (obj) {
       case 'MY_APPLY':
+        this.setState({
+          startTime: defaultStartTime,
+          endTime: defaultEndTime,
+          applyType: [],
+        });
         this.getApplyData({
           startTime: defaultStartTime,
           endTime: defaultEndTime,
@@ -417,6 +422,11 @@ export default class ToDo extends PureComponent {
         });
         break;
       case 'MY_APPROVE':
+        this.setState({
+          startTime: defaultStartTime,
+          endTime: defaultEndTime,
+          approveType: [],
+        });
         this.getApproveData({
           startTime: defaultStartTime,
           endTime: defaultEndTime,
