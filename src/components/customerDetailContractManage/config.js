@@ -207,7 +207,6 @@ export const AGREEMENT_COLUMNS = [
     dataIndex: 'id',
     title: '合同编号',
     width: 120,
-    render: text => _.isEmpty(text) ? DEFAULT_TEXT : text,
   },
   {
     key: 'name',
