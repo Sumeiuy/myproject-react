@@ -14,6 +14,7 @@ export default function getCustomerDetailPermission(empInfo = {}) {
     hasCIBMPPermission, // HTSC 客户资料-分中心管理岗
     hasNPCIHMPPermission, // HTSC 客户资料（无隐私）-总部管理岗
     hasNPCIBMPPermission, // HTSC 客户资料（无隐私）-分中心管理岗
+    hasCDMPermission, // HTSC 客户资料管理岗（无隐私）
     hasCIYYBZXGPermission, // HTSC 客户资料-营业部执行岗
     hasNPCIYYBZXGPermission, // HTSC 客户资料（无隐私）-营业部执行岗
     hasPRIVATEINFOCHECKPermission, // HTSC 隐私信息查询权限
@@ -29,6 +30,7 @@ export default function getCustomerDetailPermission(empInfo = {}) {
     hasNPCIBMPPermission() ||
     hasCIYYBZXGPermission() ||
     hasNPCIYYBZXGPermission() ||
+    hasCDMPermission() ||
     empInfo.isMainEmp ||
     empInfo.isAssistantEmp;
 
