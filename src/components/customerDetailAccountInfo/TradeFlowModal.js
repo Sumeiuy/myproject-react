@@ -2,7 +2,7 @@
  * @Author: liqianwen
  * @Date: 2018-11-07 13:31:51
  * @Last Modified by: liqianwen
- * @Last Modified time: 2018-11-28 20:02:00
+ * @Last Modified time: 2018-11-30 18:58:05
  * @description 新版客户360详情的交易流水的弹出层
  */
 import React, { PureComponent } from 'react';
@@ -687,7 +687,7 @@ export default class TradeFlowModal extends PureComponent {
     // 获取普通账户表格的分页器信息
     const standardPage = this.getPage(standardTradeFlowRes.page);
     // 判断有没有信用账户流水数据
-    const isRenderCredit = !_.isEmpty(standardTradeFlowRes.list);
+    const isRenderCredit = !_.isEmpty(creditTradeFlowRes.list);
     const creditData = data.padEmptyDataForList(creditTradeFlowRes.list);
     const creditTradeColumns = this.transformColumnsData(CREDIT_TRADE_FLOW_COLUMNS);
     const creditPage = this.getPage(creditTradeFlowRes.page);
