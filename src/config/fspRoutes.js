@@ -373,6 +373,12 @@ const fspRoutes = [
     containerId: 'edit_btn_showDetailsKnowledge',
     url: /\/knowledge\/showUpdKnowledge/,
   },
+  // 产品中心相关跳转
+  {
+    path: /\/fsp\/productCenter\/.*/,
+    action: 'loadInIframe',
+    url: '',
+  },
 ];
 
 export default fspRoutes;
