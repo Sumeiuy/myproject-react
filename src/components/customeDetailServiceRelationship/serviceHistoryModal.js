@@ -72,7 +72,7 @@ export default class ServiceHistoryModal extends PureComponent {
         modalKey="serviceHistory"
         maskClosable={false}
       >
-        <IfTableWrap isRender={isRender} text={NODATA_HINT} noDataStyle={{'paddingTop': '200px'}}>
+        <IfTableWrap isRender={isRender} text={NODATA_HINT}>
           <div className={styles.tabContainer}>
             <Table
               pagination={showServiceHistoryPagination}

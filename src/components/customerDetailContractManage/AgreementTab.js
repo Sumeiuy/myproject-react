@@ -25,6 +25,7 @@ import {
 } from './config';
 import styles from './protocolTab.less';
 
+const KEY_NAME = 'name';
 const KEY_START_TIME = 'startTime';
 const KEY_END_TIME = 'endTime';
 const KEY_CONTENT = 'content';
@@ -77,6 +78,9 @@ export default class AgreementTab extends PureComponent {
   @autobind
   getProtocolColumns(list) {
     const newList = [...list];
+    // 合同名称
+    const nameColumn = _.find(newList, o => o.key === KEY_NAME);
+    nameColumn.render = text => this.renderTooltipColumn(text);
     // 开始日期
     const startTimeColumn = _.find(newList, o => o.key === KEY_START_TIME);
     startTimeColumn.render = text => this.renderTimeColumn(text);

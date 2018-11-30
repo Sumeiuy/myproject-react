@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-22 09:54:56
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-22 15:41:48
+ * @LastEditTime: 2018-11-29 20:24:57
  * @Description: 表格无数据的占位显示
  */
 
@@ -20,9 +20,11 @@ const IfTableWrap = props => {
   if (!isRender) {
     return (
       <div className={styles.noDataWrap} style={noDataStyle}>
-        <div className={styles.noDataIcon} style={iconStyle} />
-        <div className={styles.noDataText}>
-          {text}
+        <div className={styles.placeholder}>
+          <div className={styles.noDataIcon} style={iconStyle} />
+          <div className={styles.noDataText}>
+            {text}
+          </div>
         </div>
       </div>
     );

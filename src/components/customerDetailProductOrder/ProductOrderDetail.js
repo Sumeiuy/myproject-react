@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-23 09:51:00
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-29 16:56:56
+ * @LastEditTime: 2018-11-29 19:51:13
  * @Description: 服务订单流水详情
  */
 
@@ -178,6 +178,7 @@ export default class ProductOrderDetail extends PureComponent {
           <Tabs
             className={styles.detailTab}
             onChange={this.handleTabChange}
+            animated={false}
           >
             <TabPane tab="服务产品" key="serviceProductList">
               <IfTableWrap isRender={isServiceProductListRender} text="订单暂无服务产品信息">
