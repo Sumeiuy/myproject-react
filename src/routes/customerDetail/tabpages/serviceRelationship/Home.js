@@ -2,14 +2,14 @@
  * @Author: wangyikai
  * @Date: 2018-11-05 17:45:53
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-26 16:06:09
+ * @Last Modified time: 2018-11-30 11:21:58
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { connect } from 'dva';
 import { dva } from '../../../../helper';
-import ServiceRelationship from '../../../../components/customeDetailServiceRelationship/serviceRelationship';
+import ServiceRelationship from '../../../../components/customerDetailServiceRelationship/ServiceRelationship';
 const effect = dva.generateEffect;
 const mapStateToProps = state => ({
   // 账户关系下服务团队的数据
