@@ -219,7 +219,7 @@ export default class ProtocolTab extends PureComponent {
     // 协议状态为新建时，操作类型为：编辑、删除
     if (statusCode === 'New') {
       return isMainEmp
-      ? (<div className={styles.iconWrapper}>
+      ? <div className={styles.iconWrapper}>
         <Icon
           type="bianji1"
           title="编辑"
@@ -230,7 +230,7 @@ export default class ProtocolTab extends PureComponent {
           title="删除"
           onClick={() => this.handleDeleteProtocol(record)}
         />
-      </div>)
+      </div>
       : null;
     } else if (statusCode === 'Agree') {
       // 协议状态为同意时，操作类型为：变更、查看历史记录
