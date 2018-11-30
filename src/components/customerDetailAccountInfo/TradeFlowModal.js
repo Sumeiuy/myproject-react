@@ -2,7 +2,7 @@
  * @Author: liqianwen
  * @Date: 2018-11-07 13:31:51
  * @Last Modified by: liqianwen
- * @Last Modified time: 2018-11-30 18:58:05
+ * @Last Modified time: 2018-11-30 21:56:30
  * @description 新版客户360详情的交易流水的弹出层
  */
 import React, { PureComponent } from 'react';
@@ -631,6 +631,18 @@ export default class TradeFlowModal extends PureComponent {
           )
         };
       }
+      if (dataIndex === 'productName' || dataIndex === 'optionContractName') {
+        return {
+          ...column,
+          render: content => (
+            <span>
+              <Tooltip title={content} placement="bottomLeft">
+                <span className={styles.longText}>{content}</span>
+              </Tooltip>
+            </span>
+          )
+        };
+       }
       if (!width) {
         column.width = 150;
       }

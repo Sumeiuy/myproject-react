@@ -1,8 +1,8 @@
 /*
  * @Author: sunweibin
  * @Date: 2018-10-11 18:37:20
- * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-30 15:40:34
+ * @Last Modified by: liqianwen
+ * @Last Modified time: 2018-11-30 22:10:38
  * @description 新版客户360详情的账户信息Tab下页面的配置项
  */
 
@@ -523,6 +523,7 @@ export const CREDIT_TRADE_FLOW_COLUMNS = [
     key: 'productCode',
     className:'productCode',
     fixed: 'left',
+    width: 150,
   },
   {
     title: '业务类别',
