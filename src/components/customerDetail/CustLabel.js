@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-16 09:27:48
  * @Last Modified by: liqianwen
- * @Last Modified time: 2018-11-30 10:10:45
+ * @Last Modified time: 2018-11-30 10:55:37
  * @description 客户360详情中概要信息显示的15个重点标签
  */
 
@@ -27,9 +27,12 @@ export default function CustLabel(props) {
   if (nameLength > 8) {
     fixedName = `${name.substr(0,7)}...`;
   }
+  const style = {
+    minWidth: '220px'
+  };
   return (
     <div className={styles.labelItem}>
-      <Tooltip content={desc} title={name}>
+      <Tooltip content={desc} title={name} overlayStyle={style}>
         <Tag className={styles.tag}>{fixedName}</Tag>
       </Tooltip>
     </div>
