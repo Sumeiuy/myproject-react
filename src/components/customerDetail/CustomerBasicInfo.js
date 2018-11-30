@@ -290,7 +290,7 @@ export default class CustomerBasicInfo extends PureComponent {
                   ) : null
 
                 }
-                <span>
+                <span className={styles.OpenDate}>
                   <Tooltip title={`激活日期：${renderCustomerBasicInfo.accountOpenDate}`}>
                     {this.getAccountOpenDate()}
                   </Tooltip>
