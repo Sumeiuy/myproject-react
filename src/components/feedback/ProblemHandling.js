@@ -2,7 +2,7 @@
  * @Author: yangquanjian
  * @Date: 2018-10-22 09:13:51
  * @LastEditors: li-ke
- * @LastEditTime: 2018-11-30 15:36:23
+ * @LastEditTime: 2018-11-30 20:06:50
  * @Description: 问题反馈-解决弹窗
  */
 
@@ -28,8 +28,6 @@ const Dragger = Upload.Dragger;
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 
-const EMPTY_TEXT = '请选择';
-const EMPTY_VALUE = '';
 // 马珂默认工号
 const DEFAULT_USER_ID = feedbackOptions.defaultUserId;
 @createForm()
@@ -159,7 +157,7 @@ export default class ProblemHandling extends PureComponent {
       if (_.isEmpty(operator)) {
         operator = _.find(operatorList, operator => operator.loginName === DEFAULT_USER_ID);
       }
-      return operator.lastName;
+      return operator.loginName;
     }
     return '无';
   }

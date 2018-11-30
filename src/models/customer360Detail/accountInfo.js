@@ -65,7 +65,11 @@ export default {
     // 资金变动交易流水
     capitalChangeFlowRes: {},
     // 账户变动
-    accountChangeRes: {},
+    accountChangeRes: {
+      normalAccountChange: {},
+      creditAccountChange: {},
+      optionAccountChange: {},
+    },
   },
   reducers: {
     getRealTimeAssetSuccess(state, action) {
@@ -227,10 +231,14 @@ export default {
       };
     },
     queryAccountChangeSuccess(state, action) {
-      const { payload: { resultData } } = action;
+      const { payload } = action;
+      const { accountChangeRes } = state;
       return {
         ...state,
-        accountChangeRes: resultData || {},
+        accountChangeRes: {
+          ...accountChangeRes,
+          ...payload,
+        },
       };
     },
     // 清除redux数据
@@ -430,10 +438,12 @@ export default {
     },
     // 查询账户变动
     * queryAccountChange({ payload }, { put, call }) {
-      const response = yield call(api.queryAccountChange, payload);
+      const { accountType } = payload;
+      const { resultData } = yield call(api.queryAccountChange, payload);
+      const type = `${_.lowerCase(accountType)}AccountChange`;
       yield put({
         type: 'queryAccountChangeSuccess',
-        payload: response,
+        payload:{ [type]: resultData || {} },
       });
    },
     // 清空数据

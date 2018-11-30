@@ -12,6 +12,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import moment from 'moment';
 import { message } from 'antd';
+import classnames from 'classnames';
 
 import Tooltip from '../common/Tooltip';
 import Icon from '../common/Icon';
@@ -168,10 +169,19 @@ export default class ProtocolTab extends PureComponent {
     const linkHandle = subTypeCode === TOUGU_SUBTYPE
     ? () => this.handleViewTouGuProtocol(record)
     : () => this.handleViewOtherProtocol(record);
+    const idClass = classnames({
+      [styles.ellipsis]: true,
+      [styles.idWrap]: true,
+    });
     return (
-      <div>
-        <a onClick={linkHandle}>{text}</a>
-      </div>
+      <Tooltip title={text}>
+        <div
+          onClick={linkHandle}
+          className={idClass}
+        >
+          {text}
+        </div>
+      </Tooltip>
     );
   }
 
