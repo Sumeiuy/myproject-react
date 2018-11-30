@@ -17,10 +17,18 @@ import SummaryLabels from './SummaryLabels';
 import styles from './summaryInfo.less';
 
 export default function SummaryInfo(props) {
-  const { data = {}, queryAllKeyLabels, moreLabelInfo, location } = props;
+  const {
+    data = {},
+    queryAllKeyLabels,
+    moreLabelInfo,
+    location,
+    replace,
+  } = props;
+
   if (_.isEmpty(data)) {
     return null;
   }
+
   const {
     // 可开通业务
     openBusiness,
@@ -40,6 +48,8 @@ export default function SummaryInfo(props) {
           openBusiness={openBusiness}
           recentServe={recentService}
           recentLoginZL={resentTenPayTime}
+          replace={replace}
+          location={location}
         />
       </div>
       <div className={styles.splitLine}></div>
@@ -67,4 +77,5 @@ SummaryInfo.propTypes = {
   moreLabelInfo: PropTypes.object.isRequired,
   // 查询更多重点标签
   queryAllKeyLabels: PropTypes.func.isRequired,
+  replace: PropTypes.func.isRequired,
 };

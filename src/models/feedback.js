@@ -1,7 +1,10 @@
 /* eslint-disable import/no-anonymous-default-export */
-/**
- * @file models/feedback.js
- * @author yangquanjian
+/*
+ * @Author: yangquanjian
+ * @Date: 2018-10-22 09:13:51
+ * @LastEditors: li-ke
+ * @LastEditTime: 2018-11-29 10:35:44
+ * @Description: 反馈model层
  */
 
 import _ from 'lodash';
@@ -22,7 +25,7 @@ export default {
     fbDetail: EMPTY_OBJECT,
     recordList: EMPTY_OBJECT,
     processList: EMPTY_LIST,
-    empRespDTOList: EMPTY_LIST,
+    operatorList: EMPTY_LIST,
   },
   reducers: {
     changeProblemVisible(state, action) {
@@ -90,7 +93,7 @@ export default {
       } = action;
       return {
         ...state,
-        empRespDTOList: empRespDTOList && empRespDTOList,
+        operatorList: empRespDTOList,
       };
     }
   },
@@ -196,7 +199,7 @@ export default {
       });
     },
     * addFeedbackEvaluation({ payload }, { call, put }) {
-      const response = yield call(api.addFeedbackEvaluation, payload);
+      yield call(api.addFeedbackEvaluation, payload);
     },
     * getEmpListByResp({ payload }, { call, put }) {
       const { resultData } = yield call(api.getEmpListByResp, payload);

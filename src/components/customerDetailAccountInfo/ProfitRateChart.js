@@ -52,7 +52,7 @@ export default class ProfitRateChart extends Component {
       {
         data: custBasicData.indexLine,
         type: 'line',
-        name: '收益率',
+        name: '账户收益率',
         lineStyle: {
           normal: {
             width: 2,
@@ -190,7 +190,7 @@ export default class ProfitRateChart extends Component {
               />
             </span>
             <span className={styles.basicCode} />
-            <span className={styles.text}>收益率</span>
+            <span className={styles.text}>账户收益率</span>
           </div>
         </div>
         <div className={styles.chartWrapper}>

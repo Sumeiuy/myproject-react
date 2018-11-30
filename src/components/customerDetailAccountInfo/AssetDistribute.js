@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-11 16:30:07
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-27 11:12:41
+ * @Last Modified time: 2018-11-30 14:49:07
  * @description 新版客户360详情下账户信息Tab下的资产分布组件
  */
 import React, { PureComponent } from 'react';
@@ -11,6 +11,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 
+import IfTableWrap from '../common/IfTableWrap';
 import PlaceHolder from '../common/placeholderImage';
 import IFWrap from '../common/biz/IfWrap';
 import IECharts from '../IECharts';
@@ -449,7 +450,7 @@ export default class AssetDistribute extends PureComponent {
                         <span className={styles.value}>{totalDebt.value}</span>
                         <span className={styles.unit}>{totalDebt.unit}</span>
                         <span className={styles.infoIco}>
-                          <Popover overlayClassName={styles.labelPopover} content="融资融券负债">
+                          <Popover overlayClassName={styles.labelPopover} content="此处仅为融资融券负债">
                             <Icon type="tishi2" />
                           </Popover>
                         </span>
@@ -458,11 +459,7 @@ export default class AssetDistribute extends PureComponent {
                   </div>
                 </div>
                 <div className={styles.indexDetailArea}>
-                  <PlaceHolder
-                    isRender={_.isEmpty(specificIndexData)}
-                    title={`暂无${radarIndexName}数据`}
-                  />
-                  <IfWrap isRender={!_.isEmpty(specificIndexData)}>
+                  <IfTableWrap isRender={!_.isEmpty(specificIndexData)} text={`暂无${radarIndexName}数据`}>
                     <Table
                       expandedRowKeys={assetDetailExpandKeys}
                       rowKey="key"
@@ -474,7 +471,7 @@ export default class AssetDistribute extends PureComponent {
                       scroll={TABLE_SCROLL_SETTING}
                       onExpand={this.handleExpandChange}
                     />
-                  </IfWrap>
+                  </IfTableWrap>
                 </div>
               </div>
             )

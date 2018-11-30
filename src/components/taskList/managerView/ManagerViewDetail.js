@@ -550,7 +550,7 @@ export default class ManagerViewDetail extends PureComponent {
       routerAction: push,
       url: finalUrl,
       param,
-      pathname: '/taskCenter/selfbuildTask/createTask',
+      pathname: '/customerPool/createTaskFromDetail',
       query,
     });
   }

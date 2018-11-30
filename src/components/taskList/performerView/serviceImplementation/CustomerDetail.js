@@ -139,8 +139,7 @@ export default class CustomerDetail extends PureComponent {
 
   // 服务记录查看更多
   @autobind
-  @logable({ type: 'Click',
-payload: { name: '查看更多服务记录' } })
+  @logable({ type: 'Click', payload: { name: '查看更多服务记录' } })
   handleSeeMore() {
     const param = {
       id: 'FSP_360VIEW_M_TAB',
@@ -153,8 +152,7 @@ payload: { name: '查看更多服务记录' } })
       serviceRecordChannel: '',
     };
     const { targetCustDetail = {} } = this.props;
-    this.openFsp360TabAction({ targetCustDetail,
-param });
+    this.openFsp360TabAction({ targetCustDetail, param });
   }
 
   // 打开360视图
@@ -177,6 +175,10 @@ param });
       param,
       state: {
         url,
+        param,
+        query: {
+          activeTabKey: 'serviceRecord',
+        },
       },
     });
   }

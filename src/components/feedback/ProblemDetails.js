@@ -1,7 +1,9 @@
-/**
- * @file feedback/ProblemDetail.js
- *  问题反馈-问题详情
- * @author yangquanjian
+/*
+ * @Author: yangquanjian
+ * @Date: 2018-10-22 09:13:51
+ * @LastEditors: li-ke
+ * @LastEditTime: 2018-11-29 19:24:00
+ * @Description: 问题反馈-问题详情
  */
 
 import React, { PureComponent } from 'react';
@@ -28,7 +30,7 @@ export default class ProblemDetail extends PureComponent {
     visible: PropTypes.bool,
     problemDetails: PropTypes.object,
     form: PropTypes.object.isRequired,
-    empRespDTOList: PropTypes.array.isRequired,
+    operatorList: PropTypes.array.isRequired,
     onCancel: PropTypes.func.isRequired,
     onCreate: PropTypes.func.isRequired,
     nowStatus: PropTypes.bool.isRequired,
@@ -158,13 +160,23 @@ export default class ProblemDetail extends PureComponent {
     return '无';
   }
   // 显示经办人
-  renderEmpResp(st, options) {
-    if (st && !_.isEmpty(st)) {
-      const nowStatus = options.filter(item =>
-        item.loginName === st) || EMPTY_OBJECT;
-      return nowStatus[0].lastName || '无';
+  renderEmpResp(processerID, operatorList) {
+    // 如果经办人是无就显示defaultName 马珂
+    const defaultName = _.find(operatorList, item => item.loginName === '001423');
+    if (!_.isEmpty(processerID) && !_.isEmpty(operatorList)) {
+      const nowStatus = _.find(operatorList, item =>
+        item.loginName === processerID) || {};
+      return nowStatus.lastName || defaultName.lastName;
     }
     return '无';
+  }
+
+  // 点击编辑打开经办人下拉框
+  renderEmpOption(operatorList) {
+      const empListOption = _.map(operatorList, i =>
+        <Option key={`empOptionKey${OPTIONKEY++}`} value={i.loginName}>{i.lastName}</Option>,
+      );
+      return empListOption;
   }
 
   /*
@@ -197,7 +209,13 @@ export default class ProblemDetail extends PureComponent {
   }
 
   render() {
-    const { form, problemDetails,empRespDTOList } = this.props;
+    const {
+      form,
+      problemDetails,
+      // 经办人列表数据
+      operatorList,
+    } = this.props;
+
     const {
       qtab,
       jira,
@@ -258,15 +276,12 @@ export default class ProblemDetail extends PureComponent {
       edit_show: canBeEdited,
     });
 
-    const allOperatorOptions = feedbackOptions.allOperatorOptions;
     const questionTagOptions = feedbackOptions.questionTagOptions;
     const getSelectOption = item => item.map(i =>
       <Option key={`optionKey${OPTIONKEY++}`} value={i.value}>{i.label}</Option>,
     );
     const channel = _.flattenDeep(_.map(feedbackChannel, obj => obj.children));
-    const renderEmpOption = item => item.map(i =>
-      <Option key={`EmpResp${OPTIONKEY++}`} value={i.loginName}>{i.lastName}</Option>,
-    );
+
     return (
       <div>
         <Form layout="vertical">
@@ -354,26 +369,25 @@ export default class ProblemDetail extends PureComponent {
                 <strong className="name">经办人：</strong>
                 <span className={valueIsVisibel}>
                   {
-                    this.renderEmpResp(processer, empRespDTOList)
+                    this.renderEmpResp(processer, operatorList)
                     }
                 </span>
                 <div className={editIsVisibel}>
                   <span className={processerValue} onClick={event => this.handleProcesserClick(event, 'processer')} title="点击编辑">
                     {
-                     this.renderEmpResp(processer, empRespDTOList)
+                     this.renderEmpResp(processer, operatorList)
                       }
                     <Icon type="edit" className="anticon-edit" />
                   </span>
                 </div>
                 <div className={processerHiddenValue} id="select-processer">
                   <FormItem>
-                    {getFieldDecorator('processer', { initialValue: `${this.dataNull(processer)}` })(
-                      <Select style={{ width: 110 }} className="qtSelect" getPopupContainer={() => document.getElementById('select-processer')}>
-                        {
-                         renderEmpOption(empRespDTOList)
-                          }
-                      </Select>,
-                    )}
+                    {
+                      getFieldDecorator('processer', {initialValue: this.renderEmpResp(processer, operatorList)})
+                    }
+                    <Select style={{ width: 110 }} className="qtSelect" getPopupContainer={() => document.getElementById('select-processer')}>
+                      {this.renderEmpOption(operatorList)}
+                    </Select>
                     <div className="edit-btn">
                       <a onClick={this.handleSubChange}><Icon type="success" /></a>
                       <a onClick={this.handleClose}><Icon type="close" /></a>

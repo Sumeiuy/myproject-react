@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-23 17:18:23
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-27 11:28:07
+ * @Last Modified time: 2018-11-30 14:47:32
  * @description 账户详情
  */
 
@@ -22,10 +22,9 @@ import {
 import logable from '../../decorators/logable';
 import { number } from '../../helper';
 import Pagination from '../common/Pagination';
-import PlaceHolder from '../common/placeholderImage/PlaceHolder';
 import IfTableWrap from '../common/IfTableWrap';
 import DateFilter from '../common/htFilter/dateFilter';
-
+import Tooltip from '../common/Tooltip';
 import styles from './accountDetail.less';
 
 // 默认查询日期半年
@@ -114,6 +113,15 @@ export default class AccountDetail extends PureComponent {
             }
             return number.thousandFormat(text, false);
           },
+        };
+      } else if (dataIndex === 'bussinessType' || dataIndex === 'agency') {
+        return {
+          ...column,
+          render: text => (
+            <span>
+              <Tooltip title={text}>{text}</Tooltip>
+            </span>
+          )
         };
       }
       return column;
@@ -213,18 +221,14 @@ export default class AccountDetail extends PureComponent {
             <div className={styles.title}>资金账户</div>
           </div>
           <div className={styles.accountTable}>
-            <PlaceHolder
-              isRender={_.isEmpty(fundAccount)}
-              title="暂无资金账户"
-              size="small"
-            >
+            <IfTableWrap isRender={!_.isEmpty(fundAccount)} text="暂无资金账户">
               <Table
                 pagination={false}
                 className={styles.tableBorder}
                 dataSource={fundAccount}
                 columns={FUND_ACCOUNT_TABLE_COLUMNS}
               />
-            </PlaceHolder>
+            </IfTableWrap>
           </div>
         </div>
         <div className={styles.accountBlock}>
@@ -232,18 +236,14 @@ export default class AccountDetail extends PureComponent {
             <div className={styles.title}>证券账户</div>
           </div>
           <div className={styles.accountTable}>
-            <PlaceHolder
-              isRender={_.isEmpty(stockAccount)}
-              title="暂无证券账户"
-              size="small"
-            >
+            <IfTableWrap isRender={!_.isEmpty(stockAccount)} text="暂无证券账户">
               <Table
                 pagination={false}
                 className={styles.tableBorder}
                 dataSource={stockAccount}
                 columns={stockAccountColumns}
               />
-            </PlaceHolder>
+            </IfTableWrap>
           </div>
         </div>
         <div className={styles.accountBlock}>

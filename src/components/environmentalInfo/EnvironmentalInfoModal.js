@@ -39,7 +39,7 @@ export default function EnvironmentalInfo(props) {
     >
       <div className={styles.environmentalInfoContent}>
         <div className={styles.environmentalInfoImg}>
-          <img src={Icon}/>
+          <img src={Icon} alt='environmentalInfoImg' />
         </div>
         <div className={styles.environmentalInfoText}>
           <div className={styles.environmentalInfoTextPart}>

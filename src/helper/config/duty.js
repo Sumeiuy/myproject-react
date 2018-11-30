@@ -32,6 +32,8 @@ const duty = {
   HTSC_CI_BMP: '1-FCQM-31', // HTSC 客户资料-分中心管理岗
   HTSC_NPCI_HMP: '1-FCQM-41', // HTSC 客户资料（无隐私）-总部管理岗
   HTSC_NPCI_BMP: '1-FCQM-43', // HTSC 客户资料（无隐私）-分中心管理岗
+  HTSC_CI_YYBZXG: '1-FCQM-32', // HTSC 客户资料-营业部执行岗
+  HTSC_NPCI_YYBZXG: '1-FCQM-44', // HTSC 客户资料(无隐私)-营业部执行岗
   HTSC_KF_YYBZXG: '1-FCQM-12', // HTSC 开发-营业部执行岗
   HTSC_CDM: '1-5A5ML0O', // HTSC 客户资料管理岗（无隐私）
   HTSC_GPQQSQG: '1-3LVZOPS', // HTSC 股票期权申请岗

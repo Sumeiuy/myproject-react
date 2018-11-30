@@ -23,6 +23,7 @@
   }
   .title {
     margin-bottom: 4px;
+    padding-left: 20px;
     .colorBlock {
       background: #108ee9;
       width: 3px;
@@ -59,6 +60,10 @@
 }
 .tabContainer {
   margin: 30px;
+  table > thead > tr > th,
+  table > tbody > tr > td {
+    white-space: nowrap;
+  }
   :global {
     .firstStyle {
       padding-left: 20px;
@@ -69,20 +74,6 @@
     .lastStyle {
       padding-right: 8px;
       padding-left: 8px;
-    }
-  }
-}
-.integralFlowModal {
-  .noDataContainer {
-    margin: 100px auto 0;
-    width: 300px;
-    text-align: center;
-    color: #ccc;
-    .noDataIcon {
-      font-size: 100px;
-}
-    .noDataText {
-      font-size: 20px;
     }
   }
 }

@@ -1,13 +1,26 @@
 .breadcrumbContiner {
-  .link {
-    color: #999;
-    cursor: pointer;
-    &:hover {
-      color: #108ee9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  .breadcrumb {
+    flex: 0 0 auto;
+    .link {
+      color: #999;
+      font-weight: bold;
+      cursor: pointer;
+      &:hover {
+        color: #108ee9;
+      }
+    }
+    .text {
+      color: #333;
     }
   }
-  .text {
-    color: #333;
+  .actionBtn {
+    flex: 0 0 auto;
+    color: #108ee9;
+    font-size: 14px;
+    margin-right: 30px;
   }
   :global {
     .ant-breadcrumb {
@@ -17,6 +30,7 @@
     }
     .ant-breadcrumb-separator {
       color: #999;
+      font-weight: bold;
     }
   }
 }

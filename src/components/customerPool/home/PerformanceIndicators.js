@@ -323,6 +323,7 @@ export default class PerformanceIndicators extends PureComponent {
               push={push}
               cycle={cycle}
               dataSource={data}
+              isNewHome={this.props.isNewHome}
             />
           </IfEmpty>
         </RectFrame>
@@ -330,14 +331,16 @@ export default class PerformanceIndicators extends PureComponent {
     );
   }
 
-  // 业务开通数（投顾绩效）
+  // 业务开通数
   renderBusinessIndicator(param) {
+    const { isNewHome } = this.props;
     const argument = this.getNameAndValue(param.data, filterEmptyToInteger);
     const { newUnit, items } = getClientsNumber(argument);
     const headLine = { icon: 'kehuzhibiao', title: `${param.headLine}（${newUnit}次）` };
+    const chartsHeight = isNewHome ? '190px' : '153px';
     return (
       <Col span={8} key={param.key}>
-        <RectFrame dataSource={headLine} isNewHome={this.props.isNewHome}>
+        <RectFrame dataSource={headLine} isNewHome={isNewHome}>
           <IfEmpty isEmpty={_.isEmpty(param.data)}>
             {/*
               * 因为神策日志提交的数据需要是原始数据，所以此处需要在onReady的时候将原始数据传递出去
@@ -347,7 +350,7 @@ export default class PerformanceIndicators extends PureComponent {
               option={items}
               resizable
               style={{
-                height: '170px',
+                height: chartsHeight,
               }}
             />
           </IfEmpty>
@@ -444,6 +447,7 @@ export default class PerformanceIndicators extends PureComponent {
               cycle={cycle}
               push={push}
               location={location}
+              isNewHome={this.props.isNewHome}
             />
           </IfEmpty>
         </RectFrame>
@@ -578,6 +582,7 @@ export default class PerformanceIndicators extends PureComponent {
               push={push}
               location={location}
               type="custIndicator"
+              isNewHome={this.props.isNewHome}
             />
           </IfEmpty>
         </RectFrame>

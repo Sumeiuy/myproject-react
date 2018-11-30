@@ -1,0 +1,40 @@
+@import "../../css/util.less";
+.protocolTab {
+  padding: 12px 22px;
+  .btnWrapper {
+    margin-bottom: 14px;
+  }
+  .iconWrapper {
+    i {
+      color: #108ee9;
+      font-size: 14px;
+      cursor: pointer;
+      vertical-align: middle;
+      &:first-child {
+        margin-right: 13px;
+      }
+    }
+  }
+  :global {
+    table {
+      table-layout: fixed;
+      width: 100%;
+      .ant-table-thead > tr > th, .ant-table-tbody > tr > td {
+        padding-left: 6px;
+        padding-right: 6px;
+      }
+      .ant-table-thead > tr > th:first-child,
+      .ant-table-tbody > tr > td:first-child {
+        padding-left: 16px;
+      }
+      td {
+        position: relative;
+        .one-line-ellipsis;
+      }
+    }
+  }
+  .ellipsis {
+    position: relative;
+    .one-line-ellipsis;
+  }
+}

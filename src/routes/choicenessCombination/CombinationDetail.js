@@ -27,6 +27,7 @@ import { openRctTab } from '../../utils';
 import { permission, dva, url as urlHelper, emp } from '../../helper';
 import { seperator } from '../../config';
 import { chartTabList, sourceType, securityType } from '../../components/choicenessCombination/config';
+import logable from '../../decorators/logable';
 import styles from './combinationDetail.less';
 
 const dispatch = dva.generateEffect;
@@ -279,6 +280,15 @@ export default class CombinationDetail extends PureComponent {
 
   // 关闭弹窗
   @autobind
+  @logable({
+    type: 'ButtonClick',
+    payload: {
+      name: '关闭弹窗',
+      type: '精选组合',
+      subtype: '组合详情',
+      value: '$props.location.query.modalType',
+    }
+  })
   closeModal() {
     const { replace } = this.context;
     const { location: { pathname, query: { id, name } } } = this.props;
@@ -301,6 +311,15 @@ export default class CombinationDetail extends PureComponent {
 
   // 查看持仓客户
   @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '进入客户列表',
+      type: '组合详情',
+      subType: '订购客户',
+      value: '$args[0]'
+    },
+  })
   openCustomerListPage(obj) {
     const { push } = this.context;
     const { name, code, type, source, combinationCode } = obj;

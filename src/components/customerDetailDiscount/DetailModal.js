@@ -14,11 +14,13 @@ import Modal from '../../components/common/biz/CommonModal';
 import InfoItem from '../common/infoItem';
 import Table from '../../components/common/table';
 import IfTableWrap from '../common/IfTableWrap';
-import { number } from '../../helper';
+import { number, time } from '../../helper';
+import Tooltip from '../common/Tooltip';
 import {
   checkIsNeedTitle,
   DEFAULT_VALUE,
   productTitleList,
+  COUPON_DETAIL_NEED_TOOLTIP,
 } from './config';
 import styles from './detailModal.less';
 
@@ -40,6 +42,48 @@ export default class DetailModal extends PureComponent {
   @autobind
   getQuotient(value) {
     return _.isNumber(value) ? number.thousandFormat(value) : DEFAULT_VALUE;
+  }
+
+  @autobind
+  getTitleList() {
+    return productTitleList.map(item => {
+      if (item.dataIndex === 'endTime') {
+        return {
+          ...item,
+          render: text => (
+            <span>{time.format(text)}</span>
+          ),
+        };
+      }
+      if (_.includes(COUPON_DETAIL_NEED_TOOLTIP, item.dataIndex)) {
+        return {
+          ...item,
+          render: text => (
+            this.renderTooltipColumn(text)
+          )
+        };
+      }
+      return {
+        ...item,
+        render: text => (
+          <span>{text}</span>
+        )
+      };
+    });
+  }
+
+  @autobind
+  renderTooltipColumn(text, className = '') {
+    if (!_.isEmpty(text)) {
+      return (
+        <Tooltip title={text}>
+          <span className={className}>
+            {text}
+          </span>
+        </Tooltip>
+      );
+    }
+    return null;
   }
 
   render() {
@@ -164,7 +208,7 @@ export default class DetailModal extends PureComponent {
               <div className={styles.infoItemBox}>
                 <InfoItem
                   width={INFO_ITEM_WITDH}
-                  label="收益率"
+                  label="收益率%"
                   value={this.getYield(data.yield)}
                   className={styles.infoItem}
                   isNeedValueTitle={checkIsNeedTitle(this.getYield(data.yield))}
@@ -196,7 +240,7 @@ export default class DetailModal extends PureComponent {
                 pagination={paginationProps}
                 dataSource={data.productList || EMPTY_ARRAY}
                 isNeedEmptyRow
-                columns={productTitleList}
+                columns={this.getTitleList()}
                 scroll={{ x: '1000px' }}
               />
             </IfTableWrap>
