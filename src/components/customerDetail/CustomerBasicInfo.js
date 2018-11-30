@@ -234,6 +234,11 @@ export default class CustomerBasicInfo extends PureComponent {
       addCallRecord,
       currentCommonServiceRecord,
     };
+    const toolTipContent = (
+      <div className={styles.toolTipContent}>
+        { `激活日期：${renderCustomerBasicInfo.accountOpenDate}`}
+      </div>
+    );
 
     return (
       <div className={styles.container}>
@@ -291,7 +296,7 @@ export default class CustomerBasicInfo extends PureComponent {
 
                 }
                 <span className={styles.OpenDate}>
-                  <Tooltip title={`激活日期：${renderCustomerBasicInfo.accountOpenDate}`}>
+                  <Tooltip title={toolTipContent}>
                     {this.getAccountOpenDate()}
                   </Tooltip>
                 </span>
