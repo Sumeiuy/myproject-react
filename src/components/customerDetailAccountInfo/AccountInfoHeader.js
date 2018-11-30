@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-10-11 14:05:51
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-15 16:21:04
+ * @Last Modified time: 2018-11-30 09:27:27
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -200,7 +200,6 @@ export default class AccountInfoHeader extends PureComponent {
           <Button className={styles.accountHeader} onClick={this.handleHistoryHoldingModalOpen}>历史持仓</Button>
           <Button className={styles.accountHeader} onClick={this.handleTradeFlowModalOpen}>交易流水</Button>
           <Button className={styles.accountHeader} onClick={this.handleLinkToAssetAllocation}>资产配置</Button>
-          <Button className={styles.accountHeader}>账户分析</Button>
         </div>
         <IfWrap isRender={historyHoldModalVisible}>
           <HistoryHoldingModal
