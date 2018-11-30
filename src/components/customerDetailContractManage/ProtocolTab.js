@@ -201,6 +201,8 @@ export default class ProtocolTab extends PureComponent {
   // 渲染操作列表
   @autobind
   renderOperationColumn(text, record) {
+    const { custInfo = EMPTY_OBJECT } = this.props;
+    const { isMainEmp = false } = custInfo;
     const {
       // 子类型 code
       subTypeCode,
@@ -216,30 +218,34 @@ export default class ProtocolTab extends PureComponent {
     }
     // 协议状态为新建时，操作类型为：编辑、删除
     if (statusCode === 'New') {
-      return (
-        <div className={styles.iconWrapper}>
-          <Icon
-            type="bianji1"
-            title="编辑"
-            onClick={() => this.handleEditProtocol(record, false)}
-          />
-          <Icon
-            type="shanchu"
-            title="删除"
-            onClick={() => this.handleDeleteProtocol(record)}
-          />
-        </div>
-      );
+      return isMainEmp
+      ? (<div className={styles.iconWrapper}>
+        <Icon
+          type="bianji1"
+          title="编辑"
+          onClick={() => this.handleEditProtocol(record, false)}
+        />
+        <Icon
+          type="shanchu"
+          title="删除"
+          onClick={() => this.handleDeleteProtocol(record)}
+        />
+      </div>)
+      : null;
     } else if (statusCode === 'Agree') {
       // 协议状态为同意时，操作类型为：变更、查看历史记录
       // qitawenjian\wenben
       return (
         <div className={styles.iconWrapper}>
-          <Icon
-            type="shuaxin1"
-            title="变更"
-            onClick={() => this.handleUpdateProtocol(record)}
-          />
+          {
+            isMainEmp
+            ? <Icon
+              type="shuaxin1"
+              title="变更"
+              onClick={() => this.handleUpdateProtocol(record)}
+            />
+            : null
+          }
           <Icon
             type="chakanjilu"
             title="查看历史记录"
@@ -252,11 +258,15 @@ export default class ProtocolTab extends PureComponent {
     && node === '待扣款') {
       return (
         <div className={styles.iconWrapper}>
-          <Icon
-            type="zhongzhi"
-            title="终止"
-            onClick={() => this.handleCloseProtocol(record)}
-          />
+          {
+            isMainEmp
+            ? <Icon
+              type="zhongzhi"
+              title="终止"
+              onClick={() => this.handleCloseProtocol(record)}
+            />
+            : null
+          }
           <Icon
             type="chakanjilu"
             title="查看历史记录"
