@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { connect } from 'dva';
 import { dva } from '../../../../helper';
-import ServiceRelationship from '../../../../components/customeDetailServiceRelationship/serviceRelationship';
+import ServiceRelationship from '../../../../components/customerDetailServiceRelationship/serviceRelationship';
 const effect = dva.generateEffect;
 const mapStateToProps = state => ({
   // 账户关系下服务团队的数据
