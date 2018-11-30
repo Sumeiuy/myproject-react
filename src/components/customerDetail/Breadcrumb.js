@@ -33,7 +33,9 @@ function setJspTabCache(param) {
 export default function CustDetailBreadcrumb(props) {
   // 本地缓存state
   const state = _.isEmpty(props.state) ? sessionStore.get('jspState') : props.state;
-  sessionStore.set('jspState', state);
+  if(state && state.url) {
+    sessionStore.set('jspState', state);
+  }
   const url = (state && state.backPath) || '/customerPool/list?source=leftMenu';
   // 点击面包屑回到客户列表
   function handleItemClick() {
@@ -50,8 +52,7 @@ export default function CustDetailBreadcrumb(props) {
   function handleBtnClick() {
      // 处理jsp页面的tab缓存问题
     setJspTabCache(state.param || {});
-    linkTo({
-      routerAction: props.push,
+    props.push({
       pathname: '/fsp/customerPool/list/customerDetail',
       state: {
         param: state.param,

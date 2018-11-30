@@ -95,7 +95,7 @@ export default class Tab extends PureComponent {
         };
       }
 
-      const { panes, currentMenuId } = getStayPanes(pathname, query, prevState);
+      const { panes, currentMenuId } = getStayPanes(location, prevState);
 
       const newRouterHistory =
         getNewRouterHistory({ pathname, query, routerHistory });
