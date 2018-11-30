@@ -13,7 +13,7 @@ import Table from '../../components/common/table';
 import styles from './serviceRelationship.less';
 import { number } from '../../helper';
 import logable, { logPV } from '../../decorators/logable';
-import ServiceHistoryModal from './serviceHistoryModal';
+import ServiceHistoryModal from './ServiceHistoryModal';
 import { serviceTeamColumns, introduceColumns } from './config';
 import IfTableWrap from '../common/IfTableWrap';
 

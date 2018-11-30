@@ -169,7 +169,6 @@ export default class TaskList extends PureComponent {
           ...query,
           flowId,
           source: RETURN_TASK_FROM_TODOLIST,
-          type: listType,
         },
       });
     }
