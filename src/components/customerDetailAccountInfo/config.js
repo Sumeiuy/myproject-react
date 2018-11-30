@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-11 18:37:20
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-23 11:52:38
+ * @Last Modified time: 2018-11-29 10:40:53
  * @description 新版客户360详情的账户信息Tab下页面的配置项
  */
 
@@ -104,11 +104,12 @@ export const HISTORY_HOLDING_TABS = {
   optionHistoryHolding: '期权持仓明细',
 };
 
-// 交易流水下3个Tab的显示配置
+// 交易流水下4个Tab的显示配置
 export const TRADE_FLOW_TABS = {
   standardAccountTrade: '普通账户历史交易',
   creditAccountTrade: '信用账户历史交易',
   optionAccountTrade: '期权账户历史交易',
+  capitalChange: '资金变动',
 };
 
 export const STOCK_HISTORY_HOLDING_TABLE_SCROLL = { x: 2000 };
@@ -117,7 +118,6 @@ export const OPTION_HISTORY_HOLDING_TABLE_SCROLL = { x: 2500 };
 export const STANDARD_TRADE_FLOW_TABLE_SCROLL = { x: 2100 };
 export const CREDIT_TRADE_FLOW_TABLE_SCROLL= { x: 1800 };
 export const OPTION_TRADE_FLOW_TABLE_SCROLL = { x: 2500 };
-export const CAPITAL_CHANGE_TABLE_SCROLL = { x: 1300 };
 
 // 证券历史持仓表格显示的columns
 export const STOCK_HISTORY_HOLDING_COLUMNS = [
@@ -139,7 +139,7 @@ export const STOCK_HISTORY_HOLDING_COLUMNS = [
     title: '名称',
   },
   {
-    width: 160,
+    width: 80,
     key: 'code',
     dataIndex: 'code',
     title: '代码',
@@ -233,7 +233,7 @@ export const PRODUCT_HISTORY_HOLDING_COLUMNS = [
     dataIndex: 'name',
   },
   {
-    width: 160,
+    width: 80,
     title: '产品代码',
     key: 'code',
     dataIndex: 'code',
@@ -313,7 +313,7 @@ export const OPTION_HISTORY_HOLDING_COLUMNS = [
     dataIndex: 'optionName',
   },
   {
-    width: 180,
+    width: 100,
     title: '期权代码',
     key: 'optionCode',
     dataIndex: 'optionCode',
@@ -325,7 +325,7 @@ export const OPTION_HISTORY_HOLDING_COLUMNS = [
     dataIndex: 'optionKind',
   },
   {
-    width: 160,
+    width: 80,
     title: '证劵代码',
     key: 'stockCode',
     dataIndex: 'stockCode',
@@ -707,32 +707,35 @@ export const CAPITAL_CHANGE_COLUMNS = [
     dataIndex: 'tradeDate',
     key: 'tradeDate',
     className: 'tradeDate',
-    fixed: 'left',
+    width: '14%' ,
   },
   {
     title: '资金账号',
     dataIndex: 'accountNumber',
     key: 'accountNumber',
     className:'accountNumber',
-    fixed: 'left',
+    width: '14%' ,
   },
   {
     title: '币种',
     dataIndex: 'currency',
     key: 'currency',
-    className:'currency'
+    className:'currency',
+    width: '14%',
   },
   {
     title: '交易渠道',
     dataIndex: 'tradeChannel',
     key: 'tradeChannel',
-    className:'tradeChannel'
+    className:'tradeChannel',
+    width: '14%',
   },
   {
     title: '业务标志',
     dataIndex: 'serviceIndication',
     key: 'serviceIndication',
-    className:'serviceIndication'
+    className:'serviceIndication',
+    width: '15%',
   },
   {
     title: '交易金额(元)',
@@ -741,6 +744,7 @@ export const CAPITAL_CHANGE_COLUMNS = [
     align: 'right',
     className:'ammount',
     isNumber: true,
+    width: '14%',
   },
   {
     title: '余额(元)',
@@ -749,6 +753,7 @@ export const CAPITAL_CHANGE_COLUMNS = [
     align: 'right',
     className: 'balance',
     isNumber: true,
+    width: '14%',
   },
 ];
 

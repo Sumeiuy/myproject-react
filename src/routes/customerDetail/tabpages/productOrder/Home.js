@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-19 10:17:54
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-26 21:08:17
+ * @LastEditTime: 2018-11-29 10:33:58
  * @Description: 产品订单
  */
 
@@ -11,20 +11,23 @@ import PropTypes from 'prop-types';
 import { connect } from 'dva';
 import { autobind } from 'core-decorators';
 import { Tabs } from 'antd';
+import logable from '../../../../decorators/logable';
 import { generateEffect as effect } from '../../../../helper/dva';
 import ProductOrderFlow from '../../../../components/customerDetailProductOrder/ProductOrderFlow';
 import TradeOrderFlow from '../../../../components/customerDetailProductOrder/TradeOrderFlow';
 import ServiceOrder from '../../../../components/customerDetailProductOrder/ServiceOrder';
+import {
+  DEFAULT_PAGE_SIZE,
+} from '../../../../components/customerDetailProductOrder/config';
 
 import styles from './home.less';
 
 const TabPane = Tabs.TabPane;
-const TRADE_ORDER_FLOW_PAGE_SIZE = 10;
 
 const mapStateToProps = state => ({
   serviceOrderFlow: state.productOrder.serviceOrderFlow,
   tradeOrderFlow: state.productOrder.tradeOrderFlow,
-  jxGroupProductList: state.customerPool.jxGroupProductList, // 产品搜索结果
+  serviceProductData: state.productOrder.serviceProductData, // 服务产品搜索结果
   serviceOrderDetail: state.productOrder.serviceOrderDetail,
   serviceProductList: state.productOrder.serviceProductList,
   orderApproval: state.productOrder.orderApproval,
@@ -35,11 +38,11 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   queryServiceOrderFlow: effect('productOrder/queryServiceOrderFlow'),
   queryTradeOrderFlow: effect('productOrder/queryTradeOrderFlow'),
-  queryJxGroupProduct: effect('customerPool/queryJxGroupProduct', { loading: false }),
-  queryServiceOrderDetail: effect('productOrder/queryServiceOrderDetail'),
-  queryServiceProductList: effect('productOrder/queryServiceProductList'),
-  queryOrderApproval: effect('productOrder/queryOrderApproval'),
-  getAttachmentList: effect('productOrder/getAttachmentList'),
+  queryServiceProductBySearch: effect('productOrder/queryServiceProductBySearch', { loading: false }),
+  queryServiceOrderDetail: effect('productOrder/queryServiceOrderDetail', { forceFull: true }),
+  queryServiceProductList: effect('productOrder/queryServiceProductList', { forceFull: true }),
+  queryOrderApproval: effect('productOrder/queryOrderApproval', { forceFull: true }),
+  getAttachmentList: effect('productOrder/getAttachmentList', { forceFull: true }),
   // 查询是否可发起佣金调整
   queryCustCanChangeCommission: effect('productOrder/queryCustCanChangeCommission', { loading: false }),
   // 查询服务订购订单
@@ -55,8 +58,8 @@ export default class ProductOrder extends PureComponent {
     serviceOrderData: PropTypes.object.isRequired,
     queryServiceOrderFlow: PropTypes.func.isRequired,
     queryTradeOrderFlow: PropTypes.func.isRequired,
-    jxGroupProductList: PropTypes.array.isRequired,
-    queryJxGroupProduct: PropTypes.func.isRequired,
+    serviceProductData: PropTypes.array.isRequired,
+    queryServiceProductBySearch: PropTypes.func.isRequired,
     serviceOrderDetail: PropTypes.object.isRequired,
     serviceProductList: PropTypes.array.isRequired,
     orderApproval: PropTypes.object.isRequired,
@@ -86,6 +89,7 @@ export default class ProductOrder extends PureComponent {
   }
 
   @autobind
+  @logable({type: 'Click', payload: { name: '产品订单切换显示面板', value: '$args[0]'}})
   handleTabChange(activeTabKey) {
     this.replaceActiveTabKey(activeTabKey);
   }
@@ -110,7 +114,7 @@ export default class ProductOrder extends PureComponent {
   getActiveTabInfo() {
     const activeTabKey = this.getTabActiveKeyByUrl();
     const {
-      // queryServiceOrderFlow,
+      queryServiceOrderFlow,
       queryTradeOrderFlow,
       location: {
         query: {
@@ -119,12 +123,20 @@ export default class ProductOrder extends PureComponent {
       },
     } = this.props;
     if (activeTabKey === 'serviceOrderFlow') {
-      // TODO
+      queryServiceOrderFlow({
+        custId,
+        serviceProductCode: '',
+        type: '',
+        createTimeFrom: '',
+        createTimeTo: '',
+        pageSize: DEFAULT_PAGE_SIZE,
+        curPageNum: 1,
+      });
     } else if (activeTabKey === 'tradeOrderFlow') {
       queryTradeOrderFlow({
         custId,
         pageNum: 1,
-        pageSize: TRADE_ORDER_FLOW_PAGE_SIZE,
+        pageSize: DEFAULT_PAGE_SIZE,
       });
     }
   }
@@ -178,14 +190,14 @@ export default class ProductOrder extends PureComponent {
     const {
       serviceOrderFlow,
       tradeOrderFlow,
-      jxGroupProductList,
+      serviceProductData,
       serviceOrderDetail,
       serviceProductList,
       orderApproval,
       queryServiceOrderDetail,
       queryServiceProductList,
       queryOrderApproval,
-      queryJxGroupProduct,
+      queryServiceProductBySearch,
       attachmentList,
       getAttachmentList,
       location,
@@ -215,8 +227,8 @@ export default class ProductOrder extends PureComponent {
           <TabPane tab="服务订单流水" key="serviceOrderFlow">
             <div className={styles.tabPaneWrap}>
               <ProductOrderFlow
-                productListBySearch={jxGroupProductList}
-                queryJxGroupProduct={queryJxGroupProduct}
+                productListBySearch={serviceProductData}
+                queryServiceProductBySearch={queryServiceProductBySearch}
                 serviceOrderFlow={serviceOrderFlow}
                 onProductOrderFlowChange={this.handleProductOrderFlowChanged}
                 serviceOrderDetail={serviceOrderDetail}

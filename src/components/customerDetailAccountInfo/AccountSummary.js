@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-23 13:38:45
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-19 09:18:20
+ * @Last Modified time: 2018-11-29 15:07:55
  * @desription 账户概览
  */
 import React from 'react';
@@ -76,7 +76,6 @@ export default function AccountSummary(props) {
       <div className={styles.summaryBlock}>
         <div className={styles.header}>
           <div className={styles.title}>账户信息</div>
-          <div className={styles.setting}><Icon type="setting" theme="outlined" /></div>
         </div>
         <div className={styles.body}>
           <AccountSummaryCell label="激活日期" type="DATE" content={activationDate} />
@@ -88,20 +87,18 @@ export default function AccountSummary(props) {
       <div className={styles.summaryBlock}>
         <div className={styles.header}>
           <div className={styles.title}>资产/收益</div>
-          <div className={styles.setting}><Icon type="setting" theme="outlined" /></div>
         </div>
         <div className={styles.body}>
           <AccountSummaryCell label="总资产" content={totalAssets} />
           <AccountSummaryCell label="资金余额" content={fundBalance} />
           <AccountSummaryCell label="资产峰值" content={assetsPeak} />
           <AccountSummaryCell label="年日均资产" content={yearDailyAssets} />
-          <AccountSummaryCell label="本年收益率(%)" type="RATE" content={yearProfitRate} />
+          <AccountSummaryCell label="本年收益率" type="RATE" content={yearProfitRate} />
         </div>
       </div>
       <div className={styles.summaryBlock}>
         <div className={styles.header}>
           <div className={styles.title}>交易/销售</div>
-          <div className={styles.setting}><Icon type="setting" theme="outlined" /></div>
         </div>
         <div className={styles.body}>
           <AccountSummaryCell label="股基交易量(年)" content={yearStockTradeAmt} />
@@ -117,7 +114,6 @@ export default function AccountSummary(props) {
       <div className={styles.summaryBlock}>
         <div className={styles.header}>
           <div className={styles.title}>收入贡献</div>
-          <div className={styles.setting}><Icon type="setting" theme="outlined" /></div>
         </div>
         <div className={styles.body}>
           <AccountSummaryCell label="股基净佣金收入(年)" content={yearStockBrokerage} />

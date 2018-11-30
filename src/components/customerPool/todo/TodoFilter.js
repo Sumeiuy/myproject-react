@@ -3,7 +3,7 @@
  * @Descripter: 报表头部筛选项
  * @Date: 2018-10-06 14:21:06
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-22 13:46:03
+ * @Last Modified time: 2018-11-28 18:00:15
  */
 
 import React, { PureComponent } from 'react';
@@ -26,9 +26,9 @@ export default class TodoFilter extends PureComponent {
     // 筛选后调用的Function
     filterCallback: PropTypes.func,
     // 开始时间
-    startTime: PropTypes.string.isRequired,
+    startTime: PropTypes.number.isRequired,
     // 结束时间
-    endTime: PropTypes.string.isRequired,
+    endTime: PropTypes.number.isRequired,
     // 任务搜索
     onSearch: PropTypes.func.isRequired,
     // 是否是审批列表
@@ -161,11 +161,11 @@ name });
     const {
       startTime,
       endTime,
-      isApprove,
+      /* isApprove, */
       typeData,
       type,
-      initiatorData,
-      initiator
+      /* initiatorData, */
+      /* initiator */
      } = this.props;
      const dateRangePicker = classnames([styles.filter, styles.dateRangePickFilter]);
     return (
@@ -188,7 +188,7 @@ name });
           placeholder="业务类型"
           needItemObj
         />
-        {
+        {/* {
           isApprove ?
             <SingleFilter
               filterName="发起人"
@@ -205,7 +205,7 @@ name });
             />
             :
             null
-        }
+        } */}
         <DateRangePick
           type="date"
           filterId="filterDate"

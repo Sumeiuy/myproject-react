@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-21 09:35:09
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-26 10:41:01
+ * @LastEditTime: 2018-11-28 20:59:19
  * @Description: 交易订单流水
  */
 
@@ -13,7 +13,9 @@ import _ from 'lodash';
 import moment from 'moment';
 import Table from '../common/table';
 import Tooltip from '../common/Tooltip';
+import { thousandFormat } from '../../helper/number';
 import IfTableWrap from '../common/IfTableWrap';
+import { isNull } from '../../helper/check';
 import {
   TRADE_ORDER_FLOW_COLUMNS,
   DATE_FORMATE_STR,
@@ -49,12 +51,33 @@ export default class TradeOrderFlow extends PureComponent {
     return _.map(columns, column => {
       let newColumn;
       switch(column.dataIndex) {
-        case 'isRiskMatched':
-        case 'isTimeMacthed':
-        case 'isVarietyMatched':
+        case 'riskMatched':
+        case 'timeMacthed':
+        case 'varietyMatched':
           newColumn = {
             ...column,
             render: isBool => isBool ? '是' : '否',
+          };
+          break;
+        case 'money':
+          newColumn = {
+            ...column,
+            render: content => thousandFormat(content),
+          };
+          break;
+        case 'productName':
+        case 'confirmationType':
+          newColumn = {
+            ...column,
+            render: content => (
+              <span>
+                {
+                  _.isEmpty(content)
+                  ? '--'
+                  : <Tooltip title={content}>{content}</Tooltip>
+                }
+              </span>
+            )
           };
           break;
         case 'orderTime':
@@ -73,7 +96,12 @@ export default class TradeOrderFlow extends PureComponent {
           };
           break;
         default:
-          newColumn = { ...column };
+          newColumn = {
+            ...column,
+            render: content => (
+              <span>{isNull(content) ? '--' : content}</span>
+            )
+          };
       }
       return newColumn;
     });
@@ -105,6 +133,7 @@ export default class TradeOrderFlow extends PureComponent {
             pagination={pagination}
             dataSource={custTradeOrderDTOList}
             columns={this.transformColumnsData(TRADE_ORDER_FLOW_COLUMNS)}
+            rowKey="orderTime"
             className={styles.table}
             rowClassName={styles.tableRow}
             onChange={this.handlePageChanged}

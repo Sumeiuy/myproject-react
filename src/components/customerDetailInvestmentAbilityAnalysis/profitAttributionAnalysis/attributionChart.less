@@ -1,0 +1,56 @@
+.attributionChart {
+  flex: 1;
+
+  .title {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 20px;
+  }
+
+  .chartlegend {
+    display: flex;
+    justify-content: flex-end;
+    height: 17px;
+    margin-bottom: 20px;
+
+    .column {
+      margin-left: 20px;
+      height: 17px;
+      display: inline-block;
+
+      .value {
+        font-size: 12px;
+        line-height: 17px;
+        color: #666;
+        display: flex;
+        align-items: center;
+
+        &:before {
+          content: '';
+          width: 18px;
+          height: 2px;
+          margin-right: 5px;
+          display: inline-block;
+        }
+      }
+
+      .equityRateValue {
+        &:before {
+          background: #485a7b;
+        }
+      }
+
+      .solidRecoveryRateValue {
+        &:before {
+          background: #ffd500;
+        }
+      }
+
+      .currencyRateValue {
+        &:before {
+          background: #fe5f03;
+        }
+      }
+    }
+  }
+}

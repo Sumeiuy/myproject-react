@@ -632,6 +632,13 @@ payload: { name: '取消' } })
 
   // 显示隐藏分组转标签模态框
   @autobind
+  @logable({
+    type: 'ButtonClick',
+    payload: {
+      name: '打开/关闭分组转标签模态框',
+      value: '$args[0]'
+    }
+  })
   toggleGroupToLabelModalVisible(bool) {
     this.setState({
       isShowGroupToLabelModal: bool,
@@ -640,8 +647,10 @@ payload: { name: '取消' } })
 
   // 显示分组转标签的模态框
   @autobind
-  @logPV({ pathname: '/modal/groupToLabel',
-title: '分组转标签' })
+  @logPV({
+    pathname: '/modal/groupToLabel',
+    title: '分组转标签'
+  })
   showGroupToLabelModal() {
     this.toggleGroupToLabelModalVisible(true);
   }

@@ -159,13 +159,6 @@ export default class Detail extends PureComponent {
         ruleType,
       },
     } = this.props;
-    const {
-      location: {
-        query: {
-          appId = '',
-        },
-      },
-    } = this.props;
 
     const { pageData, assignmentListData } = this.state;
     if (_.isEmpty(this.props.data)) {

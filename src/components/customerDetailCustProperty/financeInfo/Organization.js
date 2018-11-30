@@ -12,13 +12,18 @@ import _ from 'lodash';
 import InfoItem from '../../common/infoItem';
 import IfWrap from '../../common/biz/IfWrap';
 import BasicEditorCell from '../common/BasiceEditorCell';
-import { number } from '../../../helper';
+import { number, regxp } from '../../../helper';
 import {
   DEFAULT_VALUE,
   checkIsNeedTitle,
-  FINCE_REG,
 } from '../config';
 import styles from './common.less';
+
+const {
+  noFirstZero,
+  positiveNumber,
+  twoDecimals,
+} = regxp;
 
 const INFO_ITEM_WITDH_110 = '110px';
 const INFO_ITEM_WITDH = '126px';
@@ -30,7 +35,7 @@ const TOTAL_ASSETS_NAME  = 'totalAssets';
 const MASS_PROFIT_NAME  = 'massProfit';
 // 净利润
 const NET_MARGIN_NAME  = 'netMargin';
-
+const MAX_NUM_LENGTH = 17;
 export default class Organization extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -58,6 +63,7 @@ export default class Organization extends PureComponent {
       },
     } = this.props;
     return isMainEmp && !isQuoteComp;
+    // return true;
   }
 
   @autobind
@@ -88,10 +94,28 @@ export default class Organization extends PureComponent {
         msg: '数据不能为空',
       };
     }
-    if (!FINCE_REG.test(value)) {
+    if (value.length > MAX_NUM_LENGTH) {
       return {
         validate: false,
-        msg: '请输入合法的数据',
+        msg: '长度不能超过17',
+      };
+    }
+    if (!positiveNumber.test(value)) {
+      return {
+        validate: false,
+        msg: '只能输入正整数或小数',
+      };
+    }
+    if (!noFirstZero.test(value)) {
+      return {
+        validate: false,
+        msg: '第一位数字不能为0',
+      };
+    }
+    if (!twoDecimals.test(value)) {
+      return {
+        validate: false,
+        msg: '小数位不能超过2位',
       };
     }
     return {
@@ -102,8 +126,12 @@ export default class Organization extends PureComponent {
 
   @autobind
   getViewData(value) {
-    return (_.isEmpty(value) && !_.isNumber(value))
-      ? '' : number.thousandFormat(number.toFixed(value));
+    let displayValue = value;
+    // 是数字类型
+    if (_.isNumber(value)) {
+      displayValue = `${number.thousandFormat(number.toFixed(value))}(元)`;
+    }
+    return _.isEmpty(displayValue) ? DEFAULT_VALUE : displayValue;
   }
 
   @autobind
@@ -135,7 +163,7 @@ export default class Organization extends PureComponent {
                   className={styles.infoItem}
                   editorId="total_assets"
                   onEditOK={value => this.updateData(TOTAL_ASSETS_NAME, value)}
-                  value={data.totalAssets}
+                  value={data.totalAssets || ''}
                   displayValue={this.getViewData(data.totalAssets)}
                   checkable
                   onCheck={this.checkNormalValue}
@@ -146,7 +174,7 @@ export default class Organization extends PureComponent {
                 <InfoItem
                   width={INFO_ITEM_WITDH_110}
                   label="总资产"
-                  value={this.getViewData(data.totalAssets) || DEFAULT_VALUE}
+                  value={this.getViewData(data.totalAssets)}
                   className={styles.infoItem}
                   isNeedValueTitle={checkIsNeedTitle(this.getViewData(data.totalAssets))}
                   isNeedOverFlowEllipsis
@@ -158,7 +186,7 @@ export default class Organization extends PureComponent {
           <InfoItem
             width={INFO_ITEM_WITDH}
             label="净资产"
-            value={this.getViewData(data.netAsset) || DEFAULT_VALUE}
+            value={this.getViewData(data.netAsset)}
             className={styles.infoItem}
             isNeedValueTitle={checkIsNeedTitle(this.getViewData(data.netAsset))}
             isNeedOverFlowEllipsis
@@ -174,7 +202,7 @@ export default class Organization extends PureComponent {
                   className={styles.infoItem}
                   editorId="mass_profit"
                   onEditOK={value => this.updateData(MASS_PROFIT_NAME, value)}
-                  value={data.massProfit}
+                  value={data.massProfit || ''}
                   displayValue={this.getViewData(data.massProfit)}
                   checkable
                   onCheck={this.checkNormalValue}
@@ -185,7 +213,7 @@ export default class Organization extends PureComponent {
                 <InfoItem
                   width={INFO_ITEM_WITDH}
                   label="利润总额"
-                  value={this.getViewData(data.massProfit) || DEFAULT_VALUE}
+                  value={this.getViewData(data.massProfit)}
                   className={styles.infoItem}
                   isNeedValueTitle={checkIsNeedTitle(this.getViewData(data.massProfit))}
                   isNeedOverFlowEllipsis
@@ -203,7 +231,7 @@ export default class Organization extends PureComponent {
                 className={styles.infoItem}
                 editorId="net_margin"
                 onEditOK={value => this.updateData(NET_MARGIN_NAME, value)}
-                value={data.netMargin}
+                value={data.netMargin || ''}
                 displayValue={this.getViewData(data.netMargin)}
                 checkable
                 onCheck={this.checkNormalValue}
@@ -214,7 +242,7 @@ export default class Organization extends PureComponent {
               <InfoItem
                 width={INFO_ITEM_WITDH}
                 label="净利润"
-                value={this.getViewData(data.netMargin) || DEFAULT_VALUE}
+                value={this.getViewData(data.netMargin)}
                 className={styles.infoItem}
                 isNeedValueTitle={checkIsNeedTitle(this.getViewData(data.netMargin))}
                 isNeedOverFlowEllipsis
@@ -226,7 +254,7 @@ export default class Organization extends PureComponent {
           <InfoItem
             width={INFO_ITEM_WITDH_110}
             label="企业负债"
-            value={this.getViewData(data.enterpriseDebt) || DEFAULT_VALUE}
+            value={this.getViewData(data.enterpriseDebt)}
             className={styles.infoItem}
             isNeedValueTitle={checkIsNeedTitle(this.getViewData(data.enterpriseDebt))}
             isNeedOverFlowEllipsis
@@ -236,7 +264,7 @@ export default class Organization extends PureComponent {
           <InfoItem
             width={INFO_ITEM_WITDH}
             label="年营业收入"
-            value={this.getViewData(data.annualIncome) || DEFAULT_VALUE}
+            value={this.getViewData(data.annualIncome)}
             className={styles.infoItem}
             isNeedValueTitle={checkIsNeedTitle(this.getViewData(data.annualIncome))}
             isNeedOverFlowEllipsis
@@ -247,7 +275,7 @@ export default class Organization extends PureComponent {
             <InfoItem
               width={INFO_ITEM_WITDH}
               label="证券账户总资产"
-              value={this.getViewData(data.securityAssets) || DEFAULT_VALUE}
+              value={this.getViewData(data.securityAssets)}
               className={styles.infoItem}
               isNeedValueTitle={checkIsNeedTitle(this.getViewData(data.securityAssets))}
               isNeedOverFlowEllipsis
@@ -255,7 +283,7 @@ export default class Organization extends PureComponent {
           </div>
         </IfWrap>
         <div className={styles.latestTime}>
-          近期风险承受能力评估问卷日期：{data.latestSurveyTime || DEFAULT_VALUE}
+          近期风险承受能力评估问卷日期：{this.getViewData(data.latestSurveyTime)}
         </div>
       </div>
     );

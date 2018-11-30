@@ -94,8 +94,8 @@ export default class ZLMemberInfo extends PureComponent {
           <span className={styles.colorBlock} />
           <span className={styles.titleText}>涨乐U会员</span>
           <span className={styles.iconButton}>
-            <Icon type='huiyuandengjibiangeng' />
-            <span onClick={this.handleMemberGradeModalOpen}>会员等级变更</span>
+            <Icon type='dengjibiangenglishi' />
+            <span onClick={this.handleMemberGradeModalOpen}>等级变更历史</span>
             <ZLMemeberInfoModal
               location={location}
               visible={memberGradeModalVisible}

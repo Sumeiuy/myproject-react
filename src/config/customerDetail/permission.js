@@ -45,9 +45,6 @@ export default function getCustomerDetailPermission(empInfo = {}) {
     empInfo.isMainEmp ||
     empInfo.isAssistantEmp;
 
-  // 客户属性-投资偏好-权限判定
-  const custPropertyInvestVarietyPermission = custPropertyTabPermission;
-
   // 账户信息tab-(私密客户)-权限判定
   const accountInfoTabPrivatePermission =
     hasPCTIQPermission() ||
@@ -72,11 +69,13 @@ export default function getCustomerDetailPermission(empInfo = {}) {
   const discountCouponTabPermission = basicInfoPermission;
   // 客户画像tab-权限判定
   const customerProfileTabPermission = basicInfoPermission;
+
+  // 信息编辑权限
+  const infoEditPermission = empInfo.isMainEmp;
   return {
     basicInfoPermission,
     custPropertyInfoPermission,
     custPropertyPrivateInfoPermission,
-    custPropertyInvestVarietyPermission,
     accountInfoTabPermission,
     custPropertyTabPermission,
     businessHandTabPermission,
@@ -86,6 +85,7 @@ export default function getCustomerDetailPermission(empInfo = {}) {
     productOrderTabPermission,
     discountCouponTabPermission,
     customerProfileTabPermission,
+    infoEditPermission,
   };
 }
 

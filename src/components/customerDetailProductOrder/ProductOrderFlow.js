@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-20 10:31:29
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-26 20:44:07
+ * @LastEditTime: 2018-11-30 09:48:05
  * @Description: 服务订单流水
  */
 
@@ -11,6 +11,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import moment from 'moment';
+import logable from '../../decorators/logable';
 import Tooltip from '../common/Tooltip';
 import { SingleFilter } from 'lego-react-filter/src';
 import Table from '../common/table';
@@ -25,11 +26,6 @@ import {
 } from './config';
 import styles from './productOrderFlow.less';
 
-// 默认查询日期半年
-const DEFAULT_START_DATE = moment().subtract(6, 'months');
-const DEFAULT_END_DATE = moment().subtract(1, 'day');
-// 接口请求查询日期的格式
-const DATE_FORMATE_API = 'YYYY-MM-DD';
 const NODATA_HINT = '客户暂无服务订单信息';
 
 export default class ProductOrderFlow extends PureComponent {
@@ -43,7 +39,7 @@ export default class ProductOrderFlow extends PureComponent {
     queryServiceOrderDetail: PropTypes.func.isRequired,
     queryServiceProductList: PropTypes.func.isRequired,
     queryOrderApproval: PropTypes.func.isRequired,
-    queryJxGroupProduct: PropTypes.func.isRequired,
+    queryServiceProductBySearch: PropTypes.func.isRequired,
     attachmentList: PropTypes.array.isRequired,
     getAttachmentList: PropTypes.func.isRequired,
   };
@@ -59,8 +55,8 @@ export default class ProductOrderFlow extends PureComponent {
       orderNumber: '', // 订单详情的编号
       serviceProductCode: '',
       serviceType: '',
-      standardStartDate: DEFAULT_START_DATE.format(DATE_FORMATE_API),
-      standardEndDate: DEFAULT_END_DATE.format(DATE_FORMATE_API),
+      createTimeFrom: '',
+      createTimeTo: '',
     };
   }
 
@@ -68,36 +64,50 @@ export default class ProductOrderFlow extends PureComponent {
     const {
       serviceProductCode,
       serviceType,
-      standardStartDate,
-      standardEndDate,
+      createTimeFrom,
+      createTimeTo,
     } = this.state;
     this.props.onProductOrderFlowChange({
       curPageNum: 1,
       pageSize: DEFAULT_PAGE_SIZE,
       serviceProductCode,
       serviceType,
-      createTimeFrom: standardStartDate,
-      createTimeTo: standardEndDate,
+      createTimeFrom,
+      createTimeTo,
     });
   }
 
   @autobind
   handleSearchChanged(value) {
     if ( _.trim(value) !== '') {
-      this.props.queryJxGroupProduct({
+      this.props.queryServiceProductBySearch({
         keyword: value,
       });
     }
   }
 
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '服务订单流水服务产品选择',
+      value: '$args[0].value',
+    },
+  })
   handleServiceProductChanged(e) {
     this.setState({
-      serviceProductCode: e.value,
+      serviceProductCode: e.value.prodId,
     }, this.handleProductOrderFlowChange);
   }
 
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '服务订单流水类型选择',
+      value: '$args[0].value',
+    },
+  })
   handleServiceTypeChanged(e) {
     this.setState({
       serviceType: e.value,
@@ -105,10 +115,17 @@ export default class ProductOrderFlow extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'CalendarSelect',
+    payload: {
+      name: '服务订单流水日期选择',
+      value: '$args[0].value',
+    },
+  })
   haneleDateChanged(e) {
     this.setState({
-      standardStartDate: e.value[0],
-      standardEndDate: e.value[1],
+      createTimeFrom: e.value[0],
+      createTimeTo: e.value[1],
     }, this.handleProductOrderFlowChange);
   }
 
@@ -122,14 +139,14 @@ export default class ProductOrderFlow extends PureComponent {
     const {
       serviceProductCode,
       serviceType,
-      standardStartDate,
-      standardEndDate,
+      createTimeFrom,
+      createTimeTo,
     } = this.state;
     let payload = {
       serviceProductCode,
       type: serviceType,
-      createTimeFrom: standardStartDate,
-      createTimeTo: standardEndDate,
+      createTimeFrom,
+      createTimeTo,
       pageSize: DEFAULT_PAGE_SIZE,
       curPageNum: 1,
     };
@@ -143,6 +160,7 @@ export default class ProductOrderFlow extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ViewItem', payload: { name: '点击服务订单编号', value: '$args[0]' } })
   handleOrderNumberClicked(id) {
     this.setState({
       isProductOrderDetailShow: true,
@@ -187,11 +205,45 @@ export default class ProductOrderFlow extends PureComponent {
             render: renderFunc,
           };
           break;
+        case 'executiveCondition':
+          newColumn = {
+            ...column,
+            render: content => (
+              <span>
+                {
+                  _.isEmpty(content)
+                  ? '--'
+                  : <Tooltip title={content}>{content}</Tooltip>
+                }
+              </span>
+            ),
+          };
+          break;
         default:
-          newColumn = { ...column };
+          newColumn = {
+            ...column,
+            render: content => (
+              <span>
+                {_.isEmpty(content) ? '--' : content}
+              </span>
+            ),
+          };
       }
       return newColumn;
     });
+  }
+
+  @autobind
+  addNoLimitType(dict) {
+    return _.union(
+      [
+        {
+          key: '',
+          value: '不限',
+        },
+      ],
+      dict,
+    );
   }
 
   render() {
@@ -215,8 +267,8 @@ export default class ProductOrderFlow extends PureComponent {
       orderNumber,
       serviceProductCode,
       serviceType,
-      standardStartDate,
-      standardEndDate,
+      createTimeFrom,
+      createTimeTo,
     } = this.state;
     let {
       dict: {
@@ -245,10 +297,11 @@ export default class ProductOrderFlow extends PureComponent {
               placeholder="请输入服务产品"
               showSearch
               needItemObj
+              dataMap={['prodId', 'prodName']}
               value={serviceProductCode}
               data={productListBySearch}
               onInputChange={this.handleSearchChanged}
-              onChanged={this.handleServiceProductChanged}
+              onChange={this.handleServiceProductChanged}
               dropdownStyle={{
                 maxHeight: 324,
                 overflowY: 'auto',
@@ -260,7 +313,7 @@ export default class ProductOrderFlow extends PureComponent {
             <SingleFilter
               filterName="类型"
               filterId="serviceType"
-              data={serviceOrderType}
+              data={this.addNoLimitType(serviceOrderType)}
               value={serviceType}
               onChange={this.handleServiceTypeChanged}
             />
@@ -268,8 +321,7 @@ export default class ProductOrderFlow extends PureComponent {
           <div className={styles.filterItem}>
             <DateFilter
               filterName="创建日期"
-              initialStartDate={DEFAULT_START_DATE}
-              value={[standardStartDate,standardEndDate]}
+              value={[createTimeFrom, createTimeTo]}
               onChange={this.haneleDateChanged}
               disabledCurrentEnd={false}
             />

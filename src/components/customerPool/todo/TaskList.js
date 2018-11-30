@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-11-12 19:25:08
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-23 16:45:28
+ * @Last Modified time: 2018-11-30 10:14:32
  */
 
 import React, { PureComponent } from 'react';
@@ -10,6 +10,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { Table, message } from 'antd';
 import _ from 'lodash';
+import moment from 'moment';
 
 import logable from '../../../decorators/logable';
 import { openRctTab } from '../../../utils';
@@ -147,7 +148,7 @@ export default class TaskList extends PureComponent {
   // 请求基本信息成功，页面跳转
   @autobind
   handleSuccess() {
-    const { location: { query }, taskBasicInfo, listType } = this.props;
+    const { location: { query }, taskBasicInfo } = this.props;
     const { push } = this.context;
     const { flowId } = this.state;
     // 判断返回信息中msg是否报错
@@ -161,14 +162,13 @@ export default class TaskList extends PureComponent {
       };
       openRctTab({
         routerAction: push,
-        url: `/customerPool/createTaskFromTaskRejection1?source=${RETURN_TASK_FROM_TODOLIST}&flowId=${flowId}&type=${listType}`,
+        url: `/customerPool/createTaskFromTaskRejection1?source=${RETURN_TASK_FROM_TODOLIST}&flowId=${flowId}`,
         param,
         pathname: '/customerPool/createTaskFromTaskRejection1',
         query: {
           ...query,
           flowId,
           source: RETURN_TASK_FROM_TODOLIST,
-          type: listType,
         },
       });
     }
@@ -196,12 +196,12 @@ export default class TaskList extends PureComponent {
             key: 'subject',
             render: (item, record) =>
               (<a
-                className={styles.applySubject}
                 target="_blank"
                 rel="noopener noreferrer"
                 title={item}
                 data={record.id}
                 onClick={() => this.handleOpenNewPage(record.id)}
+                className={styles.title}
               >
                 {record.subject}
               </a>),
@@ -210,13 +210,13 @@ export default class TaskList extends PureComponent {
             title: '类型',
             dataIndex: 'workFlowName',
             key: 'workFlowName',
-            render: (item, record) => (<span className={styles.applyWorkFlowName}>{record.workFlowName}</span>),
+            render: (item, record) => (<span>{record.workFlowName}</span>),
           },
           {
             title: '提交时间',
             dataIndex: 'startTime',
             key: 'startTime',
-            render: (item, record) => (<span className={styles.applyStartTime}>{record.startTime}</span>),
+            render: (item, record) => (<span>{moment(Number(record.startTime)).format('YYYY-MM-DD')}</span>),
           },
         ];
         break;
@@ -233,6 +233,7 @@ export default class TaskList extends PureComponent {
                 title={item}
                 data={record.id}
                 onClick={() => this.handleOpenNewPage(record.id)}
+                className={styles.title}
               >
                 {record.subject}
               </a>),
@@ -241,26 +242,31 @@ export default class TaskList extends PureComponent {
             title: '类型',
             dataIndex: 'workFlowName',
             key: 'workFlowName',
+            render: (item, record) => (<span>{record.workFlowName}</span>),
           },
           {
             title: '提交人工号',
             dataIndex: 'originator',
             key: 'originator',
+            render: (item, record) => (<span>{record.originator}</span>),
           },
           {
             title: '提交人姓名',
             dataIndex: 'originatorName',
             key: 'originatorName',
+            render: (item, record) => (<span>{record.originatorName}</span>),
           },
           {
             title: '提交时间',
             dataIndex: 'startTime',
             key: 'startTime',
+            render: (item, record) => (<span>{moment(Number(record.startTime)).format('YYYY-MM-DD')}</span>),
           },
           {
             title: '审批时间',
             dataIndex: 'endTime',
             key: 'endTime',
+            render: (item, record) => (<span>{moment(Number(record.endTime)).format('YYYY-MM-DD')}</span>),
           },
         ];
         break;
@@ -283,7 +289,8 @@ export default class TaskList extends PureComponent {
         totalRecordNum,
       }
     } = this.props;
-    // 搜索结果为空
+
+    //数据为空
     if (_.isEmpty(data)) {
       return (
         <div className={styles.empty}>

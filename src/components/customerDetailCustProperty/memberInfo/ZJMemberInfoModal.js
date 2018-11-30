@@ -2,28 +2,31 @@
  * @Author: wangyikai
  * @Date: 2018-11-15 16:54:09
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-26 18:10:51
+ * @Last Modified time: 2018-11-29 16:53:10
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import moment from 'moment';
-import Icon from '../../common/Icon';
 import { number } from '../../../helper';
 import styles from './zjMemberInfo.less';
 import Modal from '../../../components/common/biz/CommonModal';
 import Table from '../../../components/common/table';
 import { integralFlowColumns } from '../config';
+import Tooltip from '../../common/Tooltip';
 import logable from '../../../decorators/logable';
+import IfTableWrap from '../../common/IfTableWrap';
 
+const TABLENUM = 10;
 const PAGE_SIZE = 10;
 const EMPTY_ARRAY = [];
 const EMPTY_OBJECT = {};
 const DATE_FORMAT = 'YYYY-MM-DD';
-const TRANDE_DATE= 'tradeDate';
-const PROCESS_DATE= 'processDate';
-const PRODUCT= 'productQuantity';
+const TRANDE_DATE = 'tradeDate';
+const PROCESS_DATE = 'processDate';
+const PRODUCT = 'productQuantity';
+const NODATA_HINT = '没有符合条件的记录';
 
 export default class ZJMemeberInfoModal extends PureComponent {
   static propTypes = {
@@ -63,10 +66,23 @@ export default class ZJMemeberInfoModal extends PureComponent {
   @autobind
   renderColumns(){
     const integralFlowList = [...integralFlowColumns];
-    const integralFlowColumn = _.find(integralFlowList, o => o.key === TRANDE_DATE || o.key === PROCESS_DATE);
+    const integralFlowColumn = _.find(integralFlowList, o => o.key === TRANDE_DATE);
     integralFlowColumn.render = text => {
       const date = text && moment(text).format(DATE_FORMAT);
-      return (<span title={text}>{date || '--'}</span>);
+      return (
+        <Tooltip title={text}>
+          {date || '--'}
+        </Tooltip>
+      );
+    };
+    const processDateColumns = _.find(integralFlowList, o => o.key === PROCESS_DATE);
+    processDateColumns.render = text => {
+      const date = text && moment(text).format(DATE_FORMAT);
+      return (
+        <Tooltip title={text}>
+          {date || '--'}
+        </Tooltip>
+      );
     };
     const productQuantityList = _.find(integralFlowList, o => o.key === PRODUCT);
     productQuantityList.render = text => {
@@ -98,6 +114,7 @@ export default class ZJMemeberInfoModal extends PureComponent {
   render() {
     const { dataSource, onClose, visible } = this.props;
     const { tradeFlow = EMPTY_ARRAY, page = EMPTY_OBJECT } = dataSource;
+    const isRender = !_.isEmpty(tradeFlow);
     const PaginationOption = {
       current: page.pageNum || 1,
       total: page.totalRecordNum || 0,
@@ -119,28 +136,21 @@ export default class ZJMemeberInfoModal extends PureComponent {
           modalKey="integralFlow"
           maskClosable={false}
         >
-          {
-            _.isEmpty(tradeFlow)
-            ? (
-                <div className={styles.noDataContainer}>
-                  <Icon type="wushujuzhanweitu-" className={styles.noDataIcon}/>
-                  <div className={styles.noDataText}>没有符合条件的记录</div>
-                </div>
-              )
-            : (
-                <div className={styles.tabContainer}>
-                  <Table
-                    pagination={showIntegralFlowPagination}
-                    dataSource={tradeFlow}
-                    isNeedEmptyRow
-                    columns={this.renderColumns()}
-                    scroll={{ x: '1024px' }}
-                  />
-                </div>
-              )
-          }
+          <IfTableWrap isRender={isRender} text={NODATA_HINT}>
+            <div className={styles.tabContainer}>
+              <Table
+                pagination={showIntegralFlowPagination}
+                dataSource={tradeFlow}
+                isNeedEmptyRow
+                rowNumber={TABLENUM}
+                columns={this.renderColumns()}
+                scroll={{ x: '1024px' }}
+              />
+            </div>
+          </IfTableWrap>
         </Modal>
       </div>
     );
   }
 }
+

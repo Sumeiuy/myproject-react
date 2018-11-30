@@ -1,8 +1,8 @@
 /*
  * @Author: sunweibin
  * @Date: 2018-10-19 15:24:33
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-19 15:24:58
+ * @Last Modified by: li-ke
+ * @Last Modified time: 2018-11-29 10:23:24
  * @description 问题反馈
  */
 
@@ -27,7 +27,7 @@ const EMPRESPDTOLIST = 'feedback/getEmpListByResp';
 const FEEDBACKLIST = 'feedback/getFeedbackList';
 const mapStateToProps = state => ({
   list: state.feedback.list,
-  empRespDTOList: state.feedback.empRespDTOList,
+  operatorList: state.feedback.operatorList,
 });
 
 const getDataFunction = loading => totype => query => ({
@@ -53,7 +53,7 @@ export default class FeedBackNew extends PureComponent {
     replace: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
     getEmpListByResp: PropTypes.func.isRequired,
-    empRespDTOList: PropTypes.array.isRequired,
+    operatorList: PropTypes.array.isRequired,
   }
 
   constructor(props) {
@@ -79,7 +79,7 @@ export default class FeedBackNew extends PureComponent {
     getFeedbackList(feedbackHelper.constructPostBody(query, curPageNum || 1, curPageSize || 10));
     getEmpListByResp({
       respId: '1-3PDQSG5',
-    })
+    });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -152,7 +152,7 @@ export default class FeedBackNew extends PureComponent {
       list,
       location,
       replace,
-      empRespDTOList,
+      operatorList,
     } = this.props;
     // 此处需要提供一个方法给返回的接口查询设置是否查询到数据
     const { isEmpty } = this.state;
@@ -167,14 +167,14 @@ export default class FeedBackNew extends PureComponent {
         list={list}
         replace={replace}
         location={location}
-        empRespDTOList={empRespDTOList}
+        operatorList={operatorList}
       />
     );
 
     const rightPanel = (
       <Detail
         location={location}
-        empRespDTOList={empRespDTOList}
+        operatorList={operatorList}
       />
     );
     return (

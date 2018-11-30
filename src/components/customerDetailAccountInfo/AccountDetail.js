@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-23 17:18:23
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-27 11:28:07
+ * @Last Modified time: 2018-11-27 15:58:11
  * @description 账户详情
  */
 
@@ -22,10 +22,10 @@ import {
 import logable from '../../decorators/logable';
 import { number } from '../../helper';
 import Pagination from '../common/Pagination';
-import PlaceHolder from '../common/placeholderImage/PlaceHolder';
+import PlaceHolder from '../common/placeholderImage/PlaceHolder_';
 import IfTableWrap from '../common/IfTableWrap';
 import DateFilter from '../common/htFilter/dateFilter';
-
+import Tooltip from '../common/Tooltip';
 import styles from './accountDetail.less';
 
 // 默认查询日期半年
@@ -114,6 +114,15 @@ export default class AccountDetail extends PureComponent {
             }
             return number.thousandFormat(text, false);
           },
+        };
+      } else if (dataIndex === 'bussinessType' || dataIndex === 'agency') {
+        return {
+          ...column,
+          render: text => (
+            <span>
+              <Tooltip title={text}>{text}</Tooltip>
+            </span>
+          )
         };
       }
       return column;

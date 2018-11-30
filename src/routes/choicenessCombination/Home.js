@@ -22,6 +22,7 @@ import { sourceType, securityType } from '../../components/choicenessCombination
 import { seperator } from '../../config';
 import { permission, dva, url as urlHelper, emp } from '../../helper';
 import { openRctTab } from '../../utils';
+import logable from '../../decorators/logable';
 import styles from './index.less';
 
 const dispatch = dva.generateEffect;
@@ -230,6 +231,15 @@ export default class ChoicenessCombination extends PureComponent {
 
   // 关闭弹窗
   @autobind
+  @logable({
+    type: 'ButtonClick',
+    payload: {
+      name: '关闭弹窗',
+      type: '精选组合',
+      subtype: '组合详情',
+      value: '$props.location.query.modalType',
+    }
+  })
   closeModal() {
     const { replace } = this.context;
     const { location: { pathname } } = this.props;

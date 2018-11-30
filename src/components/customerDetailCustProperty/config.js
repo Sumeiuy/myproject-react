@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 客户360，客户属性tab相关配置
  * @Date: 2018-11-07 15:17:38
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-11-23 11:01:15
+ * @Last Modified by: wangyikai
+ * @Last Modified time: 2018-11-27 20:05:40
  */
 
 import _ from 'lodash';
@@ -173,9 +173,10 @@ export const newMemberGradeColumns = _.map(MemberGradeColumns, (items) => {
   if( dataIndex === 'time'){
     newItems = {
       ...items,
-      render: text => {
-        const data =  moment(text).format('YYYY-MM-DD hh:mm:ss');
-        return data;
+      render: (text,record) => {
+        if(!_.isEmpty(record.afterChangeLevel)) {
+          return moment(text).format('YYYY-MM-DD hh:mm:ss');
+        }
       }
     };
   };
@@ -207,6 +208,3 @@ export const custPropertyTabMapData = {
   // 关系信息TAB
   [RELATION_INFO_KEY]: '关系信息',
 };
-
-// 财务信息使用到的正则，第一位数组不能为0，小数点后最多两位，包含小数点最多17位
-export const FINCE_REG = /(^0\.\d{0,2}$)|(^[1-9](\d{0,16}$|(\d{0,14}\.\d$)|(\d{0,13}\.\d{0,2}$)))|^0{1}$/;

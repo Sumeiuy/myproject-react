@@ -1,8 +1,8 @@
 /**
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
- * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-26 17:03:19
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-11-29 10:07:40
  */
 
 import React, { PureComponent } from 'react';
@@ -23,6 +23,7 @@ import DiscountCoupon from './tabpages/discountCoupon/connectedHome';
 import { logCommon } from '../../decorators/logable';
 import ProductOrder from './tabpages/productOrder/Home';
 /* import InvestmentAbilityAnalysis from './tabpages/investmentAbilityAnalysis/Home'; */
+import ContractManage from './tabpages/contractManage/Home';
 import {
   ACCOUNT_INFO_TAB_KEY,
   CUSTOMER_INFO_TAB_KEY,
@@ -45,7 +46,6 @@ import IfWrap from '../../components/common/biz/IfWrap';
 import styles from './home.less';
 
 const TabPane = Tabs.TabPane;
-
 
 @withRouter
 export default class Home extends PureComponent {
@@ -80,6 +80,14 @@ export default class Home extends PureComponent {
   static contextTypes = {
     push: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      // 当前的tab页面, 默认展示 账户信息 Tab页
+      activeTabKey: 'contractManagement',
+    };
   }
 
   componentDidMount() {
@@ -148,6 +156,10 @@ export default class Home extends PureComponent {
     });
   }
 
+  renderTabPane(tabPane, permission) {
+    return permission ? tabPane : null;
+  }
+
   render() {
     const {
       location: {
@@ -187,7 +199,6 @@ export default class Home extends PureComponent {
       basicInfoPermission,
       custPropertyInfoPermission,
       custPropertyPrivateInfoPermission,
-      custPropertyInvestVarietyPermission,
       accountInfoTabPermission,
       custPropertyTabPermission,
       businessHandTabPermission,
@@ -197,6 +208,58 @@ export default class Home extends PureComponent {
       productOrderTabPermission,
       discountCouponTabPermission,
     } = getCustomerDetailPermission(customerBasicInfo || {});
+
+    const accountInfoTabPane = (
+      <TabPane tab="账户信息" key={ACCOUNT_INFO_TAB_KEY}>
+        <AccountInfo location={location} />
+      </TabPane>
+    );
+
+    const custPropertyTabPane = (
+      <TabPane tab="客户属性" key={CUSTOMER_INFO_TAB_KEY}>
+        <CustProperty
+          location={location}
+          custPropertyInfoPermission={custPropertyInfoPermission}
+          custPropertyPrivateInfoPermission={custPropertyPrivateInfoPermission}
+        />
+      </TabPane>
+    );
+
+    const businessHandTabPane = (
+      <TabPane tab="业务办理" key={BUNESSINESS_PROCESS_TAB_KEY}>
+        <BusinessHand location={location} />
+      </TabPane>
+    );
+
+    const serviceRecordTabPane = (
+      <TabPane tab="服务记录" key={SERVICE_RECORD_TAB_KEY}>
+        <ServiceRecord location={location} />
+      </TabPane>
+    );
+
+    const serviceRelationshipTabPane = (
+      <TabPane tab="服务关系" key={SERVICE_RELATION_TAB_KEY}>
+        <ServiceRelationship location={location} />
+      </TabPane>
+    );
+
+    const contractManageTabPane = (
+      <TabPane tab="合约管理" key={CONTRACT_MANAGE_TAB_KEY}>
+        <ContractManage location={location} />
+      </TabPane>
+    );
+
+    const productOrderTabPane = (
+      <TabPane tab="产品订单" key={PRODUCT_ORDER_TAB_KEY}>
+        <ProductOrder location={location} />
+      </TabPane>
+    );
+
+    const discountCouponTabPane = (
+      <TabPane tab="理财优惠券" key={DISCOUNT_COUPON_TAB_KEY}>
+        <DiscountCoupon location={location} />
+      </TabPane>
+    );
 
     return (
       <div className={styles.container}>
@@ -225,55 +288,14 @@ export default class Home extends PureComponent {
             animated={false}
             tabBarGutter={40}
           >
-            <IfWrap isRender={accountInfoTabPermission}>
-              <TabPane tab="账户信息" key={ACCOUNT_INFO_TAB_KEY}>
-                <AccountInfo location={location} />
-              </TabPane>
-            </IfWrap>
-            <IfWrap isRender={custPropertyTabPermission}>
-              <TabPane tab="客户属性" key={CUSTOMER_INFO_TAB_KEY}>
-                <CustProperty
-                  location={location}
-                  custPropertyInfoPermission={custPropertyInfoPermission}
-                  custPropertyPrivateInfoPermission={custPropertyPrivateInfoPermission}
-                  custPropertyInvestVarietyPermission={custPropertyInvestVarietyPermission}
-                />
-            </TabPane>
-            </IfWrap>
-            {/* <TabPane tab="投资能力分析" key={INVEST_ANALYZE_TAB_KEY}>
-              <InvestmentAbilityAnalysis />
-            </TabPane> */}
-            <IfWrap isRender={businessHandTabPermission}>
-              <TabPane tab="业务办理" key={BUNESSINESS_PROCESS_TAB_KEY}>
-                <BusinessHand location={location} />
-              </TabPane>
-            </IfWrap>
-            <IfWrap isRender={serviceRecordTabPermission}>
-              <TabPane tab="服务记录" key={SERVICE_RECORD_TAB_KEY}>
-                <ServiceRecord location={location} />
-              </TabPane>
-            </IfWrap>
-            <IfWrap isRender={serviceRelationshipTabPermission}>
-              <TabPane tab="服务关系" key={SERVICE_RELATION_TAB_KEY}>
-                <ServiceRelationship location={location} />
-              </TabPane>
-            </IfWrap>
-            <IfWrap isRender={contractManagementTabPermission}>
-             <TabPane tab="合约管理" key={CONTRACT_MANAGE_TAB_KEY}>
-              </TabPane>
-            </IfWrap>
-            {/* <TabPane tab="投资者评估" key={INVESTOR_ASSESSMENT_TAB_KEY}>
-            </TabPane> */}
-            <IfWrap isRender={productOrderTabPermission}>
-              <TabPane tab="产品订单" key={PRODUCT_ORDER_TAB_KEY}>
-                <ProductOrder location={location} />
-              </TabPane>
-            </IfWrap>
-             <IfWrap isRender={discountCouponTabPermission}>
-              <TabPane tab="理财优惠券" key={DISCOUNT_COUPON_TAB_KEY}>
-                <DiscountCoupon location={location} />
-              </TabPane>
-            </IfWrap>
+            {this.renderTabPane(accountInfoTabPane, accountInfoTabPermission)}
+            {this.renderTabPane(custPropertyTabPane, custPropertyTabPermission)}
+            {this.renderTabPane(businessHandTabPane, businessHandTabPermission)}
+            {this.renderTabPane(serviceRecordTabPane, serviceRecordTabPermission)}
+            {this.renderTabPane(serviceRelationshipTabPane, serviceRelationshipTabPermission)}
+            {this.renderTabPane(contractManageTabPane, contractManagementTabPermission)}
+            {this.renderTabPane(productOrderTabPane, productOrderTabPermission)}
+            {this.renderTabPane(discountCouponTabPane, discountCouponTabPermission)}
           </Tabs>
         </div>
       </div>

@@ -33,14 +33,6 @@ export default class MyDetail extends PureComponent {
     addFeedbackEvaluation: PropTypes.func.isRequired,
   }
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      evaluationStatus: props.feedbackDetail.evaluation,
-      preFeedbackDetail: props.feedbackDetail,
-    };
-  }
-
   // 点击每一个反馈都会更新里面的值
   static getDerivedStateFromProps(nextProps, prevState) {
     if (nextProps.feedbackDetail !== prevState.preFeedbackDetail) {
@@ -50,6 +42,14 @@ export default class MyDetail extends PureComponent {
       };
     }
     return null;
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      evaluationStatus: props.feedbackDetail.evaluation,
+      preFeedbackDetail: props.feedbackDetail,
+    };
   }
 
   @autobind
