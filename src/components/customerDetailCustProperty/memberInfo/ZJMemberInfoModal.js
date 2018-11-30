@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-11-15 16:54:09
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-29 16:53:10
+ * @Last Modified time: 2018-11-30 09:45:38
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -136,7 +136,7 @@ export default class ZJMemeberInfoModal extends PureComponent {
           modalKey="integralFlow"
           maskClosable={false}
         >
-          <IfTableWrap isRender={isRender} text={NODATA_HINT}>
+          <IfTableWrap isRender={isRender} text={NODATA_HINT} noDataStyle={{'paddingTop':'200px'}}>
             <div className={styles.tabContainer}>
               <Table
                 pagination={showIntegralFlowPagination}

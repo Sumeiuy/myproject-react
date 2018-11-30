@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-11-06 13:23:32
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-29 11:52:38
+ * @Last Modified time: 2018-11-30 10:14:13
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -113,6 +113,7 @@ export default class ServiceRelationship extends PureComponent {
                     pagination={false}
                     className={styles.tableBorder}
                     dataSource={serviceTeam}
+                    rowKey='key'
                     columns={serviceTeamColumns}
                   />
                 </div>
@@ -126,6 +127,7 @@ export default class ServiceRelationship extends PureComponent {
                 <div className={styles.accountTable}>
                   <Table
                     pagination={false}
+                    rowKey='key'
                     className={styles.tableBorder}
                     dataSource={newIntroduceDatas}
                     columns={introduceColumns}
