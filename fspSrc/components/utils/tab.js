@@ -221,7 +221,7 @@ function findTopMenu(location) {
 }
 
 function getPanesFromMenu(location, fixPanes, currentMenuId) {
-  const { pathname, query } = location;
+  const { pathname, query, state } = location;
   let isTopMenu = false;
   let isFoundCurrentPane = false;
   let newActiveKey = '';
@@ -294,6 +294,7 @@ function getPanesFromMenu(location, fixPanes, currentMenuId) {
       // 找到叶节点link，修正
       currentPane.path = pathname;
       currentPane.query = query;
+      currentPane.state = state;
       isFoundCurrentPane = true;
       newCurrentMenuId = currentPane.id;
       return true;
@@ -392,7 +393,8 @@ function preTreatment(primaryMenu) {
 }
 
 // 如果设置了shouldStay标志，表示为页面内部跳转，使用这个修正pane
-function getStayPanes(pathname, query, prevState) {
+function getStayPanes(location, prevState) {
+  const { pathname, query, state } = location;
   const { panes, activeKey, currentMenuId } = prevState;
   const newPanes = [...panes];
   traverseMenus(newPanes, (pane, i, array) => {
@@ -401,6 +403,7 @@ function getStayPanes(pathname, query, prevState) {
       const currentPane = array[i];
       currentPane.path = pathname;
       currentPane.query = query;
+      currentPane.state = state;
       if (currentPane.pid === 'ROOT') {
         return false;
       }

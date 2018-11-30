@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-16 15:53:07
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-16 18:55:21
+ * @Last Modified time: 2018-11-30 17:59:15
  * @description 重点标签更多中展示的表格
  */
 import React, { Component } from 'react';
@@ -60,9 +60,16 @@ export default class KeyLabelsTable extends Component {
   renderLable(label) {
     const { name, desc, id } = label;
     return(
-      <Popover key={id} overlayClassName={styles.labelPopover} content={desc} title={name}>
-        <div className={styles.item}>{name}</div>
-      </Popover>
+      <div className={styles.item}>
+        <Popover
+          key={id}
+          overlayClassName={styles.labelPopover}
+          content={desc}
+          title={name}
+        >
+          {name}
+        </Popover>
+      </div>
     );
   }
 

@@ -12,7 +12,7 @@ import { Menu, Dropdown, Icon } from 'antd';
 import _ from 'lodash';
 import styles from './tabMenu.less';
 import MoreTab from './MoreTab';
-import commonConfig from './config';
+/* import commonConfig from './config'; */
 import { fixExternUrl } from '../utils/tab';
 
 const menuStyle = {
@@ -125,12 +125,13 @@ export default class TabMenu extends PureComponent {
       const externUrl = fixExternUrl(menuItem.url);
       window.open(externUrl, '_blank');
     } else if (menuItem.path !== path) {
+      const state =
+        !_.isEmpty(menuItem.state) ? menuItem.state : { url: menuItem && menuItem.url };
+
       push({
         pathname: menuItem.path,
         query: menuItem.query,
-        state: {
-          url: menuItem && menuItem.url,
-        },
+        state,
       });
     }
   }

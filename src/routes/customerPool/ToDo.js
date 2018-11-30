@@ -261,6 +261,7 @@ export default class ToDo extends PureComponent {
       case 'MY_APPLY':
         this.setState({
           applyType: [key, value],
+          category: key,
         }, () => {
           this.getApplyData({
             pageSize: DEFAULT_PAGESIZE,
@@ -274,6 +275,7 @@ export default class ToDo extends PureComponent {
       case 'MY_APPROVE':
         this.setState({
           approveType: [key, value],
+          category: key,
         }, () => {
           this.getApproveData({
             pageSize: DEFAULT_PAGESIZE,
@@ -391,9 +393,6 @@ export default class ToDo extends PureComponent {
       }
     } = this.props;
     const {
-      startTime,
-      endTime,
-      category,
       originator,
     } = this.state;
     if (obj === taskType) {
@@ -408,22 +407,38 @@ export default class ToDo extends PureComponent {
     });
     switch (obj) {
       case 'MY_APPLY':
-        this.getApplyData({
+        this.setState({
           startTime: defaultStartTime,
           endTime: defaultEndTime,
-          pageSize: DEFAULT_PAGESIZE,
-          pageNum: DEFAULT_PAGENUM,
-          category,
+          applyType: [],
+          category: '',
+        }, () => {
+          const { category } = this.state;
+          this.getApplyData({
+            startTime: defaultStartTime,
+            endTime: defaultEndTime,
+            pageSize: DEFAULT_PAGESIZE,
+            pageNum: DEFAULT_PAGENUM,
+            category,
+          });
         });
         break;
       case 'MY_APPROVE':
-        this.getApproveData({
+        this.setState({
           startTime: defaultStartTime,
           endTime: defaultEndTime,
-          pageSize: DEFAULT_PAGESIZE,
-          pageNum: DEFAULT_PAGENUM,
-          category,
-          originator,
+          approveType: [],
+          category: '',
+        }, () => {
+          const { category } = this.state;
+          this.getApproveData({
+            startTime: defaultStartTime,
+            endTime: defaultEndTime,
+            pageSize: DEFAULT_PAGESIZE,
+            pageNum: DEFAULT_PAGENUM,
+            category,
+            originator,
+          });
         });
         break;
       default:
