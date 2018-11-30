@@ -201,8 +201,6 @@ export default class ProtocolTab extends PureComponent {
   // 渲染操作列表
   @autobind
   renderOperationColumn(text, record) {
-    const { custInfo = EMPTY_OBJECT } = this.props;
-    const { isMainEmp = false } = custInfo;
     const {
       // 子类型 code
       subTypeCode,
@@ -216,9 +214,31 @@ export default class ProtocolTab extends PureComponent {
     if (subTypeCode !== TOUGU_SUBTYPE) {
       return null;
     }
-    // 协议状态为新建时，操作类型为：编辑、删除
     if (statusCode === 'New') {
-      return isMainEmp
+      // 协议状态为新建时，操作类型为：编辑、删除
+      return this.renderNewStatusOperation(record);
+    } else if (statusCode === 'Agree') {
+      // 协议状态为同意时，操作类型为：变更、查看历史记录
+      return this.renderAgreeStatusOperation(record);
+    } else if (chargingMode === CHARGING_MODE_CODE
+    && statusCode === 'Process'
+    && node === '待扣款') {
+      // 收费模式为【账户服务费模式】
+      // 状态【处理中】
+      // 节点【待扣款】
+      // 渲染终止按钮
+      return this.renderCloseOperation(record);
+    } else {
+      // 渲染历史记录按钮
+      return this.renderOtherOperation(record);
+    }
+  }
+
+  // 渲染新建状态下的操作按钮
+  @autobind
+  renderNewStatusOperation(record) {
+    return (
+      this.hasPermissionOfShowBtn()
       ? <div className={styles.iconWrapper}>
         <Icon
           type="bianji1"
@@ -231,59 +251,79 @@ export default class ProtocolTab extends PureComponent {
           onClick={() => this.handleDeleteProtocol(record)}
         />
       </div>
-      : null;
-    } else if (statusCode === 'Agree') {
-      // 协议状态为同意时，操作类型为：变更、查看历史记录
-      // qitawenjian\wenben
-      return (
-        <div className={styles.iconWrapper}>
-          {
-            isMainEmp
-            ? <Icon
-              type="shuaxin1"
-              title="变更"
-              onClick={() => this.handleUpdateProtocol(record)}
-            />
-            : null
-          }
-          <Icon
-            type="chakanjilu"
-            title="查看历史记录"
-            onClick={() => this.handleViewHistoryProtocol(record)}
+      : null
+    );
+  }
+
+  // 渲染同意状态下的操作按钮
+  @autobind
+  renderAgreeStatusOperation(record) {
+    return (
+      <div className={styles.iconWrapper}>
+        {
+          this.hasPermissionOfShowBtn()
+          ? <Icon
+            type="shuaxin1"
+            title="变更"
+            onClick={() => this.handleUpdateProtocol(record)}
           />
-        </div>
-      );
-    } else if (chargingMode === CHARGING_MODE_CODE
-    && statusCode === 'Process'
-    && node === '待扣款') {
-      return (
-        <div className={styles.iconWrapper}>
-          {
-            isMainEmp
-            ? <Icon
-              type="zhongzhi"
-              title="终止"
-              onClick={() => this.handleCloseProtocol(record)}
-            />
-            : null
-          }
-          <Icon
-            type="chakanjilu"
-            title="查看历史记录"
-            onClick={() => this.handleViewHistoryProtocol(record)}
+          : null
+        }
+        <Icon
+          type="chakanjilu"
+          title="查看历史记录"
+          onClick={() => this.handleViewHistoryProtocol(record)}
+        />
+      </div>
+    );
+  }
+
+  // 渲染终止操作按钮
+  @autobind
+  renderCloseOperation(record) {
+    return (
+      <div className={styles.iconWrapper}>
+        {
+          this.hasPermissionOfShowBtn()
+          ? <Icon
+            type="zhongzhi"
+            title="终止"
+            onClick={() => this.handleCloseProtocol(record)}
           />
-        </div>
-      );
-    } else {
-      return (
-        <div className={styles.iconWrapper}>
-          <Icon
-            type="chakanjilu"
-            onClick={() => this.handleViewHistoryProtocol(record)}
-          />
-        </div>
-      );
-    }
+          : null
+        }
+        <Icon
+          type="chakanjilu"
+          title="查看历史记录"
+          onClick={() => this.handleViewHistoryProtocol(record)}
+        />
+      </div>
+    );
+  }
+
+  // 渲染其他状态的操作按钮
+  @autobind
+  renderOtherOperation(record) {
+    return (
+      <div className={styles.iconWrapper}>
+        <Icon
+          type="chakanjilu"
+          onClick={() => this.handleViewHistoryProtocol(record)}
+        />
+      </div>
+    );
+  }
+
+  // 是否有权限渲染操作按钮
+  @autobind
+  hasPermissionOfShowBtn() {
+    const {
+      loginInfo = EMPTY_OBJECT,
+      custInfo = EMPTY_OBJECT,
+    } = this.props;
+    const { isMainEmp = false } = custInfo;
+    const { isTouGu = false } = loginInfo;
+    return isMainEmp && isTouGu;
   }
 
   // 统一处理跳转 fsp 协议的方法
