@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 19:41:38
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-29 17:36:36
+ * @Last Modified time: 2018-11-30 12:08:35
  * @description 机构客户联系方式配置项
  */
 // 机构客户电话信息表格columns
@@ -39,13 +39,13 @@ export const ORG_PHONE_COLUMNS = [
     title: '职务',
   },
   {
-    key: 'mobileNumber',
-    dataIndex: 'mobileNumber',
+    key: 'mobile',
+    dataIndex: 'mobile',
     title: '手机号码',
   },
   {
-    key: 'landlineNumber',
-    dataIndex: 'landlineNumber',
+    key: 'landline',
+    dataIndex: 'landline',
     title: '固定电话',
   },
   {
@@ -136,4 +136,10 @@ export const MODAL_TITLES = {
   phone: '编辑电话信息',
   address: '编辑地址信息',
   other: '编辑其他信息',
+};
+
+// 来源Code
+export const SOURCE_CODE = {
+  // ORCM来源的Code
+  ocrm: '102030',
 };

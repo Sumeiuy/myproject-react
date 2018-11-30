@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性相关api
  * @Date: 2018-11-07 10:00:46
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-28 20:09:16
+ * @Last Modified time: 2018-11-30 10:39:15
  */
 export default function detailCustProperty(api) {
   return {
@@ -33,8 +33,8 @@ export default function detailCustProperty(api) {
     updatePerOther: query => api.post('/groovynoauth/fsp/cust/custdetail/operateContactWayForOther', query),
     // 新增，修改机构客户联系方式电话信息
     updateOrgPhone: query => api.post('/groovynoauth/fsp/cust/custdetail/operateOrgContactWayForPhone', query),
-    // 新增，修改机构客户联系方式地址信息
-    updateOrgAddress: query => api.post('/groovynoauth/fsp/cust/custdetail/operateOrgContactWayForAddress', query),
+    // 新增，修改机构客户联系方式地址信息，与个人客户的地址信息修改接口路径是同一个，为了后面好区分
+    updateOrgAddress: query => api.post('/groovynoauth/fsp/cust/custdetail/operateContactWayForAddress', query),
     // 删除个人客户、机构客户的联系方式
     delContact: query => api.post('/groovynoauth/fsp/cust/custdetail/deleteContact', query),
     // 查询个人客户、机构客户的财务信息

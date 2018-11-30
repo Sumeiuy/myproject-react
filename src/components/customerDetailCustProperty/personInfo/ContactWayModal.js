@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-26 13:58:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-29 20:35:29
+ * @Last Modified time: 2018-11-30 18:12:53
  * @description 联系方式弹框-个人客户联系方式修改
  */
 import React, { Component } from 'react';
@@ -11,6 +11,7 @@ import { autobind } from 'core-decorators';
 import { Button, Switch, message } from 'antd';
 import _ from 'lodash';
 
+import confirm from '../../common/confirm_';
 import Table from '../common/InfoTable';
 import IFNoData from '../common/IfNoData';
 import logable from '../../../decorators/logable';
@@ -33,8 +34,6 @@ export default class ContactWayModal extends Component {
     onClose: PropTypes.func.isRequired,
     // 个人客户联系方式数据
     data: PropTypes.object.isRequired,
-    // 查询个人客户联系方式数据的接口
-    queryPersonalContactWay: PropTypes.func.isRequired,
     // 改变个人客户联系方式中的请勿发短信、请勿打电话
     changePhoneInfo: PropTypes.func.isRequired,
     // 新增|修改个人客户电话信息
@@ -45,6 +44,8 @@ export default class ContactWayModal extends Component {
     updatePerOther: PropTypes.func.isRequired,
     // 删除个人|机构客户的非主要联系方式
     delContact: PropTypes.func.isRequired,
+    // 新增|删除|修改后刷新联系方式列表
+    refreshContact: PropTypes.func.isRequired,
   }
 
   static contextTypes = {
@@ -79,10 +80,17 @@ export default class ContactWayModal extends Component {
       // 编辑的数据
       editData: {},
       // 编辑何种信息电话信息为phone,地址信息为address,其他信息为other
-      contactType: '',
+      contactType: 'phone',
     };
     // 判断是否是主服务经理
     this.isMainEmp = _.get(context.custBasic, 'isMainEmp');
+  }
+  // 刷新数据
+  @autobind
+  refresh(resultData) {
+    if (resultData.result === 'success') {
+      this.props.refreshContact();
+    }
   }
 
   @autobind
@@ -126,6 +134,30 @@ export default class ContactWayModal extends Component {
         this.setState({ noCall: !noCall });
       }
     });
+  }
+
+  // 删除前的确认框
+  @autobind
+  confirmBeforeDel(query) {
+    confirm({
+      content: '确定要删除该条联系方式吗？',
+      onOk: () => this.delPerContact(query),
+    });
+  }
+
+  // 删除个人客户的联系方式
+  @autobind
+  delPerContact(query) {
+    const {
+      location: {
+        query: { custId },
+      },
+    } = this.props;
+    this.props.delContact({
+      custId,
+      custNature: 'per',
+      ...query,
+    }).then(this.refresh);
   }
 
   @autobind
@@ -191,15 +223,8 @@ export default class ContactWayModal extends Component {
     payload: { name: '删除个人客户电话信息'}
   })
   handlePhoneDelClick(record) {
-    const {
-      location: {
-        query: { custId },
-      },
-    } = this.props;
-    this.props.delContact({
+    this.confirmBeforeDel({
       id: record.id,
-      custId,
-      custNature: 'per',
       contactType: 'phone',
     });
   }
@@ -223,15 +248,8 @@ export default class ContactWayModal extends Component {
     payload: { name: '删除个人客户地址信息'}
   })
   handleAddressDelClick(record) {
-    const {
-      location: {
-        query: { custId },
-      },
-    } = this.props;
-    this.props.delContact({
+    this.confirmBeforeDel({
       id: record.id,
-      custId,
-      custNature: 'per',
       contactType: 'address',
     });
   }
@@ -255,15 +273,8 @@ export default class ContactWayModal extends Component {
     payload: { name: '删除个人客户其他信息'}
   })
   handleOtherDelClick(record) {
-    const {
-      location: {
-        query: { custId },
-      },
-    } = this.props;
-    this.props.delContact({
+    this.confirmBeforeDel({
       id: record.id,
-      custId,
-      custNature: 'per',
       contactType: 'other',
     });
   }
@@ -286,30 +297,30 @@ export default class ContactWayModal extends Component {
     this.setState({ editContactModal: false });
   }
 
-  // 确认修改
+  // 编辑联系方式弹框、新增联系方式弹框点击确认
   @autobind
-  handleEditModalOK() {
-    this.setState({ editContactModal: false });
-  }
-
-  // 添加联系方式弹框点击确认按钮
-  @autobind
-  handleAddContactModalOK(type, data) {
+  handleAddOrEditMoalOK(type, data) {
     if (type === 'phone') {
       // 新增|修改电话信息
-      this.props.updatePerPhone(data);
+      this.props.updatePerPhone(data).then(this.refresh);;
     } else if (type === 'address') {
       // 新增|修改地址信息
-      this.props.updatePerAddress(data);
+      this.props.updatePerAddress(data).then(this.refresh);;
     } else if (type === 'other') {
       // 新增|修改其他信息
-      this.props.updatePerOther(data);
+      this.props.updatePerOther(data).then(this.refresh);;
     }
-    this.setState({ addContactModal: false });
+    this.setState({
+      addContactModal: false,
+      editContactModal: false,
+    });
   }
 
   render() {
-    const { data } = this.props;
+    const {
+      data,
+      location,
+    } = this.props;
     const {
       noMessage,
       noCall,
@@ -410,18 +421,20 @@ export default class ContactWayModal extends Component {
         </div>
         <IfWrap isRender={addContactModal}>
           <AddContactWayModal
+            location={location}
             contactWayData={data}
             onClose={this.handleAddContactModalClose}
-            onOK={this.handleAddContactModalOK}
+            onOK={this.handleAddOrEditMoalOK}
           />
         </IfWrap>
         <IfWrap isRender={editContactModal}>
           <EditContactWayModal
+            location={location}
             custNature="per"
             data={editData}
             contactType={contactType}
             onClose={this.handleEditContactModalClose}
-            onOK={this.handleEditModalOK}
+            onOK={this.handleAddOrEditMoalOK}
           />
         </IfWrap>
       </Modal>

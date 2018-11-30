@@ -51,25 +51,32 @@ module.exports = {
       {
         target: 'http://168.61.8.82:5086', // uat
       },
+      prefix + '/groovynoauth/fsp/cust/custdetail/deleteContact',
+      {
+        target: 'http://168.61.8.81:5090', // DOClever
+      },
       prefix + '/groovynoauth/fsp/cust/custdetail/queryContactWayForOrg',
       {
-        // target: 'http://168.61.8.82:5086', // uat
-        // target: 'http://160.9.228.98:8082', // xzx
-        // target: 'http://168.61.8.81:5087', // SIT
         target: 'http://168.61.8.81:5090', // DOClever
       },
       prefix + '/groovynoauth/fsp/cust/custdetail/queryContactWayForPerson',
       {
-        // target: 'http://168.61.8.82:5086', // uat
-        // target: 'http://160.9.228.98:8082', // xzx
-        // target: 'http://168.61.8.81:5087', // SIT
         target: 'http://168.61.8.81:5090', // DOClever
       },
-      prefix + '/groovynoauth/fsp/cust/custdetail/changePersonalContactWayPhone',
+      prefix + '/groovynoauth/fsp/cust/custdetail/operateContactWayForPhone',
       {
-        // target: 'http://168.61.8.82:5086', // uat
-        // target: 'http://160.9.228.98:8082', // xzx
-        // target: 'http://168.61.8.81:5087', // SIT
+        target: 'http://168.61.8.81:5090', // DOClever
+      },
+      prefix + '/groovynoauth/fsp/cust/custdetail/operateContactWayForAddress',
+      {
+        target: 'http://168.61.8.81:5090', // DOClever
+      },
+      prefix + '/groovynoauth/fsp/cust/custdetail/operateContactWayForOther',
+      {
+        target: 'http://168.61.8.81:5090', // DOClever
+      },
+      prefix + '/groovynoauth/fsp/cust/custdetail/operateOrgContactWayForPhone',
+      {
         target: 'http://168.61.8.81:5090', // DOClever
       },
       prefix,

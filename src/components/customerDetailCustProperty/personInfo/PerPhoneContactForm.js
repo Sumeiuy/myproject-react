@@ -2,30 +2,32 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 16:14:23
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-29 19:50:39
+ * @Last Modified time: 2018-11-30 11:57:04
  * @description 添加个人客户电话信息联系方式的Form
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { Row, Col, Select, Input } from 'antd';
+import { Row, Col, Select, Input, Form } from 'antd';
 import _ from 'lodash';
 
 import logable from '../../../decorators/logable';
-import { FORM_STYLE } from '../common/config';
+import { FORM_STYLE, SOURCE_CODE } from '../common/config';
 import { isCreateContact } from '../common/utils';
 import styles from '../contactForm.less';
 
 const Option = Select.Option;
+const FormItem = Form.Item;
+const create = Form.create;
 
+@create()
 export default class PerPhoneContactForm extends PureComponent {
   static propTypes = {
+    form: PropTypes.object.isRequired,
     // 操作类型, 如果是UPDATE,则不管hasMainMobile
     action: PropTypes.oneOf(['CREATE', 'UPDATE']).isRequired,
     // 数据
     data: PropTypes.object,
-    // 新增，编辑数据后的回调
-    onChange: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -51,16 +53,10 @@ export default class PerPhoneContactForm extends PureComponent {
       // 号码：
       tellphoneNumber: isCreate ? '' : phoneNumber,
       // 来源
-      sourceCode: isCreate ? 'OCRM' : sourceCode,
+      sourceCode: isCreate ? SOURCE_CODE.ocrm : sourceCode,
       // 联系方式
       contactWayCode: isCreate ? '' : contactWayCode,
     };
-  }
-
-  // 将值传递出去
-  @autobind
-  saveChange() {
-    this.props.onChange(this.state);
   }
 
   @autobind
@@ -72,12 +68,7 @@ export default class PerPhoneContactForm extends PureComponent {
     },
   })
   handlePerPhonesContactWaySelectChange(contactWayCode) {
-    this.setState({ contactWayCode }, this.saveChange);
-  }
-
-  @autobind
-  handlePhoneNumberChange(e) {
-    this.setState({ tellphoneNumber: e.target.value }, this.saveChange);
+    // 此方法专门用来记录日志的
   }
 
   @autobind
@@ -92,8 +83,20 @@ export default class PerPhoneContactForm extends PureComponent {
     return _.map(phoneList, this.renderOption);
   }
 
+  // 渲染个人客户的来源的下来框选项
+  @autobind
+  renderSourceOption() {
+    const { cust360Dict: { sourceList } } = this.context;
+    return _.map(sourceList, this.renderOption);
+  }
+
   render() {
-    const { tellphoneNumber, contactWayCode } = this.state;
+    const { getFieldDecorator } = this.props.form;
+    const {
+      tellphoneNumber,
+      contactWayCode,
+      sourceCode,
+    } = this.state;
 
     return (
       <div className={styles.addContactWrap}>
@@ -102,13 +105,20 @@ export default class PerPhoneContactForm extends PureComponent {
             <div className={styles.formItem}>
               <div className={styles.itemLable}>主要：</div>
               <div className={styles.valueArea}>
-                <Select
-                  disabled
-                  defaultValue="N"
-                  style={FORM_STYLE}
-                >
-                  <Option value="N">N</Option>
-                </Select>
+                {/**因为只能新增修改非主要信息，因此此处使用固定的值 */}
+                <FormItem>
+                  {getFieldDecorator('mainFlag', {
+                    initialValue: 'N',
+                  })(
+                    <Select
+                      disabled
+                      style={FORM_STYLE}
+                    >
+                      <Option value="N">N</Option>
+                    </Select>
+                    )
+                  }
+                </FormItem>
               </div>
             </div>
           </Col>
@@ -116,11 +126,14 @@ export default class PerPhoneContactForm extends PureComponent {
             <div className={styles.formItem}>
               <div className={styles.itemLable}><span className={styles.requried}>*</span>号码：</div>
               <div className={styles.valueArea}>
-                <Input
-                  style={FORM_STYLE}
-                  value={tellphoneNumber}
-                  onChange={this.handlePhoneNumberChange}
-                />
+                <FormItem>
+                  {getFieldDecorator('tellphoneNumber', {
+                    rules: [{ required: true, message: '请输入号码' }],
+                    initialValue: tellphoneNumber,
+                  })(
+                    <Input style={FORM_STYLE} />,
+                  )}
+                </FormItem>
               </div>
             </div>
           </Col>
@@ -130,13 +143,19 @@ export default class PerPhoneContactForm extends PureComponent {
             <div className={styles.formItem}>
               <div className={styles.itemLable}><span className={styles.requried}>*</span>来源：</div>
               <div className={styles.valueArea}>
-                <Select
-                  disabled
-                  defaultValue="OCRM"
-                  style={FORM_STYLE}
-                >
-                  <Option value="OCRM">OCRM系统</Option>
-                </Select>
+                <FormItem>
+                  {getFieldDecorator('sourceCode', {
+                    initialValue: sourceCode,
+                  })(
+                    <Select
+                      disabled
+                      style={FORM_STYLE}
+                    >
+                      {this.renderSourceOption()}
+                    </Select>
+                    )
+                  }
+                </FormItem>
               </div>
             </div>
           </Col>
@@ -144,13 +163,19 @@ export default class PerPhoneContactForm extends PureComponent {
             <div className={styles.formItem}>
               <div className={styles.itemLable}><span className={styles.requried}>*</span>联系方式：</div>
               <div className={styles.valueArea}>
-                <Select
-                  value={contactWayCode}
-                  style={FORM_STYLE}
-                  onChange={this.handlePerPhonesContactWaySelectChange}
-                >
-                  {this.renderPhoneWayOption()}
-                </Select>
+                <FormItem>
+                  {getFieldDecorator('contactWayCode', {
+                    rules: [{ required: true, message: '请选择联系方式' }],
+                    initialValue: contactWayCode,
+                  })(
+                    <Select
+                      style={FORM_STYLE}
+                      onChange={this.handlePerPhonesContactWaySelectChange}
+                    >
+                      {this.renderPhoneWayOption()}
+                    </Select>
+                  )}
+                </FormItem>
               </div>
             </div>
           </Col>

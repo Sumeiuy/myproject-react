@@ -2,30 +2,32 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 19:02:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-29 10:31:05
+ * @Last Modified time: 2018-11-30 16:37:50
  * @description 添加机构客户地址信息联系方式的Form
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { Row, Col, Select, Input } from 'antd';
+import { Row, Col, Select, Input, Form } from 'antd';
 
 import logable from '../../../decorators/logable';
 import { isCreateContact } from './utils';
-import { FORM_STYLE } from './config';
+import { FORM_STYLE, SOURCE_CODE } from './config';
 import styles from '../contactForm.less';
 
 const Option = Select.Option;
+const FormItem = Form.Item;
+const create = Form.create;
 
+@create()
 export default class OrgAddressContactForm extends PureComponent {
   static propTypes = {
+    form: PropTypes.object.isRequired,
     // 操作类型
     action: PropTypes.oneOf(['CREATE', 'UPDATE']).isRequired,
     // 数据
     data: PropTypes.object,
-    // 新增，编辑数据后的回调
-    onChange: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -54,7 +56,7 @@ export default class OrgAddressContactForm extends PureComponent {
       // 是否主要,只传N
       mainFlag: 'N',
       // 地址类型
-      addressType: isCreate ? '' : addressTypeCode,
+      addressTypeCode: isCreate ? '' : addressTypeCode,
       // 地址
       address: isCreate ? '' : address,
       // 邮编
@@ -66,7 +68,7 @@ export default class OrgAddressContactForm extends PureComponent {
       // 城市
       cityCode: isCreate ? '' : cityCode,
       // 来源
-      sourceCode: isCreate ? '' : sourceCode,
+      sourceCode: isCreate ? SOURCE_CODE.ocrm : sourceCode,
     };
   }
 
@@ -83,13 +85,6 @@ export default class OrgAddressContactForm extends PureComponent {
     }
   }
 
-  // 将值传递出去
-  @autobind
-  saveChange() {
-    const formData = _.omit(this.state, ['provinceList', 'cityList']);
-    this.props.onChange(formData);
-  }
-
   // 保存省份数据
   @autobind
   saveProvince({ addrDictList }) {
@@ -102,12 +97,6 @@ export default class OrgAddressContactForm extends PureComponent {
     this.setState({ cityList: addrDictList });
   }
 
-  // 修改地址
-  @autobind
-  handleAddressChange(e) {
-    this.setState({ address: e.target.value }, this.saveChange);
-  }
-
   // 地址类型下拉
   @autobind
   @logable({
@@ -117,14 +106,8 @@ export default class OrgAddressContactForm extends PureComponent {
       value: '$args[0]',
     },
   })
-  handleAddressTypeChange(addressType) {
-    this.setState({ addressType }, this.saveChange);
-  }
-
-  // 修改邮政编码
-  @autobind
-  handleZipCodeChange(e) {
-    this.setState({ zipCode: e.target.value }, this.saveChange);
+  handleAddressTypeChange() {
+    // 日志记录用
   }
 
   @autobind
@@ -137,10 +120,7 @@ export default class OrgAddressContactForm extends PureComponent {
   })
   handleProvinceChange(provinceCode) {
     // 切换省份后需要清空城市下拉，并且查询一把城市下拉
-    this.setState({
-      provinceCode,
-      cityCode: '',
-    }, this.saveChange);
+    this.props.form.setFieldsValue({ cityCode: '' });
     // 城市联动
     this.context.queryProvinceCity({
       provCd: provinceCode,
@@ -156,10 +136,7 @@ export default class OrgAddressContactForm extends PureComponent {
     },
   })
   handleCityChange(cityCode) {
-    // 切换省份后需要清空城市下拉，并且查询一把城市下拉
-    this.setState({
-      cityCode,
-    }, this.saveChange);
+    // 记录日志用
   }
 
   @autobind
@@ -188,15 +165,23 @@ export default class OrgAddressContactForm extends PureComponent {
     return _.map(cityList, this.renderOption);
   }
 
+  // 渲染机构客户的来源的下来框选项
+  @autobind
+  renderSourceOption() {
+    const { cust360Dict: { sourceList } } = this.context;
+    return _.map(sourceList, this.renderOption);
+  }
 
   render() {
+    const { getFieldDecorator } = this.props.form;
     const {
-      addressType,
+      addressTypeCode,
       address,
       zipCode,
       country,
       provinceCode,
       cityCode,
+      sourceCode,
     } = this.state;
 
     return (
@@ -206,13 +191,20 @@ export default class OrgAddressContactForm extends PureComponent {
             <div className={styles.formItem}>
               <div className={styles.itemLable}>主要：</div>
               <div className={styles.valueArea}>
-                <Select
-                  disabled
-                  defaultValue="N"
-                  style={FORM_STYLE}
-                >
-                  <Option value="N">N</Option>
-                </Select>
+                {/**因为只能新增修改非主要信息，因此此处使用固定的值 */}
+                <FormItem>
+                  {getFieldDecorator('mainFlag', {
+                    initialValue: 'N',
+                  })(
+                    <Select
+                      disabled
+                      style={FORM_STYLE}
+                    >
+                      <Option value="N">N</Option>
+                    </Select>
+                    )
+                  }
+                </FormItem>
               </div>
             </div>
           </Col>
@@ -220,13 +212,24 @@ export default class OrgAddressContactForm extends PureComponent {
             <div className={styles.formItem}>
               <div className={styles.itemLable}><span className={styles.requried}>*</span>地址类型：</div>
               <div className={styles.valueArea}>
-                <Select
-                  style={FORM_STYLE}
-                  value={addressType}
-                  onChange={this.handleAddressTypeChange}
-                >
-                  {this.renderAddressTypeOption()}
-                </Select>
+                <FormItem>
+                {
+                  getFieldDecorator(
+                    'addressTypeCode',
+                    {
+                      rules: [{ required: true, message: '请选择地址类型' }],
+                      initialValue: addressTypeCode,
+                    }
+                  )(
+                    <Select
+                      style={FORM_STYLE}
+                      onChange={this.handleAddressTypeChange}
+                    >
+                      {this.renderAddressTypeOption()}
+                    </Select>
+                  )
+                }
+              </FormItem>
               </div>
             </div>
           </Col>
@@ -236,11 +239,14 @@ export default class OrgAddressContactForm extends PureComponent {
             <div className={styles.formItem}>
               <div className={styles.itemLable}><span className={styles.requried}>*</span>地址：</div>
               <div className={styles.valueArea}>
-                <Input
-                  style={FORM_STYLE}
-                  value={address}
-                  onChange={this.handleAddressChange}
-                />
+                <FormItem>
+                  {getFieldDecorator('address', {
+                    rules: [{ required: true, message: '请填写地址' }],
+                    initialValue: address,
+                  })(
+                    <Input style={FORM_STYLE} />,
+                  )}
+                </FormItem>
               </div>
             </div>
           </Col>
@@ -248,11 +254,14 @@ export default class OrgAddressContactForm extends PureComponent {
             <div className={styles.formItem}>
               <div className={styles.itemLable}><span className={styles.requried}>*</span>邮政编码：</div>
               <div className={styles.valueArea}>
-                <Input
-                  value={zipCode}
-                  style={FORM_STYLE}
-                  onChange={this.handleZipCodeChange}
-                />
+                <FormItem>
+                  {getFieldDecorator('zipCode', {
+                    rules: [{ required: true, message: '请填写邮政编码' }],
+                    initialValue: zipCode,
+                  })(
+                    <Input style={FORM_STYLE} />,
+                  )}
+                </FormItem>
               </div>
             </div>
           </Col>
@@ -262,11 +271,13 @@ export default class OrgAddressContactForm extends PureComponent {
             <div className={styles.formItem}>
               <div className={styles.itemLable}>国家/地区：</div>
               <div className={styles.valueArea}>
-                <Input
-                  disabled
-                  value={country}
-                  style={FORM_STYLE}
-                />
+                <FormItem>
+                  {getFieldDecorator('country', {
+                    initialValue: country,
+                  })(
+                    <Input style={FORM_STYLE} disabled />
+                  )}
+                </FormItem>
               </div>
             </div>
           </Col>
@@ -274,13 +285,24 @@ export default class OrgAddressContactForm extends PureComponent {
             <div className={styles.formItem}>
               <div className={styles.itemLable}><span className={styles.requried}>*</span>省/(直辖)市：</div>
               <div className={styles.valueArea}>
-                <Select
-                  style={FORM_STYLE}
-                  value={provinceCode}
-                  onChange={this.handleProvinceChange}
-                >
-                  {this.renderProvinceOption()}
-                </Select>
+                <FormItem>
+                {
+                  getFieldDecorator(
+                    'provinceCode',
+                    {
+                      rules: [{ required: true, message: '请选择省/(直辖)市' }],
+                      initialValue: provinceCode,
+                    }
+                  )(
+                    <Select
+                      style={FORM_STYLE}
+                      onChange={this.handleProvinceChange}
+                    >
+                      {this.renderProvinceOption()}
+                    </Select>
+                  )
+                }
+              </FormItem>
               </div>
             </div>
           </Col>
@@ -290,13 +312,24 @@ export default class OrgAddressContactForm extends PureComponent {
             <div className={styles.formItem}>
               <div className={styles.itemLable}><span className={styles.requried}>*</span>城市：</div>
               <div className={styles.valueArea}>
-                <Select
-                  style={FORM_STYLE}
-                  value={cityCode}
-                  onChange={this.handleCityChange}
-                >
-                  {this.renderCityOption()}
-                </Select>
+                <FormItem>
+                {
+                  getFieldDecorator(
+                    'cityCode',
+                    {
+                      rules: [{ required: true, message: '城市' }],
+                      initialValue: cityCode,
+                    }
+                  )(
+                    <Select
+                      style={FORM_STYLE}
+                      onChange={this.handleCityChange}
+                    >
+                      {this.renderCityOption()}
+                    </Select>
+                  )
+                }
+              </FormItem>
               </div>
             </div>
           </Col>
@@ -304,13 +337,19 @@ export default class OrgAddressContactForm extends PureComponent {
             <div className={styles.formItem}>
               <div className={styles.itemLable}><span className={styles.requried}>*</span>来源：</div>
               <div className={styles.valueArea}>
-                <Select
-                  disabled
-                  defaultValue="OCRM"
-                  style={FORM_STYLE}
-                >
-                  <Option value="OCRM">OCRM系统</Option>
-                </Select>
+                <FormItem>
+                {getFieldDecorator('sourceCode', {
+                    initialValue: sourceCode,
+                  })(
+                    <Select
+                      disabled
+                      style={FORM_STYLE}
+                    >
+                      {this.renderSourceOption()}
+                    </Select>
+                    )
+                  }
+                </FormItem>
               </div>
             </div>
           </Col>

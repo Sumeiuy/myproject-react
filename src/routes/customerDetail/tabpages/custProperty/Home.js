@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性
  * @Date: 2018-11-06 16:17:28
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-29 20:31:26
+ * @Last Modified time: 2018-11-30 09:30:09
  */
 
 import React, { PureComponent } from 'react';
@@ -90,6 +90,10 @@ export default class CustProperty extends PureComponent {
     updatePerOther: PropTypes.func.isRequired,
     // 删除个人|机构客户的非主要联系方式
     delContact: PropTypes.func.isRequired,
+    // 新增|修改机构客户电话信息
+    updateOrgPhone: PropTypes.func.isRequired,
+    // 新增|修改机构客户地址信息
+    updateOrgAddress: PropTypes.func.isRequired,
   }
 
   static contextTypes = {
@@ -191,12 +195,15 @@ export default class CustProperty extends PureComponent {
   @autobind
   renderOrganizationInfo() {
     const {
+      location,
       custInfo: {
         organization = EMPTY_OBJECT,
       },
       orgContactWay,
       queryOrgContactWay,
-      location,
+      delContact,
+      updateOrgAddress,
+      updateOrgPhone,
     } = this.props;
     return (
       <OrganizationInfo
@@ -205,6 +212,9 @@ export default class CustProperty extends PureComponent {
         data={organization}
         orgContactWay={orgContactWay}
         queryOrgContactWay={queryOrgContactWay}
+        delContact={delContact}
+        updateOrgAddress={updateOrgAddress}
+        updateOrgPhone={updateOrgPhone}
       />
     );
   }
@@ -212,12 +222,15 @@ export default class CustProperty extends PureComponent {
   @autobind
   renderProductInfo() {
     const {
+      location,
       custInfo: {
         product = EMPTY_OBJECT,
       },
-      location,
       orgContactWay,
       queryOrgContactWay,
+      delContact,
+      updateOrgAddress,
+      updateOrgPhone,
     } = this.props;
     return (
       <ProductInfo
@@ -226,6 +239,9 @@ export default class CustProperty extends PureComponent {
         data={product}
         orgContactWay={orgContactWay}
         queryOrgContactWay={queryOrgContactWay}
+        delContact={delContact}
+        updateOrgAddress={updateOrgAddress}
+        updateOrgPhone={updateOrgPhone}
       />
     );
   }

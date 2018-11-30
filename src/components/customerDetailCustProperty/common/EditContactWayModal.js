@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-28 10:55:01
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-28 19:30:04
+ * @Last Modified time: 2018-11-30 17:01:34
  * @description 客户属性中个人客户|机构客户的电话信息、地址信息、其他信息的编辑弹框
  */
 import React, { PureComponent } from 'react';
@@ -26,6 +26,7 @@ import styles from './contactWayModal.less';
 
 export default class EditContactWayModal extends PureComponent {
   static propTypes = {
+    location: PropTypes.object.isRequired,
     // 客户类型
     custNature: PropTypes.oneOf(['per', 'org']).isRequired,
     // 编辑何种信息
@@ -45,10 +46,12 @@ export default class EditContactWayModal extends PureComponent {
 
   constructor(props) {
     super(props);
-    this.state = {
-      // 修改之后的数据
-      formData: {},
-    };
+
+    this.perPhoneFormRef = React.createRef();
+    this.perAddressFormRef = React.createRef();
+    this.perOtherFormRef = React.createRef();
+    this.orgPhoneFormRef = React.createRef();
+    this.orgAddressFormRef = React.createRef();
   }
 
   // 获取编辑Modal的title
@@ -56,6 +59,127 @@ export default class EditContactWayModal extends PureComponent {
   getModalTitle() {
     const { contactType } = this.props;
     return MODAL_TITLES[contactType] || '';
+  }
+
+  @autobind
+  getPerPhoneForm() {
+    return this.perPhoneFormRef.current;
+  }
+
+  @autobind
+  getPerAddressForm() {
+    return this.perAddressFormRef.current;
+  }
+
+  @autobind
+  getPerOtherForm() {
+    return this.perOtherFormRef.current;
+  }
+
+  @autobind
+  getOrgPhoneForm() {
+    return this.orgPhoneFormRef.current;
+  }
+
+  @autobind
+  getOrgAddressForm() {
+    return this.orgAddressFormRef.current;
+  }
+
+  // 编辑通过校验后提交个人客户联系方式
+  @autobind
+  handleContactSubmit(type, query) {
+    const {
+      location: {
+        query: { custId },
+      },
+      data,
+    } = this.props;
+    // 编辑的时候需要传递id
+    this.props.onOK(type, {
+      data: query,
+      id: data.id,
+      custId,
+    });
+  }
+
+  // 编辑时校验个人客户电话信息
+  @autobind
+  checkPerPhoneForSubmit() {
+    const phoneForm = this.getPerPhoneForm();
+    // 校验完成后调用提交回调
+    phoneForm.validateFields((err, values) => {
+      if (!err) {
+        this.handleContactSubmit('phone', values);
+      }
+    });
+  }
+
+  // 编辑时校验个人客户地址信息
+  @autobind
+  checkPerAddressForSubmit() {
+    const addressForm = this.getPerAddressForm();
+    // 校验完成后调用提交回调
+    addressForm.validateFields((err, values) => {
+      if (!err) {
+        this.handleContactSubmit('address', values);
+      }
+    });
+  }
+
+  // 编辑时校验个人客户其他信息
+  @autobind
+  checkPerOtherForSubmit() {
+    const otherForm = this.getPerOtherForm();
+    // 校验完成后调用提交回调
+    otherForm.validateFields((err, values) => {
+      if (!err) {
+        this.handleContactSubmit('other', values);
+      }
+    });
+  }
+
+  // 编辑校验机构客户的电话信息
+  @autobind
+  checkOrgPhoneForSubmit() {
+    const { data: { mobile, email, landline } } = this.props;
+    const phoneForm = this.getOrgPhoneForm();
+    // 校验完成后调用提交回调
+    phoneForm.validateFields((err, values) => {
+      if (!err) {
+        // 此处需要针对手机信息，固定电话、邮箱做特殊处理
+        const { emailValue, landlineValue, mobileValue, ...restValue } = values;
+        // 新增的时候需要将这三个值转换成对象,因为后端的接口需要这样弄,
+        // 因为机构客户的联系人信息有多个手机信息、固定电话、邮箱
+        this.handleContactSubmit('phone', {
+          ...restValue,
+          email: {
+            ...email,
+            value: emailValue,
+          },
+          mobile: {
+            ...mobile,
+            value: mobileValue,
+          },
+          landline: {
+            ...landline,
+            value: landlineValue,
+          },
+        });
+      }
+    });
+  }
+
+  // 校验地址信息
+  @autobind
+  checkOrgAddressForSubmit() {
+    const addressForm = this.getOrgAddressForm();
+    // 校验完成后调用提交回调
+    addressForm.validateFields((err, values) => {
+      if (!err) {
+        this.handleContactSubmit('address', values);
+      }
+    });
   }
 
   @autobind
@@ -82,12 +206,22 @@ export default class EditContactWayModal extends PureComponent {
     payload: { name: '确认' }
   })
   handleModalOK() {
-    this.props.onOK();
-  }
-
-  @autobind
-  handleFormChange(formData) {
-    this.setState({ formData });
+    const { custNature, contactType } = this.props;
+    // 将客户类型，表单类型拼接起来，方便进行比对
+    const formType = `${custNature}_${contactType}`;
+    if (formType === 'per_phone') {
+      // 编辑个人客户的电话信息
+      this.checkPerPhoneForSubmit();
+    } else if (formType === 'per_address') {
+      // 编辑个人客户的地址信息
+      this.checkPerAddressForSubmit();
+    } else if (formType === 'per_other') {
+      this.checkPerOtherForSubmit();
+    } else if (formType === 'org_phone') {
+      this.checkOrgPhoneForSubmit();
+    } else if (formType === 'org_address') {
+      this.checkOrgAddressForSubmit();
+    }
   }
 
   // 个人客户的电话信息
@@ -96,9 +230,9 @@ export default class EditContactWayModal extends PureComponent {
     const { data } = this.props;
     return (
       <PerPhoneContactForm
+        ref={this.perPhoneFormRef}
         action="UPDATE"
         data={data}
-        onChange={this.handleFormChange}
       />
     );
   }
@@ -109,9 +243,9 @@ export default class EditContactWayModal extends PureComponent {
     const { data } = this.props;
     return (
       <PerAddressContactForm
+        ref={this.perAddressFormRef}
         action="UPDATE"
         data={data}
-        onChange={this.handleFormChange}
       />
     );
   }
@@ -122,9 +256,9 @@ export default class EditContactWayModal extends PureComponent {
     const { data } = this.props;
     return (
       <PerOtherContactForm
+        ref={this.perOtherFormRef}
         action="UPDATE"
         data={data}
-        onChange={this.handleFormChange}
       />
     );
   }
@@ -135,9 +269,9 @@ export default class EditContactWayModal extends PureComponent {
     const { data } = this.props;
     return (
       <OrgPhoneContactForm
+        ref={this.orgPhoneFormRef}
         action="UPDATE"
         data={data}
-        onChange={this.handleFormChange}
       />
     );
   }
@@ -148,9 +282,9 @@ export default class EditContactWayModal extends PureComponent {
     const { data } = this.props;
     return (
       <OrgAddressContactForm
+        ref={this.orgAddressFormRef}
         action="UPDATE"
         data={data}
-        onChange={this.handleFormChange}
       />
     );
   }
@@ -206,7 +340,7 @@ export default class EditContactWayModal extends PureComponent {
         closeModal={this.handleEditModalClose}
         selfBtnGroup={footBtns}
       >
-        <div className={styles.editContactModalWrap}> {editForm} </div>
+        <div className={styles.editContactModalWrap}>{editForm}</div>
       </Modal>
     );
   }

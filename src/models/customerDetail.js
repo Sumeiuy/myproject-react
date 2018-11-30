@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-09 15:38:02
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-29 11:07:29
+ * @Last Modified time: 2018-11-30 15:01:16
  * @description 新版客户360详情的model
  */
 import { customerDetail as api } from '../api';
@@ -107,7 +107,11 @@ export default {
     // 查询省市城市
     * queryProvinceCity({ payload = {} }, { put, call }) {
       const { resultData } = yield call(api.queryProvinceCity, payload);
-      return resultData;
+      const newResultData = _.mapValues(
+        resultData,
+        item => ([{ key: '', value: '请选择'}, ...item]),
+      );
+      return newResultData;
     },
   },
   subscriptions: {

@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性-(普通机构, 产品机构)客户联系方式
  * @Date: 2018-11-07 14:33:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-29 16:37:43
+ * @Last Modified time: 2018-11-30 18:16:21
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -11,7 +11,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { Icon } from 'antd';
 
-import logable, { logPV } from '../../../decorators/logable';
+import { logPV } from '../../../decorators/logable';
 import IFWrap from '../../common/biz/IfWrap';
 import InfoItem from '../../common/infoItem';
 import ContactWayModal from './ContactWayModal';
@@ -30,6 +30,7 @@ const {
   // 公司地址标识(办公地址)
   COMPANY_ADDRESS_TYPE_CODE,
 } = LINK_WAY_TYPE;
+
 export default class ContactWay extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -44,6 +45,12 @@ export default class ContactWay extends PureComponent {
     queryOrgContactWay: PropTypes.func.isRequired,
     // 机构客户联系方式数据
     orgContactWay: PropTypes.object.isRequired,
+    // 删除个人|机构客户的非主要联系方式
+    delContact: PropTypes.func.isRequired,
+    // 新增|修改机构客户电话信息
+    updateOrgPhone: PropTypes.func.isRequired,
+    // 新增|修改机构客户地址信息
+    updateOrgAddress: PropTypes.func.isRequired,
   }
 
   static contextTypes = {
@@ -113,6 +120,19 @@ export default class ContactWay extends PureComponent {
     return this.getPrivateValue(value);
   }
 
+  // 添加|删除|编辑联系方式后刷新联系方式列表
+  @autobind
+  refreshContact() {
+    const {
+      location: {
+        query: { custId },
+      },
+    } = this.props;
+    this.props.queryOrgContactWay({
+      custId,
+    });
+  }
+
   // 关闭机构客户联系方式弹框
   @autobind
   handleContactWayModalClose() {
@@ -122,7 +142,7 @@ export default class ContactWay extends PureComponent {
   @autobind
   @logPV({
     pathname: '/modal/cust360PropertyAddOrgContactWayModal',
-    title: '添加客户联系方式'
+    title: '客户联系方式'
   })
   handleContactWayEditClick() {
     const {
@@ -139,7 +159,13 @@ export default class ContactWay extends PureComponent {
 
   render() {
     const { addOrgContactWayModal } = this.state;
-    const { orgContactWay } = this.props;
+    const {
+      orgContactWay,
+      delContact,
+      location,
+      updateOrgAddress,
+      updateOrgPhone,
+    } = this.props;
     // 是否主服务经理
     const { custBasic: { isMainEmp } } = this.context;
 
@@ -198,8 +224,13 @@ export default class ContactWay extends PureComponent {
         </div>
         <IFWrap isRender={addOrgContactWayModal}>
           <ContactWayModal
+            location={location}
             data={orgContactWay}
             onClose={this.handleContactWayModalClose}
+            delContact={delContact}
+            updateOrgAddress={updateOrgAddress}
+            updateOrgPhone={updateOrgPhone}
+            refreshContact={this.refreshContact}
           />
         </IFWrap>
       </div>

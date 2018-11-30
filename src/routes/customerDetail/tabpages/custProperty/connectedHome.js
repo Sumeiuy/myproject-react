@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性相关effect,mapStateToProps,mapDispatchToProps
  * @Date: 2018-11-06 14:50:44
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-29 20:30:43
+ * @Last Modified time: 2018-11-30 09:24:39
  */
 import { connect } from 'dva';
 
@@ -70,6 +70,10 @@ const mapDispatchToProps = {
   updatePerOther: effect('detailCustProperty/updatePerOther'),
   // 删除个人|机构客户的非主要联系方式
   delContact: effect('detailCustProperty/delContact'),
+  // 新增|修改机构客户电话信息
+  updateOrgPhone: effect('detailCustProperty/updateOrgPhone'),
+  // 新增|修改机构客户地址信息
+  updateOrgAddress: effect('detailCustProperty/updateOrgAddress'),
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

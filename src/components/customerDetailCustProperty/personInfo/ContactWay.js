@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性-个人客户联系方式
  * @Date: 2018-11-07 14:33:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-29 20:32:50
+ * @Last Modified time: 2018-11-30 17:56:55
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -13,7 +13,7 @@ import { Icon } from 'antd';
 
 import IFWrap from '../../common/biz/IfWrap';
 import ContactWayModal from './ContactWayModal';
-import logable from '../../../decorators/logable';
+import { logPV } from '../../../decorators/logable';
 import InfoItem from '../../common/infoItem';
 import {
   DEFAULT_VALUE,
@@ -142,10 +142,23 @@ export default class ContactWay extends PureComponent {
     return this.getPrivateValue(value);
   }
 
+  // 刷新个人客户的联系方式列表
   @autobind
-  @logable({
-    type: 'Click',
-    payload: { name: '个人客户编辑联系方式' }
+  refreshPerContact() {
+    const {
+      location: {
+        query: { custId },
+      },
+    } = this.props;
+    this.props.queryPersonalContactWay({
+      custId
+    });
+  }
+
+  @autobind
+  @logPV({
+    pathname: '/modal/cust360PropertyAddPerContactWayModal',
+    title: '客户联系方式'
   })
   handleContactWayEditClick() {
     const {
@@ -171,7 +184,6 @@ export default class ContactWay extends PureComponent {
       location,
       noMessage,
       noCall,
-      queryPersonalContactWay,
       personalContactWay,
       changePhoneInfo,
       updatePerPhone,
@@ -270,13 +282,13 @@ export default class ContactWay extends PureComponent {
           <ContactWayModal
             location={location}
             data={personalContactWay}
-            queryPersonalContactWay={queryPersonalContactWay}
             onClose={this.handleContactWayModalClose}
             changePhoneInfo={changePhoneInfo}
             updatePerPhone={updatePerPhone}
             updatePerAddress={updatePerAddress}
             updatePerOther={updatePerOther}
             delContact={delContact}
+            refreshContact={this.refreshPerContact}
           />
         </IFWrap>
       </div>

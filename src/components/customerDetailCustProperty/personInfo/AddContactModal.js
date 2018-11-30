@@ -2,11 +2,11 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 13:52:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-29 20:42:27
+ * @Last Modified time: 2018-11-30 17:15:20
  * @description 添加联系方式的Modal
  */
 
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { Tabs, Button } from 'antd';
@@ -37,8 +37,9 @@ import styles from './addContactModal.less';
 
 const TabPane = Tabs.TabPane;
 
-export default class AddContactModal extends Component {
+export default class AddContactModal extends PureComponent {
   static propTypes = {
+    location: PropTypes.object.isRequired,
     // 已经存在的联系方式的数据，主要是用于判断权限
     contactWayData: PropTypes.object.isRequired,
     // 关闭弹框
@@ -52,12 +53,6 @@ export default class AddContactModal extends Component {
     this.state = {
       // 当前的Tab
       activeTabKey: 'phone',
-      // 新增的电话信息数据
-      phoneData: {},
-      // 新增的地址信息数据
-      addressData: {},
-      // 新增的其他信息数据
-      otherData: {},
       // 显示主手机联方式提示
       showMainMobile: false,
       // 显示主电子邮件记录提示
@@ -65,6 +60,27 @@ export default class AddContactModal extends Component {
       // 显示主地址提示
       showMainAddress: false,
     };
+    this.perPhoneFormRef = React.createRef();
+    this.perAddressFormRef = React.createRef();
+    this.perOtherFormRef = React.createRef();
+  }
+
+  // 获取电话信息组件实例
+  @autobind
+  getPerPhoneForm() {
+    return this.perPhoneFormRef.current;
+  }
+
+  // 获取地址信息组件实例
+  @autobind
+  getPerAddressForm() {
+    return this.perAddressFormRef.current;
+  }
+
+  // 获取其他信息组件实例
+  @autobind
+  getPerOtherForm() {
+    return this.perOtherFormRef.current;
   }
 
   @autobind
@@ -76,26 +92,38 @@ export default class AddContactModal extends Component {
     this.props.onClose();
   }
 
-  // 校验电话信息
+  // 提交
   @autobind
-  checkPerPhoneForSubmit() {
-    // 1. 如果添加的是个人客户的电话信息，则判断是否有主手机联系方式
-    const { phoneData } = this.state;
+  handlePerContactSubmit(type, query) {
     const {
-      contactWayData: { tellphoneInfo },
       location: {
         query: { custId },
       },
     } = this.props;
+    // 新增id值为空
+    this.props.onOK(type, {
+      data: query,
+      id: '',
+      custId,
+    });
+  }
+
+  // 校验电话信息
+  @autobind
+  checkPerPhoneForSubmit() {
+    // 1. 如果添加的是个人客户的电话信息，则判断是否有主手机联系方式
+    const {
+      contactWayData: { tellphoneInfo },
+    } = this.props;
     if(hasMainMobile(tellphoneInfo)) {
       this.setState({ showMainMobile: false });
       // TODO 此处需要校验选择的数据
-      // 校验完后,提交电话数据
-      // 新增id值为空
-      this.props.onOK('phone', {
-        data: phoneData,
-        id: '',
-        custId,
+      const phoneForm = this.getPerPhoneForm();
+      // 校验完成后调用提交回调
+      phoneForm.validateFields((err, values) => {
+        if (!err) {
+          this.handlePerContactSubmit('phone', values);
+        }
       });
     } else {
       this.setState({ showMainMobile: true });
@@ -105,23 +133,20 @@ export default class AddContactModal extends Component {
   // 校验地址信息
   @autobind
   checkPerAddressForSubmit() {
-    const { addressData } = this.state;
     // 2. 如果添加的是个人客户的地址信息，则判断存在主地址不
     const {
       contactWayData: { addressInfo },
-      location: {
-        query: { custId },
-      },
      } = this.props;
     if (hasMainContact(addressInfo)) {
       this.setState({ showMainAddress: false });
-      // TODO 此处需要校验选择的数据
-      // 校验完后,提交地址数据
-      this.props.onOK('address', {
-        data: addressData,
-        id: '',
-        custId,
-      });
+       // TODO 此处需要校验选择的数据
+       const addressForm = this.getPerAddressForm();
+       // 校验完成后调用提交回调
+       addressForm.validateFields((err, values) => {
+         if (!err) {
+           this.handlePerContactSubmit('address', values);
+         }
+       });
     } else {
       this.setState({ showMainAddress: true });
     }
@@ -130,32 +155,28 @@ export default class AddContactModal extends Component {
   // 新建时进行添加联系方式的能力校验
   @autobind
   checkPerOtherForSubmit() {
-    const { otherData } = this.state;
     // 3. 如果添加的是个人客户的其他信息的电子邮件，则判断存在主电子邮件不
     const {
       contactWayData: { otherInfo },
-      location: {
-        query: { custId },
-      },
     } = this.props;
+    const otherForm = this.getPerOtherForm();
+    const contactWayCode = otherForm.getFieldValue('contactWayCode');
     if (
       !hasMainEmail(otherInfo)
-      && !_.isEmpty(otherData.contactWayCode)
-      && isEmailContactWay(otherData.contactWayCode)
+      && !_.isEmpty(contactWayCode)
+      && isEmailContactWay(contactWayCode)
       ) {
       // 不存在主电子邮件,但是选择的是电子邮件
       this.setState({ showMainEmail: true });
     } else  {
       this.setState({ showMainEmail: false });
-      // TODO 此处需要校验选择的数据格式
-      // 校验完后,提交地址数据
-      this.props.onOK('other', {
-        data: otherData,
-        id: '',
-        custId,
-      });
+       // 校验完成后调用提交回调
+       otherForm.validateFields((err, values) => {
+         if (!err) {
+           this.handlePerContactSubmit('other', values);
+         }
+       });
     }
-
   }
 
   @autobind
@@ -231,8 +252,8 @@ export default class AddContactModal extends Component {
     } = this.state;
     // Modal的底部按钮
     const footBtns = [
-      <Button onClick={this.handleCloseModal}>取消</Button>,
-      <Button type="primary" onClick={this.handleModalOK}>确认</Button>,
+      <Button key="perContactAddCancel" onClick={this.handleCloseModal}>取消</Button>,
+      <Button key="perContactAddOK" type="primary" onClick={this.handleModalOK}>确认</Button>,
     ];
 
     return (
@@ -251,22 +272,22 @@ export default class AddContactModal extends Component {
             <TabPane tab="电话信息" key="phone">
               {this.renderWarning(showMainMobile)}
               <PerPhoneContactForm
+                ref={this.perPhoneFormRef}
                 action="CREATE"
-                onChange={this.handlePhoneChange}
               />
             </TabPane>
             <TabPane tab="地址信息" key="address">
               {this.renderWarning(showMainAddress)}
               <PerAddressContactForm
+                ref={this.perAddressFormRef}
                 action="CREATE"
-                onChange={this.handleAddressChange}
               />
             </TabPane>
             <TabPane tab="其他信息" key="other">
               {this.renderWarning(showMainEmail)}
               <PerOtherContactForm
+                ref={this.perOtherFormRef}
                 action="CREATE"
-                onChange={this.handleOtherChange}
               />
             </TabPane>
           </Tabs>
