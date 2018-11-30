@@ -20,6 +20,8 @@ const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
 // 满意度字典
 const USER_COMMENT_LIST = feedbackOptions.userDegreeOfSatisfaction;
+// 马珂默认工号
+const DEFAULT_USER_ID = feedbackOptions.defaultUserId;
 // 状态字典
 const STATUS_MAP = [
   { value: 'PROCESSING', label: '解决中' },
@@ -187,14 +189,11 @@ export default class LeftPanel extends PureComponent {
       dataIndex: 'status.processer.createTime',
       width: '20%',
       render: (text, record) => {
-        // 当前行记录
-        let statusClass;
+        let statusClass;  // 当前行记录
         let statusLabel;
-        let processerLabel;
-        // 用户评价分别显示的类名
-        let userCommentClass;
-        // 评价字段标签
-        let userCommentLabelList;
+        let operator;  // 经办人对象
+        let userCommentClass; // 用户评价分别显示的类名
+        let userCommentLabelList; // 评价字段标签
         if (record.status) {
           statusClass = classnames({
             'state-resolve': record.status === STATUS_MAP[0].value,
@@ -202,15 +201,18 @@ export default class LeftPanel extends PureComponent {
           });
           statusLabel = STATUS_MAP.filter(item => item.value === record.status);
         }
+        
+        // 显示经办人
         if (!_.isEmpty(record.processer)
             && record.processer !== '无'
             && record.processer !== 'null') {
-              processerLabel = _.filter(operatorList,item =>
-              item.loginName === record.processer);
+              operator = _.find(operatorList, operator => operator.loginName === record.processer);
+              // 如果经办人是空就显示 马珂
+              if(_.isEmpty(operator)){
+                operator = _.find(operatorList, operator => operator.loginName === DEFAULT_USER_ID);
+              }
         }
 
-        // 如果经办人是无就显示defaultName 马珂
-        const defaultName = _.find(operatorList, item => item.loginName === '001423');
         // 如果有满意度
         if (record.evaluation) {
           // 根据满意度不同状态显示不同颜色
@@ -239,8 +241,7 @@ export default class LeftPanel extends PureComponent {
             </div>
             <div className="name">
               {
-                // 如果没有匹配到经办人 默认显示defaultName.lastName 马珂
-                (!_.isEmpty(processerLabel) && processerLabel[0].lastName) || defaultName.lastName
+                (!_.isEmpty(operator) && operator.lastName)
               }
             </div>
             <div className="date">

@@ -44,6 +44,7 @@ export const AGREEMENT_TYPE_MAP = {
   '3': '已处理',
 };
 
+// 账户服务费模式
 export const CHARGING_MODE_CODE = 'T30200';
 
 export const TOUGU_SUBTYPE = 'TG Agreement';

@@ -5,6 +5,8 @@
 */
 
 const feedbackOptions = {
+  // 马珂默认工号
+  defaultUserId: '001423',
   // 头部查询条件-渠道
   feedbackChannel: [
     {
