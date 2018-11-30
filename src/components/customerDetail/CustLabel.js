@@ -1,15 +1,16 @@
 /*
  * @Author: sunweibin
  * @Date: 2018-10-16 09:27:48
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-16 14:40:22
+ * @Last Modified by: liqianwen
+ * @Last Modified time: 2018-11-30 10:10:45
  * @description 客户360详情中概要信息显示的15个重点标签
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import { Popover, Tag } from 'antd';
+import { Tag } from 'antd';
+import Tooltip from '../common/Tooltip';
 
 import styles from './custLabel.less';
 
@@ -28,9 +29,9 @@ export default function CustLabel(props) {
   }
   return (
     <div className={styles.labelItem}>
-      <Popover overlayClassName={styles.labelPopover} content={desc} title={name}>
+      <Tooltip content={desc} title={name}>
         <Tag className={styles.tag}>{fixedName}</Tag>
-      </Popover>
+      </Tooltip>
     </div>
   );
 }
