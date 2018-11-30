@@ -161,11 +161,11 @@ name });
     const {
       startTime,
       endTime,
-      isApprove,
+      /* isApprove, */
       typeData,
       type,
-      initiatorData,
-      initiator
+      /* initiatorData, */
+      /* initiator */
      } = this.props;
      const dateRangePicker = classnames([styles.filter, styles.dateRangePickFilter]);
     return (

@@ -206,6 +206,7 @@ export const AGREEMENT_COLUMNS = [
     dataIndex: 'id',
     title: '合同编号',
     width: 120,
+    render: text => _.isEmpty(text) ? DEFAULT_TEXT : text,
   },
   {
     key: 'name',
@@ -219,12 +220,13 @@ export const AGREEMENT_COLUMNS = [
     title: '合同金额(万元)',
     width: 105,
     align: 'right',
+    render: text => _.isEmpty(text) ? DEFAULT_TEXT : text,
   },
   {
     key: 'statusCode',
     dataIndex: 'statusCode',
     title: '合同状态',
-    render: text => AGREEMENT_TYPE_MAP[text],
+    render: text => AGREEMENT_TYPE_MAP[text] || DEFAULT_TEXT,
     width: 70,
   },
   {

@@ -8,7 +8,6 @@
 
 import { detailContractManage as api } from '../../api';
 
-const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 
 export default {

@@ -407,22 +407,27 @@ export default class ProtocolTab extends PureComponent {
     payload: { name: '终止协议' },
   })
   handleCloseProtocol(record) {
-    const {
-      submitProtocol,
-      location: { query: { custId } },
-    } = this.props;
-    submitProtocol({
-      custId,
-      rowId: record.rowId,
-    }).then(() => {
-      const {
-        queryList,
-        location: { query: { custId } },
-      } = this.props;
-      // 查询列表数据
-      queryList({
-        custId,
-      });
+    commonConfirm({
+      content: '确定要终止该协议吗？',
+      onOk: () => {
+        const {
+          submitProtocol,
+          location: { query: { custId } },
+        } = this.props;
+        submitProtocol({
+          custId,
+          rowId: record.rowId,
+        }).then(() => {
+          const {
+            queryList,
+            location: { query: { custId } },
+          } = this.props;
+          // 查询列表数据
+          queryList({
+            custId,
+          });
+        });
+      },
     });
   }
 
