@@ -2,7 +2,7 @@
  * @Author: yangquanjian
  * @Date: 2018-10-22 09:13:51
  * @LastEditors: li-ke
- * @LastEditTime: 2018-11-30 10:08:40
+ * @LastEditTime: 2018-11-30 15:37:54
  * @Description: 问题反馈-问题详情
  */
 
@@ -161,14 +161,17 @@ export default class ProblemDetail extends PureComponent {
     }
     return '无';
   }
+  
   // 显示经办人
   renderEmpResp(processerID, operatorList) {
-    // 如果经办人是无就显示defaultUser 马珂
-    const defaultUser = _.find(operatorList, operator => operator.loginName === DEFAULT_USER_ID) || {};
     if (!_.isEmpty(processerID) && !_.isEmpty(operatorList)) {
-      const operator = _.find(operatorList, operator =>
-        operator.loginName === processerID) || {};
-      return operator.lastName || defaultUser.lastName;
+      let operator = _.find(operatorList, operator =>
+        operator.loginName === processerID);
+        // 如果经办人是空就显示 马珂
+        if(_.isEmpty(operator)){
+          operator = _.find(operatorList, operator => operator.loginName === DEFAULT_USER_ID);
+        }
+      return operator.lastName;
     }
     return '无';
   }
@@ -385,11 +388,14 @@ export default class ProblemDetail extends PureComponent {
                 <div className={processerHiddenValue} id="select-processer">
                   <FormItem>
                     {
-                      getFieldDecorator('processer', {initialValue: this.renderEmpResp(processer, operatorList)})
+                      getFieldDecorator('processer', {
+                        initialValue: this.renderEmpResp(processer, operatorList)
+                      })(
+                        <Select style={{ width: 110 }} className="qtSelect" getPopupContainer={() => document.getElementById('select-processer')}>
+                          {this.renderEmpOption(operatorList)}
+                        </Select>
+                      )
                     }
-                    <Select style={{ width: 110 }} className="qtSelect" getPopupContainer={() => document.getElementById('select-processer')}>
-                      {this.renderEmpOption(operatorList)}
-                    </Select>
                     <div className="edit-btn">
                       <a onClick={this.handleSubChange}><Icon type="success" /></a>
                       <a onClick={this.handleClose}><Icon type="close" /></a>

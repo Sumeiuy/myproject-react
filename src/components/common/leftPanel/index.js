@@ -201,16 +201,18 @@ export default class LeftPanel extends PureComponent {
           });
           statusLabel = STATUS_MAP.filter(item => item.value === record.status);
         }
+        
         // 显示经办人
         if (!_.isEmpty(record.processer)
             && record.processer !== '无'
             && record.processer !== 'null') {
-              operator = _.filter(operatorList, operator => operator.loginName === record.processer);
+              operator = _.find(operatorList, operator => operator.loginName === record.processer);
+              // 如果经办人是空就显示 马珂
+              if(_.isEmpty(operator)){
+                operator = _.find(operatorList, operator => operator.loginName === DEFAULT_USER_ID);
+              }
         }
 
-        // 如果经办人是无就显示 马珂
-        const defaultUser = _.find(operatorList, operator => operator.loginName === DEFAULT_USER_ID) || {};
-        
         // 如果有满意度
         if (record.evaluation) {
           // 根据满意度不同状态显示不同颜色
@@ -239,8 +241,7 @@ export default class LeftPanel extends PureComponent {
             </div>
             <div className="name">
               {
-                // 如果没有匹配到经办人 默认显示defaultUser.lastName 马珂
-                (!_.isEmpty(operator) && operator[0].lastName) || defaultUser.lastName
+                (!_.isEmpty(operator) && operator.lastName)
               }
             </div>
             <div className="date">
