@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-11-12 19:25:08
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-30 10:14:32
+ * @Last Modified time: 2018-11-30 14:40:37
  */
 
 import React, { PureComponent } from 'react';
@@ -191,6 +191,7 @@ export default class TaskList extends PureComponent {
       case 'apply':
         taskColumns = [
           {
+            width: 200,
             title: '任务名称',
             dataIndex: 'subject',
             key: 'subject',
@@ -207,6 +208,7 @@ export default class TaskList extends PureComponent {
               </a>),
           },
           {
+            width: 200,
             title: '类型',
             dataIndex: 'workFlowName',
             key: 'workFlowName',
@@ -223,6 +225,7 @@ export default class TaskList extends PureComponent {
       case 'approve':
         taskColumns =  [
           {
+            width: 200,
             title: '任务名称',
             dataIndex: 'subject',
             key: 'subject',
@@ -239,24 +242,28 @@ export default class TaskList extends PureComponent {
               </a>),
           },
           {
+            width: 150,
             title: '类型',
             dataIndex: 'workFlowName',
             key: 'workFlowName',
             render: (item, record) => (<span>{record.workFlowName}</span>),
           },
           {
+            width: 150,
             title: '提交人工号',
             dataIndex: 'originator',
             key: 'originator',
             render: (item, record) => (<span>{record.originator}</span>),
           },
           {
+            width: 150,
             title: '提交人姓名',
             dataIndex: 'originatorName',
             key: 'originatorName',
             render: (item, record) => (<span>{record.originatorName}</span>),
           },
           {
+            width: 150,
             title: '提交时间',
             dataIndex: 'startTime',
             key: 'startTime',
@@ -270,8 +277,8 @@ export default class TaskList extends PureComponent {
           },
         ];
         break;
-        default:
-          break;
+      default:
+        break;
     }
     return taskColumns;
   }
