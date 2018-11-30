@@ -1,7 +1,9 @@
-/**
- * @file components/feedback/Detail.js
- *  问题反馈
- * @author yangquanjian
+/*
+ * @Author: yangquanjian
+ * @Date: 2018-10-22 09:13:51
+ * @LastEditors: li-ke
+ * @LastEditTime: 2018-11-29 10:45:50
+ * @Description: 问题反馈
  */
 
 import React, { PureComponent } from 'react';
@@ -57,7 +59,7 @@ export default class Detail extends PureComponent {
     getFeedbackRecordList: PropTypes.func.isRequired,
     updateFeedback: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
-    empRespDTOList: PropTypes.array.isRequired,
+    operatorList: PropTypes.array.isRequired,
   }
 
   constructor(props) {
@@ -478,7 +480,7 @@ export default class Detail extends PureComponent {
       previewVisible,
       newWidth,
     } = this.state;
-    const { empRespDTOList } = this.props;
+    const { operatorList } = this.props;
     const { resultData = EMPTY_OBJECT } = dataSource || EMPTY_OBJECT;
     const { resultData: voList = EMPTY_OBJECT } = voDataSource || EMPTY_OBJECT;
     const { remarkList = EMPTY_LIST,
@@ -546,7 +548,7 @@ export default class Detail extends PureComponent {
                         onCancel={this.remarkCancel}
                         onCreate={this.handleCreate}
                         nowStatus={nowStatus}
-                        empRespDTOList={empRespDTOList}
+                        operatorList={operatorList}
                       />
                     </div>
                   </div>
@@ -578,7 +580,7 @@ export default class Detail extends PureComponent {
                         onCancel={this.remarkCancel}
                         onCreate={this.handleCreate}
                         nowStatus={nowStatus}
-                        empRespDTOList={empRespDTOList}
+                        operatorList={operatorList}
                       />
                     </div>
                   </div>
@@ -655,7 +657,7 @@ export default class Detail extends PureComponent {
           problemDetails={feedbackDetail}
           title={messageBtnValue}
           inforTxt={inforTxt}
-          empRespDTOList={empRespDTOList}
+          operatorList={operatorList}
         />
       </div>
     );

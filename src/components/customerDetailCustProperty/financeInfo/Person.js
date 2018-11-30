@@ -61,7 +61,12 @@ export default class Person extends PureComponent {
 
   @autobind
   getViewData(value) {
-    return !_.isEmpty(value) ? number.thousandFormat(value) : DEFAULT_VALUE;
+    let displayValue = value;
+    // 是数字类型
+    if (_.isNumber(value)) {
+      displayValue = `${number.thousandFormat(number.toFixed(value))}(元)`;
+    }
+    return _.isEmpty(displayValue) ? DEFAULT_VALUE : displayValue;
   }
 
   @autobind
@@ -77,7 +82,7 @@ export default class Person extends PureComponent {
     queryFinanceDetail({ custId });
   }
 
-  // 主服务经理并且不是上市公司可以编辑
+  // 主服务经理可以编辑
   @autobind
   checkIsEditable() {
     const { isMainEmp } = this.props;
@@ -127,7 +132,8 @@ export default class Person extends PureComponent {
 
   @autobind
   getYieldValue(value) {
-    return _.isEmpty(value) ? '' : `${number.toFixed(value)}%`;
+    return (_.isEmpty(value) && !_.isNumber(value))
+      ? DEFAULT_VALUE : `${number.toFixed(value)}%`;
   }
 
   @autobind
@@ -185,7 +191,7 @@ export default class Person extends PureComponent {
                   editorId="person_income"
                   onEditOK={value => this.updateData(INCOME_NAME, value)}
                   value={data.income || ''}
-                  displayValue={data.income || ''}
+                  displayValue={this.getViewData(data.income)}
                   checkable
                   onCheck={this.checkNormalValue}
                   onSuccess={this.refreshData}
@@ -195,9 +201,9 @@ export default class Person extends PureComponent {
                 <InfoItem
                   width={INFO_ITEM_WITDH_110}
                   label="收入水平"
-                  value={data.income || DEFAULT_VALUE}
+                  value={this.getViewData(data.income)}
                   className={styles.infoItem}
-                  isNeedValueTitle={checkIsNeedTitle(data.income)}
+                  isNeedValueTitle={checkIsNeedTitle(this.getViewData(data.income))}
                   isNeedOverFlowEllipsis
                 />
               )
@@ -207,9 +213,9 @@ export default class Person extends PureComponent {
           <InfoItem
             width={INFO_ITEM_WITDH}
             label="收入来源"
-            value={data.source || DEFAULT_VALUE}
+            value={this.getViewData(data.source)}
             className={styles.infoItem}
-            isNeedValueTitle={checkIsNeedTitle(data.source)}
+            isNeedValueTitle={checkIsNeedTitle(this.getViewData(data.source))}
             isNeedOverFlowEllipsis
           />
         </div>
@@ -227,9 +233,9 @@ export default class Person extends PureComponent {
           <InfoItem
             width={INFO_ITEM_WITDH}
             label="负债情况"
-            value={data.liabilities || DEFAULT_VALUE}
+            value={this.getViewData(data.liabilities)}
             className={styles.infoItem}
-            isNeedValueTitle={checkIsNeedTitle(data.liabilities)}
+            isNeedValueTitle={checkIsNeedTitle(this.getViewData(data.liabilities))}
             isNeedOverFlowEllipsis
           />
         </div>
@@ -237,9 +243,9 @@ export default class Person extends PureComponent {
           <InfoItem
             width={INFO_ITEM_WITDH_110}
             label="可投资资产"
-            value={data.investableAssets || DEFAULT_VALUE}
+            value={this.getViewData(data.investableAssets)}
             className={styles.infoItem}
-            isNeedValueTitle={checkIsNeedTitle(data.investableAssets)}
+            isNeedValueTitle={checkIsNeedTitle(this.getViewData(data.investableAssets))}
             isNeedOverFlowEllipsis
           />
         </div>
@@ -247,9 +253,9 @@ export default class Person extends PureComponent {
           <InfoItem
             width={INFO_ITEM_WITDH}
             label="可投资资产占比"
-            value={data.investableAssetsCycle || DEFAULT_VALUE}
+            value={this.getViewData(data.investableAssetsCycle)}
             className={styles.infoItem}
-            isNeedValueTitle={checkIsNeedTitle(data.investableAssetsCycle)}
+            isNeedValueTitle={checkIsNeedTitle(this.getViewData(data.investableAssetsCycle))}
             isNeedOverFlowEllipsis
           />
         </div>
@@ -264,7 +270,7 @@ export default class Person extends PureComponent {
                   editorId="person_housingSize"
                   onEditOK={value => this.updateData(HOUSE_SIEZ_NAME, value)}
                   value={data.housingSize || ''}
-                  displayValue={data.housingSize || ''}
+                  displayValue={this.getViewData(data.housingSize)}
                   checkable
                   onCheck={this.checkNormalValue}
                   onSuccess={this.refreshData}
@@ -274,9 +280,9 @@ export default class Person extends PureComponent {
                 <InfoItem
                   width={INFO_ITEM_WITDH}
                   label="房产规模"
-                  value={data.housingSize || DEFAULT_VALUE}
+                  value={this.getViewData(data.housingSize)}
                   className={styles.infoItem}
-                  isNeedValueTitle={checkIsNeedTitle(data.housingSize)}
+                  isNeedValueTitle={checkIsNeedTitle(this.getViewData(data.housingSize))}
                   isNeedOverFlowEllipsis
                 />
               )
@@ -293,7 +299,7 @@ export default class Person extends PureComponent {
                   editorId="person_bank_scale"
                   onEditOK={value => this.updateData(BANK_MONEY_NAME, value)}
                   value={data.bankMoneyScale || ''}
-                  displayValue={data.bankMoneyScale || ''}
+                  displayValue={this.getViewData(data.bankMoneyScale)}
                   checkable
                   onCheck={this.checkNormalValue}
                   onSuccess={this.refreshData}
@@ -303,9 +309,9 @@ export default class Person extends PureComponent {
                 <InfoItem
                   width={INFO_ITEM_WITDH}
                   label="银行理财规模"
-                  value={data.bankMoneyScale || DEFAULT_VALUE}
+                  value={this.getViewData(data.bankMoneyScale)}
                   className={styles.infoItem}
-                  isNeedValueTitle={checkIsNeedTitle(data.bankMoneyScale)}
+                  isNeedValueTitle={checkIsNeedTitle(this.getViewData(data.bankMoneyScale))}
                   isNeedOverFlowEllipsis
                 />
               )
@@ -322,7 +328,7 @@ export default class Person extends PureComponent {
                   editorId="person_insured"
                   onEditOK={value => this.updateData(INSURED_ASSETS_NAME, value)}
                   value={data.insuredAssetsScale || ''}
-                  displayValue={data.insuredAssetsScale || ''}
+                  displayValue={this.getViewData(data.insuredAssetsScale)}
                   checkable
                   onCheck={this.checkNormalValue}
                   onSuccess={this.refreshData}
@@ -332,9 +338,9 @@ export default class Person extends PureComponent {
                 <InfoItem
                   width={INFO_ITEM_WITDH_110}
                   label="保险类资产规模"
-                  value={data.insuredAssetsScale || DEFAULT_VALUE}
+                  value={this.getViewData(data.insuredAssetsScale)}
                   className={styles.infoItem}
-                  isNeedValueTitle={checkIsNeedTitle(data.insuredAssetsScale)}
+                  isNeedValueTitle={checkIsNeedTitle(this.getViewData(data.insuredAssetsScale))}
                   isNeedOverFlowEllipsis
                 />
               )
@@ -351,7 +357,7 @@ export default class Person extends PureComponent {
                   editorId="person_insured"
                   onEditOK={value => this.updateData(OTHER_ASSEST_NAME, value)}
                   value={data.otherAssetsScale || ''}
-                  displayValue={data.otherAssetsScale || ''}
+                  displayValue={this.getViewData(data.otherAssetsScale)}
                   checkable
                   onCheck={this.checkNormalValue}
                   onSuccess={this.refreshData}
@@ -361,9 +367,9 @@ export default class Person extends PureComponent {
                 <InfoItem
                   width={INFO_ITEM_WITDH}
                   label="其他资产规模"
-                  value={data.otherAssetsScale || DEFAULT_VALUE}
+                  value={this.getViewData(data.otherAssetsScale)}
                   className={styles.infoItem}
-                  isNeedValueTitle={checkIsNeedTitle(data.otherAssetsScale)}
+                  isNeedValueTitle={checkIsNeedTitle(this.getViewData(data.otherAssetsScale))}
                   isNeedOverFlowEllipsis
                 />
               )
@@ -374,7 +380,7 @@ export default class Person extends PureComponent {
             this.checkIsEditable()
               ? (
                 <BasicEditorCell
-                  label="投入成本收益率%"
+                  label="投入成本收益率"
                   width={INFO_ITEM_WITDH}
                   className={styles.infoItem}
                   editorId="person_insured"
@@ -389,8 +395,8 @@ export default class Person extends PureComponent {
               : (
                 <InfoItem
                   width={INFO_ITEM_WITDH}
-                  label="投入成本收益率%"
-                  value={this.getYieldValue(data.yieldRate) || DEFAULT_VALUE}
+                  label="投入成本收益率"
+                  value={this.getYieldValue(data.yieldRate)}
                   className={styles.infoItem}
                   isNeedValueTitle={checkIsNeedTitle(this.getYieldValue(data.yieldRate))}
                   isNeedOverFlowEllipsis
@@ -399,7 +405,7 @@ export default class Person extends PureComponent {
           }
         </div>
         <div className={styles.latestTime}>
-          近期风险承受能力评估问卷日期：{data.latestSurveyTime || DEFAULT_VALUE}
+          近期风险承受能力评估问卷日期：{this.getViewData(data.latestSurveyTime)}
         </div>
       </div>
     );

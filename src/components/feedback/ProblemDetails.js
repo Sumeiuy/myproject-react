@@ -1,7 +1,9 @@
-/**
- * @file feedback/ProblemDetail.js
- *  问题反馈-问题详情
- * @author yangquanjian
+/*
+ * @Author: yangquanjian
+ * @Date: 2018-10-22 09:13:51
+ * @LastEditors: li-ke
+ * @LastEditTime: 2018-11-29 19:24:00
+ * @Description: 问题反馈-问题详情
  */
 
 import React, { PureComponent } from 'react';
@@ -28,7 +30,7 @@ export default class ProblemDetail extends PureComponent {
     visible: PropTypes.bool,
     problemDetails: PropTypes.object,
     form: PropTypes.object.isRequired,
-    empRespDTOList: PropTypes.array.isRequired,
+    operatorList: PropTypes.array.isRequired,
     onCancel: PropTypes.func.isRequired,
     onCreate: PropTypes.func.isRequired,
     nowStatus: PropTypes.bool.isRequired,
@@ -158,18 +160,20 @@ export default class ProblemDetail extends PureComponent {
     return '无';
   }
   // 显示经办人
-  renderEmpResp(st, empRespList) {
-    if (!_.isEmpty(st) && !_.isEmpty(empRespList)) {
-      const nowStatus = _.find(empRespList, item =>
-        item.loginName === st);
-      return nowStatus.lastName || '无';
+  renderEmpResp(processerID, operatorList) {
+    // 如果经办人是无就显示defaultName 马珂
+    const defaultName = _.find(operatorList, item => item.loginName === '001423');
+    if (!_.isEmpty(processerID) && !_.isEmpty(operatorList)) {
+      const nowStatus = _.find(operatorList, item =>
+        item.loginName === processerID) || {};
+      return nowStatus.lastName || defaultName.lastName;
     }
     return '无';
   }
 
   // 点击编辑打开经办人下拉框
-  renderEmpOption(empRespDTOList) {
-      const empListOption = _.map(empRespDTOList, i =>
+  renderEmpOption(operatorList) {
+      const empListOption = _.map(operatorList, i =>
         <Option key={`empOptionKey${OPTIONKEY++}`} value={i.loginName}>{i.lastName}</Option>,
       );
       return empListOption;
@@ -208,7 +212,8 @@ export default class ProblemDetail extends PureComponent {
     const {
       form,
       problemDetails,
-      empRespDTOList,
+      // 经办人列表数据
+      operatorList,
     } = this.props;
 
     const {
@@ -364,26 +369,25 @@ export default class ProblemDetail extends PureComponent {
                 <strong className="name">经办人：</strong>
                 <span className={valueIsVisibel}>
                   {
-                    this.renderEmpResp(processer, empRespDTOList)
+                    this.renderEmpResp(processer, operatorList)
                     }
                 </span>
                 <div className={editIsVisibel}>
                   <span className={processerValue} onClick={event => this.handleProcesserClick(event, 'processer')} title="点击编辑">
                     {
-                     this.renderEmpResp(processer, empRespDTOList)
+                     this.renderEmpResp(processer, operatorList)
                       }
                     <Icon type="edit" className="anticon-edit" />
                   </span>
                 </div>
                 <div className={processerHiddenValue} id="select-processer">
                   <FormItem>
-                    {getFieldDecorator('processer', { initialValue: `${this.dataNull(processer)}` })(
-                      <Select style={{ width: 110 }} className="qtSelect" getPopupContainer={() => document.getElementById('select-processer')}>
-                        {
-                         this.renderEmpOption(empRespDTOList)
-                          }
-                      </Select>,
-                    )}
+                    {
+                      getFieldDecorator('processer', {initialValue: this.renderEmpResp(processer, operatorList)})
+                    }
+                    <Select style={{ width: 110 }} className="qtSelect" getPopupContainer={() => document.getElementById('select-processer')}>
+                      {this.renderEmpOption(operatorList)}
+                    </Select>
                     <div className="edit-btn">
                       <a onClick={this.handleSubChange}><Icon type="success" /></a>
                       <a onClick={this.handleClose}><Icon type="close" /></a>

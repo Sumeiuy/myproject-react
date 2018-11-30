@@ -1,7 +1,9 @@
-/**
- * @file feedback/ProblemHandling.js
- *  问题反馈-解决弹窗
- * @author yangquanjian
+/*
+ * @Author: yangquanjian
+ * @Date: 2018-10-22 09:13:51
+ * @LastEditors: li-ke
+ * @LastEditTime: 2018-11-29 19:22:18
+ * @Description: 问题反馈-解决弹窗
  */
 
 import React, { PureComponent } from 'react';
@@ -40,7 +42,7 @@ export default class ProblemHandling extends PureComponent {
     width: PropTypes.string,
     problemDetails: PropTypes.object.isRequired,
     inforTxt: PropTypes.string,
-    empRespDTOList: PropTypes.array.isRequired,
+    operatorList: PropTypes.array.isRequired,
   }
   static defaultProps = {
     popContent: ' ',
@@ -146,6 +148,19 @@ export default class ProblemHandling extends PureComponent {
     return uploadRequest(option);
   }
 
+  // 显示经办人
+  @autobind
+  renderEmpResp(processerID, operatorList) {
+    // 如果经办人是无就显示defaultName 马珂
+    const defaultName = _.find(operatorList, item => item.loginName === '001423');
+    if (!_.isEmpty(processerID) && !_.isEmpty(operatorList)) {
+      const nowStatus = _.find(operatorList, item =>
+        item.loginName === processerID) || {};
+      return nowStatus.lastName || defaultName.lastName;
+    }
+    return '无';
+  }
+
   render() {
     const {
       inforTxt,
@@ -153,7 +168,7 @@ export default class ProblemHandling extends PureComponent {
       title,
       width,
       form,
-      empRespDTOList,
+      operatorList,
     } = this.props;
     const {
       popQuestionTagOptions,
@@ -172,8 +187,6 @@ export default class ProblemHandling extends PureComponent {
     const getSelectOption = item => item.map(i =>
       <Option key={i.value} value={i.value}>{i.label}</Option>,
     );
-    // processer 值为 “请选择”，是脏数据（线上有）
-    const initProcessValue = processer === EMPTY_TEXT ? EMPTY_VALUE : processer;
     const renderEmpOption = item => item.map(i =>
       <Option key={i.loginName} value={i.loginName}>{i.lastName}</Option>,
     );
@@ -199,7 +212,7 @@ export default class ProblemHandling extends PureComponent {
                 <Col span="4"><div className={styles.amLabel}>问题标签：</div></Col>
                 <Col span="19" offset={1}>
                   <FormItem>
-                    {getFieldDecorator('tag', { initialValue: `${tag || '无'}` })(
+                    {getFieldDecorator('tag', { initialValue: tag || '无' })(
                       <Select style={{ width: 220 }}>
                         {getSelectOption(popQuestionTagOptions)}
                       </Select>,
@@ -228,16 +241,17 @@ export default class ProblemHandling extends PureComponent {
                 </Col>
                 <Col span="19" offset={1}>
                   <FormItem>
-                    {/* initialValue 值为 undefined时，才展示 placeholder */}
-                    {getFieldDecorator('processer', {
-                      initialValue: initProcessValue || undefined}
+                    {getFieldDecorator(
+                      'processer', {
+                        initialValue: this.renderEmpResp(processer, operatorList)
+                      }
                     )(
                       <Select
                         placeholder="请选择"
                         style={{ width: 220 }}
                         onChange={this.handleProcesserChange}
                       >
-                      {renderEmpOption(empRespDTOList)}
+                      {renderEmpOption(operatorList)}
                       </Select>,
                     )}
                   </FormItem>

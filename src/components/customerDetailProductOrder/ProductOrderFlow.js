@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-20 10:31:29
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-28 13:09:46
+ * @LastEditTime: 2018-11-30 10:54:17
  * @Description: 服务订单流水
  */
 
@@ -39,7 +39,7 @@ export default class ProductOrderFlow extends PureComponent {
     queryServiceOrderDetail: PropTypes.func.isRequired,
     queryServiceProductList: PropTypes.func.isRequired,
     queryOrderApproval: PropTypes.func.isRequired,
-    queryJxGroupProduct: PropTypes.func.isRequired,
+    queryServiceProductBySearch: PropTypes.func.isRequired,
     attachmentList: PropTypes.array.isRequired,
     getAttachmentList: PropTypes.func.isRequired,
   };
@@ -80,7 +80,7 @@ export default class ProductOrderFlow extends PureComponent {
   @autobind
   handleSearchChanged(value) {
     if ( _.trim(value) !== '') {
-      this.props.queryJxGroupProduct({
+      this.props.queryServiceProductBySearch({
         keyword: value,
       });
     }
@@ -233,6 +233,19 @@ export default class ProductOrderFlow extends PureComponent {
     });
   }
 
+  @autobind
+  addNoLimitType(dict) {
+    return _.union(
+      [
+        {
+          key: '',
+          value: '不限',
+        },
+      ],
+      dict,
+    );
+  }
+
   render() {
     const {
       serviceOrderFlow: {
@@ -286,7 +299,7 @@ export default class ProductOrderFlow extends PureComponent {
               needItemObj
               dataMap={['prodId', 'prodName']}
               value={serviceProductCode}
-              data={productListBySearch}
+              data={_.uniqBy(productListBySearch, 'prodId')}
               onInputChange={this.handleSearchChanged}
               onChange={this.handleServiceProductChanged}
               dropdownStyle={{
@@ -300,7 +313,7 @@ export default class ProductOrderFlow extends PureComponent {
             <SingleFilter
               filterName="类型"
               filterId="serviceType"
-              data={serviceOrderType}
+              data={this.addNoLimitType(serviceOrderType)}
               value={serviceType}
               onChange={this.handleServiceTypeChanged}
             />

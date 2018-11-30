@@ -37,6 +37,7 @@ export default class ProgressList extends PureComponent {
     cycle: PropTypes.array,
     location: PropTypes.object,
     type: PropTypes.string,
+    isNewHome: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -138,7 +139,7 @@ export default class ProgressList extends PureComponent {
 
   @autobind
   renderList() {
-    const { dataSource, location, type } = this.props;
+    const { dataSource, location, type, isNewHome } = this.props;
     // 新增客户模块指标说明文案
     const description = {
       新增有效户: '统计周期内新增且成为有效户的客户数',
@@ -148,7 +149,8 @@ export default class ProgressList extends PureComponent {
     };
     // 动态设置progress间距
     const length = dataSource.length;
-    const style = { marginTop: `${(172 - (length * 25)) / (length + 1)}px` };
+    const totalHeight = isNewHome ? 180 : 172;
+    const style = { marginTop: `${(totalHeight - (length * 25)) / (length + 1)}px` };
     return dataSource.map(
       (item, index) => {
         const rowId = `row${index}`;
@@ -206,8 +208,10 @@ export default class ProgressList extends PureComponent {
   }
 
   render() {
+    const { isNewHome } = this.props;
+    const padding = isNewHome ? '5px 21px' : '0 21px';
     return (
-      <div className={styles.container}>
+      <div className={styles.container} style={{ padding }}>
         {this.renderList()}
       </div>
     );

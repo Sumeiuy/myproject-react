@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-11 16:30:07
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-27 11:12:41
+ * @Last Modified time: 2018-11-29 15:13:26
  * @description 新版客户360详情下账户信息Tab下的资产分布组件
  */
 import React, { PureComponent } from 'react';
@@ -449,7 +449,7 @@ export default class AssetDistribute extends PureComponent {
                         <span className={styles.value}>{totalDebt.value}</span>
                         <span className={styles.unit}>{totalDebt.unit}</span>
                         <span className={styles.infoIco}>
-                          <Popover overlayClassName={styles.labelPopover} content="融资融券负债">
+                          <Popover overlayClassName={styles.labelPopover} content="此处仅为融资融券负债">
                             <Icon type="tishi2" />
                           </Popover>
                         </span>

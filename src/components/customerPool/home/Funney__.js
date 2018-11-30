@@ -2,8 +2,8 @@
  * @Description: 客户及资产
  * @Author: zhangjunli
  * @Date: 2018-10-31 20:04:34
- * @Last Modified by: Liujianshu-K0240007
- * @Last Modified time: 2018-11-01 14:37:48
+ * @Last Modified by: liqianwen
+ * @Last Modified time: 2018-11-29 21:24:57
  */
 
 import React from 'react';
@@ -32,8 +32,9 @@ function getDataConfig(data) {
   }));
 }
 
-function Funney({ dataSource, push, cycle, location }, { empInfo }) {
+function Funney({ dataSource, push, cycle, location, isNewHome }, { empInfo }) {
   const { data, color } = dataSource;
+  const containerPadding = isNewHome  ? '25px 6px 37px 9px' : '12px 6px 37px 9px';
   const funnelOption = {
     series: [
       {
@@ -173,7 +174,7 @@ function Funney({ dataSource, push, cycle, location }, { empInfo }) {
   }
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} style={{ padding: containerPadding }}>
       <div className={styles.uintRow}>
         <div />
         <div>{'户数/资产'}</div>

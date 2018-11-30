@@ -95,6 +95,7 @@ export default class LabelModals extends PureComponent {
 
   // tab切换
   @autobind
+  @logable({ type: 'Click', payload: { name: '瞄准镜标签/普通标签切换', value: '$args[0]' } })
   handleTabChange(activeKey) {
     const { queryCustLabelList } = this.props;
     queryCustLabelList({
@@ -159,8 +160,7 @@ export default class LabelModals extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click',
-payload: { name: '选择标签' } })
+  @logable({ type: 'Click', payload: { name: '选择标签', value: '$args[0].name' } })
   openClientListPage(item) {
     const options = {
       source: isSightingScope(item.source) ? 'sightingTelescope' : 'tag',
@@ -180,6 +180,7 @@ payload: { name: '选择标签' } })
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '关闭所有可用客户标签' } })
   closeModal() {
     const { toggleModal } = this.props;
     this.handleTabChange(tabList[0].key);
