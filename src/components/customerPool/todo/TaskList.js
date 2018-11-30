@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-11-12 19:25:08
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-28 18:59:48
+ * @Last Modified time: 2018-11-30 14:40:37
  */
 
 import React, { PureComponent } from 'react';
@@ -169,7 +169,6 @@ export default class TaskList extends PureComponent {
           ...query,
           flowId,
           source: RETURN_TASK_FROM_TODOLIST,
-          type: listType,
         },
       });
     }
@@ -192,38 +191,41 @@ export default class TaskList extends PureComponent {
       case 'apply':
         taskColumns = [
           {
+            width: 200,
             title: '任务名称',
             dataIndex: 'subject',
             key: 'subject',
             render: (item, record) =>
               (<a
-                className={styles.applySubject}
                 target="_blank"
                 rel="noopener noreferrer"
                 title={item}
                 data={record.id}
                 onClick={() => this.handleOpenNewPage(record.id)}
+                className={styles.title}
               >
                 {record.subject}
               </a>),
           },
           {
+            width: 200,
             title: '类型',
             dataIndex: 'workFlowName',
             key: 'workFlowName',
-            render: (item, record) => (<span className={styles.tableItem}>{record.workFlowName}</span>),
+            render: (item, record) => (<span>{record.workFlowName}</span>),
           },
           {
             title: '提交时间',
             dataIndex: 'startTime',
             key: 'startTime',
-            render: (item, record) => (<span className={styles.tableItem}>{moment(Number(record.startTime)).format('YYYY-MM-DD')}</span>),
+            render: (item, record) => (<span>{moment(Number(record.startTime)).format('YYYY-MM-DD')}</span>),
           },
         ];
         break;
       case 'approve':
         taskColumns =  [
           {
+            width: 200,
             title: '任务名称',
             dataIndex: 'subject',
             key: 'subject',
@@ -234,44 +236,49 @@ export default class TaskList extends PureComponent {
                 title={item}
                 data={record.id}
                 onClick={() => this.handleOpenNewPage(record.id)}
+                className={styles.title}
               >
                 {record.subject}
               </a>),
           },
           {
+            width: 150,
             title: '类型',
             dataIndex: 'workFlowName',
             key: 'workFlowName',
-            render: (item, record) => (<span className={styles.tableItem}>{record.workFlowName}</span>),
+            render: (item, record) => (<span>{record.workFlowName}</span>),
           },
           {
+            width: 150,
             title: '提交人工号',
             dataIndex: 'originator',
             key: 'originator',
-            render: (item, record) => (<span className={styles.tableItem}>{record.originator}</span>),
+            render: (item, record) => (<span>{record.originator}</span>),
           },
           {
+            width: 150,
             title: '提交人姓名',
             dataIndex: 'originatorName',
             key: 'originatorName',
-            render: (item, record) => (<span className={styles.tableItem}>{record.originatorName}</span>),
+            render: (item, record) => (<span>{record.originatorName}</span>),
           },
           {
+            width: 150,
             title: '提交时间',
             dataIndex: 'startTime',
             key: 'startTime',
-            render: (item, record) => (<span className={styles.tableItem}>{moment(Number(record.startTime)).format('YYYY-MM-DD')}</span>),
+            render: (item, record) => (<span>{moment(Number(record.startTime)).format('YYYY-MM-DD')}</span>),
           },
           {
             title: '审批时间',
             dataIndex: 'endTime',
             key: 'endTime',
-            render: (item, record) => (<span className={styles.tableItem}>{moment(Number(record.endTime)).format('YYYY-MM-DD')}</span>),
+            render: (item, record) => (<span>{moment(Number(record.endTime)).format('YYYY-MM-DD')}</span>),
           },
         ];
         break;
-        default:
-          break;
+      default:
+        break;
     }
     return taskColumns;
   }

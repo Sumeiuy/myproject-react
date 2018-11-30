@@ -19,17 +19,19 @@
   }
 }
 .taskList {
-  height: 560px;
   position: relative;
   :global {
     .ant-pagination {
-      position: absolute;
-      right: 20px;
-      bottom: 20px;
+      margin-top: 45px;
+      margin-bottom: 30px;
+      margin-right: 10px;
     }
   }
 }
-.tableItem {
+.title {
   width: 150px;
   display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
