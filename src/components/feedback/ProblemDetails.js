@@ -161,7 +161,7 @@ export default class ProblemDetail extends PureComponent {
     }
     return '无';
   }
-  
+
   // 显示经办人
   renderEmpResp(processerID, operatorList) {
     if (!_.isEmpty(processerID) && !_.isEmpty(operatorList)) {
