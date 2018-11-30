@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-20 10:31:29
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-30 09:48:05
+ * @LastEditTime: 2018-11-30 10:54:17
  * @Description: 服务订单流水
  */
 
@@ -299,7 +299,7 @@ export default class ProductOrderFlow extends PureComponent {
               needItemObj
               dataMap={['prodId', 'prodName']}
               value={serviceProductCode}
-              data={productListBySearch}
+              data={_.uniqBy(productListBySearch, 'prodId')}
               onInputChange={this.handleSearchChanged}
               onChange={this.handleServiceProductChanged}
               dropdownStyle={{

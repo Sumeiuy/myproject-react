@@ -206,7 +206,7 @@ export default class ToDo extends PureComponent {
     },
   })
   handleApproveSearch(value) {
-    const { location: { query: { pageSize = 10, pageNum = 1 } } } = this.props;
+    const { location: { query: { pageSize = 10 } } } = this.props;
     this.getApproveData({
       pageSize,
       pageNum: curPageNum,

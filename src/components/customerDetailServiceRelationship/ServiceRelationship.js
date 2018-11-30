@@ -1,22 +1,23 @@
 /*
  * @Author: wangyikai
- * @Description: 客户360-服务关系
  * @Date: 2018-11-06 13:23:32
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-26 16:11:21
+ * @Last Modified time: 2018-11-29 11:52:38
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import Icon from '../common/Icon';
-import Table from '../common/table';
+import Icon from '../../components/common/Icon';
+import Table from '../../components/common/table';
 import styles from './serviceRelationship.less';
 import { number } from '../../helper';
 import logable, { logPV } from '../../decorators/logable';
 import ServiceHistoryModal from './ServiceHistoryModal';
 import { serviceTeamColumns, introduceColumns } from './config';
+import IfTableWrap from '../common/IfTableWrap';
 
+const NODATA_HINT = '没有符合条件的记录';
 export default class ServiceRelationship extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -73,6 +74,8 @@ export default class ServiceRelationship extends PureComponent {
       serviceHistory,
       getCustServiceHistory,
     } = this.props;
+    const isRenderServiceTeam = !_.isEmpty(serviceTeam);
+    const isRenderIntroduce = !_.isEmpty(introduce);
     //将数据百分比化
     const newIntroduceDatas = _.map(introduce, (items) => {
       const { weight } = items;
@@ -89,7 +92,7 @@ export default class ServiceRelationship extends PureComponent {
             <div className={styles.accountBlock}>
               <div className={styles.header}>
                 <div className={styles.title}>服务团队</div>
-                <Icon type="huiyuandengjibiangeng" className={styles.serviceHistoryIcon}/>
+                <Icon type="dengjibiangenglishi" className={styles.serviceHistoryIcon} />
                 <div
                   className={styles.serviceHistory}
                   onClick={this.handleServiceHistoryModalOpen}
@@ -104,30 +107,32 @@ export default class ServiceRelationship extends PureComponent {
                   onClose={this.handleServiceHistoryModalClose}
                 />
               </div>
-              <div className={styles.accountTable}>
-                <Table
-                  pagination={false}
-                  className={styles.tableBorder}
-                  isNeedEmptyRow
-                  dataSource={serviceTeam}
-                  columns={serviceTeamColumns}
-                />
-              </div>
+              <IfTableWrap isRender={isRenderServiceTeam} text={NODATA_HINT}>
+                <div className={styles.accountTable}>
+                  <Table
+                    pagination={false}
+                    className={styles.tableBorder}
+                    dataSource={serviceTeam}
+                    columns={serviceTeamColumns}
+                  />
+                </div>
+              </IfTableWrap>
             </div>
             <div className={styles.accountBlock}>
               <div className={styles.header}>
                 <div className={styles.title}>介绍信息</div>
               </div>
-              <div className={styles.accountTable}>
-                <Table
-                  pagination={false}
-                  className={styles.tableBorder}
-                  isNeedEmptyRow
-                  dataSource={newIntroduceDatas}
-                  columns={introduceColumns}
-                />
+              <IfTableWrap isRender={isRenderIntroduce} text={NODATA_HINT}>
+                <div className={styles.accountTable}>
+                  <Table
+                    pagination={false}
+                    className={styles.tableBorder}
+                    dataSource={newIntroduceDatas}
+                    columns={introduceColumns}
+                  />
+                </div>
+              </IfTableWrap>
               </div>
-            </div>
           </div>
         </div>
       </div>

@@ -7,22 +7,11 @@
  */
 
 import React, { PureComponent } from 'react';
-import { connect } from 'dva';
 import { autobind } from 'core-decorators';
 import { message } from 'antd';
-
 import Phone from '../../components/common/phone';
-import logable from '../../decorators/logable';
 
-const mapStateToProps = () => ({
-
-});
-
-@connect(mapStateToProps)
 export default class PhoneHome extends PureComponent {
-  static propTypes = {
-  }
-
   @autobind
   handleEnd({ duration }) {
     message.info(`通话时长: ${duration} 秒`);

@@ -384,14 +384,12 @@ export default class ProblemDetail extends PureComponent {
                 </div>
                 <div className={processerHiddenValue} id="select-processer">
                   <FormItem>
-                    {getFieldDecorator('processer', {initialValue: this.renderEmpResp(processer, operatorList)})
-                    (
-                      <Select style={{ width: 110 }} className="qtSelect" getPopupContainer={() => document.getElementById('select-processer')}>
-                        {
-                         this.renderEmpOption(operatorList)
-                          }
-                      </Select>,
-                    )}
+                    {
+                      getFieldDecorator('processer', {initialValue: this.renderEmpResp(processer, operatorList)})
+                    }
+                    <Select style={{ width: 110 }} className="qtSelect" getPopupContainer={() => document.getElementById('select-processer')}>
+                      {this.renderEmpOption(operatorList)}
+                    </Select>
                     <div className="edit-btn">
                       <a onClick={this.handleSubChange}><Icon type="success" /></a>
                       <a onClick={this.handleClose}><Icon type="close" /></a>
