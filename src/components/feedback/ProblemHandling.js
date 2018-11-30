@@ -2,7 +2,7 @@
  * @Author: yangquanjian
  * @Date: 2018-10-22 09:13:51
  * @LastEditors: li-ke
- * @LastEditTime: 2018-11-29 19:22:18
+ * @LastEditTime: 2018-11-30 09:54:34
  * @Description: 问题反馈-解决弹窗
  */
 
@@ -30,6 +30,8 @@ const EMPTY_OBJECT = {};
 
 const EMPTY_TEXT = '请选择';
 const EMPTY_VALUE = '';
+// 马珂默认工号
+const DEFAULT_USER_ID = feedbackOptions.defaultUserId;
 @createForm()
 export default class ProblemHandling extends PureComponent {
   static propTypes = {
@@ -151,12 +153,12 @@ export default class ProblemHandling extends PureComponent {
   // 显示经办人
   @autobind
   renderEmpResp(processerID, operatorList) {
-    // 如果经办人是无就显示defaultName 马珂
-    const defaultName = _.find(operatorList, item => item.loginName === '001423');
+    // 如果经办人是无就显示defaultUser 马珂
+    const defaultUser = _.find(operatorList, operator => operator.loginName === DEFAULT_USER_ID) || {};
     if (!_.isEmpty(processerID) && !_.isEmpty(operatorList)) {
-      const nowStatus = _.find(operatorList, item =>
-        item.loginName === processerID) || {};
-      return nowStatus.lastName || defaultName.lastName;
+      const operator = _.find(operatorList, operator =>
+        operator.loginName === processerID) || {};
+      return operator.lastName || defaultUser.lastName;
     }
     return '无';
   }

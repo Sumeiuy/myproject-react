@@ -20,6 +20,8 @@ const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
 // 满意度字典
 const USER_COMMENT_LIST = feedbackOptions.userDegreeOfSatisfaction;
+// 马珂默认工号
+const DEFAULT_USER_ID = feedbackOptions.defaultUserId;
 // 状态字典
 const STATUS_MAP = [
   { value: 'PROCESSING', label: '解决中' },
@@ -190,7 +192,7 @@ export default class LeftPanel extends PureComponent {
         // 当前行记录
         let statusClass;
         let statusLabel;
-        let processerLabel;
+        let operator;
         // 用户评价分别显示的类名
         let userCommentClass;
         // 评价字段标签
@@ -205,12 +207,12 @@ export default class LeftPanel extends PureComponent {
         if (!_.isEmpty(record.processer)
             && record.processer !== '无'
             && record.processer !== 'null') {
-              processerLabel = _.filter(operatorList,item =>
+              operator = _.filter(operatorList,item =>
               item.loginName === record.processer);
         }
 
-        // 如果经办人是无就显示defaultName 马珂
-        const defaultName = _.find(operatorList, item => item.loginName === '001423');
+        // 如果经办人是无就显示 马珂
+        const defaultUser = _.find(operatorList, operator => operator.loginName === DEFAULT_USER_ID) || {};
         // 如果有满意度
         if (record.evaluation) {
           // 根据满意度不同状态显示不同颜色
@@ -239,8 +241,8 @@ export default class LeftPanel extends PureComponent {
             </div>
             <div className="name">
               {
-                // 如果没有匹配到经办人 默认显示defaultName.lastName 马珂
-                (!_.isEmpty(processerLabel) && processerLabel[0].lastName) || defaultName.lastName
+                // 如果没有匹配到经办人 默认显示defaultUser.lastName 马珂
+                (!_.isEmpty(operator) && operator[0].lastName) || defaultUser.lastName
               }
             </div>
             <div className="date">

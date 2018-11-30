@@ -2,7 +2,7 @@
  * @Author: yangquanjian
  * @Date: 2018-10-22 09:13:51
  * @LastEditors: li-ke
- * @LastEditTime: 2018-11-29 19:24:00
+ * @LastEditTime: 2018-11-30 09:54:14
  * @Description: 问题反馈-问题详情
  */
 
@@ -22,6 +22,8 @@ const FormItem = Form.Item;
 const Option = Select.Option;
 const EMPTY_OBJECT = {};
 const feedbackChannel = feedbackOptions.feedbackChannel;
+// 马珂默认工号
+const DEFAULT_USER_ID = feedbackOptions.defaultUserId;
 let OPTIONKEY = 0;
 
 @createForm()
@@ -161,12 +163,12 @@ export default class ProblemDetail extends PureComponent {
   }
   // 显示经办人
   renderEmpResp(processerID, operatorList) {
-    // 如果经办人是无就显示defaultName 马珂
-    const defaultName = _.find(operatorList, item => item.loginName === '001423');
+    // 如果经办人是无就显示defaultUser 马珂
+    const defaultUser = _.find(operatorList, operator => operator.loginName === DEFAULT_USER_ID) || {};
     if (!_.isEmpty(processerID) && !_.isEmpty(operatorList)) {
-      const nowStatus = _.find(operatorList, item =>
-        item.loginName === processerID) || {};
-      return nowStatus.lastName || defaultName.lastName;
+      const operator = _.find(operatorList, operator =>
+        operator.loginName === processerID) || {};
+      return operator.lastName || defaultUser.lastName;
     }
     return '无';
   }
