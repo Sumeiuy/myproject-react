@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-11-15 13:53:47
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-30 09:44:15
+ * @Last Modified time: 2018-11-30 10:27:35
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -94,7 +94,7 @@ export default class ZLMemeberInfoModal extends PureComponent {
           modalKey="memberGrade"
           maskClosable={false}
         >
-          <IfTableWrap isRender={isRender} text={NODATA_HINT} noDataStyle={{'paddingTop':'200px'}}>
+          <IfTableWrap isRender={isRender} text={NODATA_HINT}>
             <div className={styles.tabContainer}>
               <Table
                 pagination={showMemberGradePagination}
