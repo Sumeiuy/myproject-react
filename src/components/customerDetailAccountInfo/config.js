@@ -1,8 +1,8 @@
 /*
  * @Author: sunweibin
  * @Date: 2018-10-11 18:37:20
- * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-30 15:40:34
+ * @Last Modified by: liqianwen
+ * @Last Modified time: 2018-11-30 22:59:50
  * @description 新版客户360详情的账户信息Tab下页面的配置项
  */
 
@@ -411,6 +411,7 @@ export const STANDARD_TRADE_FLOW_COLUMNS = [
     key: 'tradeDate',
     className: 'tradeDate',
     fixed: 'left',
+    width: 150,
   },
   {
     title: '产品名称',
@@ -418,6 +419,7 @@ export const STANDARD_TRADE_FLOW_COLUMNS = [
     key: 'productName',
     className:'productName',
     fixed: 'left',
+    width: 150,
   },
   {
     title: '产品代码',
@@ -425,12 +427,14 @@ export const STANDARD_TRADE_FLOW_COLUMNS = [
     key: 'productCode',
     className:'productCode',
     fixed: 'left',
+    width: 150,
   },
   {
     title: '业务类别',
     dataIndex: 'bussinessType',
     key: 'bussinessType',
     className:'bussinessType',
+    width: 150,
   },
   {
     title: '成交价格',
@@ -509,6 +513,7 @@ export const CREDIT_TRADE_FLOW_COLUMNS = [
     key: 'tradeDate',
     className: 'tradeDate',
     fixed: 'left',
+    width: 150,
   },
   {
     title: '产品名称',
@@ -516,6 +521,7 @@ export const CREDIT_TRADE_FLOW_COLUMNS = [
     key: 'productName',
     className:'productName',
     fixed: 'left',
+    width: 150,
   },
   {
     title: '产品代码',
@@ -523,12 +529,14 @@ export const CREDIT_TRADE_FLOW_COLUMNS = [
     key: 'productCode',
     className:'productCode',
     fixed: 'left',
+    width: 150,
   },
   {
     title: '业务类别',
     dataIndex: 'bussinessType',
     key: 'bussinessType',
     className:'bussinessType',
+    width: 150,
   },
   {
     title: '成交价格',
@@ -593,6 +601,7 @@ export const OPTION_TRADE_FLOW_COLUMNS = [
     key: 'tradeDate',
     className: 'tradeDate',
     fixed: 'left',
+    width: 150,
   },
   {
     title: '期权合约简称',
@@ -600,6 +609,7 @@ export const OPTION_TRADE_FLOW_COLUMNS = [
     key: 'optionContractName',
     className:'optionContractName',
     fixed: 'left',
+    width: 150,
   },
   {
     title: '期权合约编码',
@@ -607,12 +617,14 @@ export const OPTION_TRADE_FLOW_COLUMNS = [
     key: 'optionContractCode',
     className:'optionContractCode',
     fixed: 'left',
+    width: 150,
   },
   {
     title: '业务类别',
     dataIndex: 'bussinessType',
     key: 'bussinessType',
     className:'bussinessType',
+    width: 150,
   },
   {
     title: '成交价格',
