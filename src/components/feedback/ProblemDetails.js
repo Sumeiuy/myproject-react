@@ -2,7 +2,7 @@
  * @Author: yangquanjian
  * @Date: 2018-10-22 09:13:51
  * @LastEditors: li-ke
- * @LastEditTime: 2018-11-30 09:54:14
+ * @LastEditTime: 2018-11-30 10:08:40
  * @Description: 问题反馈-问题详情
  */
 
@@ -175,8 +175,8 @@ export default class ProblemDetail extends PureComponent {
 
   // 点击编辑打开经办人下拉框
   renderEmpOption(operatorList) {
-      const empListOption = _.map(operatorList, i =>
-        <Option key={`empOptionKey${OPTIONKEY++}`} value={i.loginName}>{i.lastName}</Option>,
+      const empListOption = _.map(operatorList, operator =>
+        <Option key={`empOptionKey${OPTIONKEY++}`} value={operator.loginName}>{operator.lastName}</Option>,
       );
       return empListOption;
   }

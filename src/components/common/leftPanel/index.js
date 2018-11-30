@@ -189,14 +189,11 @@ export default class LeftPanel extends PureComponent {
       dataIndex: 'status.processer.createTime',
       width: '20%',
       render: (text, record) => {
-        // 当前行记录
-        let statusClass;
+        let statusClass;  // 当前行记录
         let statusLabel;
-        let operator;
-        // 用户评价分别显示的类名
-        let userCommentClass;
-        // 评价字段标签
-        let userCommentLabelList;
+        let operator;  // 经办人对象
+        let userCommentClass; // 用户评价分别显示的类名
+        let userCommentLabelList; // 评价字段标签
         if (record.status) {
           statusClass = classnames({
             'state-resolve': record.status === STATUS_MAP[0].value,
@@ -204,15 +201,16 @@ export default class LeftPanel extends PureComponent {
           });
           statusLabel = STATUS_MAP.filter(item => item.value === record.status);
         }
+        // 显示经办人
         if (!_.isEmpty(record.processer)
             && record.processer !== '无'
             && record.processer !== 'null') {
-              operator = _.filter(operatorList,item =>
-              item.loginName === record.processer);
+              operator = _.filter(operatorList, operator => operator.loginName === record.processer);
         }
 
         // 如果经办人是无就显示 马珂
         const defaultUser = _.find(operatorList, operator => operator.loginName === DEFAULT_USER_ID) || {};
+        
         // 如果有满意度
         if (record.evaluation) {
           // 根据满意度不同状态显示不同颜色
