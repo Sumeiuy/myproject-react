@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-11-15 16:54:09
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-29 16:53:10
+ * @Last Modified time: 2018-11-30 16:52:16
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -71,7 +71,7 @@ export default class ZJMemeberInfoModal extends PureComponent {
       const date = text && moment(text).format(DATE_FORMAT);
       return (
         <Tooltip title={text}>
-          {date || '--'}
+          {date}
         </Tooltip>
       );
     };
@@ -80,7 +80,7 @@ export default class ZJMemeberInfoModal extends PureComponent {
       const date = text && moment(text).format(DATE_FORMAT);
       return (
         <Tooltip title={text}>
-          {date || '--'}
+          {date}
         </Tooltip>
       );
     };

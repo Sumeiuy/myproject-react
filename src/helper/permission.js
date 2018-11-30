@@ -253,6 +253,21 @@ const permission = {
     return hasDuty(dutyList, duty.HTSC_NPCI_BMP);
   },
 
+  // HTSC 客户资料-营业部执行岗
+  hasCIYYBZXGPermission() {
+    return hasDuty(dutyList, duty.HTSC_CI_YYBZXG);
+  },
+
+  // HTSC 客户资料（无隐私）-营业部执行岗
+  hasNPCIYYBZXGPermission() {
+    return hasDuty(dutyList, duty.HTSC_NPCI_YYBZXG);
+  },
+
+  // HTSC 隐私信息查询权限
+  hasPRIVATEINFOCHECKPermission() {
+    return hasDuty(dutyList, duty.HTSC_PRIVATEINFO_CHECK);
+  },
+
   // HTSC 开发-营业部执行岗
   hasKFYYBZXGPermission() {
     return hasDuty(dutyList, duty.HTSC_KF_YYBZXG);

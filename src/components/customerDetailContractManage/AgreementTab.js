@@ -120,13 +120,16 @@ export default class AgreementTab extends PureComponent {
 
   @autobind
   renderContentColumn(text, record) {
-    return (
-      <div className={styles.ellipsis}>
-        <Tooltip title={text}>
-          <a onClick={() => this.handleJumpAgreementReport(record)}>{text}</a>
-        </Tooltip>
-      </div>
-    );
+    if (!_.isEmpty(text)) {
+      return (
+        <div className={styles.ellipsis}>
+          <Tooltip title={text}>
+            <a onClick={() => this.handleJumpAgreementReport(record)}>{text}</a>
+          </Tooltip>
+        </div>
+      );
+    }
+    return DEFAULT_TEXT;
   }
 
   @autobind

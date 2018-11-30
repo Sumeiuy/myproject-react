@@ -85,9 +85,12 @@ export default class Breadcrumb extends PureComponent {
         value: '/customerPool/list/detail',
       },
     });
+    const jspState = sessionStore.get('jspState');
+    const locationState = this.props.location.state;
+    let currentState = jspState && jspState.url ? jspState : locationState;
     this.props.push({
       pathname: '/fsp/customerCenter/customer360',
-      state: this.props.location.state || sessionStore.get('jspState'),
+      state: currentState,
     });
   }
 

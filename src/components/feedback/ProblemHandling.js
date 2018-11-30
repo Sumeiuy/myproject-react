@@ -2,7 +2,7 @@
  * @Author: yangquanjian
  * @Date: 2018-10-22 09:13:51
  * @LastEditors: li-ke
- * @LastEditTime: 2018-11-29 19:22:18
+ * @LastEditTime: 2018-11-30 20:06:50
  * @Description: 问题反馈-解决弹窗
  */
 
@@ -28,8 +28,8 @@ const Dragger = Upload.Dragger;
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 
-const EMPTY_TEXT = '请选择';
-const EMPTY_VALUE = '';
+// 马珂默认工号
+const DEFAULT_USER_ID = feedbackOptions.defaultUserId;
 @createForm()
 export default class ProblemHandling extends PureComponent {
   static propTypes = {
@@ -149,14 +149,15 @@ export default class ProblemHandling extends PureComponent {
   }
 
   // 显示经办人
-  @autobind
   renderEmpResp(processerID, operatorList) {
-    // 如果经办人是无就显示defaultName 马珂
-    const defaultName = _.find(operatorList, item => item.loginName === '001423');
     if (!_.isEmpty(processerID) && !_.isEmpty(operatorList)) {
-      const nowStatus = _.find(operatorList, item =>
-        item.loginName === processerID) || {};
-      return nowStatus.lastName || defaultName.lastName;
+      let operator = _.find(operatorList, operator =>
+        operator.loginName === processerID);
+      // 如果经办人是空就显示 马珂
+      if (_.isEmpty(operator)) {
+        operator = _.find(operatorList, operator => operator.loginName === DEFAULT_USER_ID);
+      }
+      return operator.loginName;
     }
     return '无';
   }
@@ -187,8 +188,6 @@ export default class ProblemHandling extends PureComponent {
     const getSelectOption = item => item.map(i =>
       <Option key={i.value} value={i.value}>{i.label}</Option>,
     );
-    // processer 值为 “请选择”，是脏数据（线上有）
-    const initProcessValue = processer === EMPTY_TEXT ? EMPTY_VALUE : processer;
     const renderEmpOption = item => item.map(i =>
       <Option key={i.loginName} value={i.loginName}>{i.lastName}</Option>,
     );
