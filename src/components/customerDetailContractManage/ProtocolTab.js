@@ -19,6 +19,7 @@ import Table from '../common/table';
 import Button from '../common/Button';
 import commonConfirm from '../common/confirm_';
 import IfTableWrap from '../common/IfTableWrap';
+import IfWrap from '../common/biz/IfWrap';
 import logable from '../../decorators/logable';
 import { url as urlHelper } from '../../helper';
 import {
@@ -238,20 +239,20 @@ export default class ProtocolTab extends PureComponent {
   @autobind
   renderNewStatusOperation(record) {
     return (
-      this.hasPermissionOfShowBtn()
-      ? <div className={styles.iconWrapper}>
-        <Icon
-          type="bianji1"
-          title="编辑"
-          onClick={() => this.handleEditProtocol(record, false)}
-        />
-        <Icon
-          type="shanchu"
-          title="删除"
-          onClick={() => this.handleDeleteProtocol(record)}
-        />
-      </div>
-      : null
+      <IfWrap isRender={this.hasPermissionOfShowBtn()}>
+        <div className={styles.iconWrapper}>
+          <Icon
+            type="bianji1"
+            title="编辑"
+            onClick={() => this.handleEditProtocol(record, false)}
+          />
+          <Icon
+            type="shanchu"
+            title="删除"
+            onClick={() => this.handleDeleteProtocol(record)}
+          />
+        </div>
+      </IfWrap>
     );
   }
 
@@ -260,15 +261,13 @@ export default class ProtocolTab extends PureComponent {
   renderAgreeStatusOperation(record) {
     return (
       <div className={styles.iconWrapper}>
-        {
-          this.hasPermissionOfShowBtn()
-          ? <Icon
+        <IfWrap isRender={this.hasPermissionOfShowBtn()}>
+          <Icon
             type="shuaxin1"
             title="变更"
             onClick={() => this.handleUpdateProtocol(record)}
           />
-          : null
-        }
+        </IfWrap>
         <Icon
           type="chakanjilu"
           title="查看历史记录"
@@ -283,15 +282,13 @@ export default class ProtocolTab extends PureComponent {
   renderCloseOperation(record) {
     return (
       <div className={styles.iconWrapper}>
-        {
-          this.hasPermissionOfShowBtn()
-          ? <Icon
+        <IfWrap isRender={this.hasPermissionOfShowBtn()}>
+          <Icon
             type="zhongzhi"
             title="终止"
             onClick={() => this.handleCloseProtocol(record)}
           />
-          : null
-        }
+        </IfWrap>
         <Icon
           type="chakanjilu"
           title="查看历史记录"
