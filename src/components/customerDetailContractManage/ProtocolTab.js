@@ -169,7 +169,7 @@ export default class ProtocolTab extends PureComponent {
     const linkHandle = subTypeCode === TOUGU_SUBTYPE
     ? () => this.handleViewTouGuProtocol(record)
     : () => this.handleViewOtherProtocol(record);
-    const classnames = ({
+    const idClass = classnames({
       [styles.ellipsis]: true,
       [styles.idWrap]: true,
     });
@@ -177,7 +177,7 @@ export default class ProtocolTab extends PureComponent {
       <Tooltip title={text}>
         <div
           onClick={linkHandle}
-          className={classnames}
+          className={idClass}
         >
           {text}
         </div>

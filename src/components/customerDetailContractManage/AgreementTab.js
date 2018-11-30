@@ -117,7 +117,9 @@ export default class AgreementTab extends PureComponent {
   @autobind
   renderTimeColumn(text) {
     if (!_.isEmpty(text)) {
-      return moment(text).format(FORMAT_TIME);
+      if (text.indexOf('-') !== -1) {
+        return moment(text).format(FORMAT_TIME);
+      }
     }
     return DEFAULT_TEXT;
   }
