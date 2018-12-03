@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 19:41:38
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-30 12:08:35
+ * @Last Modified time: 2018-12-03 11:14:10
  * @description 机构客户联系方式配置项
  */
 // 机构客户电话信息表格columns
@@ -142,4 +142,12 @@ export const MODAL_TITLES = {
 export const SOURCE_CODE = {
   // ORCM来源的Code
   ocrm: '102030',
+  // 客户服务中心
+  custCenter: '102330',
+  // 涨乐财付通
+  zhangle: '102220',
+  // 综柜
+  zonggui: '102014',
+  // 95597
+  callCenter: '102091',
 };

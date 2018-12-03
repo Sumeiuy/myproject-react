@@ -2,14 +2,16 @@
  * @Author: sunweibin
  * @Date: 2018-11-26 17:13:06
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-30 15:51:18
+ * @Last Modified time: 2018-12-03 11:15:15
  * @description 辅助函数
  */
 import _ from 'lodash';
 
+import { SOURCE_CODE } from './config';
+
  // 判断是否来自综柜、财富通、95597渠道的都不允许修改
  export function isFromNoSupportUpdateSource(code) {
-  return false;
+  return _.includes([SOURCE_CODE.zonggui, SOURCE_CODE.zhangle, SOURCE_CODE.callCenter], code);
  };
 
 // 判断是新建联系方式还是修改联系方式
