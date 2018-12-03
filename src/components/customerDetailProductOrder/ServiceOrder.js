@@ -234,7 +234,11 @@ export default class ServiceOrder extends PureComponent {
           佣金调整
         </Button>
       </IfWrap>
-        <IfTableWrap isRender={!_.isEmpty(productList)} text={NODATA_HINT}>
+        <IfTableWrap
+          isRender={!_.isEmpty(productList)}
+          text={NODATA_HINT}
+          effect="productOrder/queryServiceOrderData"
+        >
         <Table
           className={styles.table}
           dataSource={productList}
