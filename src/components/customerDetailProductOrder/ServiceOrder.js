@@ -2,7 +2,7 @@
  * @Author: zhufeiyang
  * @Date: 2018-11-21 09:35:09
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-26 21:29:09
+ * @LastEditTime: 2018-12-03 16:25:48
  * @Description: 服务订购
  */
 
@@ -228,7 +228,11 @@ export default class ServiceOrder extends PureComponent {
           佣金调整
           </Button>
         </IfWrap>
-        <IfTableWrap isRender={!_.isEmpty(productList)} text={NODATA_HINT}>
+        <IfTableWrap
+          isRender={!_.isEmpty(productList)}
+          text={NODATA_HINT}
+          effect="productOrder/queryServiceOrderData"
+        >
           <Table
             className={styles.table}
             dataSource={productList}

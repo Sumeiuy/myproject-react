@@ -731,10 +731,10 @@ export default class CustomerLists extends PureComponent {
                     />
                   ),
                 )
-              }
+                }
               </div>
             )
-            : <NoData />
+            : <NoData effect="customerPool/getCustomerList" />
         }
         <div
           className="list-pagination"
