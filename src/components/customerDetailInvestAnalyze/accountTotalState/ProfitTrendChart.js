@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-25 11:31:40
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-28 16:55:41
+ * @Last Modified time: 2018-12-03 21:19:40
  * @description 账户收益走势图表
  */
 import React, { PureComponent } from 'react';
@@ -15,7 +15,13 @@ import IECharts from '../../IECharts';
 import { data } from '../../../helper';
 import { filterData, filterXAxisDate } from '../utils';
 import {
-  ACCOUNT_DAILY_RATE, HS300_DAILY_RATE, ACCOUNT_CUMULATIVE_RATE, HS300_CUMULATIVE_RATE, profitTrendChartTip, NOT_EXCESS_BENEFIT_TEXT, EXCESS_BENEFIT_TEXT, chartOption
+  ACCOUNT_DAILY_RATE,
+  HS300_DAILY_RATE,
+  ACCOUNT_CUMULATIVE_RATE,
+  HS300_CUMULATIVE_RATE,
+  profitTrendChartTip,
+  NOT_EXCESS_BENEFIT_TEXT,
+  EXCESS_BENEFIT_TEXT, chartOption,
 } from '../config';
 import styles from './profitTrendChart.less';
 
@@ -23,27 +29,6 @@ export default class ProfitTrendChart extends PureComponent {
   static propTypes = {
     // 账户收益走势图表数据
     profitTrendData: PropTypes.object.isRequired,
-  }
-
-  // 图表浮层提示框
-  @autobind
-  tooltipFormat(params) {
-    const { dataIndex } = params[0];
-    const {
-      profitTrendData: {
-        profitTrendChartData = [],
-      }
-    } = this.props;
-    // 账户收益走势图表返回的日期
-    const filterDate = filterData(profitTrendChartData, 'date');
-    const dateData = filterDate[dataIndex];
-    return `
-      <div>${dateData}</div>
-      <div>${params[2].marker}${params[2].seriesName}: ${params[2].value}%</div>
-      <div>${params[0].marker}${params[0].seriesName}: ${params[0].value}%</div>
-      <div>${params[3].marker}${params[3].seriesName}: ${params[3].value}%</div>
-      <div>${params[1].marker}${params[1].seriesName}: ${params[1].value}%</div>
-    `;
   }
 
   // 图表配置项
@@ -125,6 +110,27 @@ export default class ProfitTrendChart extends PureComponent {
       summaryText = `${summaryText}${EXCESS_BENEFIT_TEXT}`;
     }
     return summaryText;
+  }
+
+  // 图表浮层提示框
+  @autobind
+  tooltipFormat(params) {
+    const { dataIndex } = params[0];
+    const {
+      profitTrendData: {
+        profitTrendChartData = [],
+      }
+    } = this.props;
+    // 账户收益走势图表返回的日期
+    const filterDate = filterData(profitTrendChartData, 'date');
+    const dateData = filterDate[dataIndex];
+    return `
+      <div>${dateData}</div>
+      <div>${params[2].marker}${params[2].seriesName}: ${params[2].value}%</div>
+      <div>${params[0].marker}${params[0].seriesName}: ${params[0].value}%</div>
+      <div>${params[3].marker}${params[3].seriesName}: ${params[3].value}%</div>
+      <div>${params[1].marker}${params[1].seriesName}: ${params[1].value}%</div>
+    `;
   }
 
   render() {

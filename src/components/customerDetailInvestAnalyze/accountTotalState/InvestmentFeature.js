@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-20 15:28:46
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-26 13:42:27
+ * @Last Modified time: 2018-12-03 21:20:16
  * @description 客户投资特征
  */
 import React, { PureComponent } from 'react';
@@ -98,7 +98,9 @@ export default class InvestmentFeature extends PureComponent {
           </p>
           <div className={styles.labelContainer}>
             {
-              _.map(investmentFeatureLabels, label => (<InvestmentFeatureLabel key={label.id} labelData={label} />))
+              _.map(investmentFeatureLabels, label => (
+                <InvestmentFeatureLabel key={label.id} labelData={label} />
+              ))
             }
           </div>
         </div>
