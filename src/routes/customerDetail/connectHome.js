@@ -1,8 +1,8 @@
 /*
  * @Author: sunweibin
  * @Date: 2018-10-09 15:33:02
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-11-07 10:55:22
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-11-29 19:20:18
  * @description 此处使用dva的connect包装下新版customer360Detail首页
  */
 import { connect } from 'dva';
@@ -25,6 +25,8 @@ const mapStateToProps = state => ({
   customerBasicInfo: state.customerDetail.customerBasicInfo,
   // 发送保存服务记录请求成功的服务id
   currentCommonServiceRecord: state.customerPool.currentCommonServiceRecord,
+  // 客户360客户属性字典接口
+  cust360Dict: state.customerDetail.cust360Dict,
 });
 
 const mapDispatchToProps = {
@@ -41,8 +43,10 @@ const mapDispatchToProps = {
   // 添加服务记录窗口
   toggleServiceRecordModal: effect('app/toggleServiceRecordModal', { loading: true }),
   // 获取客户基本信息
-  getCustomerBasicInfo: effect('customerDetail/getCustomerBasicInfo', { loading: true }),
-  addCallRecord: effect('customerPool/addCallRecord', { loading: true }),
+  getCustomerBasicInfo: effect('customerDetail/getCustomerBasicInfo', {loading: true}),
+  addCallRecord: effect('customerPool/addCallRecord', {loading: true}),
+  // 查询省市城市
+  queryProvinceCity: effect('customerDetail/queryProvinceCity', { loading: false }),
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

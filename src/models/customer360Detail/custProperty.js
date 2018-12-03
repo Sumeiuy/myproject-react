@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性
  * @Date: 2018-11-06 14:59:53
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-22 13:43:02
+ * @Last Modified time: 2018-11-30 09:23:39
  */
 import { detailCustProperty as api } from '../../api';
 
@@ -23,6 +23,10 @@ export default {
     zjPointMemberInfo: EMPTY_OBJECT,
     // 紫金积分会员积分兑换流水
     zjPointExchangeFlow: EMPTY_OBJECT,
+    // 个人客户联系方式列表数据
+    personalContactWay: {},
+    // 机构客户联系方式列表数据
+    orgContactWay: {},
     // 财务信息
     financeData: EMPTY_OBJECT,
   },
@@ -60,6 +64,20 @@ export default {
       return {
         ...state,
         zjPointExchangeFlow: payload || EMPTY_OBJECT,
+      };
+    },
+    queryPersonalContactWaySuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        personalContactWay: payload || {},
+      };
+    },
+    queryOrgContactWaySuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        orgContactWay: payload || {},
       };
     },
     queryFinanceDetailSuccess(state, action) {
@@ -112,10 +130,32 @@ export default {
       });
     },
     // 编辑个人客户、机构客户的基本信息
-    * updateCustBasicInfo({ payload }, { put, call }) {
+    * updateCustBasicInfo({ payload }, { call }) {
       // 因为此处只是单纯的修改值，并且组件中需要判断修改成功与否展示loading状态
       const { resultData } = yield call(api.updateCustBasicInfo, payload);
       return resultData;
+    },
+    // 编辑个人客户、机构客户的基本信息
+    * changePhoneInfo({ payload }, { call }) {
+      // 因为此处只是单纯的修改值，并且组件中需要判断修改成功与否展示loading状态
+      const { resultData } = yield call(api.changePhoneInfo, payload);
+      return resultData;
+    },
+    // 查询个人客户联系方式信息数据
+    * queryPersonalContactWay({ payload }, { put, call }) {
+      const { resultData } = yield call(api.queryPersonalContactWay, payload);
+      yield put({
+        type: 'queryPersonalContactWaySuccess',
+        payload: resultData,
+      });
+    },
+    // 查询机构客户联系方式信息数据
+    * queryOrgContactWay({ payload }, { put, call }) {
+      const { resultData } = yield call(api.queryOrgContactWay, payload);
+      yield put({
+        type: 'queryOrgContactWaySuccess',
+        payload: resultData,
+      });
     },
     // 查询个人客户、机构客户的财务信息
     * queryFinanceDetail({ payload }, { put, call }) {
@@ -126,18 +166,46 @@ export default {
       });
     },
     // 编辑个人客户的财务信息
-    * updatePerFinaceData({ payload }, { put, call }) {
+    * updatePerFinaceData({ payload }, { call }) {
       const { resultData } = yield call(api.updatePerFinaceData, payload);
       return resultData;
     },
     // 编辑机构客户的财务信息
-    * updateOrgFinaceData({ payload }, { put, call }) {
+    * updateOrgFinaceData({ payload }, { call }) {
       const { resultData } = yield call(api.updateOrgFinaceData, payload);
       return resultData;
     },
-
+    // 新增|修改个人客户电话信息
+    * updatePerPhone({ payload }, { call }) {
+      const { resultData } = yield call(api.updatePerPhone, payload);
+      return resultData;
+    },
+    // 新增|修改个人客户地址信息
+    * updatePerAddress({ payload }, { call }) {
+      const { resultData } = yield call(api.updatePerAddress, payload);
+      return resultData;
+    },
+    // 新增|修改个人客户其他信息
+    * updatePerOther({ payload }, { call }) {
+      const { resultData } = yield call(api.updatePerOther, payload);
+      return resultData;
+    },
+    // 删除个人客户|机构客户的非主要联系方式
+    * delContact({ payload }, { call }) {
+      const { resultData } = yield call(api.delContact, payload);
+      return resultData;
+    },
+    // 新增|修改机构客户电话信息
+    * updateOrgPhone({ payload }, { call }) {
+      const { resultData } = yield call(api.updateOrgPhone, payload);
+      return resultData;
+    },
+    // 新增|修改机构客户地址信息
+    * updateOrgAddress({ payload }, { call }) {
+      const { resultData } = yield call(api.updateOrgAddress, payload);
+      return resultData;
+    },
   },
   subscriptions: {
-
   },
 };

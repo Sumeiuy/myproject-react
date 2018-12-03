@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 客户360-客户属性
  * @Date: 2018-11-06 16:17:28
- * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-26 18:11:35
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-12-03 09:49:05
  */
 
 import React, { PureComponent } from 'react';
@@ -63,13 +63,36 @@ export default class CustProperty extends PureComponent {
     zjPointExchangeFlow: PropTypes.object.isRequired,
     // 修改个人客户、机构客户的基本信息
     updateCustBasicInfo: PropTypes.func.isRequired,
+    // 个人客户联系方式数据
+    personalContactWay: PropTypes.object.isRequired,
+    // 查询个人客户联系方式数据
+    queryPersonalContactWay: PropTypes.func.isRequired,
+    // 改变个人客户联系方式中的请勿发短信、请勿打电话
+    changePhoneInfo: PropTypes.func.isRequired,
+    // 查询机构客户联系方式
+    queryOrgContactWay: PropTypes.func.isRequired,
+    // 机构客户联系方式数据
+    orgContactWay: PropTypes.object.isRequired,
     // 查询个人客户、机构客户的财务信息
     queryFinanceDetail: PropTypes.func.isRequired,
+    // 财务信息数据
     financeData: PropTypes.object.isRequired,
     // 编辑个人客户的财务信息
     updatePerFinaceData: PropTypes.func.isRequired,
     // 编辑机构客户的财务信息
     updateOrgFinaceData: PropTypes.func.isRequired,
+    // 新增|修改个人客户电话信息
+    updatePerPhone: PropTypes.func.isRequired,
+    // 新增|修改个人客户地址信息
+    updatePerAddress: PropTypes.func.isRequired,
+    // 新增|修改个人客户其他信息
+    updatePerOther: PropTypes.func.isRequired,
+    // 删除个人|机构客户的非主要联系方式
+    delContact: PropTypes.func.isRequired,
+    // 新增|修改机构客户电话信息
+    updateOrgPhone: PropTypes.func.isRequired,
+    // 新增|修改机构客户地址信息
+    updateOrgAddress: PropTypes.func.isRequired,
     // 非隐私信息查看权限
     custPropertyInfoPermission: PropTypes.bool,
     // 隐私信息查看权限
@@ -115,10 +138,7 @@ export default class CustProperty extends PureComponent {
   // 和custId相关的接口，初次调用和custId发生变化时调用，避免多次重复写，统一放到一个方法里
   @autobind
   queryData(custId) {
-    const {
-      queryCustomerProperty,
-    } = this.props;
-    queryCustomerProperty({
+    this.props.queryCustomerProperty({
       custId,
     });
   }
@@ -132,15 +152,29 @@ export default class CustProperty extends PureComponent {
       updateCustBasicInfo,
       location,
       queryCustomerProperty,
+      personalContactWay,
+      queryPersonalContactWay,
+      changePhoneInfo,
+      updatePerAddress,
+      updatePerOther,
+      updatePerPhone,
+      delContact,
       custPropertyPrivateInfoPermission,
     } = this.props;
     return (
       <PersonInfo
-        queryCustomerProperty={queryCustomerProperty}
         location={location}
-        updateCustBasicInfo={updateCustBasicInfo}
         hasDuty={custPropertyPrivateInfoPermission}
         data={person}
+        personalContactWay={personalContactWay}
+        queryPersonalContactWay={queryPersonalContactWay}
+        queryCustomerProperty={queryCustomerProperty}
+        updateCustBasicInfo={updateCustBasicInfo}
+        changePhoneInfo={changePhoneInfo}
+        updatePerPhone={updatePerPhone}
+        updatePerAddress={updatePerAddress}
+        updatePerOther={updatePerOther}
+        delContact={delContact}
       />
     );
   }
@@ -148,15 +182,27 @@ export default class CustProperty extends PureComponent {
   @autobind
   renderOrganizationInfo() {
     const {
+      location,
       custInfo: {
         organization = EMPTY_OBJECT,
       },
+      orgContactWay,
+      queryOrgContactWay,
+      delContact,
+      updateOrgAddress,
+      updateOrgPhone,
       custPropertyPrivateInfoPermission,
     } = this.props;
     return (
       <OrganizationInfo
+        location={location}
         hasDuty={custPropertyPrivateInfoPermission}
         data={organization}
+        orgContactWay={orgContactWay}
+        queryOrgContactWay={queryOrgContactWay}
+        delContact={delContact}
+        updateOrgAddress={updateOrgAddress}
+        updateOrgPhone={updateOrgPhone}
       />
     );
   }
@@ -164,15 +210,27 @@ export default class CustProperty extends PureComponent {
   @autobind
   renderProductInfo() {
     const {
+      location,
       custInfo: {
         product = EMPTY_OBJECT,
       },
+      orgContactWay,
+      queryOrgContactWay,
+      delContact,
+      updateOrgAddress,
+      updateOrgPhone,
       custPropertyPrivateInfoPermission,
     } = this.props;
     return (
       <ProductInfo
+        location={location}
         hasDuty={custPropertyPrivateInfoPermission}
         data={product}
+        orgContactWay={orgContactWay}
+        queryOrgContactWay={queryOrgContactWay}
+        delContact={delContact}
+        updateOrgAddress={updateOrgAddress}
+        updateOrgPhone={updateOrgPhone}
       />
     );
   }

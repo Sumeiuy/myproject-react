@@ -2,14 +2,19 @@
  * @Author: XuWenKang
  * @Description: 客户360-客户属性-(普通机构, 产品机构)客户联系方式
  * @Date: 2018-11-07 14:33:00
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-11-09 09:30:54
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-11-30 18:16:21
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import { Icon } from 'antd';
+
+import { logPV } from '../../../decorators/logable';
+import IFWrap from '../../common/biz/IfWrap';
 import InfoItem from '../../common/infoItem';
+import ContactWayModal from './ContactWayModal';
 import {
   DEFAULT_VALUE,
   DEFAULT_PRIVATE_VALUE,
@@ -25,8 +30,10 @@ const {
   // 公司地址标识(办公地址)
   COMPANY_ADDRESS_TYPE_CODE,
 } = LINK_WAY_TYPE;
+
 export default class ContactWay extends PureComponent {
   static propTypes = {
+    location: PropTypes.object.isRequired,
     // 电话列表
     phoneList: PropTypes.array.isRequired,
     // 其他联系方式列表，qq,微信，email等
@@ -34,6 +41,28 @@ export default class ContactWay extends PureComponent {
     // 地址列表
     addressList: PropTypes.array.isRequired,
     hasDuty: PropTypes.bool.isRequired,
+    // 查询机构客户联系方式
+    queryOrgContactWay: PropTypes.func.isRequired,
+    // 机构客户联系方式数据
+    orgContactWay: PropTypes.object.isRequired,
+    // 删除个人|机构客户的非主要联系方式
+    delContact: PropTypes.func.isRequired,
+    // 新增|修改机构客户电话信息
+    updateOrgPhone: PropTypes.func.isRequired,
+    // 新增|修改机构客户地址信息
+    updateOrgAddress: PropTypes.func.isRequired,
+  }
+
+  static contextTypes = {
+    custBasic: PropTypes.object.isRequired,
+  };
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      // 添加机构客户联系方式的的Modal
+      addOrgContactWayModal: false,
+    };
   }
 
   // 获取显示的数据，优先取mainFlag为true即主联系方式的数据，没有则任取一条
@@ -91,10 +120,68 @@ export default class ContactWay extends PureComponent {
     return this.getPrivateValue(value);
   }
 
+  // 添加|删除|编辑联系方式后刷新联系方式列表
+  @autobind
+  refreshContact() {
+    const {
+      location: {
+        query: { custId },
+      },
+    } = this.props;
+    this.props.queryOrgContactWay({
+      custId,
+    });
+  }
+
+  // 关闭机构客户联系方式弹框
+  @autobind
+  handleContactWayModalClose() {
+    this.setState({ addOrgContactWayModal: false });
+  }
+
+  @autobind
+  @logPV({
+    pathname: '/modal/cust360PropertyAddOrgContactWayModal',
+    title: '客户联系方式'
+  })
+  handleContactWayEditClick() {
+    const {
+      location: {
+        query: { custId },
+      },
+    } = this.props;
+    this.props.queryOrgContactWay({
+      custId,
+    }).then(() => {
+      this.setState({ addOrgContactWayModal: true });
+    });
+  }
+
   render() {
+    const { addOrgContactWayModal } = this.state;
+    const {
+      orgContactWay,
+      delContact,
+      location,
+      updateOrgAddress,
+      updateOrgPhone,
+    } = this.props;
+    // 是否主服务经理
+    const { custBasic: { isMainEmp } } = this.context;
+
     return (
       <div className={styles.contactWayBox}>
-        <div className={styles.title}>联系方式</div>
+        <div className={styles.title}>联系方式
+          {/**只有主服务经理才可以进入编辑谭宽 */}
+          <IFWrap isRender={isMainEmp}>
+            <span
+              className={styles.contactWayEdit}
+              onClick={this.handleContactWayEditClick}
+            >
+              <Icon type="edit" />
+            </span>
+          </IFWrap>
+        </div>
         <div className={styles.infoItemBox}>
           <InfoItem
             width={INFO_ITEM_WITDH_110}
@@ -135,6 +222,17 @@ export default class ContactWay extends PureComponent {
             isNeedOverFlowEllipsis
           />
         </div>
+        <IFWrap isRender={addOrgContactWayModal}>
+          <ContactWayModal
+            location={location}
+            data={orgContactWay}
+            onClose={this.handleContactWayModalClose}
+            delContact={delContact}
+            updateOrgAddress={updateOrgAddress}
+            updateOrgPhone={updateOrgPhone}
+            refreshContact={this.refreshContact}
+          />
+        </IFWrap>
       </div>
     );
   }

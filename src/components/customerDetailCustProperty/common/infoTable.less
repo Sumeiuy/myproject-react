@@ -1,0 +1,43 @@
+.infoTable {
+  border-top: 1px solid #e9e9e9;
+  border-left: 1px solid #e9e9e9;
+  border-right: 1px solid #e9e9e9;
+
+  :global {
+    .ant-table-wrapper {
+      .ant-table .ant-table-content .ant-table-body {
+        .ant-table-thead {
+          tr > th {
+            font-size: 14px;
+            color: #666;
+            font-weight: bold;
+            height: 38px;
+            padding-top: 0;
+            padding-bottom: 0;
+          }
+        }
+        .ant-table-tbody {
+          tr > td {
+            font-size: 14px;
+            color: #333;
+            line-height: 20px;
+            height: 38px;
+            padding-top: 0;
+            padding-bottom: 0;
+          }
+        }
+      }
+    }
+  }
+}
+.operateBtn {
+  margin-right: 10px;
+  font-size: 14px;
+  color: #108ee9;
+  cursor: pointer;
+
+  &.editBtn {
+    position: relative;
+    top: 2px;
+  }
+}

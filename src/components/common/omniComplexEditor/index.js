@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-19 11:11:19
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-26 10:17:07
+ * @Last Modified time: 2018-11-29 15:46:39
  * @description 多功能复合编辑框
  */
 
@@ -43,7 +43,7 @@ export default class OmniComplexEditor extends PureComponent {
       PropTypes.string,
       PropTypes.number,
     ]),
-    // 初始数据,一般与dispalyValue一起变动
+    // 初始数据,一般与dispalyValue一起变动,默认值如果为空则传递空字符串
     value: PropTypes.oneOfType([
       PropTypes.string,
       PropTypes.object,
@@ -90,6 +90,7 @@ export default class OmniComplexEditor extends PureComponent {
     const { prevValue } = prevState;
     if (!_.isEqual(value, prevValue)) {
       // 一般情况如果props中的value值变化了则需要相应的变化state
+      // 判断传入的值是否是无值的情况，因为无值的情况是使用'--'表示
       return {
         prevValue: value,
         originalValue: displayValue,
@@ -317,14 +318,17 @@ export default class OmniComplexEditor extends PureComponent {
     payload: { name: '编辑图标' },
   })
   handleEditWrapperClick(e) {
+    console.warn('111111');
     const { form, editorId, editable } = this.props;
     if (!editable) {
       return;
     }
+    console.warn('2222');
     const editor = form.getFieldInstance(editorId);
     if (editor.focus) {
       editor.focus();
     }
+    console.warn('333333');
     this.enterEditState();
     // 阻止React合成事件传播
     e.stopPropagation();

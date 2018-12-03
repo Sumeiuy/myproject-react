@@ -1,8 +1,8 @@
 /**
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-29 10:07:40
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-11-29 14:52:51
  */
 
 import React, { PureComponent } from 'react';
@@ -75,6 +75,10 @@ export default class Home extends PureComponent {
     addCallRecord: PropTypes.func.isRequired,
     // 当前服务记录id
     currentCommonServiceRecord: PropTypes.object.isRequired,
+    // 字典
+    cust360Dict: PropTypes.object.isRequired,
+    // 查询省市城市数据
+    queryProvinceCity: PropTypes.func.isRequired,
   }
 
   static contextTypes = {
@@ -82,11 +86,31 @@ export default class Home extends PureComponent {
     replace: PropTypes.func.isRequired,
   }
 
+  static childContextTypes = {
+    custBasic: PropTypes.object,
+    cust360Dict: PropTypes.object,
+    queryProvinceCity: PropTypes.func,
+  };
+
   constructor(props) {
     super(props);
     this.state = {
       // 当前的tab页面, 默认展示 账户信息 Tab页
       activeTabKey: 'contractManagement',
+    };
+  }
+
+  @autobind
+  getChildContext() {
+    const {
+      customerBasicInfo,
+      cust360Dict,
+      queryProvinceCity,
+    } = this.props;
+    return {
+      custBasic: customerBasicInfo,
+      cust360Dict,
+      queryProvinceCity,
     };
   }
 
