@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性-普通机构属性
  * @Date: 2018-11-07 14:39:15
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-29 16:08:00
+ * @Last Modified time: 2018-11-30 09:31:33
  */
 
 import React, { PureComponent } from 'react';
@@ -15,12 +15,32 @@ import IfWrap from '../../common/biz/IfWrap';
 
 export default class OrganizationInfo extends PureComponent {
   static propTypes = {
+    location: PropTypes.object.isRequired,
     data: PropTypes.object.isRequired,
     hasDuty: PropTypes.bool.isRequired,
+    // 查询机构客户联系方式
+    queryOrgContactWay: PropTypes.func.isRequired,
+    // 机构客户联系方式数据
+    orgContactWay: PropTypes.object.isRequired,
+    // 删除个人|机构客户的非主要联系方式
+    delContact: PropTypes.func.isRequired,
+    // 新增|修改机构客户电话信息
+    updateOrgPhone: PropTypes.func.isRequired,
+    // 新增|修改机构客户地址信息
+    updateOrgAddress: PropTypes.func.isRequired,
   }
 
   render() {
-    const { data, hasDuty } = this.props;
+    const {
+      location,
+      data,
+      hasDuty,
+      orgContactWay,
+      queryOrgContactWay,
+      delContact,
+      updateOrgAddress,
+      updateOrgPhone,
+    } = this.props;
     const {
       phones = [],
       others = [],
@@ -34,10 +54,16 @@ export default class OrganizationInfo extends PureComponent {
         />
         <IfWrap isRender={hasDuty}>
           <ContactWay
+            location={location}
             phoneList={phones}
             otherList={others}
             addressList={addresses}
             hasDuty={hasDuty}
+            orgContactWay={orgContactWay}
+            queryOrgContactWay={queryOrgContactWay}
+            delContact={delContact}
+            updateOrgAddress={updateOrgAddress}
+            updateOrgPhone={updateOrgPhone}
           />
         </IfWrap>
       </div>

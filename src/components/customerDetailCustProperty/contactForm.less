@@ -1,0 +1,39 @@
+.addContactWrap {
+  padding: 0 50px;
+  :global {
+    .ant-row-flex.ant-row-flex-middle {
+      margin-bottom: 20px;
+    }
+  }
+  .formItem {
+    display: flex;
+
+    .itemLable {
+      flex: 0 0 auto;
+      width: 100px;
+      height: 30px;
+      line-height: 30px;
+      font-size: 14px;
+      color: #666;
+      text-align: right;
+
+      .requried {
+        color: #f00;
+      }
+    }
+
+    .valueArea {
+      flex: 1 1 auto;
+      height: 30px;
+
+      :global {
+        .ant-select-arrow:before {
+          content: "\E606" !important;
+        }
+        .ant-select-disabled .ant-select-selection {
+          background-color: #fff;
+        }
+      }
+    }
+  }
+}

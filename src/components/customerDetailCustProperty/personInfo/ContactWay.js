@@ -2,13 +2,18 @@
  * @Author: XuWenKang
  * @Description: 客户360-客户属性-个人客户联系方式
  * @Date: 2018-11-07 14:33:00
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-11-09 09:31:53
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-11-30 17:56:55
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import { Icon } from 'antd';
+
+import IFWrap from '../../common/biz/IfWrap';
+import ContactWayModal from './ContactWayModal';
+import { logPV } from '../../../decorators/logable';
 import InfoItem from '../../common/infoItem';
 import {
   DEFAULT_VALUE,
@@ -17,11 +22,11 @@ import {
   getViewTextByBool,
   checkIsNeedTitle,
 } from '../config';
-import styles from './contactWay.less';
+
+import styles from '../common/contactWay.less';
 
 const INFO_ITEM_WITDH_110 = '110px';
 const INFO_ITEM_WITDH = '126px';
-const EMPTY_OBJECT = {};
 const {
   // 手机号码的标识
   MOBILE_TYPE_CODE,
@@ -32,8 +37,10 @@ const {
   // qq的标识
   QQ_TYPE_CODE,
 } = LINK_WAY_TYPE;
+
 export default class ContactWay extends PureComponent {
   static propTypes = {
+    location: PropTypes.object.isRequired,
     // 电话列表
     phoneList: PropTypes.array.isRequired,
     // 其他联系方式列表，qq,微信，email等
@@ -45,11 +52,37 @@ export default class ContactWay extends PureComponent {
     noMessage: PropTypes.bool,
     // 请勿打电话
     noCall: PropTypes.bool,
+    // 个人客户联系方式数据
+    personalContactWay: PropTypes.object.isRequired,
+    // 查询个人客户联系方式数据
+    queryPersonalContactWay: PropTypes.func.isRequired,
+    // 改变个人客户联系方式中的请勿发短信、请勿打电话
+    changePhoneInfo: PropTypes.func.isRequired,
+    // 新增|修改个人客户电话信息
+    updatePerPhone: PropTypes.func.isRequired,
+    // 新增|修改个人客户地址信息
+    updatePerAddress: PropTypes.func.isRequired,
+    // 新增|修改个人客户其他信息
+    updatePerOther: PropTypes.func.isRequired,
+    // 删除个人|机构客户的非主要联系方式
+    delContact: PropTypes.func.isRequired,
   }
 
   static defaultPropTypes = {
     noMessage: false,
     noCall: false,
+  }
+
+  static contextTypes = {
+    custBasic: PropTypes.object.isRequired,
+  };
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      // 编辑联系方式Modal的visible
+      personalContactWayModal: false,
+    };
   }
 
   // 获取需要隐私控制的数据，有权限则展示字段，有权限没有数据则展示--，无权限则展示***
@@ -63,7 +96,7 @@ export default class ContactWay extends PureComponent {
   @autobind
   getViewData(list) {
     const data = _.filter(list, item => !!item.mainFlag);
-    return _.isEmpty(data) ? (list[0] || EMPTY_OBJECT) : data[0];
+    return _.isEmpty(data) ? (list[0] || {}) : data[0];
   }
 
   // 获取手机号码
@@ -109,14 +142,72 @@ export default class ContactWay extends PureComponent {
     return this.getPrivateValue(value);
   }
 
+  // 刷新个人客户的联系方式列表
+  @autobind
+  refreshPerContact() {
+    const {
+      location: {
+        query: { custId },
+      },
+    } = this.props;
+    this.props.queryPersonalContactWay({
+      custId
+    });
+  }
+
+  @autobind
+  @logPV({
+    pathname: '/modal/cust360PropertyAddPerContactWayModal',
+    title: '客户联系方式'
+  })
+  handleContactWayEditClick() {
+    const {
+      location: {
+        query: { custId },
+      },
+    } = this.props;
+    this.props.queryPersonalContactWay({
+      custId
+    }).then(() => {
+      this.setState({ personalContactWayModal: true });
+    });
+  }
+
+  // 关闭个人客户添加联系方式的Modal
+  @autobind
+  handleContactWayModalClose() {
+    this.setState({ personalContactWayModal: false });
+  }
+
   render() {
     const {
+      location,
       noMessage,
       noCall,
+      personalContactWay,
+      changePhoneInfo,
+      updatePerPhone,
+      updatePerAddress,
+      updatePerOther,
+      delContact,
     } = this.props;
+    const { personalContactWayModal } = this.state;
+    // 是否主服务经理
+    const { custBasic: { isMainEmp } } = this.context;
+
     return (
       <div className={styles.contactWayBox}>
-        <div className={styles.title}>联系方式</div>
+        <div className={styles.title}>联系方式
+          {/**只有主服务经理才可以进入编辑谭宽 */}
+          <IFWrap isRender={!isMainEmp}>
+            <span
+              className={styles.contactWayEdit}
+              onClick={this.handleContactWayEditClick}
+            >
+              <Icon type="edit" />
+            </span>
+          </IFWrap>
+        </div>
         <div className={styles.infoItemBox}>
           <InfoItem
             width={INFO_ITEM_WITDH_110}
@@ -187,6 +278,19 @@ export default class ContactWay extends PureComponent {
             isNeedOverFlowEllipsis
           />
         </div>
+        <IFWrap isRender={personalContactWayModal}>
+          <ContactWayModal
+            location={location}
+            data={personalContactWay}
+            onClose={this.handleContactWayModalClose}
+            changePhoneInfo={changePhoneInfo}
+            updatePerPhone={updatePerPhone}
+            updatePerAddress={updatePerAddress}
+            updatePerOther={updatePerOther}
+            delContact={delContact}
+            refreshContact={this.refreshPerContact}
+          />
+        </IFWrap>
       </div>
     );
   }

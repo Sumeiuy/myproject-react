@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性-个人客户基本信息
  * @Date: 2018-11-07 14:33:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-23 16:15:13
+ * @Last Modified time: 2018-11-29 15:48:36
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -12,7 +12,7 @@ import _ from 'lodash';
 import { message } from 'antd';
 
 import InfoItem from '../../common/infoItem';
-// import BasicEditorCell from '../common/BasiceEditorCell';
+import BasicEditorCell from '../common/BasiceEditorCell';
 import {
   DEFAULT_VALUE,
   DEFAULT_PRIVATE_VALUE,
@@ -35,6 +35,11 @@ export default class BasicInfo extends PureComponent {
     queryCustomerProperty: PropTypes.func.isRequired,
   }
 
+  static contextTypes = {
+    custBasic: PropTypes.object.isRequired,
+    cust360Dict: PropTypes.object.isRequired,
+  };
+
   // 获取需要隐私控制的数据，有权限则展示字段，有权限没有数据则展示--，无权限则展示***
   @autobind
   getPrivateValue(value) {
@@ -54,25 +59,16 @@ export default class BasicInfo extends PureComponent {
     const {
       location: { query: { custId }}
     } = this.props;
+    //接口访问成功的时候
+    // 使用这种方式为了让原地编辑组件能够控制loading的状态
+    // 必须添加一个reject的函数用于判断接口失败状态
     return this.props.updateCustBasicInfo({
       custNature: 'per',
       custId,
       ...param,
     }).then(
-      (resultData) => {
-      //接口访问成功的时候
-      // 使用这种方式为了让原地编辑组件能够控制loading的状态
-      if (!_.isEmpty(resultData)) {
-        const flag = resultData.result === 'success';
-        if (!flag) {
-          // 如果成功
-          message.error(resultData.message || '失败');
-        }
-        return flag;
-      }
-      return false;
-    },
-    () => false
+      resultData => resultData,
+      () => false
     );
   }
 
@@ -92,8 +88,7 @@ export default class BasicInfo extends PureComponent {
   updateChildNum(value) {
     // 此处为修改个人客户信息的子女数量信息，所以
     return this.updateBasicInfo({
-      infoKey: 'childNum',
-      infoValue: Number(value),
+      childNum: Number(value),
     });
   }
 
@@ -120,24 +115,55 @@ export default class BasicInfo extends PureComponent {
 
   // 修改婚姻状态
   @autobind
-  updateMarryState(value) {
-    this.updateBasicInfo({
-      infoKey: 'maritalCode',
-      infoValue: value,
+  updateMarryState(marryStatus) {
+    return this.updateBasicInfo({
+      marryStatus,
     });
+  }
+
+  // 校验婚姻状态
+  @autobind
+  checkMarry(value) {
+    if (_.isEmpty(value)) {
+      return {
+        validate: false,
+        msg: '数据不能为空',
+      };
+    }
+    return {
+      validate: true,
+      msg: '',
+    };
   }
 
   // 修改爱好
   @autobind
   upadateHobby(value) {
-    this.updateBasicInfo({
-      infoKey: 'hobby',
-      infoValue: value,
+    return this.updateBasicInfo({
+      hobby: value,
     });
+  }
+
+  // 校验爱好
+  @autobind
+  checkHobby(value) {
+    if (_.isEmpty(value)) {
+      return {
+        validate: false,
+        msg: '数据不能为空',
+      };
+    }
+    return {
+      validate: true,
+      msg: '',
+    };
   }
 
   render() {
     const { data } = this.props;
+    // 是否主服务经理
+    const { custBasic: { isMainEmp }, cust360Dict: { marriageList } } = this.context;
+
     return (
       <div className={styles.basicInfoBox}>
         <div className={styles.title}>基本信息</div>
@@ -223,72 +249,92 @@ export default class BasicInfo extends PureComponent {
             />
           </div>
           <div className={styles.infoItemBox}>
-            <InfoItem
-              width={INFO_ITEM_WITDH_110}
-              label="婚姻状况"
-              value={data.maritalText || DEFAULT_VALUE}
-              className={styles.infoItem}
-              isNeedValueTitle={checkIsNeedTitle(data.maritalText || DEFAULT_VALUE)}
-              isNeedOverFlowEllipsis
-            />
-           {/* 本迭代中先关闭
-            <BasicEditorCell
-              label="婚姻状况"
-              width={INFO_ITEM_WITDH_110}
-              className={styles.infoItem}
-              editorId="person_children_num"
-              onEditOK={_.noop}
-              mode="select"
-              value={data.maritalText || DEFAULT_VALUE}
-              displayValue={data.maritalText || DEFAULT_VALUE}
-              options={[]}
-            />
-            */}
+            { /**如果是主服务经理才能编辑 */
+              !isMainEmp
+                ? (
+                  <InfoItem
+                    width={INFO_ITEM_WITDH_110}
+                    label="婚姻状况"
+                    value={data.maritalText || DEFAULT_VALUE}
+                    className={styles.infoItem}
+                    isNeedValueTitle={checkIsNeedTitle(data.maritalText || DEFAULT_VALUE)}
+                    isNeedOverFlowEllipsis
+                  />
+                )
+                : (
+                  <BasicEditorCell
+                    label="婚姻状况"
+                    editorId="person_children_num"
+                    mode="select"
+                    width={INFO_ITEM_WITDH_110}
+                    className={styles.infoItem}
+                    checkable
+                    value={data.maritalCode || ''}
+                    displayValue={data.maritalText || DEFAULT_VALUE}
+                    options={marriageList}
+                    onEditOK={this.updateMarryState}
+                    onCheck={this.checkMarry}
+                    onSuccess={this.refreshCustProperty}
+                  />
+                )
+            }
           </div>
           <div className={styles.infoItemBox}>
-           <InfoItem
-              width={INFO_ITEM_WITDH}
-              label="子女数量"
-              value={this.getChildNumText(data.childNum)}
-              className={styles.infoItem}
-              isNeedValueTitle={checkIsNeedTitle(this.getChildNumText(data.childNum))}
-              isNeedOverFlowEllipsis
-           />
-           {/* 本迭代中先关闭
-             <BasicEditorCell
-               label="子女数量"
-               width={INFO_ITEM_WITDH}
-               className={styles.infoItem}
-               editorId="person_children_num"
-               onEditOK={this.updateChildNum}
-               value={data.childNum}
-               displayValue={data.childNum}
-               checkable
-               onCheck={this.checkChildNumValue}
-               onSuccess={this.refreshCustProperty}
-             />
-              */}
+           {
+             !isMainEmp
+              ? (
+                <InfoItem
+                  width={INFO_ITEM_WITDH}
+                  label="子女数量"
+                  value={this.getChildNumText(data.childNum)}
+                  className={styles.infoItem}
+                  isNeedValueTitle={checkIsNeedTitle(this.getChildNumText(data.childNum))}
+                  isNeedOverFlowEllipsis
+              />)
+              : (
+                <BasicEditorCell
+                  label="子女数量"
+                  width={INFO_ITEM_WITDH}
+                  className={styles.infoItem}
+                  editorId="person_children_num"
+                  onEditOK={this.updateChildNum}
+                  value={data.childNum}
+                  displayValue={data.childNum}
+                  checkable
+                  onCheck={this.checkChildNumValue}
+                  onSuccess={this.refreshCustProperty}
+                />
+              )
+           }
           </div>
           <div className={styles.infoItemBox}>
-            <InfoItem
-              width={INFO_ITEM_WITDH}
-              label="爱好"
-              value={data.hobby || DEFAULT_VALUE}
-              className={styles.infoItem}
-              isNeedValueTitle={checkIsNeedTitle(data.hobby || DEFAULT_VALUE)}
-              isNeedOverFlowEllipsis
-            />
-            {/* 本迭代中先关闭
-              <BasicEditorCell
-              label="爱好"
-              width={INFO_ITEM_WITDH}
-              className={styles.infoItem}
-              editorId="person_children_num"
-              onEditOK={_.noop}
-              value={data.hobby || DEFAULT_VALUE}
-              displayValue={data.hobby || DEFAULT_VALUE}
-            />
-            */}
+            {
+              !isMainEmp
+                ? (
+                  <InfoItem
+                    width={INFO_ITEM_WITDH}
+                    label="爱好"
+                    value={data.hobby || DEFAULT_VALUE}
+                    className={styles.infoItem}
+                    isNeedValueTitle={checkIsNeedTitle(data.hobby || DEFAULT_VALUE)}
+                    isNeedOverFlowEllipsis
+                  />
+                )
+                : (
+                  <BasicEditorCell
+                    label="爱好"
+                    width={INFO_ITEM_WITDH}
+                    className={styles.infoItem}
+                    editorId="person_hobby"
+                    onEditOK={this.upadateHobby}
+                    value={data.hobby || ''}
+                    displayValue={data.hobby || DEFAULT_VALUE}
+                    checkable
+                    onCheck={this.checkHobby}
+                    onSuccess={this.refreshCustProperty}
+                  />
+                )
+            }
           </div>
         </div>
       </div>

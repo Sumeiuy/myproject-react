@@ -2,10 +2,12 @@
  * @Author: sunweibin
  * @Date: 2018-10-09 15:38:02
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-16 17:33:58
+ * @Last Modified time: 2018-11-30 15:01:16
  * @description 新版客户360详情的model
  */
 import { customerDetail as api } from '../api';
+
+import _ from 'lodash';
 
 export default {
   namespace: 'customerDetail',
@@ -16,6 +18,8 @@ export default {
     moreLabelInfo: {},
     // 客户概要信息基本数据
     customerBasicInfo: {},
+    // 客户360客户属性字典
+    cust360Dict: {},
   },
   reducers: {
     queryCustSummaryInfoSuccess(state, action) {
@@ -45,6 +49,13 @@ export default {
       return {
         ...state,
         customerBasicInfo: resultData,
+      };
+    },
+    queryCust360DictSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        cust360Dict: payload || {},
       };
     },
   },
@@ -80,8 +91,33 @@ export default {
         payload: response,
       });
     },
+    // 查询客户属性字典接口
+    * queryCust360Dict({ payload }, { put, call }) {
+      const { resultData } = yield call(api.queryCust360Dict, payload);
+      // 此处的地点接口，需要做一些特殊处理，比如给某些字段添加请选择选项
+      const newResultData = _.mapValues(
+        resultData,
+        item => ([{ key: '', value: '请选择'}, ...item]),
+      );
+      yield put({
+        type: 'queryCust360DictSuccess',
+        payload: newResultData,
+      });
+    },
+    // 查询省市城市
+    * queryProvinceCity({ payload = {} }, { put, call }) {
+      const { resultData } = yield call(api.queryProvinceCity, payload);
+      const newResultData = _.mapValues(
+        resultData,
+        item => ([{ key: '', value: '请选择'}, ...item]),
+      );
+      return newResultData;
+    },
   },
   subscriptions: {
+    setup({ dispatch }) {
+      dispatch({ type: 'queryCust360Dict' });
+    },
   },
 };
 

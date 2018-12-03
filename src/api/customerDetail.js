@@ -1,8 +1,8 @@
 /*
  * @Author: sunweibin
  * @Date: 2018-10-09 15:39:15
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-11-07 10:01:11
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-11-29 19:22:57
  * @description 新版客户360详情 API
  */
 export default function customerDetail(api) {
@@ -13,5 +13,9 @@ export default function customerDetail(api) {
     queryAllKeyLabels: query => api.post('/groovynoauth/fsp/cust/custdetail/queryCustImportLabels', query),
     // 获取客户基本信息的接口
     queryCustomerBasicInfo: query => api.post('/groovynoauth/fsp/cust/custdetail/queryCustBasicInfo', query),
+    // 客户360客户属性，字典接口
+    queryCust360Dict: query => api.post('/groovynoauth/fsp/common/queryEcifDict', query),
+    // 查询省市数据
+    queryProvinceCity: query => api.post('/groovynoauth/fsp/common/queryNextAddrByCode', query),
   };
 }

@@ -2,8 +2,13 @@
  * @Author: XuWenKang
  * @Description: 客户360，客户属性tab相关配置
  * @Date: 2018-11-07 15:17:38
- * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-27 20:05:40
+<<<<<<< HEAD
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-11-27 20:32:53
+=======
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-11-29 09:03:42
+>>>>>>> b20181130
  */
 
 import _ from 'lodash';
