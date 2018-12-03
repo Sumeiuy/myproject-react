@@ -13,6 +13,13 @@
   version "1.1.15"
   resolved "http://168.61.48.13:4873/@ant-design%2ficons/-/icons-1.1.15.tgz#2ff689b87bb160c246a07adaa99cdb1c8dfd4412"
 
+"@babel/code-frame@7.0.0-beta.44":
+  version "7.0.0-beta.44"
+  resolved "http://registry.npm.taobao.org/@babel/code-frame/download/@babel/code-frame-7.0.0-beta.44.tgz#2a02643368de80916162be70865c97774f3adbd9"
+  integrity sha1-KgJkM2jegJFhYr5whlyXd08629k=
+  dependencies:
+    "@babel/highlight" "7.0.0-beta.44"
+
 "@babel/code-frame@^7.0.0":
   version "7.0.0"
   resolved "http://168.61.48.13:4873/@babel%2fcode-frame/-/code-frame-7.0.0.tgz#06e2ab19bdb535385559aabb5ba59729482800f8"
@@ -37,6 +44,17 @@
     resolve "^1.3.2"
     semver "^5.4.1"
     source-map "^0.5.0"
+
+"@babel/generator@7.0.0-beta.44":
+  version "7.0.0-beta.44"
+  resolved "http://registry.npm.taobao.org/@babel/generator/download/@babel/generator-7.0.0-beta.44.tgz#c7e67b9b5284afcf69b309b50d7d37f3e5033d42"
+  integrity sha1-x+Z7m1KEr89pswm1DX038+UDPUI=
+  dependencies:
+    "@babel/types" "7.0.0-beta.44"
+    jsesc "^2.5.1"
+    lodash "^4.2.0"
+    source-map "^0.5.0"
+    trim-right "^1.0.1"
 
 "@babel/generator@^7.1.6":
   version "7.1.6"
@@ -91,6 +109,15 @@
     "@babel/traverse" "^7.1.0"
     "@babel/types" "^7.0.0"
 
+"@babel/helper-function-name@7.0.0-beta.44":
+  version "7.0.0-beta.44"
+  resolved "http://registry.npm.taobao.org/@babel/helper-function-name/download/@babel/helper-function-name-7.0.0-beta.44.tgz#e18552aaae2231100a6e485e03854bc3532d44dd"
+  integrity sha1-4YVSqq4iMRAKbkheA4VLw1MtRN0=
+  dependencies:
+    "@babel/helper-get-function-arity" "7.0.0-beta.44"
+    "@babel/template" "7.0.0-beta.44"
+    "@babel/types" "7.0.0-beta.44"
+
 "@babel/helper-function-name@^7.1.0":
   version "7.1.0"
   resolved "http://168.61.48.13:4873/@babel%2fhelper-function-name/-/helper-function-name-7.1.0.tgz#a0ceb01685f73355d4360c1247f582bfafc8ff53"
@@ -98,6 +125,13 @@
     "@babel/helper-get-function-arity" "^7.0.0"
     "@babel/template" "^7.1.0"
     "@babel/types" "^7.0.0"
+
+"@babel/helper-get-function-arity@7.0.0-beta.44":
+  version "7.0.0-beta.44"
+  resolved "http://registry.npm.taobao.org/@babel/helper-get-function-arity/download/@babel/helper-get-function-arity-7.0.0-beta.44.tgz#d03ca6dd2b9f7b0b1e6b32c56c72836140db3a15"
+  integrity sha1-0Dym3SufewseazLFbHKDYUDbOhU=
+  dependencies:
+    "@babel/types" "7.0.0-beta.44"
 
 "@babel/helper-get-function-arity@^7.0.0":
   version "7.0.0"
@@ -176,6 +210,13 @@
     "@babel/template" "^7.1.0"
     "@babel/types" "^7.0.0"
 
+"@babel/helper-split-export-declaration@7.0.0-beta.44":
+  version "7.0.0-beta.44"
+  resolved "http://registry.npm.taobao.org/@babel/helper-split-export-declaration/download/@babel/helper-split-export-declaration-7.0.0-beta.44.tgz#c0b351735e0fbcb3822c8ad8db4e583b05ebd9dc"
+  integrity sha1-wLNRc14PvLOCLIrY205YOwXr2dw=
+  dependencies:
+    "@babel/types" "7.0.0-beta.44"
+
 "@babel/helper-split-export-declaration@^7.0.0":
   version "7.0.0"
   resolved "http://168.61.48.13:4873/@babel%2fhelper-split-export-declaration/-/helper-split-export-declaration-7.0.0.tgz#3aae285c0311c2ab095d997b8c9a94cad547d813"
@@ -198,6 +239,15 @@
     "@babel/template" "^7.1.2"
     "@babel/traverse" "^7.1.5"
     "@babel/types" "^7.1.5"
+
+"@babel/highlight@7.0.0-beta.44":
+  version "7.0.0-beta.44"
+  resolved "http://registry.npm.taobao.org/@babel/highlight/download/@babel/highlight-7.0.0-beta.44.tgz#18c94ce543916a80553edcdcf681890b200747d5"
+  integrity sha1-GMlM5UORaoBVPtzc9oGJCyAHR9U=
+  dependencies:
+    chalk "^2.0.0"
+    esutils "^2.0.2"
+    js-tokens "^3.0.0"
 
 "@babel/highlight@^7.0.0":
   version "7.0.0"
@@ -682,6 +732,16 @@
   dependencies:
     regenerator-runtime "^0.12.0"
 
+"@babel/template@7.0.0-beta.44":
+  version "7.0.0-beta.44"
+  resolved "http://registry.npm.taobao.org/@babel/template/download/@babel/template-7.0.0-beta.44.tgz#f8832f4fdcee5d59bf515e595fc5106c529b394f"
+  integrity sha1-+IMvT9zuXVm/UV5ZX8UQbFKbOU8=
+  dependencies:
+    "@babel/code-frame" "7.0.0-beta.44"
+    "@babel/types" "7.0.0-beta.44"
+    babylon "7.0.0-beta.44"
+    lodash "^4.2.0"
+
 "@babel/template@^7.1.0", "@babel/template@^7.1.2":
   version "7.1.2"
   resolved "http://168.61.48.13:4873/@babel%2ftemplate/-/template-7.1.2.tgz#090484a574fef5a2d2d7726a674eceda5c5b5644"
@@ -689,6 +749,22 @@
     "@babel/code-frame" "^7.0.0"
     "@babel/parser" "^7.1.2"
     "@babel/types" "^7.1.2"
+
+"@babel/traverse@7.0.0-beta.44":
+  version "7.0.0-beta.44"
+  resolved "http://registry.npm.taobao.org/@babel/traverse/download/@babel/traverse-7.0.0-beta.44.tgz#a970a2c45477ad18017e2e465a0606feee0d2966"
+  integrity sha1-qXCixFR3rRgBfi5GWgYG/u4NKWY=
+  dependencies:
+    "@babel/code-frame" "7.0.0-beta.44"
+    "@babel/generator" "7.0.0-beta.44"
+    "@babel/helper-function-name" "7.0.0-beta.44"
+    "@babel/helper-split-export-declaration" "7.0.0-beta.44"
+    "@babel/types" "7.0.0-beta.44"
+    babylon "7.0.0-beta.44"
+    debug "^3.1.0"
+    globals "^11.1.0"
+    invariant "^2.2.0"
+    lodash "^4.2.0"
 
 "@babel/traverse@^7.1.0", "@babel/traverse@^7.1.5", "@babel/traverse@^7.1.6":
   version "7.1.6"
@@ -703,6 +779,15 @@
     debug "^4.1.0"
     globals "^11.1.0"
     lodash "^4.17.10"
+
+"@babel/types@7.0.0-beta.44":
+  version "7.0.0-beta.44"
+  resolved "http://registry.npm.taobao.org/@babel/types/download/@babel/types-7.0.0-beta.44.tgz#6b1b164591f77dec0a0342aca995f2d046b3a757"
+  integrity sha1-axsWRZH3fewKA0KsqZXy0Eazp1c=
+  dependencies:
+    esutils "^2.0.2"
+    lodash "^4.2.0"
+    to-fast-properties "^2.0.0"
 
 "@babel/types@^7.0.0", "@babel/types@^7.1.2", "@babel/types@^7.1.5", "@babel/types@^7.1.6":
   version "7.1.6"
@@ -958,13 +1043,19 @@ ajv-errors@^1.0.0:
   version "1.0.0"
   resolved "http://168.61.48.13:4873/ajv-errors/-/ajv-errors-1.0.0.tgz#ecf021fa108fd17dfb5e6b383f2dd233e31ffc59"
 
+ajv-keywords@^2.1.0:
+  version "2.1.1"
+  resolved "http://registry.npm.taobao.org/ajv-keywords/download/ajv-keywords-2.1.1.tgz#617997fc5f60576894c435f940d819e135b80762"
+  integrity sha1-YXmX/F9gV2iUxDX5QNgZ4TW4B2I=
+
 ajv-keywords@^3.0.0, ajv-keywords@^3.1.0:
   version "3.2.0"
   resolved "http://168.61.48.13:4873/ajv-keywords/-/ajv-keywords-3.2.0.tgz#e86b819c602cf8821ad637413698f1dec021847a"
 
-ajv@^5.2.0:
+ajv@^5.2.3, ajv@^5.3.0:
   version "5.5.2"
-  resolved "http://168.61.48.13:4873/ajv/-/ajv-5.5.2.tgz#73b5eeca3fab653e3d3f9422b341ad42205dc965"
+  resolved "http://registry.npm.taobao.org/ajv/download/ajv-5.5.2.tgz#73b5eeca3fab653e3d3f9422b341ad42205dc965"
+  integrity sha1-c7Xuyj+rZT49P5Qis0GtQiBdyWU=
   dependencies:
     co "^4.6.0"
     fast-deep-equal "^1.0.0"
@@ -1160,9 +1251,10 @@ argparse@^1.0.7:
   dependencies:
     sprintf-js "~1.0.2"
 
-aria-query@^0.7.0:
-  version "0.7.1"
-  resolved "http://168.61.48.13:4873/aria-query/-/aria-query-0.7.1.tgz#26cbb5aff64144b0a825be1846e0b16cfa00b11e"
+aria-query@^3.0.0:
+  version "3.0.0"
+  resolved "http://registry.npm.taobao.org/aria-query/download/aria-query-3.0.0.tgz#65b3fcc1ca1155a8c9ae64d6eee297f15d5133cc"
+  integrity sha1-ZbP8wcoRVajJrmTW7uKX8V1RM8w=
   dependencies:
     ast-types-flow "0.0.7"
     commander "^2.11.0"
@@ -1277,7 +1369,7 @@ assign-symbols@^1.0.0:
   version "1.0.0"
   resolved "http://168.61.48.13:4873/assign-symbols/-/assign-symbols-1.0.0.tgz#59667f41fadd4f20ccbc2bb96b8d4f7f78ec0367"
 
-ast-types-flow@0.0.7:
+ast-types-flow@0.0.7, ast-types-flow@^0.0.7:
   version "0.0.7"
   resolved "http://168.61.48.13:4873/ast-types-flow/-/ast-types-flow-0.0.7.tgz#f70b735c6bca1a5c9c22d982c3e39e7feba3bdad"
 
@@ -1337,9 +1429,10 @@ aws4@^1.8.0:
   version "1.8.0"
   resolved "http://168.61.48.13:4873/aws4/-/aws4-1.8.0.tgz#f0e003d9ca9e7f59c7a508945d7b2ef9a04a542f"
 
-axobject-query@^0.1.0:
-  version "0.1.0"
-  resolved "http://168.61.48.13:4873/axobject-query/-/axobject-query-0.1.0.tgz#62f59dbc59c9f9242759ca349960e7a2fe3c36c0"
+axobject-query@^2.0.1:
+  version "2.0.2"
+  resolved "http://registry.npm.taobao.org/axobject-query/download/axobject-query-2.0.2.tgz#ea187abe5b9002b377f925d8bf7d1c561adf38f9"
+  integrity sha1-6hh6vluQArN3+SXYv30cVhrfOPk=
   dependencies:
     ast-types-flow "0.0.7"
 
@@ -1351,29 +1444,27 @@ babel-code-frame@^6.22.0, babel-code-frame@^6.26.0:
     esutils "^2.0.2"
     js-tokens "^3.0.2"
 
-babel-eslint@7.2.3:
-  version "7.2.3"
-  resolved "http://168.61.48.13:4873/babel-eslint/-/babel-eslint-7.2.3.tgz#b2fe2d80126470f5c19442dc757253a897710827"
+babel-eslint@8.2.6:
+  version "8.2.6"
+  resolved "http://registry.npm.taobao.org/babel-eslint/download/babel-eslint-8.2.6.tgz#6270d0c73205628067c0f7ae1693a9e797acefd9"
+  integrity sha1-YnDQxzIFYoBnwPeuFpOp55es79k=
   dependencies:
-    babel-code-frame "^6.22.0"
-    babel-traverse "^6.23.1"
-    babel-types "^6.23.0"
-    babylon "^6.17.0"
+    "@babel/code-frame" "7.0.0-beta.44"
+    "@babel/traverse" "7.0.0-beta.44"
+    "@babel/types" "7.0.0-beta.44"
+    babylon "7.0.0-beta.44"
+    eslint-scope "3.7.1"
+    eslint-visitor-keys "^1.0.0"
 
-babel-loader@^8.0.0-beta.4:
+babel-loader@^8.0.2:
   version "8.0.4"
-  resolved "http://168.61.48.13:4873/babel-loader/-/babel-loader-8.0.4.tgz#7bbf20cbe4560629e2e41534147692d3fecbdce6"
+  resolved "http://registry.npm.taobao.org/babel-loader/download/babel-loader-8.0.4.tgz#7bbf20cbe4560629e2e41534147692d3fecbdce6"
+  integrity sha1-e78gy+RWBini5BU0FHaS0/7L3OY=
   dependencies:
     find-cache-dir "^1.0.0"
     loader-utils "^1.0.2"
     mkdirp "^0.5.1"
     util.promisify "^1.0.0"
-
-babel-messages@^6.23.0:
-  version "6.23.0"
-  resolved "http://168.61.48.13:4873/babel-messages/-/babel-messages-6.23.0.tgz#f3cdf4703858035b2a2951c6ec5edf6c62f2630e"
-  dependencies:
-    babel-runtime "^6.22.0"
 
 babel-plugin-dva-hmr@^0.4.1:
   version "0.4.1"
@@ -1386,39 +1477,17 @@ babel-plugin-import@^1.8.0:
     "@babel/helper-module-imports" "^7.0.0"
     "@babel/runtime" "^7.0.0"
 
-babel-runtime@6.x, babel-runtime@^6.22.0, babel-runtime@^6.23.0, babel-runtime@^6.26.0:
+babel-runtime@6.x, babel-runtime@^6.23.0, babel-runtime@^6.26.0:
   version "6.26.0"
   resolved "http://168.61.48.13:4873/babel-runtime/-/babel-runtime-6.26.0.tgz#965c7058668e82b55d7bfe04ff2337bc8b5647fe"
   dependencies:
     core-js "^2.4.0"
     regenerator-runtime "^0.11.0"
 
-babel-traverse@^6.23.1:
-  version "6.26.0"
-  resolved "http://168.61.48.13:4873/babel-traverse/-/babel-traverse-6.26.0.tgz#46a9cbd7edcc62c8e5c064e2d2d8d0f4035766ee"
-  dependencies:
-    babel-code-frame "^6.26.0"
-    babel-messages "^6.23.0"
-    babel-runtime "^6.26.0"
-    babel-types "^6.26.0"
-    babylon "^6.18.0"
-    debug "^2.6.8"
-    globals "^9.18.0"
-    invariant "^2.2.2"
-    lodash "^4.17.4"
-
-babel-types@^6.23.0, babel-types@^6.26.0:
-  version "6.26.0"
-  resolved "http://168.61.48.13:4873/babel-types/-/babel-types-6.26.0.tgz#a3b073f94ab49eb6fa55cd65227a334380632497"
-  dependencies:
-    babel-runtime "^6.26.0"
-    esutils "^2.0.2"
-    lodash "^4.17.4"
-    to-fast-properties "^1.0.3"
-
-babylon@^6.17.0, babylon@^6.18.0:
-  version "6.18.0"
-  resolved "http://168.61.48.13:4873/babylon/-/babylon-6.18.0.tgz#af2f3b88fa6f5c1e4c634d1a0f8eac4f55b395e3"
+babylon@7.0.0-beta.44:
+  version "7.0.0-beta.44"
+  resolved "http://registry.npm.taobao.org/babylon/download/babylon-7.0.0-beta.44.tgz#89159e15e6e30c5096e22d738d8c0af8a0e8ca1d"
+  integrity sha1-iRWeFebjDFCW4i1zjYwK+KDoyh0=
 
 bail@^1.0.0:
   version "1.0.3"
@@ -1634,7 +1703,7 @@ buffer@^4.3.0:
     ieee754 "^1.1.4"
     isarray "^1.0.0"
 
-builtin-modules@^1.0.0, builtin-modules@^1.1.1:
+builtin-modules@^1.0.0:
   version "1.1.1"
   resolved "http://168.61.48.13:4873/builtin-modules/-/builtin-modules-1.1.1.tgz#270f076c5a72c02f5b65a47df94c5fe3a278892f"
 
@@ -2410,9 +2479,10 @@ d@1:
   dependencies:
     es5-ext "^0.10.9"
 
-damerau-levenshtein@^1.0.0:
+damerau-levenshtein@^1.0.4:
   version "1.0.4"
-  resolved "http://168.61.48.13:4873/damerau-levenshtein/-/damerau-levenshtein-1.0.4.tgz#03191c432cb6eea168bb77f3a55ffdccb8978514"
+  resolved "http://registry.npm.taobao.org/damerau-levenshtein/download/damerau-levenshtein-1.0.4.tgz#03191c432cb6eea168bb77f3a55ffdccb8978514"
+  integrity sha1-AxkcQyy27qFou3fzpV/9zLiXhRQ=
 
 dashdash@^1.12.0:
   version "1.14.1"
@@ -2444,9 +2514,10 @@ debug@=3.1.0:
   dependencies:
     ms "2.0.0"
 
-debug@^3.0.0, debug@^3.0.1:
+debug@^3.0.0, debug@^3.1.0:
   version "3.2.6"
-  resolved "http://168.61.48.13:4873/debug/-/debug-3.2.6.tgz#e83d17de16d8a7efb7717edbe5fb10135eee629b"
+  resolved "http://registry.npm.taobao.org/debug/download/debug-3.2.6.tgz#e83d17de16d8a7efb7717edbe5fb10135eee629b"
+  integrity sha1-6D0X3hbYp++3cX7b5fsQE17uYps=
   dependencies:
     ms "^2.1.1"
 
@@ -2590,9 +2661,10 @@ doctrine@1.5.0:
     esutils "^2.0.2"
     isarray "^1.0.0"
 
-doctrine@^2.0.0:
+doctrine@^2.1.0:
   version "2.1.0"
-  resolved "http://168.61.48.13:4873/doctrine/-/doctrine-2.1.0.tgz#5cd01fc101621b42c4cd7f5d1a66243716d3f39d"
+  resolved "http://registry.npm.taobao.org/doctrine/download/doctrine-2.1.0.tgz#5cd01fc101621b42c4cd7f5d1a66243716d3f39d"
+  integrity sha1-XNAfwQFiG0LEzX9dGmYkNxbT850=
   dependencies:
     esutils "^2.0.2"
 
@@ -2816,9 +2888,10 @@ elliptic@^6.0.0:
     minimalistic-assert "^1.0.0"
     minimalistic-crypto-utils "^1.0.0"
 
-emoji-regex@^6.1.0:
+emoji-regex@^6.5.1:
   version "6.5.1"
-  resolved "http://168.61.48.13:4873/emoji-regex/-/emoji-regex-6.5.1.tgz#9baea929b155565c11ea41c6626eaa65cef992c2"
+  resolved "http://registry.npm.taobao.org/emoji-regex/download/emoji-regex-6.5.1.tgz#9baea929b155565c11ea41c6626eaa65cef992c2"
+  integrity sha1-m66pKbFVVlwR6kHGYm6qZc75ksI=
 
 emojis-list@^2.0.0:
   version "2.1.0"
@@ -2983,9 +3056,23 @@ escape-string-regexp@^1.0.2, escape-string-regexp@^1.0.5:
   version "1.0.5"
   resolved "http://168.61.48.13:4873/escape-string-regexp/-/escape-string-regexp-1.0.5.tgz#1b61c0562190a8dff6ae3bb2cf0200ca130b86d4"
 
-eslint-config-react-app@^2.1.0:
-  version "2.1.0"
-  resolved "http://168.61.48.13:4873/eslint-config-react-app/-/eslint-config-react-app-2.1.0.tgz#23c909f71cbaff76b945b831d2d814b8bde169eb"
+eslint-config-airbnb-base@^13.1.0:
+  version "13.1.0"
+  resolved "http://registry.npm.taobao.org/eslint-config-airbnb-base/download/eslint-config-airbnb-base-13.1.0.tgz#b5a1b480b80dfad16433d6c4ad84e6605052c05c"
+  integrity sha1-taG0gLgN+tFkM9bErYTmYFBSwFw=
+  dependencies:
+    eslint-restricted-globals "^0.1.1"
+    object.assign "^4.1.0"
+    object.entries "^1.0.4"
+
+eslint-config-airbnb@17.1.0:
+  version "17.1.0"
+  resolved "http://registry.npm.taobao.org/eslint-config-airbnb/download/eslint-config-airbnb-17.1.0.tgz#3964ed4bc198240315ff52030bf8636f42bc4732"
+  integrity sha1-OWTtS8GYJAMV/1IDC/hjb0K8RzI=
+  dependencies:
+    eslint-config-airbnb-base "^13.1.0"
+    object.assign "^4.1.0"
+    object.entries "^1.0.4"
 
 eslint-import-resolver-node@^0.3.1:
   version "0.3.2"
@@ -3004,9 +3091,10 @@ eslint-loader@1.9.0:
     object-hash "^1.1.4"
     rimraf "^2.6.1"
 
-eslint-module-utils@^2.1.1:
+eslint-module-utils@^2.2.0:
   version "2.2.0"
-  resolved "http://168.61.48.13:4873/eslint-module-utils/-/eslint-module-utils-2.2.0.tgz#b270362cd88b1a48ad308976ce7fa54e98411746"
+  resolved "http://registry.npm.taobao.org/eslint-module-utils/download/eslint-module-utils-2.2.0.tgz#b270362cd88b1a48ad308976ce7fa54e98411746"
+  integrity sha1-snA2LNiLGkitMIl2zn+lTphBF0Y=
   dependencies:
     debug "^2.6.8"
     pkg-dir "^1.0.0"
@@ -3017,51 +3105,69 @@ eslint-plugin-flowtype@2.39.1:
   dependencies:
     lodash "^4.15.0"
 
-eslint-plugin-import@2.8.0:
-  version "2.8.0"
-  resolved "http://168.61.48.13:4873/eslint-plugin-import/-/eslint-plugin-import-2.8.0.tgz#fa1b6ef31fcb3c501c09859c1b86f1fc5b986894"
+eslint-plugin-import@2.14.0:
+  version "2.14.0"
+  resolved "http://registry.npm.taobao.org/eslint-plugin-import/download/eslint-plugin-import-2.14.0.tgz#6b17626d2e3e6ad52cfce8807a845d15e22111a8"
+  integrity sha1-axdibS4+atUs/OiAeoRdFeIhEag=
   dependencies:
-    builtin-modules "^1.1.1"
     contains-path "^0.1.0"
     debug "^2.6.8"
     doctrine "1.5.0"
     eslint-import-resolver-node "^0.3.1"
-    eslint-module-utils "^2.1.1"
+    eslint-module-utils "^2.2.0"
     has "^1.0.1"
-    lodash.cond "^4.3.0"
+    lodash "^4.17.4"
     minimatch "^3.0.3"
     read-pkg-up "^2.0.0"
+    resolve "^1.6.0"
 
-eslint-plugin-jsx-a11y@5.1.1:
-  version "5.1.1"
-  resolved "http://168.61.48.13:4873/eslint-plugin-jsx-a11y/-/eslint-plugin-jsx-a11y-5.1.1.tgz#5c96bb5186ca14e94db1095ff59b3e2bd94069b1"
+eslint-plugin-jsx-a11y@6.1.1:
+  version "6.1.1"
+  resolved "http://registry.npm.taobao.org/eslint-plugin-jsx-a11y/download/eslint-plugin-jsx-a11y-6.1.1.tgz#7bf56dbe7d47d811d14dbb3ddff644aa656ce8e1"
+  integrity sha1-e/Vtvn1H2BHRTbs93/ZEqmVs6OE=
   dependencies:
-    aria-query "^0.7.0"
+    aria-query "^3.0.0"
     array-includes "^3.0.3"
-    ast-types-flow "0.0.7"
-    axobject-query "^0.1.0"
-    damerau-levenshtein "^1.0.0"
-    emoji-regex "^6.1.0"
-    jsx-ast-utils "^1.4.0"
+    ast-types-flow "^0.0.7"
+    axobject-query "^2.0.1"
+    damerau-levenshtein "^1.0.4"
+    emoji-regex "^6.5.1"
+    has "^1.0.3"
+    jsx-ast-utils "^2.0.1"
 
 eslint-plugin-promise@^3.4.0:
   version "3.8.0"
   resolved "http://168.61.48.13:4873/eslint-plugin-promise/-/eslint-plugin-promise-3.8.0.tgz#65ebf27a845e3c1e9d6f6a5622ddd3801694b621"
 
-eslint-plugin-react@7.4.0:
-  version "7.4.0"
-  resolved "http://168.61.48.13:4873/eslint-plugin-react/-/eslint-plugin-react-7.4.0.tgz#300a95861b9729c087d362dd64abcc351a74364a"
+eslint-plugin-react@7.11.1:
+  version "7.11.1"
+  resolved "http://registry.npm.taobao.org/eslint-plugin-react/download/eslint-plugin-react-7.11.1.tgz#c01a7af6f17519457d6116aa94fc6d2ccad5443c"
+  integrity sha1-wBp69vF1GUV9YRaqlPxtLMrVRDw=
   dependencies:
-    doctrine "^2.0.0"
-    has "^1.0.1"
-    jsx-ast-utils "^2.0.0"
-    prop-types "^15.5.10"
+    array-includes "^3.0.3"
+    doctrine "^2.1.0"
+    has "^1.0.3"
+    jsx-ast-utils "^2.0.1"
+    prop-types "^15.6.2"
 
 eslint-plugin-sensors@^0.0.3:
   version "0.0.3"
   resolved "http://168.61.48.13:4873/eslint-plugin-sensors/-/eslint-plugin-sensors-0.0.3.tgz#0ced46878acd1e1191aab41f0ca5ac53614b337b"
   dependencies:
     requireindex "~1.1.0"
+
+eslint-restricted-globals@^0.1.1:
+  version "0.1.1"
+  resolved "http://registry.npm.taobao.org/eslint-restricted-globals/download/eslint-restricted-globals-0.1.1.tgz#35f0d5cbc64c2e3ed62e93b4b1a7af05ba7ed4d7"
+  integrity sha1-NfDVy8ZMLj7WLpO0saevBbp+1Nc=
+
+eslint-scope@3.7.1:
+  version "3.7.1"
+  resolved "http://registry.npm.taobao.org/eslint-scope/download/eslint-scope-3.7.1.tgz#3d63c3edfda02e06e01a452ad88caacc7cdcb6e8"
+  integrity sha1-PWPD7f2gLgbgGkUq2IyqzHzctug=
+  dependencies:
+    esrecurse "^4.1.0"
+    estraverse "^4.1.1"
 
 eslint-scope@^3.7.1:
   version "3.7.3"
@@ -3077,32 +3183,38 @@ eslint-scope@^4.0.0:
     esrecurse "^4.1.0"
     estraverse "^4.1.1"
 
-eslint@4.10.0:
-  version "4.10.0"
-  resolved "http://168.61.48.13:4873/eslint/-/eslint-4.10.0.tgz#f25d0d7955c81968c2309aa5c9a229e045176bb7"
+eslint-visitor-keys@^1.0.0:
+  version "1.0.0"
+  resolved "http://registry.npm.taobao.org/eslint-visitor-keys/download/eslint-visitor-keys-1.0.0.tgz#3f3180fb2e291017716acb4c9d6d5b5c34a6a81d"
+  integrity sha1-PzGA+y4pEBdxastMnW1bXDSmqB0=
+
+eslint@4.19.1:
+  version "4.19.1"
+  resolved "http://registry.npm.taobao.org/eslint/download/eslint-4.19.1.tgz#32d1d653e1d90408854bfb296f076ec7e186a300"
+  integrity sha1-MtHWU+HZBAiFS/spbwdux+GGowA=
   dependencies:
-    ajv "^5.2.0"
+    ajv "^5.3.0"
     babel-code-frame "^6.22.0"
     chalk "^2.1.0"
     concat-stream "^1.6.0"
     cross-spawn "^5.1.0"
-    debug "^3.0.1"
-    doctrine "^2.0.0"
+    debug "^3.1.0"
+    doctrine "^2.1.0"
     eslint-scope "^3.7.1"
-    espree "^3.5.1"
+    eslint-visitor-keys "^1.0.0"
+    espree "^3.5.4"
     esquery "^1.0.0"
-    estraverse "^4.2.0"
     esutils "^2.0.2"
     file-entry-cache "^2.0.0"
     functional-red-black-tree "^1.0.1"
     glob "^7.1.2"
-    globals "^9.17.0"
+    globals "^11.0.1"
     ignore "^3.3.3"
     imurmurhash "^0.1.4"
     inquirer "^3.0.6"
     is-resolvable "^1.0.0"
     js-yaml "^3.9.1"
-    json-stable-stringify "^1.0.1"
+    json-stable-stringify-without-jsonify "^1.0.1"
     levn "^0.3.0"
     lodash "^4.17.4"
     minimatch "^3.0.2"
@@ -3112,16 +3224,18 @@ eslint@4.10.0:
     path-is-inside "^1.0.2"
     pluralize "^7.0.0"
     progress "^2.0.0"
+    regexpp "^1.0.1"
     require-uncached "^1.0.3"
     semver "^5.3.0"
     strip-ansi "^4.0.0"
     strip-json-comments "~2.0.1"
-    table "^4.0.1"
+    table "4.0.2"
     text-table "~0.2.0"
 
-espree@^3.5.1:
+espree@^3.5.4:
   version "3.5.4"
-  resolved "http://168.61.48.13:4873/espree/-/espree-3.5.4.tgz#b0f447187c8a8bed944b815a660bddf5deb5d1a7"
+  resolved "http://registry.npm.taobao.org/espree/download/espree-3.5.4.tgz#b0f447187c8a8bed944b815a660bddf5deb5d1a7"
+  integrity sha1-sPRHGHyKi+2US4FaZgvd9d610ac=
   dependencies:
     acorn "^5.5.0"
     acorn-jsx "^3.0.0"
@@ -3146,7 +3260,7 @@ esrecurse@^4.1.0:
   dependencies:
     estraverse "^4.1.0"
 
-estraverse@^4.0.0, estraverse@^4.1.0, estraverse@^4.1.1, estraverse@^4.2.0:
+estraverse@^4.0.0, estraverse@^4.1.0, estraverse@^4.1.1:
   version "4.2.0"
   resolved "http://168.61.48.13:4873/estraverse/-/estraverse-4.2.0.tgz#0dee3fed31fcd469618ce7342099fc1afa0bdb13"
 
@@ -3686,13 +3800,9 @@ global@^4.3.2:
     min-document "^2.19.0"
     process "~0.5.1"
 
-globals@^11.1.0:
+globals@^11.0.1, globals@^11.1.0:
   version "11.9.0"
   resolved "http://168.61.48.13:4873/globals/-/globals-11.9.0.tgz#bde236808e987f290768a93d065060d78e6ab249"
-
-globals@^9.17.0, globals@^9.18.0:
-  version "9.18.0"
-  resolved "http://168.61.48.13:4873/globals/-/globals-9.18.0.tgz#aa3896b3e69b487f17e31ed2143d69a8e30c2d8a"
 
 globby@^7.0.0, globby@^7.1.1:
   version "7.1.1"
@@ -4464,13 +4574,14 @@ js-levenshtein@^1.1.3:
   version "1.1.4"
   resolved "http://168.61.48.13:4873/js-levenshtein/-/js-levenshtein-1.1.4.tgz#3a56e3cbf589ca0081eb22cd9ba0b1290a16d26e"
 
+js-tokens@^3.0.0, js-tokens@^3.0.2:
+  version "3.0.2"
+  resolved "http://registry.npm.taobao.org/js-tokens/download/js-tokens-3.0.2.tgz#9866df395102130e38f7f996bceb65443209c25b"
+  integrity sha1-mGbfOVECEw449/mWvOtlRDIJwls=
+
 "js-tokens@^3.0.0 || ^4.0.0", js-tokens@^4.0.0:
   version "4.0.0"
   resolved "http://168.61.48.13:4873/js-tokens/-/js-tokens-4.0.0.tgz#19203fb59991df98e3a287050d4647cdeaf32499"
-
-js-tokens@^3.0.2:
-  version "3.0.2"
-  resolved "http://168.61.48.13:4873/js-tokens/-/js-tokens-3.0.2.tgz#9866df395102130e38f7f996bceb65443209c25b"
 
 js-yaml@^3.4.3, js-yaml@^3.9.0, js-yaml@^3.9.1:
   version "3.12.0"
@@ -4518,11 +4629,10 @@ json-schema@0.2.3:
   version "0.2.3"
   resolved "http://168.61.48.13:4873/json-schema/-/json-schema-0.2.3.tgz#b480c892e59a2f05954ce727bd3f2a4e882f9e13"
 
-json-stable-stringify@^1.0.1:
+json-stable-stringify-without-jsonify@^1.0.1:
   version "1.0.1"
-  resolved "http://168.61.48.13:4873/json-stable-stringify/-/json-stable-stringify-1.0.1.tgz#9a759d39c5f2ff503fd5300646ed445f88c4f9af"
-  dependencies:
-    jsonify "~0.0.0"
+  resolved "http://registry.npm.taobao.org/json-stable-stringify-without-jsonify/download/json-stable-stringify-without-jsonify-1.0.1.tgz#9db7b59496ad3f3cfef30a75142d2d930ad72651"
+  integrity sha1-nbe1lJatPzz+8wp1FC0tkwrXJlE=
 
 json-stringify-safe@5.0.1, json-stringify-safe@^5.0.1, json-stringify-safe@~5.0.1:
   version "5.0.1"
@@ -4544,10 +4654,6 @@ json5@^2.1.0:
   dependencies:
     minimist "^1.2.0"
 
-jsonify@~0.0.0:
-  version "0.0.0"
-  resolved "http://168.61.48.13:4873/jsonify/-/jsonify-0.0.0.tgz#2c74b6ee41d93ca51b7b5aaee8f503631d252a73"
-
 jsonp@^0.2.1:
   version "0.2.1"
   resolved "http://168.61.48.13:4873/jsonp/-/jsonp-0.2.1.tgz#a65b4fa0f10bda719a05441ea7b94c55f3e15bae"
@@ -4563,13 +4669,10 @@ jsprim@^1.2.2:
     json-schema "0.2.3"
     verror "1.10.0"
 
-jsx-ast-utils@^1.4.0:
-  version "1.4.1"
-  resolved "http://168.61.48.13:4873/jsx-ast-utils/-/jsx-ast-utils-1.4.1.tgz#3867213e8dd79bf1e8f2300c0cfc1efb182c0df1"
-
-jsx-ast-utils@^2.0.0:
+jsx-ast-utils@^2.0.1:
   version "2.0.1"
-  resolved "http://168.61.48.13:4873/jsx-ast-utils/-/jsx-ast-utils-2.0.1.tgz#e801b1b39985e20fffc87b40e3748080e2dcac7f"
+  resolved "http://registry.npm.taobao.org/jsx-ast-utils/download/jsx-ast-utils-2.0.1.tgz#e801b1b39985e20fffc87b40e3748080e2dcac7f"
+  integrity sha1-6AGxs5mF4g//yHtA43SAgOLcrH8=
   dependencies:
     array-includes "^3.0.3"
 
@@ -4909,10 +5012,6 @@ lodash.bind@^4.1.4:
 lodash.camelcase@^4.3.0:
   version "4.3.0"
   resolved "http://168.61.48.13:4873/lodash.camelcase/-/lodash.camelcase-4.3.0.tgz#b28aa6288a2b9fc651035c7711f65ab6190331a6"
-
-lodash.cond@^4.3.0:
-  version "4.5.2"
-  resolved "http://168.61.48.13:4873/lodash.cond/-/lodash.cond-4.5.2.tgz#f471a1da486be60f6ab955d17115523dd1d255d5"
 
 lodash.debounce@^4.0.0, lodash.debounce@^4.0.8:
   version "4.0.8"
@@ -7631,6 +7730,11 @@ regex-not@^1.0.0, regex-not@^1.0.2:
     extend-shallow "^3.0.2"
     safe-regex "^1.1.0"
 
+regexpp@^1.0.1:
+  version "1.1.0"
+  resolved "http://registry.npm.taobao.org/regexpp/download/regexpp-1.1.0.tgz#0e3516dd0b7904f413d2d4193dce4618c3a689ab"
+  integrity sha1-DjUW3Qt5BPQT0tQZPc5GGMOmias=
+
 regexpu-core@^1.0.0:
   version "1.0.0"
   resolved "http://168.61.48.13:4873/regexpu-core/-/regexpu-core-1.0.0.tgz#86a763f58ee4d7c2f6b102e4764050de7ed90c6b"
@@ -7839,7 +7943,7 @@ resolve-url@^0.2.1:
   version "0.2.1"
   resolved "http://168.61.48.13:4873/resolve-url/-/resolve-url-0.2.1.tgz#2c637fe77c893afd2a663fe21aa9080068e2052a"
 
-resolve@^1.1.6, resolve@^1.3.2, resolve@^1.5.0, resolve@^1.8.1:
+resolve@^1.1.6, resolve@^1.3.2, resolve@^1.5.0, resolve@^1.6.0, resolve@^1.8.1:
   version "1.8.1"
   resolved "http://168.61.48.13:4873/resolve/-/resolve-1.8.1.tgz#82f1ec19a423ac1fbd080b0bab06ba36e84a7a26"
   dependencies:
@@ -8526,6 +8630,18 @@ synthetic-dom@^1.2.0:
   version "1.2.0"
   resolved "http://168.61.48.13:4873/synthetic-dom/-/synthetic-dom-1.2.0.tgz#f3589aafe2b5e299f337bb32973a9be42dd5625e"
 
+table@4.0.2:
+  version "4.0.2"
+  resolved "http://registry.npm.taobao.org/table/download/table-4.0.2.tgz#a33447375391e766ad34d3486e6e2aedc84d2e36"
+  integrity sha1-ozRHN1OR52atNNNIbm4q7chNLjY=
+  dependencies:
+    ajv "^5.2.3"
+    ajv-keywords "^2.1.0"
+    chalk "^2.1.0"
+    lodash "^4.17.4"
+    slice-ansi "1.0.0"
+    string-width "^2.1.1"
+
 table@^4.0.1:
   version "4.0.3"
   resolved "http://168.61.48.13:4873/table/-/table-4.0.3.tgz#00b5e2b602f1794b9acaf9ca908a76386a7813bc"
@@ -8612,10 +8728,6 @@ tmp@^0.0.33:
 to-arraybuffer@^1.0.0:
   version "1.0.1"
   resolved "http://168.61.48.13:4873/to-arraybuffer/-/to-arraybuffer-1.0.1.tgz#7d229b1fcc637e466ca081180836a7aabff83f43"
-
-to-fast-properties@^1.0.3:
-  version "1.0.3"
-  resolved "http://168.61.48.13:4873/to-fast-properties/-/to-fast-properties-1.0.3.tgz#b83571fa4d8c25b82e231b06e3a3055de4ca1a47"
 
 to-fast-properties@^2.0.0:
   version "2.0.0"
