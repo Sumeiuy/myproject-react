@@ -21,7 +21,9 @@ export default function BottnGroup(props) {
         className={item.operate === KEY_CANCEL ? style.cancelBtn : style.spBtn}
         onClick={clickBotton}
         key={item.flowBtnId}
-      >{item.btnName}</span>
+      >
+        {item.btnName}
+      </span>
     );
   });
   if (_.isEmpty(list)) {

@@ -509,8 +509,7 @@ export default {
         });
         // 记录信息中attachmentRecord不为空时，根据attachmentRecord 去查询附件信息
         if (resultData.attachmentRecord) {
-          const { resultData: fileList }
-            = yield call(custApi.ceFileList, { attachment: resultData.attachmentRecord });
+          const { resultData: fileList } = yield call(custApi.ceFileList, { attachment: resultData.attachmentRecord });
           yield put({
             type: 'queryFileListSuccess',
             payload: fileList,

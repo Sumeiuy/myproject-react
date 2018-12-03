@@ -190,7 +190,11 @@ export default class InvestAdviceTabsHome extends PureComponent {
             { TAB_LIST.map(v => (<TabPane tab={v.tabName} key={v.key} />)) }
           </Tabs>
         </div>
-        <div className={styles.componentBox}> {tabContentComponent} </div>
+        <div className={styles.componentBox}>
+          {' '}
+          {tabContentComponent}
+          {' '}
+        </div>
       </div>
     );
   }

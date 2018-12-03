@@ -448,28 +448,29 @@ export default class ApplyHome extends PureComponent {
           isSetMarginTop={false}
         />
         {
-          isShowCreateModal ?
-            <CreateApply
-              location={location}
-              advisorListData={advisorListData}
-              queryAdvisorList={queryAdvisorList}
-              empAppBindingList={empAppBindingList}
-              queryEmpAppBindingList={queryEmpAppBindingList}
-              batchAdvisorListData={batchAdvisorListData}
-              queryBatchAdvisorList={queryBatchAdvisorList}
-              updateBindingFlowAppId={updateBindingFlowAppId}
-              updateBindingFlow={updateBindingFlow}
-              doApprove={doApprove}
-              queryAppList={this.queryAppList}
-              clearProps={clearProps}
-              onEmitClearModal={this.clearModal}
-              buttonList={buttonList}
-              getButtonList={getButtonList}
-              validateResultData={validateResultData}
-              validateData={validateData}
-            />
-            :
-            null
+          isShowCreateModal
+            ? (
+              <CreateApply
+                location={location}
+                advisorListData={advisorListData}
+                queryAdvisorList={queryAdvisorList}
+                empAppBindingList={empAppBindingList}
+                queryEmpAppBindingList={queryEmpAppBindingList}
+                batchAdvisorListData={batchAdvisorListData}
+                queryBatchAdvisorList={queryBatchAdvisorList}
+                updateBindingFlowAppId={updateBindingFlowAppId}
+                updateBindingFlow={updateBindingFlow}
+                doApprove={doApprove}
+                queryAppList={this.queryAppList}
+                clearProps={clearProps}
+                onEmitClearModal={this.clearModal}
+                buttonList={buttonList}
+                getButtonList={getButtonList}
+                validateResultData={validateResultData}
+                validateData={validateData}
+              />
+            )
+            : null
         }
       </div>
     );

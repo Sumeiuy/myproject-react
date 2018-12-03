@@ -68,7 +68,9 @@ export default class CommonSelect extends PureComponent {
   }
 
   render() {
-    const { data, name, value, onChange, width, ...resetProps } = this.props;
+    const {
+      data, name, value, onChange, width, ...resetProps
+    } = this.props;
     const options = this.makeSelectOptions(data);
     return (
       <div className={styles.commomSelect}>

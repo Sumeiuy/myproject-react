@@ -26,7 +26,6 @@ const TASK_TYPE = {
 };
 
 export default class ServeContent extends PureComponent {
-
   constructor(props) {
     super(props);
     // 只读状态不会到此组件中
@@ -127,8 +126,10 @@ export default class ServeContent extends PureComponent {
 
   /** 点击添加内容按钮 | 编辑修改按钮 */
   @autobind
-  @logable({ type: 'ButtonClick',
-payload: { name: '添加内容/编辑修改' } })
+  @logable({
+    type: 'ButtonClick',
+    payload: { name: '添加内容/编辑修改' }
+  })
   handleBtnClick() {
     this.setState({
       serveContentModal: true,
@@ -142,7 +143,9 @@ payload: { name: '添加内容/编辑修改' } })
 
   // 添加服务内容按确认按钮
   @autobind
-  handleServeModalOK({ title, type = '', desc, mode, templateID = '' }) {
+  handleServeModalOK({
+    title, type = '', desc, mode, templateID = ''
+  }) {
     this.setState({
       serveContentModal: false,
       serveContentDesc: desc,
@@ -185,7 +188,9 @@ payload: { name: '添加内容/编辑修改' } })
     if (!hasEditContent) {
       return (
         <div className={styles.noCT}>
-          <Icon type="exclamation-circle" /> 你还没有添加任何服务内容，请通过选择模板进行添加或者手动编辑添加
+          <Icon type="exclamation-circle" />
+          {' '}
+你还没有添加任何服务内容，请通过选择模板进行添加或者手动编辑添加
         </div>
       );
     }
@@ -193,8 +198,10 @@ payload: { name: '添加内容/编辑修改' } })
   }
 
   @autobind
-  @logPV({ pathname: '/modal/openApproverBoardModal',
-title: '选择审批人弹框' })
+  @logPV({
+    pathname: '/modal/openApproverBoardModal',
+    title: '选择审批人弹框'
+  })
   openApproverBoard() {
     this.setState({ approvalModal: true });
   }
@@ -252,65 +259,69 @@ title: '选择审批人弹框' })
           <div className={styles.rightArea}>
             <div className={styles.btn}>{this.renderBtn()}</div>
             {
-              !hasEditContent ? null :
-              (
-                <div className={styles.ctHeader}>
-                  <span className={styles.caption}>{serveContentTitle}</span>
-                  <span className={styles.type}>{serveContentType}</span>
-                  <div className={styles.rightCT}>{serveContentDesc}</div>
-                </div>
-              )
+              !hasEditContent ? null
+                : (
+                  <div className={styles.ctHeader}>
+                    <span className={styles.caption}>{serveContentTitle}</span>
+                    <span className={styles.type}>{serveContentType}</span>
+                    <div className={styles.rightCT}>{serveContentDesc}</div>
+                  </div>
+                )
             }
             {this.showAddContentTips()}
           </div>
         </div>
         {
-          !this.isFreeEditContent() ? null :
-          (
-            <div className={styles.serveRecord}>
-              <div className={approvalCls}>选择审批人:</div>
-              <div className={styles.rightArea}>
-                <div className={styles.checkApprover} onClick={this.openApproverBoard}>
-                  {approverName === '' ? '' : `${approverName}(${approverId})`}
-                  <div className={styles.searchIcon}><Icon type="search" /></div>
+          !this.isFreeEditContent() ? null
+            : (
+              <div className={styles.serveRecord}>
+                <div className={approvalCls}>选择审批人:</div>
+                <div className={styles.rightArea}>
+                  <div className={styles.checkApprover} onClick={this.openApproverBoard}>
+                    {approverName === '' ? '' : `${approverName}(${approverId})`}
+                    <div className={styles.searchIcon}><Icon type="search" /></div>
+                  </div>
+                  <div className={styles.noCT}>
+                    <Icon type="exclamation-circle" />
+                    {' '}
+注：投资建议需要经过审批才会发送给客户。请提醒审批人及时完成审批流程，以确保投资建议的时效性。
+                  </div>
                 </div>
-                <div className={styles.noCT}><Icon type="exclamation-circle" /> 注：投资建议需要经过审批才会发送给客户。请提醒审批人及时完成审批流程，以确保投资建议的时效性。</div>
               </div>
-            </div>
-          )
+            )
         }
         {
-          !approvalModal ? null :
-          (
-            <ChoiceApproverBoard
-              visible={approvalModal}
-              approverList={newApprovalList}
-              onClose={this.handleCloseApprovalModal}
-              onOk={this.handleApproverModalOK}
-            />
-          )
+          !approvalModal ? null
+            : (
+              <ChoiceApproverBoard
+                visible={approvalModal}
+                approverList={newApprovalList}
+                onClose={this.handleCloseApprovalModal}
+                onOk={this.handleApproverModalOK}
+              />
+            )
         }
         {
-          !serveContentModal ? null :
-          (
-            <ChoiceInvestAdviceModal
-              visible={serveContentModal}
-              modalKey="serveContentModal"
-              eventId={this.props.eventId}
-              serviceTypeCode={this.props.serviceTypeCode}
-              custId={this.props.custId}
-              taskType={this.props.taskType}
-              templateID={templateID}
-              onClose={this.handleCloseServeContentModal}
-              onOK={this.handleServeModalOK}
-              isUpdate={hasEditContent}
-              isReject={isReject}
-              fromMode={contentMode}
-              serveContent={serveContent}
-              testWallCollision={testWallCollision}
-              testWallCollisionStatus={testWallCollisionStatus}
-            />
-          )
+          !serveContentModal ? null
+            : (
+              <ChoiceInvestAdviceModal
+                visible={serveContentModal}
+                modalKey="serveContentModal"
+                eventId={this.props.eventId}
+                serviceTypeCode={this.props.serviceTypeCode}
+                custId={this.props.custId}
+                taskType={this.props.taskType}
+                templateID={templateID}
+                onClose={this.handleCloseServeContentModal}
+                onOK={this.handleServeModalOK}
+                isUpdate={hasEditContent}
+                isReject={isReject}
+                fromMode={contentMode}
+                serveContent={serveContent}
+                testWallCollision={testWallCollision}
+                testWallCollisionStatus={testWallCollisionStatus}
+              />
+            )
         }
       </div>
     );

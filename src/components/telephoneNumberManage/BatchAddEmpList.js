@@ -72,10 +72,19 @@ export default class BatchAddEmpList extends PureComponent {
     const selectedRowKeysSize = _.size(selectedRowKeys);
     return (
       <span>
-        已选中 <span className={styles.selectedRowKeysSize}>{selectedRowKeysSize}</span> 条 /共 {total} 条
+        已选中
+        {' '}
+        <span className={styles.selectedRowKeysSize}>{selectedRowKeysSize}</span>
+        {' '}
+条 /共
+        {' '}
+        {total}
+        {' '}
+条
       </span>
     );
   }
+
   // 关闭新建弹框
   @autobind
   closeModal() {

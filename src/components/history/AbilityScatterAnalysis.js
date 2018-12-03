@@ -91,13 +91,14 @@ export default class AbilityScatterAnalysis extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { data: nextData,
+    const {
+      data: nextData,
       optionsData: nextOptions,
       switchDefault: nextSwitch,
       isLvIndicator,
       isCommissionRate,
       scope,
-     } = nextProps;
+    } = nextProps;
     const {
       scope: preScope,
       description,
@@ -165,7 +166,9 @@ export default class AbilityScatterAnalysis extends PureComponent {
    * @param {*} seriesData series数据
    */
   getAnyPoint(seriesData) {
-    const { xAxisMin, yAxisMin, yAxisMax, slope, xAxisMax, average } = seriesData;
+    const {
+      xAxisMin, yAxisMin, yAxisMax, slope, xAxisMax, average
+    } = seriesData;
     if (average) {
       // 代表率
       // 直接画出一条横线，代表平均线
@@ -196,7 +199,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
         average: '',
       });
       return true;
-    } else if (slope <= 1) {
+    } if (slope <= 1) {
       // 处理斜率小于1的情况
       // 太小的斜率直接计算坐标
       const endYCood = xAxisMax * slope;
@@ -403,7 +406,8 @@ export default class AbilityScatterAnalysis extends PureComponent {
     },
   })
   handleScatterHover(params) {
-    const { isShowTooltip,
+    const {
+      isShowTooltip,
       finalData: {
         xAxisName,
         xAxisUnit,
@@ -413,13 +417,18 @@ export default class AbilityScatterAnalysis extends PureComponent {
         yAxisMin,
         xAxisMin,
         average,
-      } } = this.state;
+      }
+    } = this.state;
 
-    const { data: [
+    const {
+      data: [
         xAxisData,
         yAxisData,
-        { level2Name, level3Name, level4Name, level5Name, level5Id },
-      ] } = params;
+        {
+          level2Name, level3Name, level4Name, level5Name, level5Id
+        },
+      ]
+    } = params;
     if (isShowTooltip) {
       // 设置state，切换tooltip的显示信息
       this.setState({
@@ -513,19 +522,19 @@ export default class AbilityScatterAnalysis extends PureComponent {
   @autobind
   toggleChart() {
     const { boardType, currentSelectIndicatorKey, contrastType } = this.props;
-    return (boardType === 'TYPE_LSDB_TGJX' &&
-      (_.findIndex(EXCEPT_CUST_TOUGU_TGJX_MAP,
+    return (boardType === 'TYPE_LSDB_TGJX'
+      && (_.findIndex(EXCEPT_CUST_TOUGU_TGJX_MAP,
         item => item.key === currentSelectIndicatorKey) > -1
-        || (contrastType === '客户类型' &&
-          (_.findIndex(EXCEPT_CUST_TGJX_MAP,
+        || (contrastType === '客户类型'
+          && (_.findIndex(EXCEPT_CUST_TGJX_MAP,
             item => item.key === currentSelectIndicatorKey) > -1))
       ))
       || (boardType === 'TYPE_LSDB_JYYJ'
-        && ((contrastType === '客户类型' &&
-          (_.findIndex(EXCEPT_CUST_JYYJ_MAP,
+        && ((contrastType === '客户类型'
+          && (_.findIndex(EXCEPT_CUST_JYYJ_MAP,
             item => item.key === currentSelectIndicatorKey) > -1))
-          || (contrastType === '投顾类型' &&
-            _.findIndex(EXCEPT_TOUGU_JYYJ_MAP,
+          || (contrastType === '投顾类型'
+            && _.findIndex(EXCEPT_TOUGU_JYYJ_MAP,
               item => item.key === currentSelectIndicatorKey) > -1))
       );
   }
@@ -563,9 +572,9 @@ export default class AbilityScatterAnalysis extends PureComponent {
       hideOption: Number(level) !== 1,
     });
     const toggleScope3Option = classnames({
-      hideOption: Number(level) === 3 ||
-        Number(level) === 4 ||
-        (Number(level) === 2 && !report.isNewOrg(orgId)),
+      hideOption: Number(level) === 3
+        || Number(level) === 4
+        || (Number(level) === 2 && !report.isNewOrg(orgId)),
     });
     const toggleScope4Option = classnames({
       hideOption: Number(level) === 4,
@@ -576,7 +585,9 @@ export default class AbilityScatterAnalysis extends PureComponent {
       sortByTypeArr = sortByType.REPORT_RELATION_TYPE;
     }
 
-    const { xAxisName, yAxisName, xAxisUnit, yAxisUnit } = finalData;
+    const {
+      xAxisName, yAxisName, xAxisUnit, yAxisUnit
+    } = finalData;
     return (
       <div
         className={styles.abilityScatterAnalysis}
@@ -591,20 +602,21 @@ export default class AbilityScatterAnalysis extends PureComponent {
           <div className={styles.customerDimensionSelect}>
             <span className={styles.contrastType}>{contrastType}</span>
             {
-              _.isEmpty(finalOptions) ?
-              null :
-              <Select
-                onChange={this.handleChange}
-                allowClear={false}
-                placeholder="无"
-                value={selectValue} // 默认选中项
-                dropdownClassName={styles.custDimenSelect}
-              >
-                {
-                  !_.isEmpty(finalOptions) ? finalOptions.map(item =>
-                    <Option value={item.value} key={item.key}>{item.label}</Option>) : null
+              _.isEmpty(finalOptions)
+                ? null
+                : (
+                  <Select
+                    onChange={this.handleChange}
+                    allowClear={false}
+                    placeholder="无"
+                    value={selectValue} // 默认选中项
+                    dropdownClassName={styles.custDimenSelect}
+                  >
+                    {
+                  !_.isEmpty(finalOptions) ? finalOptions.map(item => <Option value={item.value} key={item.key}>{item.label}</Option>) : null
                 }
-              </Select>
+                  </Select>
+                )
             }
           </div>
           <div className={styles.customerDimensionSelect}>
@@ -637,7 +649,8 @@ export default class AbilityScatterAnalysis extends PureComponent {
                       key={sortByTypeIndex}
                       value={item.scope}
                     >
-                      按{item.name}
+                      按
+                      {item.name}
                     </Option>
                   );
                 })
@@ -647,25 +660,33 @@ export default class AbilityScatterAnalysis extends PureComponent {
         </div>
         {
           // 无对比意义的判断
-          this.toggleChart() ?
-            <div className={styles.noChart}>
-              <img src={imgSrc} alt="无对比意义" />
-              <div className={styles.noChartTip}>无对比意义</div>
-            </div>
-          :
-            <div>
-              {
+          this.toggleChart()
+            ? (
+              <div className={styles.noChart}>
+                <img src={imgSrc} alt="无对比意义" />
+                <div className={styles.noChartTip}>无对比意义</div>
+              </div>
+            )
+            : (
+              <div>
+                {
                 // 投顾历史看板下的投顾与投顾对比无对应数据(4是投顾或服务经理)
-              (scopeSelectValue === '5' && (selectValue === 'tgInNum' || selectValue === 'ptyMngNum')) ||
-              _.isEmpty(finalData) ?
-                <div className={styles.noChart}>
-                  <img src={imgSrc} alt="无对应数据" />
-                  <div className={styles.noChartTip}>无对应数据</div>
-                </div>
-              :
-                (
+              (scopeSelectValue === '5' && (selectValue === 'tgInNum' || selectValue === 'ptyMngNum'))
+              || _.isEmpty(finalData)
+                ? (
+                  <div className={styles.noChart}>
+                    <img src={imgSrc} alt="无对应数据" />
+                    <div className={styles.noChartTip}>无对应数据</div>
+                  </div>
+                )
+                : (
                   <div>
-                    <div className={styles.yAxisName} style={style}>{yAxisName}（{yAxisUnit}）</div>
+                    <div className={styles.yAxisName} style={style}>
+                      {yAxisName}
+（
+                      {yAxisUnit}
+）
+                    </div>
                     <div
                       className={styles.abilityScatter}
                       ref={ref => (this.abilityScatterElem = ref)}
@@ -676,40 +697,50 @@ export default class AbilityScatterAnalysis extends PureComponent {
                         scatterOptions={scatterOptions}
                         scatterElemHeight={scatterElemHeight}
                       />
-                      <div className={styles.xAxisName}>{xAxisName}（{xAxisUnit}）</div>
+                      <div className={styles.xAxisName}>
+                        {xAxisName}
+（
+                        {xAxisUnit}
+）
+                      </div>
                     </div>
                     {
-                      _.isEmpty(finalData) ?
-                        null
-                        :
-                        <div className={styles.averageDescription}>
-                          <div className={styles.averageIcon} />
-                          <div className={styles.averageInfo}>{averageInfo}</div>
-                        </div>
+                      _.isEmpty(finalData)
+                        ? null
+                        : (
+                          <div className={styles.averageDescription}>
+                            <div className={styles.averageIcon} />
+                            <div className={styles.averageInfo}>{averageInfo}</div>
+                          </div>
+                        )
                     }
 
-                    {isShowTooltip ?
-                      <div className={styles.description}>
-                        <div className={styles.orgDes}>
-                          <i className={styles.desIcon} />
-                          <span>
-                            {_.isEmpty(level2Name) ? '' : `${level2Name}`}
-                            {_.isEmpty(level3Name) ? '' : `-${level3Name}`}
-                            {_.isEmpty(level4Name) ? '' : `-${level4Name}`}
-                            {_.isEmpty(level5Name) ? '' : `-${level5Name}`}
-                            {_.isEmpty(level5Id) ? '' : `(${level5Id})`}:
-                          </span>
+                    {isShowTooltip
+                      ? (
+                        <div className={styles.description}>
+                          <div className={styles.orgDes}>
+                            <i className={styles.desIcon} />
+                            <span>
+                              {_.isEmpty(level2Name) ? '' : `${level2Name}`}
+                              {_.isEmpty(level3Name) ? '' : `-${level3Name}`}
+                              {_.isEmpty(level4Name) ? '' : `-${level4Name}`}
+                              {_.isEmpty(level5Name) ? '' : `-${level5Name}`}
+                              {_.isEmpty(level5Id) ? '' : `(${level5Id})`}
+:
+                            </span>
+                          </div>
+                          <div className={styles.detailDesc}>
+                            <span>{tooltipInfo}</span>
+                          </div>
                         </div>
-                        <div className={styles.detailDesc}>
-                          <span>{tooltipInfo}</span>
-                        </div>
-                      </div>
+                      )
                       : <div className={styles.noneTooltip} />
                     }
                   </div>
                 )
               }
-            </div>
+              </div>
+            )
         }
       </div>
     );

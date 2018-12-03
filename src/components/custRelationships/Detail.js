@@ -84,7 +84,10 @@ export default class Detail extends PureComponent {
       <div className={styles.custRelationshipsDetail}>
         <div className={styles.inner}>
           <div className={styles.innerWrap}>
-            <h1 className={styles.title}>编号{id}</h1>
+            <h1 className={styles.title}>
+编号
+              {id}
+            </h1>
             <div className={styles.module}>
               <InfoTitle head="基本信息" />
               <div className={styles.modContent}>
@@ -106,10 +109,12 @@ export default class Detail extends PureComponent {
                   </li>
                   {
                     businessFlag === 'Y'
-                    ? <li className={styles.item2}>
-                      <InfoItem label="项目经理" value={projectManagerInfo} width="70px" />
-                    </li>
-                    : null
+                      ? (
+                        <li className={styles.item2}>
+                          <InfoItem label="项目经理" value={projectManagerInfo} width="70px" />
+                        </li>
+                      )
+                      : null
                   }
                 </ul>
               </div>
@@ -149,14 +154,16 @@ export default class Detail extends PureComponent {
             </div>
             {
               businessFlag === 'Y'
-              ? <ApprovalRecord
-                head="审批记录"
-                info={workflowHistoryBeans}
-                currentApproval={currentApproval}
-                currentNodeName={currentNodeName}
-                statusType="ready"
-              />
-              : null
+                ? (
+                  <ApprovalRecord
+                    head="审批记录"
+                    info={workflowHistoryBeans}
+                    currentApproval={currentApproval}
+                    currentNodeName={currentNodeName}
+                    statusType="ready"
+                  />
+                )
+                : null
             }
           </div>
         </div>

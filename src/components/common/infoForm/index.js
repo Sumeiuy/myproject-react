@@ -10,15 +10,16 @@ import PropTypes from 'prop-types';
 import styles from './index.less';
 
 export default function InfoForm(props) {
-  const { label, required, children, style, className } = props;
+  const {
+    label, required, children, style, className
+  } = props;
   return (
     <div className={`${styles.infoForm} ${className}`}>
       <div style={style} className={styles.infoFormLabel}>
         {
-          required ?
-            <i>*</i>
-            :
-            null
+          required
+            ? <i>*</i>
+            : null
         }
         {label}
         <span className={styles.colon}>:</span>

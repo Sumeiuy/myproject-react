@@ -138,15 +138,17 @@ export default class CascadeFeedbackSelect extends PureComponent {
            * 用来更新组件时，不显示客户反馈
            */}
           {
-            !isShowSecond || first === defaultFeedbackOption ? null :
-              (<Select
-                value={second}
-                style={STYLE_SECONDSELECT}
-                onChange={this.handleSecondFeedbackSelectChange}
-                getPopupContainer={() => this.customerFeedbackRef}
-              >
-                {secondOptions}
-              </Select>)
+            !isShowSecond || first === defaultFeedbackOption ? null
+              : (
+                <Select
+                  value={second}
+                  style={STYLE_SECONDSELECT}
+                  onChange={this.handleSecondFeedbackSelectChange}
+                  getPopupContainer={() => this.customerFeedbackRef}
+                >
+                  {secondOptions}
+                </Select>
+              )
           }
         </div>
       </div>
@@ -161,4 +163,3 @@ CascadeFeedbackSelect.propTypes = {
 };
 
 CascadeFeedbackSelect.defaultProps = {};
-

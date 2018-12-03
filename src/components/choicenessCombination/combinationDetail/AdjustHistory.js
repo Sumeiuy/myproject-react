@@ -53,36 +53,41 @@ export default class AdjustHistory extends PureComponent {
         [styles.in]: item.directionCode === Number(directionRange[1].value),
       });
       const key = `${index}${item.securityCode}`;
-      return (<div className={itemClass} key={key}>
-        <div className={styles.icon}>
-          {iconText}
-        </div>
-        <div className={styles.text}>
-          <div className={`${styles.top} clearfix`}>
-            <span className={styles.security}>
-              {
-                item.securityType === STOCK_CODE ?
-                  <a
-                    title={`${item.securityName} (${item.securityCode}) `}
-                    onClick={() => this.handleSecurityClick(item.securityType, item.securityCode, `${item.securityName}(${item.securityCode})`)}
-                  >
-                    {`${item.securityName} (${item.securityCode}) `}
-                  </a>
-                  :
-                  <span title={`${item.securityName} (${item.securityCode}) `}>
-                    {`${item.securityName} (${item.securityCode}) `}
-                  </span>
-              }
-            </span>
-            <span className={styles.time}>{time.format(item.time, formatDateStr)}</span>
-            <span className={styles.const}>{item.price}</span>
-            <span className={styles.change}>{item.change || '持仓变化：暂无'}</span>
+      return (
+        <div className={itemClass} key={key}>
+          <div className={styles.icon}>
+            {iconText}
           </div>
-          {
+          <div className={styles.text}>
+            <div className={`${styles.top} clearfix`}>
+              <span className={styles.security}>
+                {
+                item.securityType === STOCK_CODE
+                  ? (
+                    <a
+                      title={`${item.securityName} (${item.securityCode}) `}
+                      onClick={() => this.handleSecurityClick(item.securityType, item.securityCode, `${item.securityName}(${item.securityCode})`)}
+                    >
+                      {`${item.securityName} (${item.securityCode}) `}
+                    </a>
+                  )
+                  : (
+                    <span title={`${item.securityName} (${item.securityCode}) `}>
+                      {`${item.securityName} (${item.securityCode}) `}
+                    </span>
+                  )
+              }
+              </span>
+              <span className={styles.time}>{time.format(item.time, formatDateStr)}</span>
+              <span className={styles.const}>{item.price}</span>
+              <span className={styles.change}>{item.change || '持仓变化：暂无'}</span>
+            </div>
+            {
             this.renderPopover(item.reason)
           }
+          </div>
         </div>
-      </div>);
+      );
     });
   }
 
@@ -123,16 +128,18 @@ export default class AdjustHistory extends PureComponent {
   renderPopover(value) {
     let reactElement = null;
     if (value) {
-      reactElement = (<Popover
-        placement="bottomLeft"
-        content={value}
-        trigger="hover"
-        overlayStyle={overlayStyle}
-      >
-        <div className={styles.reason}>
-          {value}
-        </div>
-      </Popover>);
+      reactElement = (
+        <Popover
+          placement="bottomLeft"
+          content={value}
+          trigger="hover"
+          overlayStyle={overlayStyle}
+        >
+          <div className={styles.reason}>
+            {value}
+          </div>
+        </Popover>
+      );
     } else {
       reactElement = <div className={styles.reason}>调仓理由：暂无</div>;
     }

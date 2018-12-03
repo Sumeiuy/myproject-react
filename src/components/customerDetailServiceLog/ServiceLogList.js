@@ -45,11 +45,11 @@ export default class ServiceLogList extends PureComponent {
   getserviceLogMap() {
     let serviceLogMap = [];
     const { serviceLogList } = this.props;
-    _.each(serviceLogList, item => {
-      if(item) {
+    _.each(serviceLogList, (item) => {
+      if (item) {
         const feedbackTime = (item.serveTime.split(' '))[0].replace(/\//g, '-');
         const currentLog = _.find(serviceLogMap, log => log.date === feedbackTime);
-        if(currentLog) {
+        if (currentLog) {
           currentLog.logList = _.concat(currentLog.logList, item);
         } else {
           serviceLogMap = _.concat(serviceLogMap, {
@@ -67,14 +67,14 @@ export default class ServiceLogList extends PureComponent {
   handleCollapseChange(key) {
     const { serviceLogList, getCeFileList } = this.props;
     const { activeKey } = this.state;
-    if(!key || activeKey === key) { // 折叠当前的服务记录面板
+    if (!key || activeKey === key) { // 折叠当前的服务记录面板
       this.setState({
         activeKey: 'close',
       });
     } else {
       // 找到当前key对应的服务记录
       const currentServiceLog = _.find(serviceLogList, log => log.id === key);
-      if(currentServiceLog) {
+      if (currentServiceLog) {
         const { uuid } = currentServiceLog;
         if (!_.isEmpty(uuid)) {
           getCeFileList({ attachment: uuid });
@@ -108,7 +108,8 @@ export default class ServiceLogList extends PureComponent {
           className={styles.headerLeft}
           title={`${item.subtypeCd || ''}：${item.serveRecord || ''}`}
         >
-          {_.isEmpty(item.subtypeCd) ? '' : `${item.subtypeCd}：`}{item.serveRecord || ''}
+          {_.isEmpty(item.subtypeCd) ? '' : `${item.subtypeCd}：`}
+          {item.serveRecord || ''}
         </span>
       );
     }
@@ -119,7 +120,8 @@ export default class ServiceLogList extends PureComponent {
         className={styles.headerLeft}
         title={`${item.taskName || ''}：${item.serveRecord || ''}`}
       >
-        {_.isEmpty(item.taskName) ? '' : `${item.taskName}：`}{item.serveRecord || ''}
+        {_.isEmpty(item.taskName) ? '' : `${item.taskName}：`}
+        {item.serveRecord || ''}
       </span>
     );
   }
@@ -163,7 +165,7 @@ export default class ServiceLogList extends PureComponent {
   }
 
   renderTimePane(item, defaultActiveKey) {
-    const {executeTypes, filesList } = this.props;
+    const { executeTypes, filesList } = this.props;
     // 获取时分秒
     const currentTime = item.serveTime.split(' ')[1];
     const header = (
@@ -184,12 +186,14 @@ export default class ServiceLogList extends PureComponent {
         disabled={_.isEmpty(item.actor)}
       >
         {
-          !_.isEmpty(item.actor) ?
-            <ServiceRecordContent
-              executeTypes={executeTypes}
-              item={item}
-              filesList={filesList}
-            /> : null
+          !_.isEmpty(item.actor)
+            ? (
+              <ServiceRecordContent
+                executeTypes={executeTypes}
+                item={item}
+                filesList={filesList}
+              />
+            ) : null
         }
       </Panel>
     );

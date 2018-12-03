@@ -55,7 +55,6 @@ const IS_UP_TO_STANDARD_STATUS = 'IS_UP_TO_STANDARD';
 const Y_FLAG = 'Y';
 
 export default class CustManagerDetailScope extends PureComponent {
-
   static propTypes = {
     detailData: PropTypes.object,
     // 当前组织机构层级
@@ -97,9 +96,11 @@ export default class CustManagerDetailScope extends PureComponent {
       // 当前选择的维度
       // 页面从无到有的过程中，orgId不一定是初始化的orgId，需要将外部传入的orgId传入进行
       // 比对，得出当前维度
-      currentSelectScope: getCurrentScopeByOrgId({ custRange,
-orgId,
-ptyMngId }),
+      currentSelectScope: getCurrentScopeByOrgId({
+        custRange,
+        orgId,
+        ptyMngId
+      }),
       dataSource: EMPTY_LIST,
     };
   }
@@ -129,8 +130,10 @@ ptyMngId }),
     // 任务id切换了，orgId肯定恢复原始了，不需要将外部的orgId传入getCurrentScopeByOrgId
     if (currentId !== nextMssnId) {
       this.setState({
-        currentSelectScope: getCurrentScopeByOrgId({ custRange,
-ptyMngId }),
+        currentSelectScope: getCurrentScopeByOrgId({
+          custRange,
+          ptyMngId
+        }),
       });
     }
     // 用来处理列改变的时候，primaryKey会为空的情况，所以将数据源用内部状态控制
@@ -193,8 +196,10 @@ ptyMngId }),
    * 选中一个维度，触发回调，请求当前维度的信息
    */
   @autobind
-  @logable({ type: 'Click',
-payload: { name: '选择查看维度' } })
+  @logable({
+    type: 'Click',
+    payload: { name: '选择查看维度' }
+  })
   handleSelectMenuItem({ key }) {
     this.setState({
       currentSelectScope: key,
@@ -292,7 +297,12 @@ payload: { name: '选择查看维度' } })
   renderManagerNameId(record = EMPTY_OBJECT) {
     const { empName, login } = record;
     return (
-      <span>{empName || '--'}（{login || '--'}）</span>
+      <span>
+        {empName || '--'}
+（
+        {login || '--'}
+）
+      </span>
     );
   }
 
@@ -318,8 +328,14 @@ payload: { name: '选择查看维度' } })
             })
           }
           {...clickHandler}
-        >{remainingRowData[type]}</span>
-        <span>（{percent}%）</span>
+        >
+          {remainingRowData[type]}
+        </span>
+        <span>
+（
+          {percent}
+%）
+        </span>
       </span>
     );
   }
@@ -343,7 +359,9 @@ payload: { name: '选择查看维度' } })
           })
         }
         {...clickHandler}
-      >{flowNum}</span>
+      >
+        {flowNum}
+      </span>
     );
   }
 
@@ -374,22 +392,21 @@ payload: { name: '选择查看维度' } })
           <Dropdown
             // dropdown的trigger需要数组
             trigger={['click']}
-            overlay={
+            overlay={(
               <Menu
                 onClick={this.handleSelectMenuItem}
                 selectedKeys={[currentScope]}
               >
                 {this.renderFilterOption()}
               </Menu>
-            }
+)}
             placement="bottomRight"
             getPopupContainer={this.getFilterPopupContainer}
           >
             <div>
               <span className={styles.title}>查看维度：</span>
               <span className={styles.currentSelectScope}>
-                {_.filter(ALL_EMP_SCOPE_ITEM, item =>
-                  item.key === currentScope)[0].value}
+                {_.filter(ALL_EMP_SCOPE_ITEM, item => item.key === currentScope)[0].value}
               </span>
               <span
                 className="ant-select-arrow"
@@ -425,7 +442,7 @@ payload: { name: '选择查看维度' } })
     const { currentSelectScope } = this.state;
     if (currentSelectScope === EMP_COMPANY_SCOPE) {
       return [EMP_COMPANY_COLUMN_FOR_FIRST];
-    } else if (currentSelectScope === EMP_DEPARTMENT_SCOPE) {
+    } if (currentSelectScope === EMP_DEPARTMENT_SCOPE) {
       return [EMP_DEPARTMENT_COLUMN_FOR_FIRST];
     }
 
@@ -448,7 +465,7 @@ payload: { name: '选择查看维度' } })
       // 服务经理维度，最后两列，根据层级，展示分公司或营业部
       if (currentOrgLevel === ORG_LEVEL1) {
         return [EMP_COMPANY_COLUMN_FOR_LAST, EMP_DEPARTMENT_COLUMN_FOR_LAST];
-      } else if (currentOrgLevel === ORG_LEVEL2) {
+      } if (currentOrgLevel === ORG_LEVEL2) {
         return [EMP_DEPARTMENT_COLUMN_FOR_LAST];
       }
     }
@@ -485,49 +502,45 @@ payload: { name: '选择查看维度' } })
       {
         key: 'flowNum',
         value: '客户总数',
-        render: item =>
-          this.renderCustTotal({
-            ...item,
-            type: 'flowNum',
-            isEntryFromCustTotal: true,
-          }),
+        render: item => this.renderCustTotal({
+          ...item,
+          type: 'flowNum',
+          isEntryFromCustTotal: true,
+        }),
       },
       {
         key: 'servFlowNum',
         value: '已服务客户',
-        render: item =>
-          this.renderEveryCust({
-            ...item,
-            type: 'servFlowNum',
-            isEntryFromProgressDetail: true,
-            missionProgressStatus: IS_SERVED_STATUS,
-            progressFlag: Y_FLAG,
-          }),
+        render: item => this.renderEveryCust({
+          ...item,
+          type: 'servFlowNum',
+          isEntryFromProgressDetail: true,
+          missionProgressStatus: IS_SERVED_STATUS,
+          progressFlag: Y_FLAG,
+        }),
       },
       {
         key: 'doneFlowNum',
         value: '已完成客户',
-        render: item =>
-          this.renderEveryCust({
-            ...item,
-            type: 'doneFlowNum',
-            isEntryFromProgressDetail: true,
-            missionProgressStatus: IS_COMPLETED_STATUS,
-            progressFlag: Y_FLAG,
-          }),
+        render: item => this.renderEveryCust({
+          ...item,
+          type: 'doneFlowNum',
+          isEntryFromProgressDetail: true,
+          missionProgressStatus: IS_COMPLETED_STATUS,
+          progressFlag: Y_FLAG,
+        }),
       },
       {
         key: 'traceFlowNum',
         value: '结果达标客户',
-        render: item =>
-          this.renderEveryCust({
-            ...item,
-            type: 'traceFlowNum',
-            isEntryFromProgressDetail: true,
-            isEntryFromResultStatisfy: true,
-            missionProgressStatus: IS_UP_TO_STANDARD_STATUS,
-            progressFlag: Y_FLAG,
-          }),
+        render: item => this.renderEveryCust({
+          ...item,
+          type: 'traceFlowNum',
+          isEntryFromProgressDetail: true,
+          isEntryFromResultStatisfy: true,
+          missionProgressStatus: IS_UP_TO_STANDARD_STATUS,
+          progressFlag: Y_FLAG,
+        }),
       },
       ...this.renderLastTwoColumn(),
     ];

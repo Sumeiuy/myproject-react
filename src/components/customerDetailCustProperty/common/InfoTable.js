@@ -17,11 +17,12 @@ import styles from './infoTable.less';
 
 function InfoTable(props) {
   // 给表格添加操作列内容
-  const { dataSource, columns, isMainEmp, onEditClick, onDelClick } = props;
+  const {
+    dataSource, columns, isMainEmp, onEditClick, onDelClick
+  } = props;
   const newColumns = _.map(columns, (column) => {
     const { dataIndex } = column;
     if (dataIndex === 'operate') {
-
       return {
         ...column,
         render: (text, record) => {
@@ -32,7 +33,7 @@ function InfoTable(props) {
             return (
               <span>
                 <span className={`${styles.operateBtn} ${styles.editBtn}`}>
-                  <Icon type="shenqing" onClick={() => onEditClick(record)}/>
+                  <Icon type="shenqing" onClick={() => onEditClick(record)} />
                 </span>
                 <span className={styles.operateBtn}>
                   <Icon type="shanchu" onClick={() => onDelClick(record)} />
@@ -70,5 +71,3 @@ InfoTable.propTypes = {
 };
 
 export default InfoTable;
-
-

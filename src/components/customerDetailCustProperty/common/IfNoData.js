@@ -26,5 +26,3 @@ IfNoData.propTypes = {
 };
 
 export default IfNoData;
-
-

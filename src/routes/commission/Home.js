@@ -38,7 +38,7 @@ const {
     basicFilters,
     moreFilters,
     moreFilterData,
- },
+  },
 } = seibelConfig;
 
 const effects = {
@@ -211,7 +211,6 @@ const mapDispatchToProps = {
 @withRouter
 @Barable
 export default class CommissionHome extends PureComponent {
-
   static propTypes = {
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
@@ -302,9 +301,9 @@ export default class CommissionHome extends PureComponent {
     const {
       location: {
         query,
-      query: {
+        query: {
           pageNum,
-        pageSize,
+          pageSize,
         },
       },
     } = this.props;
@@ -379,16 +378,22 @@ export default class CommissionHome extends PureComponent {
         getBatchCommissionDetail({ batchNum: business1 });
         break;
       case comsubs.single:
-        getSingleDetail({ orderId: business1,
-loginuser });
+        getSingleDetail({
+          orderId: business1,
+          loginuser
+        });
         break;
       case comsubs.subscribe:
-        getSubscribeDetail({ orderId: business1,
-loginuser });
+        getSubscribeDetail({
+          orderId: business1,
+          loginuser
+        });
         break;
       case comsubs.unsubscribe:
-        getUnSubscribeDetail({ orderId: business1,
-loginuser });
+        getUnSubscribeDetail({
+          orderId: business1,
+          loginuser
+        });
         break;
       default:
         break;
@@ -399,8 +404,10 @@ loginuser });
   @autobind
   getApprovalBoardCustInfo(info) {
     const loginuser = emp.getId();
-    this.props.getApprovalRecords({ ...info,
-loginuser }).then(this.openApprovalBoard);
+    this.props.getApprovalRecords({
+      ...info,
+      loginuser
+    }).then(this.openApprovalBoard);
   }
 
   /**
@@ -464,8 +471,10 @@ loginuser }).then(this.openApprovalBoard);
     const { getCommissionList } = this.props;
     const params = seibelHelper.constructSeibelPostBody(query, pageNum, pageSize);
     // 默认筛选条件
-    getCommissionList({ ...params,
-type: pageType }).then(this.getRightDetail);
+    getCommissionList({
+      ...params,
+      type: pageType
+    }).then(this.getRightDetail);
   }
 
   // 创建新的成功后，刷新页面列表
@@ -500,8 +509,10 @@ type: pageType }).then(this.getRightDetail);
         currentId: id,
       },
     });
-    this.setState({ currentSubtype: st,
-activeRowIndex: index });
+    this.setState({
+      currentSubtype: st,
+      activeRowIndex: index
+    });
     this.getDetail4Subtye(record);
   }
 
@@ -536,8 +547,10 @@ activeRowIndex: index });
 
   // 头部新建按钮点击事件处理程序
   @autobind
-  @logPV({ pathname: '/modal/createCommission',
-title: '新建佣金调整' })
+  @logPV({
+    pathname: '/modal/createCommission',
+    title: '新建佣金调整'
+  })
   handleCreateBtnClick() {
     // TODO 此处需要新增一个判断，如果用户所有申请的权限都没有则提示不能点击新建
     if (this.hasCreatApplyAuthority()) {

@@ -11,7 +11,6 @@ import ErrorPage from '../components/common/errorPage';
 import styles from './errorBoundary.less';
 
 export default class ErrorBoundary extends Component {
-
   static propTypes = {
     children: PropTypes.element.isRequired,
     location: PropTypes.object.isRequired,

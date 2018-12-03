@@ -41,7 +41,10 @@ export default class TextareaComponent extends PureComponent {
   render() {
     return (
       <div className={style.approvalContent}>
-        <span className={style.approvalContentTitle}>{this.props.title}：</span>
+        <span className={style.approvalContentTitle}>
+          {this.props.title}
+：
+        </span>
         <div className={style.approvalContentText}>
           <textarea
             className={style.acTextarea}

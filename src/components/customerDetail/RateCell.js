@@ -18,7 +18,9 @@ import { number } from '../../helper';
 import styles from './cell.less';
 
 export default function RateCell(props) {
-  const { title, current, last, isMoney } = props;
+  const {
+    title, current, last, isMoney
+  } = props;
   // 年收益率显示的百分比，所以在数据处理上需要做区分
   const newCurrentText = isMoney ? displayMoney(current) : number.convertRate(current);
   // 1.首先判断什么时候显示 Tip
@@ -48,7 +50,7 @@ export default function RateCell(props) {
                 <span className={ascCls}>{tips.rateText}</span>
                 <span>
                   <Popover overlayClassName={styles.labelPopover} content={tips.tip} trigger="click">
-                    <Icon className={styles.tishi} type="tishi"/>
+                    <Icon className={styles.tishi} type="tishi" />
                   </Popover>
                 </span>
               </span>

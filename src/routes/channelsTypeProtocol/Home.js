@@ -51,7 +51,9 @@ const {
     moreFilterData,
   },
 } = seibelConfig;
-const { subscribeArray, unSubscribeArray, tenHQ, tipsMap, protocolSubs, protocolSubTypes } = config;
+const {
+  subscribeArray, unSubscribeArray, tenHQ, tipsMap, protocolSubs, protocolSubTypes
+} = config;
 const fetchDataFunction = (globalLoading, type, forceFull) => query => ({
   type,
   payload: query || {},
@@ -225,9 +227,9 @@ export default class ChannelsTypeProtocol extends PureComponent {
     const {
       location: {
         query,
-      query: {
+        query: {
           pageNum,
-        pageSize,
+          pageSize,
         },
       },
     } = this.props;
@@ -482,8 +484,8 @@ export default class ChannelsTypeProtocol extends PureComponent {
   @autobind
   checkFormDataIsLegal(formData) {
     // 如果操作类型是退订并且协议模版是十档行情，不进行验证
-    if (formData.templateId === tenHQ &&
-      _.includes(unSubscribeArray, formData.operationType)) {
+    if (formData.templateId === tenHQ
+      && _.includes(unSubscribeArray, formData.operationType)) {
       return true;
     }
     if (!formData.subType) {
@@ -670,6 +672,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
       this.showconFirm(payload, btnItem);
     }
   }
+
   // 渲染列表项里面的每一项
   @autobind
   renderListRow(record, index) {
@@ -712,19 +715,19 @@ export default class ChannelsTypeProtocol extends PureComponent {
       protocolClauseList, // 所选模板对应协议条款列表
       queryChannelProtocolProduct, // 查询协议产品列表
       protocolProductList, // 协议产品列表
-      saveProtocolData,  // 保存详情
-      underCustList,  // 下挂客户列表
-      queryCust,  // 请求下挂客户接口
+      saveProtocolData, // 保存详情
+      underCustList, // 下挂客户列表
+      queryCust, // 请求下挂客户接口
       clearPropsData, // 清除props数据
       flowStepInfo, // 审批人列表
-      getCustValidate,  // 验证客户接口
+      getCustValidate, // 验证客户接口
       location: { query: { pageNum = 1, pageSize = 20 } },
       seibleList: { page = {} },
-      queryProtocolList,  // 查询协议 ID 列表
-      protocolList,  // 协议 ID 列表
-      getProtocolDetail,  // 查询协议详情
-      getFlowStepInfo,  // 查询审批人
-      clearDetailData,  // 清除详情数据
+      queryProtocolList, // 查询协议 ID 列表
+      protocolList, // 协议 ID 列表
+      getProtocolDetail, // 查询协议详情
+      getFlowStepInfo, // 查询审批人
+      clearDetailData, // 清除详情数据
       filterTemplate, // 筛选协议模板
     } = this.props;
     const {
@@ -766,10 +769,12 @@ export default class ChannelsTypeProtocol extends PureComponent {
       />
     );
     const rightPanel = this.getProtocolDetailComponent(currentView);
-    const selfBtnGroup = (<BottonGroup
-      list={flowStepInfo}
-      onEmitEvent={this.footerBtnHandle}
-    />);
+    const selfBtnGroup = (
+      <BottonGroup
+        list={flowStepInfo}
+        onEmitEvent={this.footerBtnHandle}
+      />
+    );
     // editForm 需要的 props
     const editFormProps = {
       location,
@@ -836,7 +841,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
       />,
     };
     return (
-      <div className={styles.premissionbox} >
+      <div className={styles.premissionbox}>
         <SplitPanel
           isEmpty={isEmpty}
           topPanel={topPanel}
@@ -845,22 +850,22 @@ export default class ChannelsTypeProtocol extends PureComponent {
           leftListClassName="contractList"
         />
         {
-          editFormModal ?
-            <CommonModal {...editFormModalProps} />
-            :
-            null
+          editFormModal
+            ? <CommonModal {...editFormModalProps} />
+            : null
         }
         {
-          approverModal ?
-            <ChoiceApproverBoard
-              visible={approverModal}
-              approverList={flowAuditors}
-              onClose={() => this.closeModal('approverModal')}
-              onOk={this.handleApproverModalOK}
-              afterConfirmCloseModal={false}
-            />
-            :
-            null
+          approverModal
+            ? (
+              <ChoiceApproverBoard
+                visible={approverModal}
+                approverList={flowAuditors}
+                onClose={() => this.closeModal('approverModal')}
+                onOk={this.handleApproverModalOK}
+                afterConfirmCloseModal={false}
+              />
+            )
+            : null
         }
       </div>
     );

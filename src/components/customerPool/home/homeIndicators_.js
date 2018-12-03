@@ -194,7 +194,9 @@ export function getTradingVolume({ numberArray, nameArray, descArray }) {
 }
 
 // 经营指标的服务指标
-export function getServiceIndicatorOfManage({ motOkMnt, motTotMnt, taskCust, totCust }) {
+export function getServiceIndicatorOfManage({
+  motOkMnt, motTotMnt, taskCust, totCust
+}) {
   let motPercent = 0;
   let taskPercent = 0;
   if (!_.isEmpty(motTotMnt) && filterEmptyToNumber(motOkMnt) > 0) {
@@ -251,9 +253,13 @@ export function getCustAndProperty(dataArray) {
   const custArray = [];
   const properyArray = [];
   for (let i = 0; i < dataArray.length; i += 2) {
-    const { value = '', name = '', key, description } = dataArray[i];
+    const {
+      value = '', name = '', key, description
+    } = dataArray[i];
     const { value: propertyValue, description: propertyDesc } = dataArray[(i + 1)];
-    custArray.push({ value: filterEmptyToInteger(value), name, key, description, propertyDesc });
+    custArray.push({
+      value: filterEmptyToInteger(value), name, key, description, propertyDesc
+    });
     properyArray.push(filterEmptyToNumber(propertyValue || ''));
   }
   // formatter 资产数据，获得 unit

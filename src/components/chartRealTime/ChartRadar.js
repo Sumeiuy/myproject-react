@@ -27,7 +27,6 @@ const hbgxSummaryType = constants.hbgxSummaryType;
 const orgClass = optionsMap.charRadarOrgClass;
 
 export default class ChartRadar extends PureComponent {
-
   static propTypes = {
     radarData: PropTypes.array.isRequired,
     total: PropTypes.string.isRequired,
@@ -131,7 +130,7 @@ export default class ChartRadar extends PureComponent {
 
       indicatorName.push(name);
       if (scopeNum !== null && scopeNum !== 'null') {
-         // 判断有无值
+        // 判断有无值
         if (currentV !== null && currentV !== 'null') {
           originalCurrent.push(Number(currentV));
           radarCurrent.push(Number(scopeNum) - Number(currentV));
@@ -210,7 +209,9 @@ export default class ChartRadar extends PureComponent {
   }
 
   render() {
-    const { radarData, total, selectCore, localScope } = this.props;
+    const {
+      radarData, total, selectCore, localScope
+    } = this.props;
     if (localScope === '1' || _.isEmpty(radarData)) {
       return null;
     }
@@ -253,10 +254,18 @@ export default class ChartRadar extends PureComponent {
         </div>
         <div className={styles.radarInfo}>
           <div className={styles.radarDesc}>
-            <span className={styles.name}>{indicatorName[selectCore]}排名</span>
+            <span className={styles.name}>
+              {indicatorName[selectCore]}
+排名
+            </span>
             <span className={styles.totalDesc}>(共 </span>
             <span className={styles.totalNo}>{total === '0' ? '--' : total}</span>
-            <span className={styles.totalDesc}> 家{levelName})</span>
+            <span className={styles.totalDesc}>
+              {' '}
+家
+              {levelName}
+)
+            </span>
             <span className={styles.radarNowDura}>本期:</span>
             <span className={styles.now}>
               {_.isEmpty(current) ? '--' : current[selectCore]}

@@ -30,17 +30,17 @@ const MAX_STRING_LENGTH = 30;
 const MAX_NUM_LENGTH_17 = 17;
 // const EMPTY_OBJECT = {};
 // 收入水平
-const INCOME_NAME  = 'income';
+const INCOME_NAME = 'income';
 // 房产规模
-const HOUSE_SIEZ_NAME  = 'housingSize';
+const HOUSE_SIEZ_NAME = 'housingSize';
 // 银行理财规模
-const BANK_MONEY_NAME  = 'bankMoneyScale';
+const BANK_MONEY_NAME = 'bankMoneyScale';
 // 保险类资产规模
-const INSURED_ASSETS_NAME  = 'insuredAssetsScale';
+const INSURED_ASSETS_NAME = 'insuredAssetsScale';
 // 其他资产规模
-const OTHER_ASSEST_NAME  = 'otherAssetsScale';
+const OTHER_ASSEST_NAME = 'otherAssetsScale';
 // 投入成本收益率
-const YIELD_RATE_NAME  = 'yieldRate';
+const YIELD_RATE_NAME = 'yieldRate';
 
 export default class Person extends PureComponent {
   static propTypes = {
@@ -405,7 +405,8 @@ export default class Person extends PureComponent {
           }
         </div>
         <div className={styles.latestTime}>
-          近期风险承受能力评估问卷日期：{this.getViewData(data.latestSurveyTime)}
+          近期风险承受能力评估问卷日期：
+          {this.getViewData(data.latestSurveyTime)}
         </div>
       </div>
     );

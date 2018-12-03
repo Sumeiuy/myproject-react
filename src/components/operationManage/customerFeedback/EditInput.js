@@ -161,23 +161,26 @@ export default class EditInput extends PureComponent {
     return (
       <div className={styles.editInput}>
         {
-          !editable ?
-            <div className={styles.noInput}>
-              {this.renderInputTextDomByValue(value)}
-              <Icon type="edit" onClick={this.onEdit} title="编辑" />
-              {btnGroup}
-            </div>
-          :
-            <div className={styles.hasInput}>
-              <Input
-                value={value}
-                onChange={this.onChange}
-                onPressEnter={this.onClick}
-                onClick={e => e.stopPropagation()}
-              />
-              <Icon type="success" onClick={this.onSubmit} title="确定" />
-              <Icon type="close" onClick={this.onCancel} title="取消" />
-            </div>
+          !editable
+            ? (
+              <div className={styles.noInput}>
+                {this.renderInputTextDomByValue(value)}
+                <Icon type="edit" onClick={this.onEdit} title="编辑" />
+                {btnGroup}
+              </div>
+            )
+            : (
+              <div className={styles.hasInput}>
+                <Input
+                  value={value}
+                  onChange={this.onChange}
+                  onPressEnter={this.onClick}
+                  onClick={e => e.stopPropagation()}
+                />
+                <Icon type="success" onClick={this.onSubmit} title="确定" />
+                <Icon type="close" onClick={this.onCancel} title="取消" />
+              </div>
+            )
         }
       </div>
     );

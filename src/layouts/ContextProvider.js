@@ -19,7 +19,6 @@ const mapDispatchToProps = {
 
 @connect(null, mapDispatchToProps)
 export default class ContextProvider extends Component {
-
   static propTypes = {
     children: PropTypes.node.isRequired,
     dict: PropTypes.object.isRequired,

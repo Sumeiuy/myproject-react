@@ -409,8 +409,10 @@ export default class Contract extends PureComponent {
     const { getSeibleList } = this.props;
     const params = seibelHelper.constructSeibelPostBody(query, pageNum, pageSize);
     // 默认筛选条件
-    getSeibleList({ ...params,
-type: pageType }).then(this.getRightDetail);
+    getSeibleList({
+      ...params,
+      type: pageType
+    }).then(this.getRightDetail);
   }
 
   /**
@@ -430,9 +432,11 @@ type: pageType }).then(this.getRightDetail);
   // 根据子类型和客户查询合约编号
   @autobind
   handleSearchContractNum(data) {
-    this.props.getContractNumList({ subType: data.subType,
-Type: '3',
-custId: data.client.cusId });
+    this.props.getContractNumList({
+      subType: data.subType,
+      Type: '3',
+      custId: data.client.cusId
+    });
   }
 
   // 查询客户
@@ -547,8 +551,10 @@ custId: data.client.cusId });
 
   // 头部新建按钮点击事件处理程序
   @autobind
-  @logPV({ pathname: '/modal/createContract',
-title: '新建合作合约' })
+  @logPV({
+    pathname: '/modal/createContract',
+    title: '新建合作合约'
+  })
   handleCreateBtnClick() {
     const { getFlowStepInfo, resetUnsubscribeDetail } = this.props;
     getFlowStepInfo({
@@ -585,10 +591,9 @@ title: '新建合作合约' })
     // 可能需要清空 contractFormData--TODO
     this.setState({
       [modalKey]: false,
-      contractFormData: modalKey === 'approverModal' ?
-        this.state.contractFormData
-      :
-        EMPTY_OBJECT,
+      contractFormData: modalKey === 'approverModal'
+        ? this.state.contractFormData
+        : EMPTY_OBJECT,
     }, () => {
       if (modalKey === 'addFormModal' && this.AddFormComponent) {
         this.AddFormComponent.handleReset();
@@ -1057,10 +1062,12 @@ title: '新建合作合约' })
       // 清除合作部门
       clearDepartmentData,
     };
-    const selfBtnGroup = (<BottonGroup
-      list={flowStepInfo}
-      onEmitEvent={this.footerBtnHandle}
-    />);
+    const selfBtnGroup = (
+      <BottonGroup
+        list={flowStepInfo}
+        onEmitEvent={this.footerBtnHandle}
+      />
+    );
     const editFormModalProps = {
       modalKey: 'editFormModal',
       title: '修改合约申请',
@@ -1070,7 +1077,7 @@ title: '新建合作合约' })
       selfBtnGroup,
     };
     return (
-      <div className={styles.premissionbox} >
+      <div className={styles.premissionbox}>
         <SplitPanel
           isEmpty={isEmpty}
           topPanel={topPanel}
@@ -1079,34 +1086,37 @@ title: '新建合作合约' })
           leftListClassName="contractList"
         />
         {
-          addFormModal ?
-            <CommonModal {...addFormModalProps} >
-              <AddForm
-                {...addFormProps}
-                ref={(AddFormComponent) => { this.AddFormComponent = AddFormComponent; }}
+          addFormModal
+            ? (
+              <CommonModal {...addFormModalProps}>
+                <AddForm
+                  {...addFormProps}
+                  ref={(AddFormComponent) => { this.AddFormComponent = AddFormComponent; }}
+                />
+              </CommonModal>
+            )
+            : null
+        }
+        {
+          editFormModal
+            ? (
+              <CommonModal {...editFormModalProps}>
+                <EditForm {...editFormProps} />
+              </CommonModal>
+            )
+            : null
+        }
+        {
+          approverModal
+            ? (
+              <ChoiceApproverBoard
+                visible={approverModal}
+                approverList={flowAuditors}
+                onClose={() => this.closeModal('approverModal')}
+                onOk={this.handleApproverModalOK}
               />
-            </CommonModal>
-          :
-            null
-        }
-        {
-          editFormModal ?
-            <CommonModal {...editFormModalProps}>
-              <EditForm {...editFormProps} />
-            </CommonModal>
-          :
-            null
-        }
-        {
-          approverModal ?
-            <ChoiceApproverBoard
-              visible={approverModal}
-              approverList={flowAuditors}
-              onClose={() => this.closeModal('approverModal')}
-              onOk={this.handleApproverModalOK}
-            />
-          :
-            null
+            )
+            : null
         }
       </div>
     );

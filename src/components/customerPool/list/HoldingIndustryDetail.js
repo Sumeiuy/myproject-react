@@ -20,7 +20,6 @@ const getPopupContainer = () => document.querySelector(fspContainer.container) |
 const holdingIndustryTitleList = holdingIndustry;
 const EMPTY_ARRAY = [];
 export default class HoldingIndustryDetail extends PureComponent {
-
   static propTypes = {
     // 行业id
     id: PropTypes.string.isRequired,
@@ -73,7 +72,9 @@ export default class HoldingIndustryDetail extends PureComponent {
 
   @autobind
   getContent() {
-    const { data, id, formatAsset, listItem: { custId } } = this.props;
+    const {
+      data, id, formatAsset, listItem: { custId }
+    } = this.props;
     const list = data[`${custId}_${id}`] || EMPTY_ARRAY;
     const newTitleList = [...holdingIndustryTitleList];
     newTitleList[1].render = value => number.thousandFormat(value);
@@ -111,7 +112,7 @@ export default class HoldingIndustryDetail extends PureComponent {
     const { isMouseEnter, hasData } = this.state;
     const { queryHoldingIndustryDetailReqState } = this.props;
     return (
-      <span style={{ cursor: queryHoldingIndustryDetailReqState ? 'wait' : 'pointer' }} >
+      <span style={{ cursor: queryHoldingIndustryDetailReqState ? 'wait' : 'pointer' }}>
         <Popover
           overlayClassName={styles.popoverBox}
           title="持有该行业证券"

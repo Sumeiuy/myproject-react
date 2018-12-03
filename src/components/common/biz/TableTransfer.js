@@ -37,7 +37,7 @@ import _ from 'lodash';
 import classnames from 'classnames';
 
 import { dom } from '../../../helper';
-import Icon from '../../common/Icon';
+import Icon from '../Icon';
 import logable, { logCommon } from '../../../decorators/logable';
 import styles from './tableTransfer.less';
 
@@ -347,8 +347,8 @@ export default class TableTransfer extends Component {
       ],
       rate: {
         rateFlag, // 是否计算佣金率
-        differenceRate: int2Float(differenceRate),  // 差值：右表totalRate-目标佣金率
-        totalRate,   // 右表totalRate
+        differenceRate: int2Float(differenceRate), // 差值：右表totalRate-目标佣金率
+        totalRate, // 右表totalRate
         tip: { type: '', content: '' }, // 佣金率提示
       },
     };
@@ -376,8 +376,8 @@ export default class TableTransfer extends Component {
                 parentKey: item[rowKey],
                 tip: checkFlag ? '取消可选产品' : '标记可选产品',
               };
-              return _.isEmpty(defaultCheckKey) ?
-                newChild : { ...newChild };
+              return _.isEmpty(defaultCheckKey)
+                ? newChild : { ...newChild };
             },
           );
           return { ...item, children: newChildren };
@@ -575,8 +575,8 @@ export default class TableTransfer extends Component {
     if (!rateFlag) {
       return {
         rateFlag: false, // 是否计算佣金率
-        differenceRate: 0,  // 差值：右表totalRate-目标佣金率
-        totalRate: 0,   // 右表totalRate
+        differenceRate: 0, // 差值：右表totalRate-目标佣金率
+        totalRate: 0, // 右表totalRate
         tip: { type: '', content: '' }, // 佣金率提示
       };
     }
@@ -715,12 +715,10 @@ export default class TableTransfer extends Component {
           (keys, index) => {
             // 精准匹配
             if (index === 0) {
-              return !_.isEmpty(_.filter(keys, key =>
-                (_.isEmpty(item[key]) ? false : (item[key] === keyword))));
+              return !_.isEmpty(_.filter(keys, key => (_.isEmpty(item[key]) ? false : (item[key] === keyword))));
             }
             // 模糊匹配
-            return !_.isEmpty(_.filter(keys, key =>
-              (_.isEmpty(item[key]) ? false : (item[key].indexOf(keyword) !== -1))));
+            return !_.isEmpty(_.filter(keys, key => (_.isEmpty(item[key]) ? false : (item[key].indexOf(keyword) !== -1))));
           },
         );
         return !_.isEmpty(resultArray);

@@ -31,7 +31,7 @@ export default class MorningBroadcast extends PureComponent {
 
   static defaultProps = {
     isNewHome: false,
-    introPositionId:'',
+    introPositionId: '',
   }
 
   static contextTypes = {
@@ -104,14 +104,16 @@ export default class MorningBroadcast extends PureComponent {
   }
 
   render() {
-    const { dataList, sourceList = [], isNewHome, introPositionId } = this.props;
+    const {
+      dataList, sourceList = [], isNewHome, introPositionId
+    } = this.props;
     const { activeMusic } = this.state;
     const trueStyles = isNewHome ? classes : styles;
     return (
       <div className={trueStyles.morning_broadcast} id={introPositionId}>
         <div className={trueStyles.title}>
           <span className={trueStyles.morningPaper}>{isNewHome ? '每日晨报' : '晨间播报'}</span>
-          <span className={trueStyles.more} onClick={() => this.openNewTab('/strategyCenter/broadcastList')} >
+          <span className={trueStyles.more} onClick={() => this.openNewTab('/strategyCenter/broadcastList')}>
             <span>更多</span>
             {
               isNewHome ? null : <img src={more} alt="" />
@@ -158,15 +160,21 @@ export default class MorningBroadcast extends PureComponent {
                       {`${newsTypValue}：${title}`}
                     </span>
                     {
-                      isNewHome ?
-                        <span
-                          onClick={() => { this.onListen(newsId, audioFileId); }}
-                          className={trueStyles.listen}
-                        /> :
-                        <span
-                          onClick={() => { this.onListen(newsId, audioFileId); }}
-                          className={trueStyles.listen}
-                        >收听</span>
+                      isNewHome
+                        ? (
+                          <span
+                            onClick={() => { this.onListen(newsId, audioFileId); }}
+                            className={trueStyles.listen}
+                          />
+                        )
+                        : (
+                          <span
+                            onClick={() => { this.onListen(newsId, audioFileId); }}
+                            className={trueStyles.listen}
+                          >
+收听
+                          </span>
+                        )
                     }
                   </div>
                 );

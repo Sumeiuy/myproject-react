@@ -9,8 +9,8 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import mouseWheel from '../common/mouseWheel';
 import { TreeFilter } from 'lego-tree-filter/src';
+import mouseWheel from '../common/mouseWheel';
 
 import styles from './departmentFilter.less';
 
@@ -20,10 +20,8 @@ function transformCustRangeData(list, parent = '') {
     const obj = {
       label: item.name,
       value: parent
-        ?
-        `${item.level}#${item.id}#${parent}#${item.name}`
-        :
-        `${item.level}#${item.id}#${item.name}`,
+        ? `${item.level}#${item.id}#${parent}#${item.name}`
+        : `${item.level}#${item.id}#${item.name}`,
       key: item.id,
     };
     if (item.children && item.children.length) {
@@ -53,10 +51,9 @@ function findOrgNameByOrgId(orgId) {
     if (Array.isArray(orgArr)) {
       for (let i = 0; i < orgArr.length; i++) {
         if (orgArr[i].key === orgId) {
-          custRangeNameDedault = parent !== '' ?
-            `${parent}/${orgArr[i].label}`
-            :
-            `${orgArr[i].label}`;
+          custRangeNameDedault = parent !== ''
+            ? `${parent}/${orgArr[i].label}`
+            : `${orgArr[i].label}`;
         }
       }
     }
@@ -94,8 +91,7 @@ export default class DepartmentFilter extends PureComponent {
     const changedValue = {
       label: custRangeName,
       value: custRangeName
-        ?
-        `${custRangeLevel}#${orgId}#${custRangeName}`
+        ? `${custRangeLevel}#${orgId}#${custRangeName}`
         : custRange[0].id,
     };
     this.setState({
@@ -117,9 +113,9 @@ export default class DepartmentFilter extends PureComponent {
       && custRange[0]
       && custRange[0].id)), '');
     const initValue = {
-        label: custRangeNameDedault,
-        value: custRange && custRange[0] && custRange[0].id,
-      };
+      label: custRangeNameDedault,
+      value: custRange && custRange[0] && custRange[0].id,
+    };
     return {
       formatCustRange,
       value: initValue,
@@ -139,10 +135,10 @@ export default class DepartmentFilter extends PureComponent {
             value={value}
             treeData={formatCustRange}
             onChange={this.handleDepartmentChange}
-            key='orgId'
+            key="orgId"
             className={styles.departmentTreeFilter}
-            treeNodeFilterProp='title'
-            searchPlaceholder='搜索'
+            treeNodeFilterProp="title"
+            searchPlaceholder="搜索"
             dropdownMatchSelectWidth={false}
             dropdownStyle={{ width: 250, maxHeight: 300, overflow: 'auto' }}
             labelInValue

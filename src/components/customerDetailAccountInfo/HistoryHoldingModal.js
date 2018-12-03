@@ -8,7 +8,9 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { Button, Tabs, Radio, DatePicker, Table } from 'antd';
+import {
+  Button, Tabs, Radio, DatePicker, Table
+} from 'antd';
 import moment from 'moment';
 import _ from 'lodash';
 import cx from 'classnames';
@@ -98,7 +100,7 @@ export default class HistoryHoldingModal extends PureComponent {
   // 查询证券历史持仓明细
   @autobind
   queryStockHolding(query = {}) {
-    const { location: { query: { custId }} } = this.props;
+    const { location: { query: { custId } } } = this.props;
     const { stockQueryDate } = this.state;
     // type 值用于到Home页面中区分调用哪个具体api接口
     this.props.queryHistoryHolding({
@@ -357,18 +359,16 @@ export default class HistoryHoldingModal extends PureComponent {
         }
         return (<span className={styles.clickAble}>{text}</span>);
       },
-      onCell: (record) => {
-        return {
-          onClick: () => this.hanleProductCellClick(record),
-        };
-      },
+      onCell: record => ({
+        onClick: () => this.hanleProductCellClick(record),
+      }),
     };
   }
 
   // 修改证券历史持仓明细表格中各个column的显示
   @autobind
   getStockTableColumns(columns) {
-    return _.map(columns, column => {
+    return _.map(columns, (column) => {
       const { dataIndex, isNumber = false, isAmount = false } = column;
       if (isNumber || isAmount) {
         // 针对数字金额类的column添加数字处理render
@@ -401,7 +401,7 @@ export default class HistoryHoldingModal extends PureComponent {
   // 修改产品历史持仓的Table的column
   @autobind
   getProductTableColumns(columns) {
-    return _.map(columns, column => {
+    return _.map(columns, (column) => {
       const { dataIndex, isNumber = false, isAmount = false } = column;
       if (isNumber || isAmount) {
         // 针对数字金额类的column添加数字处理render
@@ -430,7 +430,7 @@ export default class HistoryHoldingModal extends PureComponent {
   // 修改期权历史持仓的Table的column
   @autobind
   getOptionTableColumns(columns) {
-    return _.map(columns, column => {
+    return _.map(columns, (column) => {
       const { dataIndex, isNumber = false, isAmount = false } = column;
       // 针对数字金额类的column添加数字处理render
       if (isNumber || isAmount) {
@@ -713,17 +713,17 @@ export default class HistoryHoldingModal extends PureComponent {
               </div>
             </TabPane>
             <TabPane tab="产品持仓明细" key="productHistoryHolding">
-                <div className={styles.tabPaneWrap}>
-                  <div className={styles.header}>
-                    <div className={styles.dateArea}>
-                      <span className={styles.label}>查询日期:</span>
-                      <DatePicker
-                        onChange={this.handleProductDateChange}
-                        defaultValue={DEFAULT_DATE}
-                      />
-                    </div>
+              <div className={styles.tabPaneWrap}>
+                <div className={styles.header}>
+                  <div className={styles.dateArea}>
+                    <span className={styles.label}>查询日期:</span>
+                    <DatePicker
+                      onChange={this.handleProductDateChange}
+                      defaultValue={DEFAULT_DATE}
+                    />
                   </div>
-                  {
+                </div>
+                {
                     hasNoProductData
                       ? (<PlaceHolderImage title="暂无产品历史持仓数据" style={nodataStyle} />)
                       : (
@@ -744,7 +744,7 @@ export default class HistoryHoldingModal extends PureComponent {
                         </div>
                       )
                   }
-                </div>
+              </div>
             </TabPane>
             <TabPane tab="期权持仓明细" key="optionHistoryHolding">
               <div className={styles.tabPaneWrap}>

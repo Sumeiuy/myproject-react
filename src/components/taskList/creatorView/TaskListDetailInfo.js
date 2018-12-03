@@ -17,7 +17,6 @@ const { taskList: { status } } = pageConfig;
 const COMPLETE_CODE = '02';
 
 export default class TaskListDetailInfo extends PureComponent {
-
   static propTypes = {
     infoData: PropTypes.object,
   }
@@ -40,63 +39,67 @@ export default class TaskListDetailInfo extends PureComponent {
     const timelyIntervalValue = infoData.timelyIntervalValue || '--';
     return (
       <div className={styles.module}>
-        {infoData.status !== COMPLETE_CODE ?
-          <div className={styles.modContent}>
-            <div>
-              <span>任务编号&nbsp;:</span>
-              <span>{infoData.currentId || '--'}</span>
+        {infoData.status !== COMPLETE_CODE
+          ? (
+            <div className={styles.modContent}>
+              <div>
+                <span>任务编号&nbsp;:</span>
+                <span>{infoData.currentId || '--'}</span>
+              </div>
+              <div className={styles.leftRow}>
+                <span>任务状态&nbsp;:</span>
+                <span>{this.changeDisplay(infoData.status, status) || '--'}</span>
+              </div>
+              <div className={styles.rightRow}>
+                <span>有效期（天）&nbsp;:</span>
+                <span>{String(timelyIntervalValue) || '--'}</span>
+              </div>
+              <div>
+                <span>服务策略&nbsp;:</span>
+                <span>
+                  <ForgeryRichText text={infoData.strategyDesc} />
+                </span>
+              </div>
+              <div>
+                <span>任务提示&nbsp;:</span>
+                <span>
+                  <ForgeryRichText text={infoData.infoContent} />
+                </span>
+              </div>
             </div>
-            <div className={styles.leftRow}>
-              <span>任务状态&nbsp;:</span>
-              <span>{this.changeDisplay(infoData.status, status) || '--'}</span>
+          )
+          : (
+            <div className={styles.modContent}>
+              <div>
+                <span>任务编号&nbsp;:</span>
+                <span>{infoData.currentId || '--'}</span>
+              </div>
+              <div>
+                <span>任务状态&nbsp;:</span>
+                <span>{this.changeDisplay(infoData.status, status) || '--'}</span>
+              </div>
+              <div className={styles.leftRow}>
+                <span>触发时间&nbsp;:</span>
+                <span>{infoData.triggerTime || '--'}</span>
+              </div>
+              <div className={styles.rightRow}>
+                <span>截止时间&nbsp;:</span>
+                <span>{infoData.deadTime || '--'}</span>
+              </div>
+              <div>
+                <span>服务策略&nbsp;:</span>
+                <span>
+                  <ForgeryRichText text={infoData.strategyDesc} />
+                </span>
+              </div>
+              <div>
+                <span>任务提示&nbsp;:</span>
+                <span>
+                  <ForgeryRichText text={infoData.infoContent} />
+                </span>
+              </div>
             </div>
-            <div className={styles.rightRow}>
-              <span>有效期（天）&nbsp;:</span>
-              <span>{String(timelyIntervalValue) || '--'}</span>
-            </div>
-            <div>
-              <span>服务策略&nbsp;:</span>
-              <span>
-                <ForgeryRichText text={infoData.strategyDesc} />
-              </span>
-            </div>
-            <div>
-              <span>任务提示&nbsp;:</span>
-              <span>
-                <ForgeryRichText text={infoData.infoContent} />
-              </span>
-            </div>
-          </div> :
-          <div className={styles.modContent}>
-            <div>
-              <span>任务编号&nbsp;:</span>
-              <span>{infoData.currentId || '--'}</span>
-            </div>
-            <div>
-              <span>任务状态&nbsp;:</span>
-              <span>{this.changeDisplay(infoData.status, status) || '--'}</span>
-            </div>
-            <div className={styles.leftRow}>
-              <span>触发时间&nbsp;:</span>
-              <span>{infoData.triggerTime || '--'}</span>
-            </div>
-            <div className={styles.rightRow}>
-              <span>截止时间&nbsp;:</span>
-              <span>{infoData.deadTime || '--'}</span>
-            </div>
-            <div>
-              <span>服务策略&nbsp;:</span>
-              <span>
-                <ForgeryRichText text={infoData.strategyDesc} />
-              </span>
-            </div>
-            <div>
-              <span>任务提示&nbsp;:</span>
-              <span>
-                <ForgeryRichText text={infoData.infoContent} />
-              </span>
-            </div>
-          </div>
+          )
         }
       </div>
     );

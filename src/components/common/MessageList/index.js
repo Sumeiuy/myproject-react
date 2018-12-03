@@ -50,4 +50,3 @@ export default class MessageList extends PureComponent {
     );
   }
 }
-

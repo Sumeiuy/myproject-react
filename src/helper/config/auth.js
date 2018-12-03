@@ -54,6 +54,6 @@ const auth = {
 export default auth;
 
 export const {
- commission,
- keyMonitorAccount,
+  commission,
+  keyMonitorAccount,
 } = auth;

@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
 import isNumber from 'lodash/isNumber';
 import styles from './index.less';
 
-const IfTableWrap = props => {
+const IfTableWrap = (props) => {
   const {
     isRender,
     text,

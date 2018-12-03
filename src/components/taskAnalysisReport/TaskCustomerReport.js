@@ -14,7 +14,9 @@ import IECharts from '../IECharts';
 import ReportTitle from './ReportTitle';
 import ReportFilter from './ReportFilter';
 import ChartLegend from './ChartLegend';
-import { defaultStartTime, defaultEndTime, taskCustomerOptions, generalOptions, chartLineOptions, COVER_CUSTOMEER_NUMBER_NAME, TASK_NUMBER_NAME } from './config';
+import {
+  defaultStartTime, defaultEndTime, taskCustomerOptions, generalOptions, chartLineOptions, COVER_CUSTOMEER_NUMBER_NAME, TASK_NUMBER_NAME
+} from './config';
 import { number } from '../../helper';
 import { filterData } from './utils';
 
@@ -22,7 +24,9 @@ import styles from './taskCustomerReport.less';
 import imgSrc from '../chartRealTime/noChart.png';
 
 const { thousandFormat } = number;
-const { yAxisSplitLine, textStyle, toolbox, gridOptions } = generalOptions;
+const {
+  yAxisSplitLine, textStyle, toolbox, gridOptions
+} = generalOptions;
 const { series } = chartLineOptions;
 const { color, legendList } = taskCustomerOptions;
 
@@ -100,11 +104,11 @@ export default class TaskCustomerReport extends PureComponent {
     // 客户人次数据
     const customerNumberData = filterData(taskCustomerList, 'customerNumber');
     // 客户人次最大值
-    const customerNumberMax =  Math.max.apply(null, customerNumberData);
+    const customerNumberMax = Math.max.apply(null, customerNumberData);
     // 任务数数据
     const taskNumberData = filterData(taskCustomerList, 'taskNumber');
     // 任务数最大值
-    const taskNumberMax =  Math.max.apply(null, taskNumberData);
+    const taskNumberMax = Math.max.apply(null, taskNumberData);
     // 任务数间隔
     // xAxis轴触发时间数据
     const triggerTimeData = filterData(taskCustomerList, 'triggerTime');
@@ -138,7 +142,7 @@ export default class TaskCustomerReport extends PureComponent {
           border-radius: 3px 3px 3px 0 0 3px 0 0 0;`,
     };
     const options = {
-      color: color,
+      color,
       textStyle,
       toolbox,
       grid: gridOptions,
@@ -148,7 +152,7 @@ export default class TaskCustomerReport extends PureComponent {
           type: 'category',
           data: triggerTimeData,
           axisPointer: {
-              type: 'shadow',
+            type: 'shadow',
           },
           axisLabel: {
             interval: xAxisLabelInterval,
@@ -205,9 +209,9 @@ export default class TaskCustomerReport extends PureComponent {
     };
     return (
       <div className={styles.taskCustomerReport}>
-        <ReportTitle title='每日触发任务及覆盖客户数' />
+        <ReportTitle title="每日触发任务及覆盖客户数" />
         <ReportFilter
-          dateFilterName='任务触发时间'
+          dateFilterName="任务触发时间"
           startTime={startTime}
           endTime={endTime}
           executeType={executeType}
@@ -217,27 +221,25 @@ export default class TaskCustomerReport extends PureComponent {
         <div className={styles.taskCustomerChartWrapper}>
           {
             (taskCustomerList && taskCustomerList.length > 0)
-            ?
-            (
-              <div className={styles.taskCustomerChart}>
-                <ChartLegend
-                  legendList={legendList}
-                />
-                <IECharts
-                  option={options}
-                  resizable
-                  style={{
-                    height: '310px',
-                  }}
-                />
-              </div>
-            )
-            :
-            (
-              <div className={styles.noChart}>
-                <img src={imgSrc} alt="图表不可见" />
-              </div>
-            )
+              ? (
+                <div className={styles.taskCustomerChart}>
+                  <ChartLegend
+                    legendList={legendList}
+                  />
+                  <IECharts
+                    option={options}
+                    resizable
+                    style={{
+                      height: '310px',
+                    }}
+                  />
+                </div>
+              )
+              : (
+                <div className={styles.noChart}>
+                  <img src={imgSrc} alt="图表不可见" />
+                </div>
+              )
           }
         </div>
       </div>

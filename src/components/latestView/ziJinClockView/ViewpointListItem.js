@@ -53,10 +53,9 @@ export default class ViewpointListItem extends PureComponent {
       <span className={styles.stockItem} key={item.code}>
         <a onClick={() => this.openStockPage(item)}>{`${item.name}(${item.code})`}</a>
         {
-          index === commend.length - 1 ?
-          null
-          :
-          <em>、</em>
+          index === commend.length - 1
+            ? null
+            : <em>、</em>
         }
       </span>
     ));
@@ -125,12 +124,13 @@ export default class ViewpointListItem extends PureComponent {
             style={{ height: toggle ? 'auto' : `${MAX_HEIGHT}px` }}
           >
             {
-              showToggleButton ?
-                <div className={styles.toggleBox}>
-                  <a onClick={this.toggle}><Icon type={toggle ? 'shouqi2' : 'zhankai1'} /></a>
-                </div>
-                :
-                null
+              showToggleButton
+                ? (
+                  <div className={styles.toggleBox}>
+                    <a onClick={this.toggle}><Icon type={toggle ? 'shouqi2' : 'zhankai1'} /></a>
+                  </div>
+                )
+                : null
             }
             <div
               className={styles.stockCon}

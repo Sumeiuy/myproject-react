@@ -11,7 +11,9 @@ import { autobind } from 'core-decorators';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import moment from 'moment';
-import { Form, DatePicker, Input, Switch, AutoComplete  } from 'antd';
+import {
+  Form, DatePicker, Input, Switch, AutoComplete
+} from 'antd';
 
 import HtSchedule from 'lego-schedule/src';
 import InfoCell from './InfoCell';
@@ -29,10 +31,12 @@ const create = Form.create;
 const { TextArea } = Input;
 
 // 时间段选择样式配置项
-const { rowContentStyle, cellStyle, disabledCellStyle, selectedCellStyle } = SCHEDULE_STYLES;
+const {
+  rowContentStyle, cellStyle, disabledCellStyle, selectedCellStyle
+} = SCHEDULE_STYLES;
 
 @create()
-export default class AdvisorSpaceForm  extends PureComponent {
+export default class AdvisorSpaceForm extends PureComponent {
   static propTypes = {
     form: PropTypes.object.isRequired,
     // 判断此组件用于新建页面还是驳回后修改页面，'CREATE'或者'UPDATE'
@@ -188,7 +192,9 @@ export default class AdvisorSpaceForm  extends PureComponent {
     },
   })
   handleRoomChange(value, option) {
-    const { roomNo, roomName, siteCode, siteName, orderPeriodList } = option;
+    const {
+      roomNo, roomName, siteCode, siteName, orderPeriodList
+    } = option;
     // 已预订时间，每个对象需要增加行标，所以增加index属性
     const selectedRange = _.map(orderPeriodList, item => ({ index: 0, ...item }));
     const roomTitle = `${siteName}${roomName}`;
@@ -252,7 +258,7 @@ export default class AdvisorSpaceForm  extends PureComponent {
     const { participantCode, participantName } = participant;
     const text = `${participantName}（${participantCode}）`;
     return (
-      <Option key={participantCode} value={text} >
+      <Option key={participantCode} value={text}>
         <span className={styles.participantAutoCompleteOptionValue} title={text}>{text}</span>
       </Option>
     );
@@ -348,29 +354,29 @@ export default class AdvisorSpaceForm  extends PureComponent {
     const innerParticipant = participantCode ? `${participantCode}（${participantName}）` : '';
     return (
       <div className={styles.advisorSpaceForm}>
-        <Form >
+        <Form>
           <InfoTitle head="选择智慧前厅和时间" />
           <div className={styles.roomWrapper}>
             <div className={styles.coloumnHalfWrapper}>
               <div className={styles.coloumn}>
-                <InfoCell label='预约日期' required className={styles.advisorInfoCell}>
+                <InfoCell label="预约日期" required className={styles.advisorInfoCell}>
                   <FormItem>
-                      {getFieldDecorator('orderDate', {
-                        rules: [{ required: true, message: '请选择预约日期' }],
-                        initialValue: !_.isEmpty(orderDate) ? moment(orderDate) : null,
-                      })(
-                        <DatePicker
-                          onChange={this.handleOrderDateChange}
-                          placeholder="请选择"
-                          disabledDate={this.disabledDate}
-                          dropdownClassName="progressSelectDropdown"
-                        />
-                      )}
-                    </FormItem>
+                    {getFieldDecorator('orderDate', {
+                      rules: [{ required: true, message: '请选择预约日期' }],
+                      initialValue: !_.isEmpty(orderDate) ? moment(orderDate) : null,
+                    })(
+                      <DatePicker
+                        onChange={this.handleOrderDateChange}
+                        placeholder="请选择"
+                        disabledDate={this.disabledDate}
+                        dropdownClassName="progressSelectDropdown"
+                      />
+                    )}
+                  </FormItem>
                 </InfoCell>
               </div>
               <div className={styles.coloumn}>
-                <InfoCell label='智慧前厅' required className={styles.advisorInfoCell}>
+                <InfoCell label="智慧前厅" required className={styles.advisorInfoCell}>
                   <FormItem {...roomStatusErrorProps}>
                     <ProgressSelect
                       data={roomList}
@@ -383,15 +389,15 @@ export default class AdvisorSpaceForm  extends PureComponent {
               </div>
             </div>
             {
-              !_.isEmpty(roomNo) ?
-                (
+              !_.isEmpty(roomNo)
+                ? (
                   <div className={styles.scheduleWrapper}>
                     <FormItem {...periodStatusErrorProps}>
                       <HtSchedule
                         startTime="09:00"
                         endTime="18:00"
                         onSelected={this.handleScheduleSelect}
-                        rowContents={[{title: roomTitle}]}
+                        rowContents={[{ title: roomTitle }]}
                         rowContentStyle={rowContentStyle}
                         cellStyle={cellStyle}
                         disabledCellStyle={disabledCellStyle}
@@ -401,11 +407,11 @@ export default class AdvisorSpaceForm  extends PureComponent {
                       />
                       <div className={styles.scheduleLabel}>
                         <div className={styles.scheduleItem}>
-                          <i className={styles.unSelected}></i>
+                          <i className={styles.unSelected} />
                           <span>可选定</span>
                         </div>
                         <div className={styles.scheduleItem}>
-                          <i className={styles.selected}></i>
+                          <i className={styles.selected} />
                           <span>已预订</span>
                         </div>
                       </div>
@@ -416,14 +422,14 @@ export default class AdvisorSpaceForm  extends PureComponent {
           </div>
           <InfoTitle head="填写详细信息" />
           <div className={styles.detailInfo}>
-            <InfoCell label='主题' required>
+            <InfoCell label="主题" required>
               <div className={`${styles.value} ${styles.theme}`}>
                 <FormItem>
                   {getFieldDecorator('theme', {
                     rules: [
                       { required: true, message: '请输入主题' },
                       { whitespace: true, message: '请输入主题' },
-                      { max: 50, message: '最多50个字符'}
+                      { max: 50, message: '最多50个字符' }
                     ],
                     initialValue: theme,
                   })(
@@ -432,52 +438,51 @@ export default class AdvisorSpaceForm  extends PureComponent {
                 </FormItem>
               </div>
             </InfoCell>
-            <InfoCell label='参与人' required>
+            <InfoCell label="参与人" required>
               <div className={`${styles.value} ${styles.participant}`}>
-                  <FormItem {...participantStatusErrorProps}>
-                    {
-                      outerPersonFlag ?
-                      (
-                        <Input
-                          placeholder="请输入"
-                          onChange={this.handleOuterPersonChange}
-                          defaultValue={participantName}
-                        />
-                      )
-                      :
-                      (
-                        <SimilarAutoComplete
-                          style={{ width: '228px', height: '30px' }}
-                          placeholder="经纪客户号/客户名称"
-                          optionList={participantList}
-                          optionKey="participantCode"
-                          defaultValue={innerParticipant}
-                          onSelect={this.handleSelectParticipant}
-                          onSearch={this.handleSearchParticipant}
-                          renderOptionNode={this.renderParticipantAutoCompleteOption}
-                        />
-                      )
+                <FormItem {...participantStatusErrorProps}>
+                  {
+                      outerPersonFlag
+                        ? (
+                          <Input
+                            placeholder="请输入"
+                            onChange={this.handleOuterPersonChange}
+                            defaultValue={participantName}
+                          />
+                        )
+                        : (
+                          <SimilarAutoComplete
+                            style={{ width: '228px', height: '30px' }}
+                            placeholder="经纪客户号/客户名称"
+                            optionList={participantList}
+                            optionKey="participantCode"
+                            defaultValue={innerParticipant}
+                            onSelect={this.handleSelectParticipant}
+                            onSearch={this.handleSearchParticipant}
+                            renderOptionNode={this.renderParticipantAutoCompleteOption}
+                          />
+                        )
                     }
-                  </FormItem>
-                  <div className={styles.externalCustomer}>
-                    <div className={styles.customerLabel}>外部客户</div>
-                    <div className={styles.value}>
-                      <Switch
-                        checkedChildren="是"
-                        unCheckedChildren="否"
-                        checked={outerPersonFlag}
-                        onChange={this.handleExternalCustChange}
-                      />
-                    </div>
+                </FormItem>
+                <div className={styles.externalCustomer}>
+                  <div className={styles.customerLabel}>外部客户</div>
+                  <div className={styles.value}>
+                    <Switch
+                      checkedChildren="是"
+                      unCheckedChildren="否"
+                      checked={outerPersonFlag}
+                      onChange={this.handleExternalCustChange}
+                    />
                   </div>
                 </div>
+              </div>
             </InfoCell>
-            <InfoCell label='备注'>
+            <InfoCell label="备注">
               <div className={`${styles.value} ${styles.remark}`}>
                 <FormItem>
                   {getFieldDecorator('remark', {
                     rules: [
-                      { max: 100, message: '最多100个字符'}
+                      { max: 100, message: '最多100个字符' }
                     ],
                     initialValue: remark,
                   })(

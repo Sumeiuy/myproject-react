@@ -21,7 +21,6 @@ const formItemLayout = {
 
 @Form.create()
 export default class CustomerSourceInput extends PureComponent {
-
   static propTypes = {
     form: PropTypes.object.isRequired,
     defaultValue: PropTypes.string,

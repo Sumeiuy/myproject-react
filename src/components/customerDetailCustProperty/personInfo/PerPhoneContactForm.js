@@ -8,7 +8,9 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { Row, Col, Select, Input, Form } from 'antd';
+import {
+  Row, Col, Select, Input, Form
+} from 'antd';
 import _ from 'lodash';
 
 import logable from '../../../decorators/logable';
@@ -105,7 +107,7 @@ export default class PerPhoneContactForm extends PureComponent {
             <div className={styles.formItem}>
               <div className={styles.itemLable}>主要：</div>
               <div className={styles.valueArea}>
-                {/**因为只能新增修改非主要信息，因此此处使用固定的值 */}
+                {/** 因为只能新增修改非主要信息，因此此处使用固定的值 */}
                 <FormItem>
                   {getFieldDecorator('mainFlag', {
                     initialValue: 'N',
@@ -116,7 +118,7 @@ export default class PerPhoneContactForm extends PureComponent {
                     >
                       <Option value="N">N</Option>
                     </Select>
-                    )
+                  )
                   }
                 </FormItem>
               </div>
@@ -124,7 +126,10 @@ export default class PerPhoneContactForm extends PureComponent {
           </Col>
           <Col span={12}>
             <div className={styles.formItem}>
-              <div className={styles.itemLable}><span className={styles.requried}>*</span>号码：</div>
+              <div className={styles.itemLable}>
+                <span className={styles.requried}>*</span>
+号码：
+              </div>
               <div className={styles.valueArea}>
                 <FormItem>
                   {getFieldDecorator('tellphoneNumber', {
@@ -141,7 +146,10 @@ export default class PerPhoneContactForm extends PureComponent {
         <Row type="flex" gutter={16} align="middle">
           <Col span={12}>
             <div className={styles.formItem}>
-              <div className={styles.itemLable}><span className={styles.requried}>*</span>来源：</div>
+              <div className={styles.itemLable}>
+                <span className={styles.requried}>*</span>
+来源：
+              </div>
               <div className={styles.valueArea}>
                 <FormItem>
                   {getFieldDecorator('sourceCode', {
@@ -153,7 +161,7 @@ export default class PerPhoneContactForm extends PureComponent {
                     >
                       {this.renderSourceOption()}
                     </Select>
-                    )
+                  )
                   }
                 </FormItem>
               </div>
@@ -161,7 +169,10 @@ export default class PerPhoneContactForm extends PureComponent {
           </Col>
           <Col span={12}>
             <div className={styles.formItem}>
-              <div className={styles.itemLable}><span className={styles.requried}>*</span>联系方式：</div>
+              <div className={styles.itemLable}>
+                <span className={styles.requried}>*</span>
+联系方式：
+              </div>
               <div className={styles.valueArea}>
                 <FormItem>
                   {getFieldDecorator('contactWayCode', {
@@ -184,4 +195,3 @@ export default class PerPhoneContactForm extends PureComponent {
     );
   }
 }
-

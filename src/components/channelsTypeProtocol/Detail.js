@@ -21,9 +21,9 @@ import { time } from '../../helper';
 import config from '../../routes/channelsTypeProtocol/config';
 
 const {
-  underCustTitleList,  // 下挂客户表头集合
-  protocolClauseTitleList,  // 协议条款表头集合
-  protocolProductTitleList,  // 协议产品表头集合
+  underCustTitleList, // 下挂客户表头集合
+  protocolClauseTitleList, // 协议条款表头集合
+  protocolProductTitleList, // 协议产品表头集合
 } = seibelConfig.channelsTypeProtocol;
 
 const SUBTYPE = {
@@ -92,8 +92,8 @@ export default class Detail extends PureComponent {
     };
     let isTenLevel = true;
     // 判断是否是紫金快车道 并且是 协议订购
-    if (currentView === SUBTYPE.violetGold &&
-        _.includes(config.subscribeArray, protocolDetail.operationType)) {
+    if (currentView === SUBTYPE.violetGold
+        && _.includes(config.subscribeArray, protocolDetail.operationType)) {
       // 判断是否是十档行情
       isTenLevel = (protocolDetail.templateId || '').indexOf('十档') > -1;
     }
@@ -111,7 +111,10 @@ export default class Detail extends PureComponent {
     return (
       <div className={styles.detailComponent}>
         <div className={styles.dcHeader}>
-          <span className={styles.dcHaderNumb}>编号{protocolDetail.appId}</span>
+          <span className={styles.dcHaderNumb}>
+编号
+            {protocolDetail.appId}
+          </span>
         </div>
         <div className={styles.detailWrapper}>
           <InfoTitle head="基本信息" />
@@ -122,25 +125,25 @@ export default class Detail extends PureComponent {
             value={custName}
           />
           {
-            currentView === SUBTYPE.heightSpeed ?
-              <InfoItem label="申请单编号" value={protocolDetail.appId} />
+            currentView === SUBTYPE.heightSpeed
+              ? <InfoItem label="申请单编号" value={protocolDetail.appId} />
               : null
           }
           {
-            protocolDetail.agreementNum ?
-              <InfoItem label="协议编号" value={protocolDetail.agreementNum} />
-              :
-              null
+            protocolDetail.agreementNum
+              ? <InfoItem label="协议编号" value={protocolDetail.agreementNum} />
+              : null
           }
           <InfoItem label="协议模板" value={protocolDetail.templateId} />
           {
-            isTenLevel ?
-              null
-              :
-              <div>
-                <InfoItem label="是否多账户使用" value={mapBoolData[protocolDetail.multiUsedFlag]} />
-                <InfoItem label="是否订购十档行情" value={mapBoolData[protocolDetail.levelTenFlag]} />
-              </div>
+            isTenLevel
+              ? null
+              : (
+                <div>
+                  <InfoItem label="是否多账户使用" value={mapBoolData[protocolDetail.multiUsedFlag]} />
+                  <InfoItem label="是否订购十档行情" value={mapBoolData[protocolDetail.levelTenFlag]} />
+                </div>
+              )
           }
           <InfoItem label="协议开始日期" value={time.format(protocolDetail.startDt) || EMPTY_PARAM} />
           <InfoItem label="协议有效期" value={time.format(protocolDetail.vailDt) || EMPTY_PARAM} />
@@ -168,26 +171,29 @@ export default class Detail extends PureComponent {
           />
         </div>
         {
-          showUnderCust ?
-            <div className={styles.detailWrapper}>
-              <InfoTitle head="下挂客户" />
-              <CommonTable
-                data={protocolDetail.cust}
-                titleList={underCustTitleList}
-              />
-            </div>
-            :
-            null
+          showUnderCust
+            ? (
+              <div className={styles.detailWrapper}>
+                <InfoTitle head="下挂客户" />
+                <CommonTable
+                  data={protocolDetail.cust}
+                  titleList={underCustTitleList}
+                />
+              </div>
+            )
+            : null
         }
         <div className={styles.detailWrapper}>
           <InfoTitle head="附件信息" />
           {
-            (attachmentList || EMPTY_ARRAY).map(item => (<MultiUploader
-              attachmentList={item.attachmentList}
-              attachment={''}
-              title={item.title}
-              key={`${protocolDetail.id}${item.title}`}
-            />))
+            (attachmentList || EMPTY_ARRAY).map(item => (
+              <MultiUploader
+                attachmentList={item.attachmentList}
+                attachment=""
+                title={item.title}
+                key={`${protocolDetail.id}${item.title}`}
+              />
+            ))
           }
         </div>
         <div className={styles.detailWrapper}>

@@ -37,7 +37,7 @@ const org = {
 export default org;
 
 export const {
- isFiliale,
- isDepartment,
- isManagementHeadquarters,
+  isFiliale,
+  isDepartment,
+  isManagementHeadquarters,
 } = org;

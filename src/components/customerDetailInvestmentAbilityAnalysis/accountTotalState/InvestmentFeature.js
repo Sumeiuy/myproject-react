@@ -11,8 +11,8 @@ import _ from 'lodash';
 import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 
-import Icon from '../../common/Icon';
 import { Popover } from 'antd';
+import Icon from '../../common/Icon';
 import InvestmentFeatureLabel from './InvestmentFeatureLabel';
 import ProfitAbilityLevel from './ProfitAbilityLevel';
 import { profitAbilityLevelList } from '../config';
@@ -33,9 +33,9 @@ export default class InvestmentFeature extends PureComponent {
     // 展示的数据和levelList顺序相反，levelList需要倒叙排列
     const levelList = _.slice(profitAbilityLevelList);
     const levelListReverse = _.reverse(levelList);
-    const levelDescData = _.map(levelListReverse, level => {
+    const levelDescData = _.map(levelListReverse, (level) => {
       const { levelName, levelDesc, levelClassName } = level;
-      const levelLabelCls = classnames([styles['levelLabel'], styles[levelClassName]]);
+      const levelLabelCls = classnames([styles.levelLabel, styles[levelClassName]]);
       return (
         <div className={styles.levelDesc}>
           <span className={levelLabelCls}>{levelName}</span>
@@ -70,7 +70,9 @@ export default class InvestmentFeature extends PureComponent {
             {beatCustPercent}
           </p>
           <p className={styles.custAssetStage}>
-            同资产段 ({custAssetStage}）客户
+            同资产段 (
+            {custAssetStage}
+）客户
           </p>
         </div>
         <div className={styles.profitAbilityLevel}>
@@ -81,7 +83,7 @@ export default class InvestmentFeature extends PureComponent {
               title={levelDesc}
               trigger="click"
             >
-              <Icon type="tishi" className={styles.profitAbilityLevelIcon}/>
+              <Icon type="tishi" className={styles.profitAbilityLevelIcon} />
             </Popover>
           </div>
           <div className={styles.levelWrapper}>

@@ -109,7 +109,7 @@ export default class MajorAssets extends PureComponent {
     logCommon({
       type: 'Click',
       payload: {
-        name: param.title + '-更多',
+        name: `${param.title}-更多`,
       },
     });
   }
@@ -130,31 +130,36 @@ export default class MajorAssets extends PureComponent {
         </div>
         <Tabs activeKey={activeKey} onChange={this.handleTabsChange}>
           {
-            tabArray.map(item =>
+            tabArray.map(item => (
               <TabPane
                 tab={
                   indexData[item.key].hasNew
-                  ?
-                    <span className={styles.newIcon}>{item.name}<Icon type="new1" /></span>
-                  :
-                    item.name
+                    ? (
+                      <span className={styles.newIcon}>
+                        {item.name}
+                        <Icon type="new1" />
+                      </span>
+                    )
+                    : item.name
                 }
                 key={item.key}
               >
                 <div className={styles.itemList}>
                   {
-                    tabPaneData.map((child, index) => <Item
-                      data={child}
-                      isEven={index % 2 === 0}
-                      modalKey={MODAL_KEY}
-                      openModal={this.openModal}
-                      getDetail={getDetail}
-                      key={child.id}
-                    />)
+                    tabPaneData.map((child, index) => (
+                      <Item
+                        data={child}
+                        isEven={index % 2 === 0}
+                        modalKey={MODAL_KEY}
+                        openModal={this.openModal}
+                        getDetail={getDetail}
+                        key={child.id}
+                      />
+                    ))
                   }
                 </div>
-              </TabPane>,
-            )
+              </TabPane>
+            ), )
           }
         </Tabs>
         <Modal

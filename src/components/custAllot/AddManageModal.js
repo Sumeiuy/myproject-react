@@ -16,14 +16,16 @@ import { TreeFilter as HTTreeFilter } from 'lego-tree-filter/src';
 
 import logable, { logCommon } from '../../decorators/logable';
 import CommonModal from '../common/biz/CommonModal';
-import Pagination from '../../components/common/Pagination';
-import CommonTable from '../../components/common/biz/CommonTable';
+import Pagination from '../common/Pagination';
+import CommonTable from '../common/biz/CommonTable';
 import { emp } from '../../helper';
 import config from './config';
 import styles from './addManageModal.less';
 
 // 表头
-const { titleList: { manage }, positionTypeArray, clearDataArray, operateType } = config;
+const {
+  titleList: { manage }, positionTypeArray, clearDataArray, operateType
+} = config;
 // 登陆人的组织ID
 const empOrgId = emp.getOrgId();
 // 服务经理
@@ -96,7 +98,13 @@ export default class AddManageModal extends PureComponent {
     const newTitleList = [...manage];
     const empNameColumn = _.find(newTitleList, o => o.key === KEY_EMPNAME);
     empNameColumn.render = (text, record) => (
-      <div>{text} ({record.empId})</div>
+      <div>
+        {text}
+        {' '}
+(
+        {record.empId}
+)
+      </div>
     );
     return newTitleList;
   }
@@ -175,7 +183,7 @@ export default class AddManageModal extends PureComponent {
     const payload = {
       customer: [],
       manage: selectedRows,
-      operateType: operateType[0],  // add
+      operateType: operateType[0], // add
       attachment: '',
       id: updateData.appId || '',
     };

@@ -56,7 +56,10 @@ export default function ViewListRow(props) {
       <div className={styles.oneLineCls}>
         <div className={styles.title}>
           <Icon type={type} className={styles.appIcon} />
-          <span className={styles.serialNumber}>编号{data.id || '暂无'}</span>
+          <span className={styles.serialNumber}>
+编号
+            {data.id || '暂无'}
+          </span>
         </div>
         <div className={styles.tagArea}>
           <div className={styles.tag}>{changeDisplay(data.status, statusOptions)}</div>
@@ -70,10 +73,23 @@ export default function ViewListRow(props) {
       {/* 第三行 */}
       <div className={styles.thirdLine}>
         <div className={styles.drafter}>
-          拟稿人：<span className={styles.drafterName}>{data.empName}({data.empId})</span>{`${data.orgName || ''}` || '无'}
+          拟稿人：
+          <span className={styles.drafterName}>
+            {data.empName}
+(
+            {data.empId}
+)
+          </span>
+          {`${data.orgName || ''}` || '无'}
         </div>
         <div className={styles.customer}>
-          客户：<span>{data.custName || '无'}({data.custNumber || '无'})</span>
+          客户：
+          <span>
+            {data.custName || '无'}
+(
+            {data.custNumber || '无'}
+)
+          </span>
         </div>
       </div>
     </div>

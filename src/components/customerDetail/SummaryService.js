@@ -28,7 +28,7 @@ export default function SummaryService(props) {
   let recentServeText = '暂无';
   if (_.isEmpty(serviceDate)) {
     recentServeText = '暂无';
-  } else if ( _.isEmpty(serviceRecordType)) {
+  } else if (_.isEmpty(serviceRecordType)) {
     recentServeText = `${serviceDate} ${serviceRecordTitle}`;
   } else if (_.isEmpty(serviceRecordTitle)) {
     recentServeText = `${serviceDate} ${serviceRecordType}`;

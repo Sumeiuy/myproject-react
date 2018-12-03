@@ -8,8 +8,8 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import Table from '../../../components/common/table';
-import Modal from '../../../components/common/biz/CommonModal';
+import Table from '../../common/table';
+import Modal from '../../common/biz/CommonModal';
 import { newMemberGradeColumns } from '../config';
 import styles from './zlMemberInfo.less';
 import logable from '../../../decorators/logable';
@@ -57,8 +57,10 @@ export default class ZLMemeberInfoModal extends PureComponent {
 
   // 页码改变的回调
   @autobind
-  @logable({ type: 'Click',
-  payload: { name: '页码切换' } })
+  @logable({
+    type: 'Click',
+    payload: { name: '页码切换' }
+  })
   handlePaginationChange(page) {
     const { queryZLUmemberLevelChangeRecords, location: { query: { custId } } } = this.props;
     queryZLUmemberLevelChangeRecords({
@@ -80,13 +82,13 @@ export default class ZLMemeberInfoModal extends PureComponent {
       onChange: this.handlePaginationChange,
     };
     // 数据长达大于10显示分页
-    const showMemberGradePagination =  page.totalPageNum !== 1 ? PaginationOption : false;
+    const showMemberGradePagination = page.totalPageNum !== 1 ? PaginationOption : false;
     return (
       <div>
         <Modal
           className={styles.memberGradeModal}
           title="会员等级变更"
-          size='large'
+          size="large"
           visible={visible}
           closeModal={onClose}
           showOkBtn={false}

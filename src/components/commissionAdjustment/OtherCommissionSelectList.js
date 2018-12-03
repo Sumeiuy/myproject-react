@@ -49,7 +49,9 @@ export default class OtherCommissionSelectList extends PureComponent {
 
   @autobind
   makeSelect(item) {
-    const { onChange, reset, subType, custOpenRzrq, baseCommission } = this.props;
+    const {
+      onChange, reset, subType, custOpenRzrq, baseCommission
+    } = this.props;
     // 单佣金调整需要针对两融开关进行下拉框disabled
     let disabled = false;
     const { code, options } = item;
@@ -116,7 +118,8 @@ export default class OtherCommissionSelectList extends PureComponent {
           }
         </div>
         <div className={tipCls}>
-          <Icon type="exclamation-circle" />本功能不提供特殊资产校验的费率设置，如需调整请通过单客户佣金调整功能
+          <Icon type="exclamation-circle" />
+本功能不提供特殊资产校验的费率设置，如需调整请通过单客户佣金调整功能
         </div>
       </div>
     );

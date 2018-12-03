@@ -33,7 +33,9 @@ export default class Item extends PureComponent {
   @autobind
   @logPV({ pathname: '/modal/detailClickLog', title: '大类资产配置分析详情弹框' })
   handleDetailClick() {
-    const { data: { id = '' }, openModal, modalKey, getDetail } = this.props;
+    const {
+      data: { id = '' }, openModal, modalKey, getDetail
+    } = this.props;
     getDetail({ id }).then(() => {
       openModal(modalKey);
     });
@@ -41,7 +43,9 @@ export default class Item extends PureComponent {
 
   render() {
     const { data, isEven } = this.props;
-    const { title, categoryName, time, gradeName, content } = data;
+    const {
+      title, categoryName, time, gradeName, content
+    } = data;
     const wrapperClassName = classnames({
       [styles.itemWrapper]: true,
       [styles.even]: isEven,

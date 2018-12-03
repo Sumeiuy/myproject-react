@@ -159,8 +159,8 @@ export default class SingleCreateBoard extends PureComponent {
       }).then(() => {
         const { custCurrentCommission } = this.props;
         this.setState({
-          newCurrentCommission: _.isEmpty(custCurrentCommission) ||
-            _.isNull(custCurrentCommission.currentCommission) ? '--' : custCurrentCommission.currentCommission,
+          newCurrentCommission: _.isEmpty(custCurrentCommission)
+            || _.isNull(custCurrentCommission.currentCommission) ? '--' : custCurrentCommission.currentCommission,
         });
       });
     }
@@ -452,17 +452,17 @@ export default class SingleCreateBoard extends PureComponent {
         <div className={styles.approvalBlock}>
           <InfoTitle head="其他佣金费率" />
           {
-            _.isEmpty(customer) ? null :
-            (
-              <OtherCommissionSelectList
-                showTip
-                reset={otherComReset}
-                otherRatios={otherRations}
-                onChange={this.changeOtherCommission}
-                custOpenRzrq={customer.openRzrq}
-                subType={commadj.single}
-              />
-            )
+            _.isEmpty(customer) ? null
+              : (
+                <OtherCommissionSelectList
+                  showTip
+                  reset={otherComReset}
+                  otherRatios={otherRations}
+                  onChange={this.changeOtherCommission}
+                  custOpenRzrq={customer.openRzrq}
+                  subType={commadj.single}
+                />
+              )
           }
         </div>
         {/* 附件信息 */}

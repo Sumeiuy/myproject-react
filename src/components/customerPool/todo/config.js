@@ -7,7 +7,7 @@
 
 import moment from 'moment';
 
- // 筛选项默认开始时间
+// 筛选项默认开始时间
 const defaultStartTime = moment().subtract(61, 'days').valueOf();
 // 筛选项默认结束时间
 const defaultEndTime = moment().valueOf();

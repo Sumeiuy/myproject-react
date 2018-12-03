@@ -76,7 +76,10 @@ export default function ApplyItem(props) {
       <div className={styles.itemHeader}>
         <div className={styles.titleArea}>
           <Icon type={iconType} className={appIconCls} />
-          <span className={serialCls}>编号{data.id || '暂无'}</span>
+          <span className={serialCls}>
+编号
+            {data.id || '暂无'}
+          </span>
           <span className={typeCls}>{typeName}</span>
         </div>
         <div className={styles.tagArea}>
@@ -92,7 +95,16 @@ export default function ApplyItem(props) {
       </div>
       {/* 第三行 */}
       <div className={thirdLineCls}>
-        <div className={styles.drafter}>拟稿人：<span className={styles.drafterName}>{data.empName}({data.empId})</span>{`${data.orgName || ''}` || '无'}</div>
+        <div className={styles.drafter}>
+拟稿人：
+          <span className={styles.drafterName}>
+            {data.empName}
+(
+            {data.empId}
+)
+          </span>
+          {`${data.orgName || ''}` || '无'}
+        </div>
         <div className={styles.customer} title={thirdLineValue}>{thirdLineValue}</div>
       </div>
     </div>

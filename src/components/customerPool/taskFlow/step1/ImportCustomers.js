@@ -16,7 +16,6 @@ import styles from './importCustomers.less';
 
 
 export default class ImportCustomers extends PureComponent {
-
   static propTypes = {
     visible: PropTypes.bool,
     onPreview: PropTypes.func.isRequired,

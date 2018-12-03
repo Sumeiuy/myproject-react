@@ -10,14 +10,13 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { Form, Button } from 'antd';
 
-import AutoComplete from '../../components/common/similarAutoComplete/index';
+import AutoComplete from '../common/similarAutoComplete/index';
 import logable from '../../decorators/logable';
 import styles from './searchForm.less';
 
 const FormItem = Form.Item;
 
 export default class SearchForm extends Component {
-
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '重置' } })
   reset() {
@@ -124,4 +123,3 @@ SearchForm.propTypes = {
   onQueryProductList: PropTypes.func.isRequired,
   onReset: PropTypes.func.isRequired,
 };
-

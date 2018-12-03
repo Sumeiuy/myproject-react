@@ -19,6 +19,7 @@ export default class IEWarningModal extends PureComponent {
       this.warning();
     }
   }
+
   @autobind
   warning() {
     Modal.warning({
@@ -27,6 +28,7 @@ export default class IEWarningModal extends PureComponent {
       okText: '确定',
     });
   }
+
   render() {
     return null;
   }

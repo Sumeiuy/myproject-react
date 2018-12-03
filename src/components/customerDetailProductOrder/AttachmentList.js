@@ -12,7 +12,7 @@ import CommonUpload from '../common/biz/CommonUpload';
 import styles from './attachmentList.less';
 
 export default function AttachmentList(props) {
-  return(
+  return (
     <div className={styles.attachmentListWrap}>
       <CommonUpload
         attachmentList={props.attachmentList}

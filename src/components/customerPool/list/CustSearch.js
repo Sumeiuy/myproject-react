@@ -11,7 +11,7 @@ import { Icon as AntdIcon, Input, AutoComplete } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { isSightingScope } from '../helper';
-import { emp, permission } from '../../../../src/helper';
+import { emp, permission } from '../../../helper';
 import { logCommon } from '../../../decorators/logable';
 import { custListSearchTypeMapData } from './config/filterConfig';
 
@@ -21,7 +21,6 @@ const Option = AutoComplete.Option;
 const NONE_INFO = '按回车键发起搜索';
 
 export default class CustSearch extends PureComponent {
-
   static propTypes ={
     location: PropTypes.object.isRequired,
     // 搜索联想词
@@ -144,11 +143,11 @@ export default class CustSearch extends PureComponent {
       name: 'searchText',
       value: _.trim(value),
     }, false, {
-        source: 'association',
-        q: _.trim(value),
-        type: 'ALL',
-        labelMapping: '',
-        isSearchFromCust: true,
+      source: 'association',
+      q: _.trim(value),
+      type: 'ALL',
+      labelMapping: '',
+      isSearchFromCust: true,
     });
   }
 
@@ -260,7 +259,7 @@ export default class CustSearch extends PureComponent {
         className={styles.custSearchBox}
         dropdownClassName={styles.custSearchDropdown}
         size="large"
-        placeholder={'客户基本信息等'}
+        placeholder="客户基本信息等"
         defaultActiveFirstOption={false}
         allowClear
         dataSource={this.renderDatasource()}
@@ -272,13 +271,13 @@ export default class CustSearch extends PureComponent {
       >
         <Input
           onPressEnter={this.handlePressEnter}
-          suffix={
-              <AntdIcon
-                type="search"
-                className="certain-category-icon"
-                onClick={this.handlePressEnter}
-              />
-            }
+          suffix={(
+            <AntdIcon
+              type="search"
+              className="certain-category-icon"
+              onClick={this.handlePressEnter}
+            />
+)}
         />
       </AutoComplete>
     );

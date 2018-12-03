@@ -102,8 +102,10 @@ export default class FeedBackNew extends PureComponent {
   }
 
   componentDidUpdate() {
-    const { location: { pathname, query, query: { isResetPageNum } }, replace,
-      list: { resultData = EMPTY_LIST } } = this.props;
+    const {
+      location: { pathname, query, query: { isResetPageNum } }, replace,
+      list: { resultData = EMPTY_LIST }
+    } = this.props;
     // 重置pageNum和pageSize
     if (isResetPageNum === 'Y') {
       replace({

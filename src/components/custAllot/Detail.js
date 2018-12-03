@@ -74,9 +74,12 @@ export default class Detail extends PureComponent {
     const custColumn = _.find(tempTitleList, o => o.key === KEY_CUSTNAME);
     custColumn.render = (text, record) => {
       const custId = record.custId ? ` (${record.custId})` : '';
-      return (<div title={`${text}${custId}`}>
-        {text}{custId}
-      </div>);
+      return (
+        <div title={`${text}${custId}`}>
+          {text}
+          {custId}
+        </div>
+      );
     };
     // 状态
     const statusColumn = _.find(tempTitleList, o => o.key === KEY_STATUS);
@@ -93,11 +96,17 @@ export default class Detail extends PureComponent {
         <div>
           {
             text
-            ? <div className={styles.oldEmp} title={`${text} (${record.oldEmpId})`}>
-              {text} ({record.oldEmpId})
-              {touGuElement}
-            </div>
-            : null
+              ? (
+                <div className={styles.oldEmp} title={`${text} (${record.oldEmpId})`}>
+                  {text}
+                  {' '}
+(
+                  {record.oldEmpId}
+)
+                  {touGuElement}
+                </div>
+              )
+              : null
           }
         </div>
       );
@@ -111,7 +120,13 @@ export default class Detail extends PureComponent {
     // 新服务经理
     const newEmpColumn = _.find(tempTitleList, o => o.key === KEY_NEWEMPNAME);
     newEmpColumn.render = (text, record) => (
-      <div title={`${text} (${record.newEmpId})`}>{text} ({record.newEmpId})</div>
+      <div title={`${text} (${record.newEmpId})`}>
+        {text}
+        {' '}
+(
+        {record.newEmpId}
+)
+      </div>
     );
     return tempTitleList;
   }
@@ -189,29 +204,36 @@ export default class Detail extends PureComponent {
 
     return (
       <div className={styles.detailBox}>
-        <h2 className={styles.title}>编号{id}</h2>
+        <h2 className={styles.title}>
+编号
+          {id}
+        </h2>
         <div className={styles.module}>
           <div className={styles.error}>
             {
               errorDesc
-              ? <p>
-                <Icon type="tishi" />
-                {config.tips[errorDesc]}
-              </p>
-              : null
+                ? (
+                  <p>
+                    <Icon type="tishi" />
+                    {config.tips[errorDesc]}
+                  </p>
+                )
+                : null
             }
             {
               errorDesc === config.errorArray[0]
-              ? <p>
-                <a
-                  onClick={this.handleDownloadClick}
-                  href={`${request.prefix}/excel/custTransfer/exportAssigumentExcel?appId=${dataId}&empId=${emp.getId()}&orgId=${empOrgId}`}
-                  download
-                >
+                ? (
+                  <p>
+                    <a
+                      onClick={this.handleDownloadClick}
+                      href={`${request.prefix}/excel/custTransfer/exportAssigumentExcel?appId=${dataId}&empId=${emp.getId()}&orgId=${empOrgId}`}
+                      download
+                    >
                   下载报错信息
-                </a>
-              </p>
-              : null
+                    </a>
+                  </p>
+                )
+                : null
             }
           </div>
           <InfoTitle head="客户列表" />
@@ -228,11 +250,13 @@ export default class Detail extends PureComponent {
         </div>
         {
           ruleType
-          ? <div className={styles.module}>
-            <InfoTitle head="客户分配规则" />
-            <InfoItem label="规则" value={ruleType ? ruleTypeArray[ruleType].label : ''} />
-          </div>
-          : null
+            ? (
+              <div className={styles.module}>
+                <InfoTitle head="客户分配规则" />
+                <InfoItem label="规则" value={ruleType ? ruleTypeArray[ruleType].label : ''} />
+              </div>
+            )
+            : null
         }
         <div className={styles.module}>
           <InfoTitle head="拟稿信息" />

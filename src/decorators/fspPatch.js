@@ -12,11 +12,11 @@ import { autobind } from 'core-decorators';
 import { dom, env } from '../helper';
 
 const config = {
-  utb: '#UTBContent',  // FSP 外层容器
+  utb: '#UTBContent', // FSP 外层容器
   reactHeaderHeight: 140, // 在React框架下的头部高度
   fspHeaderHeight: 55, // 在FSP框架下的头部高度
-  UTBContentMargin: '10px 30px 10px 25px',  // FSP 框架下顶层容器的 margin
-  newUTBContentMargin: '0 0 0 25px',  // 需要设置的新 margin
+  UTBContentMargin: '10px 30px 10px 25px', // FSP 框架下顶层容器的 margin
+  newUTBContentMargin: '0 0 0 25px', // 需要设置的新 margin
 };
 
 const fspPatch = (...arg) => (ComposedComponent) => {
@@ -26,11 +26,10 @@ const fspPatch = (...arg) => (ComposedComponent) => {
    * 需要其他设置时，传入相应参数，并在 setContentStyle 中做相应更改
    */
   class FspPatchComponent extends PureComponent {
-
     componentDidMount() {
       // 初始化当前系统
       this.UTBContentElem = document.querySelector(config.utb);
-      if(this.UTBContentElem) {
+      if (this.UTBContentElem) {
         // 设置新的 系统的 margin
         this.setUTBContentMargin(config.newUTBContentMargin);
 
@@ -43,7 +42,7 @@ const fspPatch = (...arg) => (ComposedComponent) => {
     }
 
     componentWillUnmount() {
-      if(this.UTBContentElem) {
+      if (this.UTBContentElem) {
         // 重置外层容器 margin 样式,防止影响其他界面
         this.setUTBContentMargin(config.UTBContentMargin);
         // 取消监听 window.onResize 事件

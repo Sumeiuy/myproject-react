@@ -8,8 +8,8 @@ import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import Icon from '../../components/common/Icon';
-import Table from '../../components/common/table';
+import Icon from '../common/Icon';
+import Table from '../common/table';
 import styles from './serviceRelationship.less';
 import { number } from '../../helper';
 import logable, { logPV } from '../../decorators/logable';
@@ -27,24 +27,25 @@ export default class ServiceRelationship extends PureComponent {
     introduce: PropTypes.array.isRequired,
     // 账户关系下服务历史的数据
     serviceHistory: PropTypes.array.isRequired,
-    //查询账户关系下的服务团队信息
+    // 查询账户关系下的服务团队信息
     getCustServiceTeam: PropTypes.func.isRequired,
     // 查询账户关系下的介绍信息
     getCustDevInfo: PropTypes.func.isRequired,
-    //查询账户关系下的服务历史信息
+    // 查询账户关系下的服务历史信息
     getCustServiceHistory: PropTypes.func.isRequired,
   }
+
   constructor(props) {
     super(props);
     this.state = {
-     // 服务历史的弹出框
-     serviceHistoryModalVisible: false,
+      // 服务历史的弹出框
+      serviceHistoryModalVisible: false,
     };
   }
 
-  //打开服务历史的弹框
+  // 打开服务历史的弹框
   @autobind
-  @logPV ({
+  @logPV({
     pathname: '/modal/serviceHistoryModal',
     title: '服务历史的弹框',
   })
@@ -58,8 +59,8 @@ export default class ServiceRelationship extends PureComponent {
   // 关闭服务历史的弹出层
   @autobind
   @logable({
-     type: 'ButtonClick',
-     payload: { name: '服务历史' },
+    type: 'ButtonClick',
+    payload: { name: '服务历史' },
   })
   handleServiceHistoryModalClose() {
     this.setState({ serviceHistoryModalVisible: false });
@@ -76,16 +77,16 @@ export default class ServiceRelationship extends PureComponent {
     } = this.props;
     const isRenderServiceTeam = !_.isEmpty(serviceTeam);
     const isRenderIntroduce = !_.isEmpty(introduce);
-    //将数据百分比化
+    // 将数据百分比化
     const newIntroduceDatas = _.map(introduce, (items) => {
       const { weight } = items;
-      const newWeight= `${number.toFixed(weight)}%`;
+      const newWeight = `${number.toFixed(weight)}%`;
       return {
         ...items,
         weight: newWeight,
       };
     });
-    return(
+    return (
       <div className={styles.tabsContainer}>
         <div className={styles.tabPaneWrap}>
           <div className={styles.accountDetailWrap}>
@@ -111,7 +112,7 @@ export default class ServiceRelationship extends PureComponent {
                 <div className={styles.accountTable}>
                   <Table
                     pagination={false}
-                    rowKey='productName'
+                    rowKey="productName"
                     className={styles.tableBorder}
                     dataSource={serviceTeam}
                     columns={serviceTeamColumns}
@@ -127,14 +128,14 @@ export default class ServiceRelationship extends PureComponent {
                 <div className={styles.accountTable}>
                   <Table
                     pagination={false}
-                    rowKey='productName'
+                    rowKey="productName"
                     className={styles.tableBorder}
                     dataSource={newIntroduceDatas}
                     columns={introduceColumns}
                   />
                 </div>
               </IfTableWrap>
-              </div>
+            </div>
           </div>
         </div>
       </div>

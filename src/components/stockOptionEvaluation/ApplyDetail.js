@@ -24,6 +24,7 @@ export default class ApplyDetail extends PureComponent {
     detailInfo: PropTypes.object.isRequired,
     attachmentList: PropTypes.array,
   }
+
   static defaultProps = {
     attachmentList: [],
   }
@@ -56,19 +57,22 @@ export default class ApplyDetail extends PureComponent {
       <div className={styles.applyDetailbox}>
         <div className={styles.inner}>
           <div className={styles.innerWrap}>
-            <h1 className={styles.title}>编号{id}</h1>
+            <h1 className={styles.title}>
+编号
+              {id}
+            </h1>
             <div className={styles.module}>
               <BasicInfo data={detailInfo} />
             </div>
             {
-              isPerCustType ?
-                (
+              isPerCustType
+                ? (
                   <div className={styles.module}>
                     <InfoTitle head="适当性评估表" />
                     <AssessTable data={detailInfo} />
                   </div>
                 )
-              : null
+                : null
             }
             <div className={styles.module}>
               <InfoTitle head="拟稿信息" />

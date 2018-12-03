@@ -76,106 +76,104 @@ export default function ServiceRecordReadOnly(props) {
           <div className={styles.readOnlyText}>{serviceStatus}</div>
         </div>
         {
-          flowIsApproval ? null :
-          (
-            <div className={styles.serveTime}>
-              <div className={styles.title}>服务时间:</div>
-              <div className={styles.readOnlyText}>{serviceTime}</div>
-            </div>
-          )
+          flowIsApproval ? null
+            : (
+              <div className={styles.serveTime}>
+                <div className={styles.title}>服务时间:</div>
+                <div className={styles.readOnlyText}>{serviceTime}</div>
+              </div>
+            )
         }
         {
           !isZL
-          ? (
-            <div className={styles.serveRecord}>
-              <div className={styles.title}>服务记录:</div>
-              <div className={styles.readOnlyText}>{serviceRecord}</div>
-            </div>
-          )
-          : (
-            <div className={styles.serveRecord}>
-              <div className={styles.title}>服务内容:</div>
-              <div className={styles.readOnlyText}>
-                {
-                  flowIsApproval ? null
-                  : (<div className={styles.adviceTips}>{investAdviceTip}</div>)
-                }
-                {
-                  _.isEmpty(zlServiceRecord.title) ? null
-                  : (
-                    <div>
-                      <span className={styles.caption}>{zlServiceRecord.title}</span>
-                      <span className={styles.type}>{zlServiceRecord.type}</span>
-                    </div>
-                  )
-                }
-                <div className={styles.rightCT}>{zlServiceRecord.content}</div>
+            ? (
+              <div className={styles.serveRecord}>
+                <div className={styles.title}>服务记录:</div>
+                <div className={styles.readOnlyText}>{serviceRecord}</div>
               </div>
-            </div>
-          )
+            )
+            : (
+              <div className={styles.serveRecord}>
+                <div className={styles.title}>服务内容:</div>
+                <div className={styles.readOnlyText}>
+                  {
+                  flowIsApproval ? null
+                    : (<div className={styles.adviceTips}>{investAdviceTip}</div>)
+                }
+                  {
+                  _.isEmpty(zlServiceRecord.title) ? null
+                    : (
+                      <div>
+                        <span className={styles.caption}>{zlServiceRecord.title}</span>
+                        <span className={styles.type}>{zlServiceRecord.type}</span>
+                      </div>
+                    )
+                }
+                  <div className={styles.rightCT}>{zlServiceRecord.content}</div>
+                </div>
+              </div>
+            )
         }
         {
           !isMOTReturnVisitTask ? null
-          : (
-            <div className={styles.serveRecord}>
-              <div className={styles.title}>回访结果:</div>
-              <div className={styles.readOnlyText}>{motReturnResult}</div>
-            </div>
-          )
+            : (
+              <div className={styles.serveRecord}>
+                <div className={styles.title}>回访结果:</div>
+                <div className={styles.readOnlyText}>{motReturnResult}</div>
+              </div>
+            )
         }
         {
           (isMOTReturnVisitTask && motReturnResult === MOT_RETURN_VISIT_WORK_RESULT_LOST)
-          ?
-          (
-            <div className={styles.serveRecord}>
-              <div className={styles.title}>失败原因:</div>
-              <div className={styles.readOnlyText}>{motReturnFailReason}</div>
-            </div>
-          )
-          : null
+            ? (
+              <div className={styles.serveRecord}>
+                <div className={styles.title}>失败原因:</div>
+                <div className={styles.readOnlyText}>{motReturnFailReason}</div>
+              </div>
+            )
+            : null
         }
         <div className={styles.divider} />
         {
           isMOTReturnVisitTask ? null
-          :
-          (
-            <div className={cx([styles.feedbackType, styles.readOnly])}>
-              {
+            : (
+              <div className={cx([styles.feedbackType, styles.readOnly])}>
+                {
                 (isZL && flowIsApproval)
-                ? (<div className={cx([styles.title, styles.flowIsApproval])}>客户可选反馈:</div>)
-                : (<div className={styles.title}>客户反馈:</div>)
+                  ? (<div className={cx([styles.title, styles.flowIsApproval])}>客户可选反馈:</div>)
+                  : (<div className={styles.title}>客户反馈:</div>)
               }
-              {
+                {
                 isZL
-                ? (
-                  <div className={styles.readOnlyText}>
-                    <span className={styles.feedbackTypeL1}>{custFeedbackText}</span>
-                  </div>
-                )
-                : (
-                  <div className={styles.readOnlyText}>
-                    <span className={styles.feedbackTypeL1}>{normalWayCustFeedbackText}</span>
-                  </div>
-                )
+                  ? (
+                    <div className={styles.readOnlyText}>
+                      <span className={styles.feedbackTypeL1}>{custFeedbackText}</span>
+                    </div>
+                  )
+                  : (
+                    <div className={styles.readOnlyText}>
+                      <span className={styles.feedbackTypeL1}>{normalWayCustFeedbackText}</span>
+                    </div>
+                  )
               }
-            </div>
-          )
+              </div>
+            )
         }
         {
           isMOTReturnVisitTask || (isZL && flowIsApproval) || (isZL && ZLFeedbackStatus !== 'FEEDBACK')
-          ? null
-          : (
-            <div className={styles.feedbackTime}>
-              <div className={styles.title}>反馈时间:</div>
-              <div className={styles.readOnlyText}>{feedbackDateTime}</div>
-            </div>
-          )
+            ? null
+            : (
+              <div className={styles.feedbackTime}>
+                <div className={styles.title}>反馈时间:</div>
+                <div className={styles.readOnlyText}>{feedbackDateTime}</div>
+              </div>
+            )
         }
       </div>
       {
         (isZL && _.isEmpty(attachmentList))
-        ? null
-        : (<ServeRecordAttachment list={attachmentList} />)
+          ? null
+          : (<ServeRecordAttachment list={attachmentList} />)
       }
     </div>
   );

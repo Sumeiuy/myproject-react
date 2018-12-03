@@ -36,13 +36,15 @@ function ContactGroup({
       {
         _.map(newList, (item, index) => {
           if (index === 0) {
-            return (<li className={styles.title} key={groupTitle} >
-              {groupTitle}
-              {mainFlag && <span className={styles.primary}>主</span>}
-            </li>);
+            return (
+              <li className={styles.title} key={groupTitle}>
+                {groupTitle}
+                {mainFlag && <span className={styles.primary}>主</span>}
+              </li>
+            );
           }
           return (
-            <li key={item.rowId} >
+            <li key={item.rowId}>
               {item.label && <span className={styles.label}>{item.label}</span>}
               <span className={styles.content}>
                 <Phone
@@ -56,9 +58,9 @@ function ContactGroup({
                 />
               </span>
               {
-                custType === PER_CODE &&
-                item.mainFlag &&
-                <span className={styles.primary}>主</span>
+                custType === PER_CODE
+                && item.mainFlag
+                && <span className={styles.primary}>主</span>
               }
             </li>
           );

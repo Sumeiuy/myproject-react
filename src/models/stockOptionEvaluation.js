@@ -80,7 +80,8 @@ export default {
 
     // 基本信息的多个select数据成功
     getSelectMapSuccess(state, action) {
-      const { payload: {
+      const {
+        payload: {
           resultData: {
             stockCustTypeList = EMPTY_LIST,
             optionMarketTypeList = EMPTY_LIST,

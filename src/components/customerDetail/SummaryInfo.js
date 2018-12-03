@@ -52,11 +52,11 @@ export default function SummaryInfo(props) {
           location={location}
         />
       </div>
-      <div className={styles.splitLine}></div>
+      <div className={styles.splitLine} />
       <div className={styles.middleArea}>
         <SummaryTransaction data={transactionData} />
       </div>
-      <div className={styles.splitLine}></div>
+      <div className={styles.splitLine} />
       <div className={styles.rightArea}>
         <SummaryLabels
           location={location}

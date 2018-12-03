@@ -158,7 +158,7 @@ export default class LabelManager extends PureComponent {
 
   @autobind
   @logable({
-      type: 'DropdownSelect',
+    type: 'DropdownSelect',
     payload: {
       name: '标签类型',
       value: '$args[0].value',
@@ -181,6 +181,7 @@ export default class LabelManager extends PureComponent {
       pageSize,
     });
   }
+
   // 新建标签类型 ----start
   @autobind
   @logPV({ pathname: '/modal/createLabelTypeLog', title: '新建标签类型' })
@@ -196,6 +197,7 @@ export default class LabelManager extends PureComponent {
       createTypeVisible: false,
     });
   }
+
   // 新建标签类型 ----end
   // 删除标签 ----start
   handleDelLabel(labelId) {
@@ -212,6 +214,7 @@ export default class LabelManager extends PureComponent {
       }
     });
   }
+
   // 删除标签 ----end
   // 新建标签 ----start
   @autobind
@@ -273,7 +276,7 @@ export default class LabelManager extends PureComponent {
       labelList = [],
     } = labelInfo;
 
-    if(_.isEmpty(custRange)) {
+    if (_.isEmpty(custRange)) {
       return null;
     }
 

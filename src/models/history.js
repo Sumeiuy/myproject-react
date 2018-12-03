@@ -134,7 +134,11 @@ export default {
 
     // 各种操作的状态
     opertateBoardState(state, action) {
-      const { payload: { name, value, message, operateData } } = action;
+      const {
+        payload: {
+          name, value, message, operateData
+        }
+      } = action;
       return {
         ...state,
         [name]: value,
@@ -165,8 +169,10 @@ export default {
     },
   },
   effects: {
-     // 探测有数据的最大时间点接口(接口中包含是否显示汇总方式切换的字段)
-    * getInitialData({ payload }, { call, put, select, take }) {
+    // 探测有数据的最大时间点接口(接口中包含是否显示汇总方式切换的字段)
+    * getInitialData({ payload }, {
+      call, put, select, take
+    }) {
       const response = yield call(api.getInitialData, payload);
       yield put({
         type: 'getInitialDataSuccess',

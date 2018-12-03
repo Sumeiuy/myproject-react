@@ -82,9 +82,11 @@ export default class LabelModals extends PureComponent {
       // 判断数据是否为空，为空则渲染空div,用来样式上填满容器
       let element;
       if (!_.isEmpty(item)) {
-        element = (<div className={styles.itemBox} key={item.id}>
-          {this.renderPopover(item)}
-        </div>);
+        element = (
+          <div className={styles.itemBox} key={item.id}>
+            {this.renderPopover(item)}
+          </div>
+        );
       } else {
         const key = `key-${index}`;
         element = <div className={styles.itemBox} key={key} />;
@@ -226,7 +228,7 @@ export default class LabelModals extends PureComponent {
         visible={show}
         footer={null}
         wrapClassName={styles.modal}
-        transitionName={'noAnimation'}
+        transitionName="noAnimation"
         onCancel={this.closeModal}
         maskClosable={false}
         width={650}

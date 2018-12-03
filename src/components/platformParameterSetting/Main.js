@@ -7,7 +7,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import env from '../../../src/helper/env';
+import env from '../../helper/env';
 import styles from './main.less';
 
 import Header from './Header';

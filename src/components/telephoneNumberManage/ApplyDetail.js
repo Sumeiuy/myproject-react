@@ -73,9 +73,9 @@ export default class ApplyDetail extends PureComponent {
     // branchHandle表示分公司处理状态
     // headAudit表示总部审核状态
     // trueOver表示办结状态
-    if (currentNodeCode === 'branchHandle' ||
-    currentNodeCode === 'headAudit' ||
-    currentNodeCode === 'trueOver') {
+    if (currentNodeCode === 'branchHandle'
+    || currentNodeCode === 'headAudit'
+    || currentNodeCode === 'trueOver') {
       // 处于以上三种状态，表示此时电话号码，手机串号，SIM卡号1，SIM卡号2已经录入
       // 需要增加展示电话号码，手机串号，SIM卡1，SIM卡2四列
       const increasedColumns = [
@@ -151,7 +151,10 @@ export default class ApplyDetail extends PureComponent {
       <div className={styles.applyDetailbox}>
         <div className={styles.inner}>
           <div className={styles.innerWrap}>
-            <h1 className={styles.title}>编号{id}</h1>
+            <h1 className={styles.title}>
+编号
+              {id}
+            </h1>
             <div id="advisorAppBindingTable_module" className={styles.module}>
               <InfoTitle head="服务经理" />
               <Table
@@ -191,14 +194,20 @@ export default class ApplyDetail extends PureComponent {
             </div>
             {
               this.isShowAttachmentModule()
-              ? <div id="attachment_module" className={styles.module}>
-                <div className={styles.detailWrapper}>
-                  <InfoTitle head="附件信息" />
-                  <div className={styles.attachmentTitle}><span>*</span> 合规承诺书</div>
-                  <CommonUpload attachmentList={attachmentList} />
-                </div>
-              </div>
-              : null
+                ? (
+                  <div id="attachment_module" className={styles.module}>
+                    <div className={styles.detailWrapper}>
+                      <InfoTitle head="附件信息" />
+                      <div className={styles.attachmentTitle}>
+                        <span>*</span>
+                        {' '}
+合规承诺书
+                      </div>
+                      <CommonUpload attachmentList={attachmentList} />
+                    </div>
+                  </div>
+                )
+                : null
             }
             <div id="approvalRecord_module" className={styles.module}>
               <ApprovalRecord

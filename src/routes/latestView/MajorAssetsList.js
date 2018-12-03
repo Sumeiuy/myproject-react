@@ -104,12 +104,14 @@ export default class MajorAssetsList extends PureComponent {
     const newArray = [...array];
     // 标题
     const titleColumn = _.find(newArray, o => o.key === KEY_TITLE);
-    titleColumn.render = (text, record) => <div
-      title={text}
-      onClick={() => this.handleTitleClick(record)}
-    >
-      {text}
-    </div>;
+    titleColumn.render = (text, record) => (
+      <div
+        title={text}
+        onClick={() => this.handleTitleClick(record)}
+      >
+        {text}
+      </div>
+    );
     // 报告日期
     const timeColumn = _.find(newArray, o => o.key === KEY_TIME);
     timeColumn.render = text => time.format(text, dateFormatStr);
@@ -174,7 +176,9 @@ export default class MajorAssetsList extends PureComponent {
   @autobind
   sendRequest() {
     const { queryMajorAssetsList } = this.props;
-    const { type, category, startDate, endDate, pageNum, pageSize } = this.state;
+    const {
+      type, category, startDate, endDate, pageNum, pageSize
+    } = this.state;
     queryMajorAssetsList({
       type,
       category,
@@ -222,7 +226,9 @@ export default class MajorAssetsList extends PureComponent {
 
   render() {
     const { majorAssetsData, majorAssetsDetail } = this.props;
-    const { type, category, startDate, endDate } = this.state;
+    const {
+      type, category, startDate, endDate
+    } = this.state;
     const {
       list = EMPTY_ARRAY,
       page = EMPTY_OBJECT,

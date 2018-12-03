@@ -79,7 +79,7 @@ export default class ServiceLog extends PureComponent {
     const { location: { query: prevQuery } } = prevState;
     // url是否发生变化
     const isQueryChange = !_.isEqual(nextQuery, prevQuery);
-    if(isQueryChange) {
+    if (isQueryChange) {
       const { custId } = nextQuery;
       const { custId: prevCustId } = prevQuery;
       if (custId && custId !== prevCustId) {
@@ -233,7 +233,7 @@ export default class ServiceLog extends PureComponent {
           pageNum: 1,
           custId,
           serveType: '',
-          keyword:'',
+          keyword: '',
         });
       } else {
         getServiceLog({
@@ -256,9 +256,9 @@ export default class ServiceLog extends PureComponent {
     const startDate = date.value[0];
     const endDate = date.value[1];
     // 如果时间没有发生改变, 直接return
-    if (startDate === this.state.startDate &&
-        endDate === this.state.endDate) {
-          return;
+    if (startDate === this.state.startDate
+        && endDate === this.state.endDate) {
+      return;
     }
     this.setState({
       startDate,
@@ -463,12 +463,12 @@ export default class ServiceLog extends PureComponent {
                 [styles.hidden]: !isLastServiceLog,
               })}
             >
-              <span className={styles.divider} />已经是最后一条了<span className={styles.divider} />
+              <span className={styles.divider} />
+已经是最后一条了
+              <span className={styles.divider} />
             </div>
           </div>
-          <div>
-
-          </div>
+          <div />
         </div>
       </div>
     );

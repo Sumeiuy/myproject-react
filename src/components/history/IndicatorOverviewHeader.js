@@ -172,11 +172,11 @@ export default class IndicatorOverviewHeader extends PureComponent {
       [styles.createBtnUnshowClass]: _.isEmpty(this.props.selectKeys),
     });
     const updateBtnClass = classnames({
-      [styles.updateBtnUnshowClass]: boardId === TYPE_LSDB_TGJX ||
-                                     boardId === TYPE_LSDB_JYYJ ||
-                                     (_.isEmpty(this.props.selectKeys) &&
-                                     boardId !== TYPE_LSDB_TGJX &&
-                                     boardId !== TYPE_LSDB_JYYJ),
+      [styles.updateBtnUnshowClass]: boardId === TYPE_LSDB_TGJX
+                                     || boardId === TYPE_LSDB_JYYJ
+                                     || (_.isEmpty(this.props.selectKeys)
+                                     && boardId !== TYPE_LSDB_TGJX
+                                     && boardId !== TYPE_LSDB_JYYJ),
     });
 
     return (

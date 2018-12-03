@@ -70,20 +70,20 @@ export default class MOTReturnVisitTaskContent extends PureComponent {
         </div>
         {
           visitResultValue !== 'Lost' ? null
-          : (
-            <div className={styles.visitReturnBlock}>
-              <div className={styles.title}>失败原因:</div>
-              <div className={styles.content}>
-                <FormItem {...failReasonFormProps}>
-                  <TextArea
-                    rows={5}
-                    value={failReasonValue}
-                    onChange={onFailReasonChange}
-                  />
-                </FormItem>
+            : (
+              <div className={styles.visitReturnBlock}>
+                <div className={styles.title}>失败原因:</div>
+                <div className={styles.content}>
+                  <FormItem {...failReasonFormProps}>
+                    <TextArea
+                      rows={5}
+                      value={failReasonValue}
+                      onChange={onFailReasonChange}
+                    />
+                  </FormItem>
+                </div>
               </div>
-            </div>
-          )
+            )
         }
       </div>
     );

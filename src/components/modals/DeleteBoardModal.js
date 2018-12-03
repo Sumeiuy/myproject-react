@@ -4,7 +4,9 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Modal, Button, Form, Input, Tooltip } from 'antd';
+import {
+  Modal, Button, Form, Input, Tooltip
+} from 'antd';
 import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
@@ -152,12 +154,14 @@ export default class DeleteBoardModal extends PureComponent {
                   'delModalName',
                   {
                     initialValue: '',
-                  })(
-                    <Input
-                      type="text"
-                      placeholder="请输入看板名称"
-                      onFocus={this.hideTooltip}
-                    />)
+                  }
+                )(
+                  <Input
+                    type="text"
+                    placeholder="请输入看板名称"
+                    onFocus={this.hideTooltip}
+                  />
+                )
               }
             </FormItem>
           </Tooltip>

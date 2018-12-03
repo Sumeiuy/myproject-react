@@ -35,7 +35,6 @@ const totalAssetsAsc = { sortType: ASET, sortDirection: ASC };
 const totalAssetsDesc = { sortType: ASET, sortDirection: DESC };
 
 export default class Order extends PureComponent {
-
   static propTypes = {
     onChange: PropTypes.func.isRequired,
     value: PropTypes.object.isRequired,

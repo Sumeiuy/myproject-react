@@ -14,11 +14,11 @@ import { detailAccountInfo as api } from '../../api';
 export default {
   namespace: 'detailAccountInfo',
   state: {
-    //实时持仓下的实时资产数据
+    // 实时持仓下的实时资产数据
     realTimeAsset: {},
-    //实时持仓下的证券实时持仓数据
+    // 实时持仓下的证券实时持仓数据
     securitiesHolding: [],
-    //实时持仓下的产品实时持仓数据
+    // 实时持仓下的产品实时持仓数据
     productHoldingData: [],
     // 资产分布的雷达数据
     assetsRadarData: {},
@@ -103,7 +103,7 @@ export default {
     getProfitRateInfoSuccess(state, action) {
       const { payload } = action;
       const { withCustPofit, resultData } = payload;
-      if(withCustPofit) { // 需要同时更新基准数据和对比数据
+      if (withCustPofit) { // 需要同时更新基准数据和对比数据
         return {
           ...state,
           custBasicData: {
@@ -284,7 +284,7 @@ export default {
     * querySpecificIndexData({ payload }, { put, call }) {
       const { resultData } = yield call(api.querySpecificIndexData, payload);
       // 给数据一个key,避免在组件中render时候，每一次都会变化
-      const newResultData =  _.map(resultData, item => {
+      const newResultData = _.map(resultData, (item) => {
         const { children } = item;
         const childrenData = _.map(children, data.addKey);
         const newItem = data.addKey(item);
@@ -306,7 +306,7 @@ export default {
         payload: resultData,
       });
     },
-    //实时持仓中的实时资产
+    // 实时持仓中的实时资产
     * getRealTimeAsset({ payload }, { put, call }) {
       const { resultData } = yield call(api.queryRealTimeAsset, payload);
       yield put({
@@ -314,7 +314,7 @@ export default {
         payload: resultData,
       });
     },
-    //实时持仓中的证券实时持仓
+    // 实时持仓中的证券实时持仓
     * getSecuritiesHolding({ payload }, { put, call }) {
       const { resultData } = yield call(api.querySecuritiesHolding, payload);
       yield put({
@@ -443,9 +443,9 @@ export default {
       const type = `${_.lowerCase(accountType)}AccountChange`;
       yield put({
         type: 'queryAccountChangeSuccess',
-        payload:{ [type]: resultData || {} },
+        payload: { [type]: resultData || {} },
       });
-   },
+    },
     // 清空数据
     * clearReduxData({ payload }, { put }) {
       yield put({

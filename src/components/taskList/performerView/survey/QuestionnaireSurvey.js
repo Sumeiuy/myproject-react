@@ -11,7 +11,9 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { Button, Radio, Checkbox, Input, Form, message } from 'antd';
+import {
+  Button, Radio, Checkbox, Input, Form, message
+} from 'antd';
 import _ from 'lodash';
 
 import { emp } from '../../../../helper';
@@ -42,7 +44,6 @@ const CHECKBOX_VALUE_SEPARATOR = '+-+';
 
 @create()
 export default class QuestionnaireSurvey extends PureComponent {
-
   static propTypes = {
     form: PropTypes.object.isRequired,
     answersList: PropTypes.object,
@@ -197,12 +198,10 @@ export default class QuestionnaireSurvey extends PureComponent {
         222: [{},{}],
       }
     */
-    const checkedCheckboxIdList =
-      _.compact(
-        _.map(Object.keys(checkboxData),
-          item => !_.isEmpty(checkboxData[item]) && Number(item),
-        ),
-      );
+    const checkedCheckboxIdList = _.compact(
+      _.map(Object.keys(checkboxData),
+        item => !_.isEmpty(checkboxData[item]) && Number(item), ),
+    );
 
     // 找出已经完成的checkbox与初始化的checkbox之间的questionId
     const diffQuestionId = _.difference(checkBoxQuesId, checkedCheckboxIdList);
@@ -287,7 +286,9 @@ export default class QuestionnaireSurvey extends PureComponent {
   // 根据返回的问题列表，判断不同类型显示
   @autobind
   renderOption() {
-    const { errorCheckboxIdList, radioData, checkboxData, areaTextData } = this.state;
+    const {
+      errorCheckboxIdList, radioData, checkboxData, areaTextData
+    } = this.state;
     const {
       form,
       answersList,
@@ -314,26 +315,30 @@ export default class QuestionnaireSurvey extends PureComponent {
           // 设置该问题默认值
           const defaultData = answerData.answerdIds || EMPTY_ARRAY;
 
-          const currentQuestion = _.find(radioData, radio =>
-            radio.quesId === quesId) || EMPTY_OBJECT;
+          const currentQuestion = _.find(radioData, radio => radio.quesId === quesId) || EMPTY_OBJECT;
 
-          content = (<FormItem key={quesId}>
-            {getFieldDecorator(String(quesId), {
-              rules: [{ required: true, message: '此答案不能为空，请选择你的选项' }],
-            })(
-              <div className={styles.radioContent}>
-                <p className={styles.title}>{key + 1}.{item.quesValue}</p>
-                <RadioGroup
-                  name={item.quesTypeCode}
-                  className={styles.radioGroup}
-                  onChange={this.handleRadioChange}
+          content = (
+            <FormItem key={quesId}>
+              {getFieldDecorator(String(quesId), {
+                rules: [{ required: true, message: '此答案不能为空，请选择你的选项' }],
+              })(
+                <div className={styles.radioContent}>
+                  <p className={styles.title}>
+                    {key + 1}
+.
+                    {item.quesValue}
+                  </p>
+                  <RadioGroup
+                    name={item.quesTypeCode}
+                    className={styles.radioGroup}
+                    onChange={this.handleRadioChange}
                   // 禁用情况下,取defaultData
                   // 编辑状态下，取radioData第一个
-                  value={isDisabled ? defaultData[0] :
-                    currentQuestion.answerId}
-                >
-                  {
-                    item.optionInfoList.map(childItem =>
+                    value={isDisabled ? defaultData[0]
+                      : currentQuestion.answerId}
+                  >
+                    {
+                    item.optionInfoList.map(childItem => (
                       <Radio
                         value={childItem.optionId}
                         dataVale={childItem.optionValue}
@@ -343,18 +348,19 @@ export default class QuestionnaireSurvey extends PureComponent {
                         disabled={isDisabled}
                       >
                         {childItem.optionValue}
-                      </Radio>)
+                      </Radio>
+                    ))
                   }
-                </RadioGroup>
-              </div>,
-            )}
-          </FormItem>);
+                  </RadioGroup>
+                </div>,
+              )}
+            </FormItem>
+          );
         } else if (item.quesTypeCode === TYPE.checkboxType) {
           // 默认值，根据后台返回值来设置默认值，以checkbox分隔符分隔
           const defaultData = _.map(answerData.answerdIds, (childVal) => {
             // 拼接字符串
-            const checkedData = _.find(item.optionInfoList, count =>
-              count.optionId === childVal);
+            const checkedData = _.find(item.optionInfoList, count => count.optionId === childVal);
             const values = `${checkedData.optionValue}${CHECKBOX_VALUE_SEPARATOR}${childVal}${CHECKBOX_VALUE_SEPARATOR}${quesId}`;
             return values;
           }) || EMPTY_ARRAY;
@@ -362,20 +368,24 @@ export default class QuestionnaireSurvey extends PureComponent {
           // 当前表单处于编辑状态，设置value，受控模式
           let currentData = EMPTY_ARRAY;
           const currentCheckboxQuestion = checkboxData[quesId];
-          currentData = _.map(currentCheckboxQuestion, childItem =>
-            `${childItem.answerText}${CHECKBOX_VALUE_SEPARATOR}${childItem.answerId}${CHECKBOX_VALUE_SEPARATOR}${quesId}`);
+          currentData = _.map(currentCheckboxQuestion, childItem => `${childItem.answerText}${CHECKBOX_VALUE_SEPARATOR}${childItem.answerId}${CHECKBOX_VALUE_SEPARATOR}${quesId}`);
 
-          content = (<FormItem key={quesId} {...CheckboxErrorProps}>
-            <div className={styles.radioContent}>
-              <p className={styles.title}>{key + 1}.{item.quesValue}</p>
-              <CheckboxGroup
-                style={{ width: '100%' }}
-                className={styles.radioGroup}
-                onChange={keyIndex => this.handleCheckChange(keyIndex, quesId)}
-                value={isDisabled ? defaultData : currentData}
-              >
-                {
-                  item.optionInfoList.map(childItem =>
+          content = (
+            <FormItem key={quesId} {...CheckboxErrorProps}>
+              <div className={styles.radioContent}>
+                <p className={styles.title}>
+                  {key + 1}
+.
+                  {item.quesValue}
+                </p>
+                <CheckboxGroup
+                  style={{ width: '100%' }}
+                  className={styles.radioGroup}
+                  onChange={keyIndex => this.handleCheckChange(keyIndex, quesId)}
+                  value={isDisabled ? defaultData : currentData}
+                >
+                  {
+                  item.optionInfoList.map(childItem => (
                     <Checkbox
                       value={`${childItem.optionValue}${CHECKBOX_VALUE_SEPARATOR}${childItem.optionId}${CHECKBOX_VALUE_SEPARATOR}${quesId}`}
                       className={styles.radioOption}
@@ -383,12 +393,13 @@ export default class QuestionnaireSurvey extends PureComponent {
                       disabled={isDisabled}
                     >
                       {childItem.optionValue}
-                    </Checkbox>,
-                  )
+                    </Checkbox>
+                  ),)
                 }
-              </CheckboxGroup>
-            </div>
-          </FormItem>);
+                </CheckboxGroup>
+              </div>
+            </FormItem>
+          );
         } else if (item.quesTypeCode === TYPE.textAreaType) {
           // 从后台取主观题答案默认值
           const defaultData = answerData.answertext || '';
@@ -398,31 +409,37 @@ export default class QuestionnaireSurvey extends PureComponent {
             text => +text.quesId === quesId) || EMPTY_OBJECT;
           const currentData = currentQuestion.answerText || '';
 
-          content = (<FormItem key={quesId}>
-            {getFieldDecorator(String(quesId), {
-              rules: [{
-                required: true,
-                max: 250,
-                min: 10,
-                message: '问题答案不能小于10个字符，最多250个字符',
-              }],
-            })(
-              <div className={styles.radioContent}>
-                <p className={styles.title}>{key + 1}.{item.quesValue}</p>
-                <TextArea
-                  rows={4}
-                  className={styles.radioGroup}
-                  onChange={this.handleTextAreaChange}
-                  data={quesId}
-                  value={isDisabled ? defaultData : currentData}
-                  placeholder={item.quesDesp}
-                  disabled={isDisabled}
-                  maxLength={250}
-                  minLength={10}
-                />
-              </div>,
-            )}
-          </FormItem>);
+          content = (
+            <FormItem key={quesId}>
+              {getFieldDecorator(String(quesId), {
+                rules: [{
+                  required: true,
+                  max: 250,
+                  min: 10,
+                  message: '问题答案不能小于10个字符，最多250个字符',
+                }],
+              })(
+                <div className={styles.radioContent}>
+                  <p className={styles.title}>
+                    {key + 1}
+.
+                    {item.quesValue}
+                  </p>
+                  <TextArea
+                    rows={4}
+                    className={styles.radioGroup}
+                    onChange={this.handleTextAreaChange}
+                    data={quesId}
+                    value={isDisabled ? defaultData : currentData}
+                    placeholder={item.quesDesp}
+                    disabled={isDisabled}
+                    maxLength={250}
+                    minLength={10}
+                  />
+                </div>,
+              )}
+            </FormItem>
+          );
         }
         return content;
       });
@@ -434,26 +451,30 @@ export default class QuestionnaireSurvey extends PureComponent {
     const { visible } = this.state;
     const { answerVOList } = answersList;
     // 已回答则显示确定按钮，否则显示提交
-    const showBtn = visible && _.isEmpty(answerVOList) && canSubmit ?
-      (<Button
-        key="submit"
-        type="primary"
-        className={styles.btn}
-        onClick={_.debounce(this.handleOk, 300, { leading: true })}
-      >
+    const showBtn = visible && _.isEmpty(answerVOList) && canSubmit
+      ? (
+        <Button
+          key="submit"
+          type="primary"
+          className={styles.btn}
+          onClick={_.debounce(this.handleOk, 300, { leading: true })}
+        >
         提交
-      </Button>) : null;
+        </Button>
+      ) : null;
 
     return (
       <div className={styles.container}>
         <Form layout="vertical">
           {this.renderOption()}
           {showBtn}
-          {!canSubmit ?
-            <InfoModal
-              visible
-              content="调查问卷需在任务到期前完成，到期后只可查看不可提交"
-            /> : null}
+          {!canSubmit
+            ? (
+              <InfoModal
+                visible
+                content="调查问卷需在任务到期前完成，到期后只可查看不可提交"
+              />
+            ) : null}
         </Form>
       </div>
     );

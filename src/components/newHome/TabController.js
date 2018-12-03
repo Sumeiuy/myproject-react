@@ -9,9 +9,9 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
+import { SingleFilter } from 'lego-react-filter/src';
 import logable from '../../decorators/logable';
 import CustRange from '../customerPool/list/manageFilter/CustFilter';
-import { SingleFilter } from 'lego-react-filter/src';
 import { MAIN_MAGEGER_ID } from '../../routes/customerPool/config';
 import styles from './tabController.less';
 
@@ -52,7 +52,7 @@ export default class TabController extends PureComponent {
       }
 
       let currentDepartment;
-      _.forEach(custRange, item => {
+      _.forEach(custRange, (item) => {
         if (item.children && !_.isEmpty(item.children)) {
           const targetValue = _.find(item.children, object => object.id === loginOrgId);
           if (targetValue) {
@@ -89,18 +89,17 @@ export default class TabController extends PureComponent {
     } = location;
 
     // 如果从query上能取到，直接使用
-    if(orgId) {
+    if (orgId) {
       return orgId;
     }
 
     // 有权限时使用当前登陆的营业部，作为默认值
-    if(authority) {
+    if (authority) {
       return loginOrgId;
     }
 
     // 无权限时，自己作为默认值
     return MAIN_MAGEGER_ID;
-
   }
 
   // 获取当前的选择时间范围
@@ -112,7 +111,7 @@ export default class TabController extends PureComponent {
 
     const {
       query: {
-      cycleSelect,
+        cycleSelect,
       },
     } = location;
 

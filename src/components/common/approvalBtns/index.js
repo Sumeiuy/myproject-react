@@ -21,7 +21,7 @@ export default function ApprovalBtnGroup(props) {
     >
       {item.btnName}
     </span>
-    ));
+  ));
   return (
     <div className={style.dcFooter}>
       {resultMap}
@@ -36,4 +36,3 @@ ApprovalBtnGroup.propTypes = {
 ApprovalBtnGroup.defaultProps = {
   approval: {},
 };
-

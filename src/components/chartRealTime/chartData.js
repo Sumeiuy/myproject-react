@@ -187,7 +187,7 @@ const chartData = {
       allData = _.concat(allData, newStackSeries[i].data);
     }
     const maxMoney = Math.max(...allData);
-     // 1. 全部在万元以下的数据不做处理
+    // 1. 全部在万元以下的数据不做处理
     // 2.超过万元的，以‘万元’为单位
     // 3.超过亿元的，以‘亿元’为单位
     if (maxMoney > 100000000) {
@@ -222,7 +222,7 @@ const chartData = {
       allData = _.concat(allData, newStackSeries[i].data);
     }
     const maxMoney = Math.max(...allData);
-     // 1. 全部在万元以下的数据不做处理
+    // 1. 全部在万元以下的数据不做处理
     // 2.超过万元的，以‘万元’为单位
     // 3.超过亿元的，以‘亿元’为单位
     if (maxMoney > 100000000) {
@@ -248,14 +248,14 @@ const chartData = {
     let newStackSeries = stackSeries;
     // 合计值
     let newTotals = totals.map(convert2number);
-     // 判断stackSeries中最大值是多少
+    // 判断stackSeries中最大值是多少
     let allData = [];
     const len = newStackSeries.length;
     for (let i = 0; i < len; i++) {
       allData = _.concat(allData, newStackSeries[i].data);
     }
     const maxHu = Math.max(...allData);
-     // 1. 全部在万元以下的数据不做处理
+    // 1. 全部在万元以下的数据不做处理
     // 2.超过万元的，以‘万元’为单位
     // 3.超过亿元的，以‘亿元’为单位
     if (maxHu > 5000) {
@@ -345,7 +345,7 @@ const chartData = {
     let max = 10;
     let min = -10;
     if (plus.max === 0 && minus.min !== 0) {
-       // 当正值的最大值是0的时候，只存在负值
+      // 当正值的最大值是0的时候，只存在负值
       max = 0;
       min = Math.floor(minus.min);
     } else if (minus.min === 0 && plus.max !== 0) {

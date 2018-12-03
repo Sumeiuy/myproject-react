@@ -19,6 +19,7 @@ export default class MoveContainer extends Component {
     onRemove: PropTypes.func.isRequired,
     onDnd: PropTypes.func.isRequired,
   }
+
   constructor(props) {
     super(props);
     const data = props.data;

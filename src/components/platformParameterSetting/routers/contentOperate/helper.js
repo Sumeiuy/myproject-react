@@ -2,7 +2,7 @@
 function filterData(data, key) {
   const filterData = [];
   if (data) {
-    data.forEach(item => {
+    data.forEach((item) => {
       filterData.push(item[key]);
     });
   }

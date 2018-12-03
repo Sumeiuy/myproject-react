@@ -16,7 +16,7 @@ import styles from './progressSelect.less';
 
 const Option = Select.Option;
 
-export default class ProgressSelect  extends PureComponent {
+export default class ProgressSelect extends PureComponent {
   static propTypes = {
     data: PropTypes.array,
     value: PropTypes.oneOfType([
@@ -36,15 +36,17 @@ export default class ProgressSelect  extends PureComponent {
 
   @autobind
   makeSelectOptions(data) {
-    const options = _.map(data, item => {
+    const options = _.map(data, (item) => {
       const label = `${item.siteName}${item.roomName}`;
       const value = item.roomNo;
-      return (<Option key={value} value={value}>
+      return (
+        <Option key={value} value={value}>
           <span className={styles.label}>{label}</span>
           <div className={styles.progress}>
-            <Progress percent={item.progressNumber}/>
+            <Progress percent={item.progressNumber} />
           </div>
-      </Option>);
+        </Option>
+      );
     });
     return options;
   }
@@ -57,7 +59,9 @@ export default class ProgressSelect  extends PureComponent {
   }
 
   render() {
-    const { data, value, onChange, disabled, ...resetProps } = this.props;
+    const {
+      data, value, onChange, disabled, ...resetProps
+    } = this.props;
     const options = this.makeSelectOptions(data);
     return (
       <div className={styles.progressSelect}>

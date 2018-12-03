@@ -43,7 +43,14 @@ const ListItem = (props) => {
    */
   const choiceAnswer = (list) => {
     if (!_.isEmpty(list)) {
-      return _.map(list, (o, i) => <p key={o.optionId} >{getLetter(i)}. {o.optionValue}</p>);
+      return _.map(list, (o, i) => (
+        <p key={o.optionId}>
+          {getLetter(i)}
+.
+          {' '}
+          {o.optionValue}
+        </p>
+      ));
     }
     return null;
   };
@@ -86,7 +93,9 @@ const ListItem = (props) => {
       </div>
       <div className={styles.actionZone}>
         <span className={styles.button} onClick={handleDelete}>
-          <Icon type="shanchu" /> 删除
+          <Icon type="shanchu" />
+          {' '}
+删除
         </span>
       </div>
     </div>

@@ -4,7 +4,9 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Modal, Button, Form, Input, Select, Tooltip } from 'antd';
+import {
+  Modal, Button, Form, Input, Select, Tooltip
+} from 'antd';
 import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
@@ -204,7 +206,8 @@ export default class CreateBoardModal extends PureComponent {
                   'boardname',
                   {
                     initialValue: '',
-                  })(<Input type="text" placeholder="请输入看板名称" onFocus={this.hideToolTip} />)
+                  }
+                )(<Input type="text" placeholder="请输入看板名称" onFocus={this.hideToolTip} />)
               }
             </FormItem>
           </Tooltip>
@@ -217,11 +220,12 @@ export default class CreateBoardModal extends PureComponent {
               'boardtype',
               {
                 initialValue: 'TYPE_TGJX',
-              })(
-                <Select>
-                  <Option value="TYPE_TGJX">投顾业绩</Option>
-                  <Option value="TYPE_JYYJ">经营业绩</Option>
-                </Select>,
+              }
+            )(
+              <Select>
+                <Option value="TYPE_TGJX">投顾业绩</Option>
+                <Option value="TYPE_JYYJ">经营业绩</Option>
+              </Select>,
             )}
           </FormItem>
           <FormItem
@@ -238,7 +242,8 @@ export default class CreateBoardModal extends PureComponent {
                     currency: [],
                     label: allOptions[0].name,
                   },
-                })(<SelfSelect options={allOptions} level={level} />)
+                }
+              )(<SelfSelect options={allOptions} level={level} />)
             }
           </FormItem>
         </Form>

@@ -18,7 +18,6 @@ import styles from './targetCustomer.less';
 import logable from '../../../decorators/logable';
 
 export default class TargetCustomer extends PureComponent {
-
   static propTypes = {
     // 父容器宽度变化,默认宽度窄
     isFold: PropTypes.bool,
@@ -102,14 +101,18 @@ export default class TargetCustomer extends PureComponent {
                   className={classnames({
                     [styles.label]: true,
                   })}
-                >客户总数:&nbsp;</span>
+                >
+客户总数:&nbsp;
+                </span>
                 <span
                   className={classnames({
                     [styles.custTotal]: true,
                     [styles.content]: true,
                   })}
                   onClick={this.handlePreview}
-                >{Number(custTotal) || 0}</span>
+                >
+                  {Number(custTotal) || 0}
+                </span>
                 <span
                   className={styles.custTotalTooltip}
                   onMouseOver={this.handleMouseOver}
@@ -134,15 +137,17 @@ export default class TargetCustomer extends PureComponent {
               </Col>
             </Row>
             {
-              !_.isEmpty(custSourceDescription) ?
-                <Row className={styles.rowItem}>
-                  <Col className={styles.colItem}>
-                    <span className={`${styles.label} ${styles.fl}`}>客户来源说明:&nbsp;</span>
-                    <p className={`${styles.content} ${styles.servicePolicy}`}>
-                      {custSourceDescription || '--'}
-                    </p>
-                  </Col>
-                </Row> : null
+              !_.isEmpty(custSourceDescription)
+                ? (
+                  <Row className={styles.rowItem}>
+                    <Col className={styles.colItem}>
+                      <span className={`${styles.label} ${styles.fl}`}>客户来源说明:&nbsp;</span>
+                      <p className={`${styles.content} ${styles.servicePolicy}`}>
+                        {custSourceDescription || '--'}
+                      </p>
+                    </Col>
+                  </Row>
+                ) : null
             }
           </div>
         </div>

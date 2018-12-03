@@ -42,8 +42,10 @@ const mapStateToProps = state => ({
 });
 const mapDispatchToProps = {
   queryChiefViewpointList: generateEffect(effects.queryChiefViewpointList,
-    { loading: true,
-forceFull: true }),
+    {
+      loading: true,
+      forceFull: true
+    }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -145,12 +147,16 @@ export default class ViewpointList extends PureComponent {
     const { location: { query } } = this.props;
     const { id } = data;
     const { push } = this.context;
-    const param = { id: 'RTC_TAB_VIEWPOINT',
-title: '资讯' };
+    const param = {
+      id: 'RTC_TAB_VIEWPOINT',
+      title: '资讯'
+    };
     const url = '/strategyCenter/latestView/viewpointDetail';
-    const newQuery = { ...query,
-id,
-sourceUrl: '/strategyCenter/latestView/viewpointList' };
+    const newQuery = {
+      ...query,
+      id,
+      sourceUrl: '/strategyCenter/latestView/viewpointList'
+    };
     linkTo({
       routerAction: push,
       url: `${url}?${urlHelper.stringify(newQuery)}`,
@@ -185,9 +191,13 @@ sourceUrl: '/strategyCenter/latestView/viewpointList' };
       startDate,
       endDate,
     }).then(() => {
-      replace({ pathname,
-query: { ...query,
-pageNum } });
+      replace({
+        pathname,
+        query: {
+          ...query,
+          pageNum
+        }
+      });
     });
   }
 
@@ -214,8 +224,10 @@ pageNum } });
       startDate: newQuery.startDate,
       endDate: newQuery.endDate,
     }).then(() => {
-      replace({ pathname,
-query: { ...newQuery } });
+      replace({
+        pathname,
+        query: { ...newQuery }
+      });
     });
   }
 
@@ -254,7 +266,7 @@ query: { ...newQuery } });
             onFilter={this.handleQueryList}
           />
           <Table
-            rowKey={'id'}
+            rowKey="id"
             columns={this.getColumns()}
             dataSource={list}
             pagination={false}

@@ -26,7 +26,6 @@ const FormItem = Form.Item;
 
 @Form.create()
 export default class EditableText extends PureComponent {
-
   static propTypes = {
     name: PropTypes.string.isRequired,
     label: PropTypes.string.isRequired,
@@ -161,7 +160,9 @@ export default class EditableText extends PureComponent {
   // 编辑模式的dom节点
   @autobind
   renderEditableNode() {
-    const { name, children, form, validateRules } = this.props;
+    const {
+      name, children, form, validateRules
+    } = this.props;
     return (
       <div className={styles.inputWrapper} ref={this.saveInputWrapperRef}>
         <FormItem>

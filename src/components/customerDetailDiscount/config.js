@@ -103,4 +103,3 @@ export const COUPON_DETAIL_NEED_TOOLTIP = [
   'introduce',
   'label',
 ];
-

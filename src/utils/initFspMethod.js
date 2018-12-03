@@ -90,8 +90,8 @@ function initFspMethod({ store, history, isInReact }) {
     if (_.find(routers, router => router.path === location.pathname)) {
       // 激活fsp框架的滚动条
       if (!fspContainerElem) {
-        fspContainerElem = env.isInReact() ? document.querySelector('#tabpanel') :
-          document.querySelector('.wrapper.ps-container');
+        fspContainerElem = env.isInReact() ? document.querySelector('#tabpanel')
+          : document.querySelector('.wrapper.ps-container');
       }
 
       // 客户列表只有切换页码时需要修正滚动
@@ -173,7 +173,8 @@ function initFspMethod({ store, history, isInReact }) {
               title: '窗口标题',
             },
             actionParam,
-            { sourceURL: contextPath + url });
+            { sourceURL: contextPath + url }
+          );
 
           window.$('body').EBWindow(options);
         },

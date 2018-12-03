@@ -2,7 +2,7 @@
  * @Author: zhufeiyang
  * @Date: 2018-11-21 09:35:09
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-26 21:29:09
+ * @LastEditTime: 2018-12-03 16:25:48
  * @Description: 服务订购
  */
 
@@ -11,10 +11,10 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import moment from 'moment';
-import Table from '../common/table';
 import { Button, Modal, Tooltip } from 'antd';
+import Table from '../common/table';
 import IfTableWrap from '../common/IfTableWrap';
-import logable from '../../../src/decorators/logable';
+import logable from '../../decorators/logable';
 import ascSvg from '../../../static/svg/asc.svg';
 import descSvg from '../../../static/svg/desc.svg';
 import normalSvg from '../../../static/svg/normal.svg';
@@ -77,7 +77,7 @@ export default class ServiceOrder extends PureComponent {
   @autobind
   @logable({
     type: 'Click',
-    payload: { name: '服务订购排序', value: '$args[0]'},
+    payload: { name: '服务订购排序', value: '$args[0]' },
   })
   handleSortChange(column) {
     const { sortType, sortValue } = this.state;
@@ -117,7 +117,7 @@ export default class ServiceOrder extends PureComponent {
     const defaultMessage = '网络错误，请稍后重试';
 
     queryCustCanChangeCommission({ custId }).then((resData) => {
-      if(!resData || resData.flag) {
+      if (!resData || resData.flag) {
         warning({
           title: (resData && resData.msg) || defaultMessage,
           cancelText: '取消',
@@ -138,13 +138,13 @@ export default class ServiceOrder extends PureComponent {
 
   transformColumnsData() {
     const { sortType, sortValue } = this.state;
-    return _.map(SERVICE_ORDER_TABLE_COLUMNS, column => {
+    return _.map(SERVICE_ORDER_TABLE_COLUMNS, (column) => {
       const newColumn = {
         ...column,
       };
       // 日期格式特殊处理
-      if (column.dataIndex === 'startDt' ||
-        column.dataIndex === 'endDt') {
+      if (column.dataIndex === 'startDt'
+        || column.dataIndex === 'endDt') {
         // 默认排序图标
         let direImg = normalSvg;
         if (sortValue === column.dataIndex) {
@@ -159,21 +159,17 @@ export default class ServiceOrder extends PureComponent {
             <img src={direImg} className={styles.sortImg} alt="排序方向" />
           </span>
         );
-        newColumn.render = (text) => {
-          return text ? moment(text).format(DATE_FORMATE_STR) : '--';
-        };
+        newColumn.render = text => (text ? moment(text).format(DATE_FORMATE_STR) : '--');
         return newColumn;
       }
       // 服务名称加tooltip处理, 溢出打点处理
       if (column.dataIndex === 'aliasName') {
-        newColumn.render = (text) => {
-          return text ?
-            (
-              <Tooltip title={text}>
-                <span className={styles.serviceName}>{text}</span>
-              </Tooltip>
-            ) : '--';
-        };
+        newColumn.render = text => (text
+          ? (
+            <Tooltip title={text}>
+              <span className={styles.serviceName}>{text}</span>
+            </Tooltip>
+          ) : '--');
         return newColumn;
       }
 
@@ -189,9 +185,7 @@ export default class ServiceOrder extends PureComponent {
       }
 
       // 其他字段如果没有值，都显示'--'
-      newColumn.render = (text) => {
-        return text ? text : '--';
-      };
+      newColumn.render = text => (text || '--');
 
       return newColumn;
     });
@@ -223,27 +217,31 @@ export default class ServiceOrder extends PureComponent {
     const isShowBtn = currentPstn.postnTypeCD && currentPstn.postnTypeCD.indexOf('服务岗') > -1;
     return (
       <div className={styles.tradeOrderFlowWrap}>
-      {/* 只有营业部服务岗才可以显示佣金调整按钮 */}
-      <IfWrap isRender={isShowBtn || false}>
-        <Button
-          type="primary"
-          ghost
-          className={styles.btn}
-          onClick={this.handleBtnClick}
-        >
+        {/* 只有营业部服务岗才可以显示佣金调整按钮 */}
+        <IfWrap isRender={isShowBtn || false}>
+          <Button
+            type="primary"
+            ghost
+            className={styles.btn}
+            onClick={this.handleBtnClick}
+          >
           佣金调整
-        </Button>
-      </IfWrap>
-        <IfTableWrap isRender={!_.isEmpty(productList)} text={NODATA_HINT}>
-        <Table
-          className={styles.table}
-          dataSource={productList}
-          rowKey="name"
-          pagination={pagination}
-          rowClassName={styles.tableRow}
-          columns={this.transformColumnsData()}
-          indentSize={0}
-        />
+          </Button>
+        </IfWrap>
+        <IfTableWrap
+          isRender={!_.isEmpty(productList)}
+          text={NODATA_HINT}
+          effect="productOrder/queryServiceOrderData"
+        >
+          <Table
+            className={styles.table}
+            dataSource={productList}
+            rowKey="name"
+            pagination={pagination}
+            rowClassName={styles.tableRow}
+            columns={this.transformColumnsData()}
+            indentSize={0}
+          />
         </IfTableWrap>
       </div>
     );

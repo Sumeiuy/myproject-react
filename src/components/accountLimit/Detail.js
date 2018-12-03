@@ -23,10 +23,10 @@ import logable from '../../decorators/logable';
 
 // 表头
 const {
-  tableTitle: { custList: custTitleList, moreList },  // 客户表格列表
-  operateTypeArray,  // 操作类型枚举
-  RELIEVE_CODE,  // 限制解除的 value
-  attachmentMap,  // 附件类型枚举
+  tableTitle: { custList: custTitleList, moreList }, // 客户表格列表
+  operateTypeArray, // 操作类型枚举
+  RELIEVE_CODE, // 限制解除的 value
+  attachmentMap, // 附件类型枚举
 } = config;
 // 客户姓名
 const KEY_CUSTNAME = 'custName';
@@ -177,7 +177,10 @@ export default class Detail extends PureComponent {
     const limitName = isRelieve ? '解除限制类型' : '限制类型';
     return (
       <div className={styles.detailBox}>
-        <h2 className={styles.title}>编号{id}</h2>
+        <h2 className={styles.title}>
+编号
+          {id}
+        </h2>
         <div className={styles.module}>
           <InfoTitle head="基本信息" />
           <InfoItem label="操作类型" width="120px" value={filterOperate[0].label} />
@@ -186,8 +189,8 @@ export default class Detail extends PureComponent {
           {/* 操作类型为限制解除时显示银行确认 */}
           {
             isRelieve
-            ? <InfoItem label="是否银行确认" className={styles.inlineInfoItem} width="120px" value={bankConfirm ? '是' : '否'} />
-            : null
+              ? <InfoItem label="是否银行确认" className={styles.inlineInfoItem} width="120px" value={bankConfirm ? '是' : '否'} />
+              : null
           }
         </div>
         <div className={styles.module}>
@@ -208,8 +211,8 @@ export default class Detail extends PureComponent {
           <InfoItem label={limitName} value={(_.map(limitType, 'label').join('、'))} />
           {
             isRelieve
-            ? null
-            : <InfoItem label="账户限制设置日期" className={styles.inlineInfoItem} value={time.format(limitStartTime)} />
+              ? null
+              : <InfoItem label="账户限制设置日期" className={styles.inlineInfoItem} value={time.format(limitStartTime)} />
           }
           <InfoItem label="账户限制解除日期" className={styles.inlineInfoItem} value={time.format(limitEndTime)} />
         </div>
@@ -222,17 +225,20 @@ export default class Detail extends PureComponent {
         <div className={styles.module}>
           <InfoTitle head="附件信息" />
           {
-            !_.isEmpty(attachList) ?
-              attachList.map(item => (<MultiUploader
-                attachmentList={item.attachmentList}
-                attachment={''}
-                title={this.getAttachmentTitle(item.title)}
-                key={`${appId}-${item.attachment}`}
-              />))
-              :
-              <div className={styles.fileList}>
-                <div className={styles.noFile}>暂无附件</div>
-              </div>
+            !_.isEmpty(attachList)
+              ? attachList.map(item => (
+                <MultiUploader
+                  attachmentList={item.attachmentList}
+                  attachment=""
+                  title={this.getAttachmentTitle(item.title)}
+                  key={`${appId}-${item.attachment}`}
+                />
+              ))
+              : (
+                <div className={styles.fileList}>
+                  <div className={styles.noFile}>暂无附件</div>
+                </div>
+              )
           }
         </div>
         <div className={styles.module}>

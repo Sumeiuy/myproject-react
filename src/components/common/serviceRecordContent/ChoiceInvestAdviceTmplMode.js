@@ -125,28 +125,29 @@ export default class ChoiceInvestAdviceTmplMode extends Component {
       <div className={styles.tmplModeContainer}>
         {
           isEmptyTmp ? (<EmptyData />)
-          :
-          (
-            <div className={styles.tmplArea}>
-              <div className={styles.containerHeader}>
-                <div className={styles.search}>
-                  <Search
-                    onKeyDown={this.preventKeyDownPropagation}
-                    placeholder="搜索标题/内容"
-                    onSearch={this.handleTemplateSearch}
-                    style={{ width: 200 }}
-                    enterButton
-                  />
+            : (
+              <div className={styles.tmplArea}>
+                <div className={styles.containerHeader}>
+                  <div className={styles.search}>
+                    <Search
+                      onKeyDown={this.preventKeyDownPropagation}
+                      placeholder="搜索标题/内容"
+                      onSearch={this.handleTemplateSearch}
+                      style={{ width: 200 }}
+                      enterButton
+                    />
+                  </div>
+                  <div className={styles.searchResult}>
+                  共有
+                    {_.size(filteredTmplList)}
+条可选模板
+                  </div>
                 </div>
-                <div className={styles.searchResult}>
-                  共有{_.size(filteredTmplList)}条可选模板
+                <div className={styles.templateListWrapper}>
+                  {this.renderTamplatePanelsComponnet(filteredTmplList)}
                 </div>
               </div>
-              <div className={styles.templateListWrapper}>
-                {this.renderTamplatePanelsComponnet(filteredTmplList)}
-              </div>
-            </div>
-          )
+            )
         }
       </div>
     );

@@ -109,7 +109,9 @@ export default class CreateDeputeModal extends PureComponent {
   doApproveAfterSubmit() {
     const { submitResult, doFlow, doRefreshListAfterApprove } = this.props;
     if (!_.isEmpty(submitResult)) {
-      const { operate, groupName, auditors, flowClass, currentNodeName } = this.state;
+      const {
+        operate, groupName, auditors, flowClass, currentNodeName
+      } = this.state;
       doFlow({
         itemId: submitResult.itemId,
         operate,

@@ -171,8 +171,9 @@ export default class ContactWay extends PureComponent {
 
     return (
       <div className={styles.contactWayBox}>
-        <div className={styles.title}>联系方式
-          {/**只有主服务经理才可以进入编辑谭宽 */}
+        <div className={styles.title}>
+联系方式
+          {/** 只有主服务经理才可以进入编辑谭宽 */}
           <IFWrap isRender={isMainEmp}>
             <span
               className={styles.contactWayEdit}

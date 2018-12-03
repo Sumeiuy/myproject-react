@@ -17,7 +17,6 @@ import logable from '../../../decorators/logable';
 const Option = AutoComplete.Option;
 
 export default class autoComplete extends PureComponent {
-
   static propTypes = {
     dataSource: PropTypes.array.isRequired,
     onChangeValue: PropTypes.func.isRequired,
@@ -39,6 +38,7 @@ export default class autoComplete extends PureComponent {
       inputValue: props.initValue,
     };
   }
+
   componentWillReceiveProps(nextProps) {
     const { initValue: prevValue } = this.props;
     const { initValue: nextValue } = nextProps;
@@ -48,6 +48,7 @@ export default class autoComplete extends PureComponent {
       });
     }
   }
+
   // 根据用户选中的option的value值获取对应的数组值
   @autobind
   @logable({ type: 'DropdownSelect', payload: { name: '选择选项', value: '$args[0]' } })

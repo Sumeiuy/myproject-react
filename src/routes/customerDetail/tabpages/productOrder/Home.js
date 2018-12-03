@@ -77,7 +77,7 @@ export default class ProductOrder extends PureComponent {
   }
 
   componentDidUpdate(prevProps) {
-    const { location: { query: { custId : preCustId } } } = prevProps;
+    const { location: { query: { custId: preCustId } } } = prevProps;
     const {
       query: {
         custId,
@@ -89,7 +89,7 @@ export default class ProductOrder extends PureComponent {
   }
 
   @autobind
-  @logable({type: 'Click', payload: { name: '产品订单切换显示面板', value: '$args[0]'}})
+  @logable({ type: 'Click', payload: { name: '产品订单切换显示面板', value: '$args[0]' } })
   handleTabChange(activeTabKey) {
     this.replaceActiveTabKey(activeTabKey);
   }

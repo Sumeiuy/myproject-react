@@ -160,7 +160,12 @@ export default class DistributeHome extends PureComponent {
   renderManagerNameId(record = EMPTY_OBJECT) {
     const { empName, empId } = record;
     return (
-      <span>{empName}（{empId}）</span>
+      <span>
+        {empName}
+（
+        {empId}
+）
+      </span>
     );
   }
 

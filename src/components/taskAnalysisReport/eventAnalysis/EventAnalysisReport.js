@@ -14,13 +14,15 @@ import _ from 'lodash';
 import ReportTitle from '../ReportTitle';
 import ReportFilter from '../ReportFilter';
 import EventAnalysisChart from './EventAnalysisChart';
-import { defaultStartTime,
+import {
+  defaultStartTime,
   defaultEndTime,
   taskOption,
   customerOption,
   serviceChannelChangeOption,
   eventSourceTypes,
-  tableOption } from '../config';
+  tableOption
+} from '../config';
 import { filterData } from '../utils';
 import { dom } from '../../../helper';
 
@@ -44,13 +46,15 @@ export default class EventAnalysisReport extends PureComponent {
     orgId: PropTypes.string.isRequired,
   }
 
-  constructor(props,context) {
+  constructor(props, context) {
     super(props);
     this.eventAnalysisChartRef = React.createRef();
     this.eventAnalysisReportRef = React.createRef();
-    const { dict: {
-      missionType = [],
-    } } = context;
+    const {
+      dict: {
+        missionType = [],
+      }
+    } = context;
     this.state = {
       // 任务开始时间
       startTime: defaultStartTime,
@@ -126,15 +130,17 @@ export default class EventAnalysisReport extends PureComponent {
   handleEventSource(obj) {
     const { eventSource } = obj;
     const { MOT, SELFBUILD } = eventSourceTypes;
-    const { dict: {
-      missionType = [],
-    } } = this.context;
+    const {
+      dict: {
+        missionType = [],
+      }
+    } = this.context;
     let eventTypeOptions = missionType;
     // descText为0时候是MOT类型，为1时候是自建类型
-    const motDict = _.filter(missionType, {'descText': '0'});
-    const zjDict = _.filter(missionType, {'descText': '1'});
+    const motDict = _.filter(missionType, { descText: '0' });
+    const zjDict = _.filter(missionType, { descText: '1' });
     // 此处eventSource为1指的事件来源是MOT推送，为2指事件来源是自建，为''指的不限，通过事件来源控制事件类型
-    switch(eventSource) {
+    switch (eventSource) {
       case MOT:
         eventTypeOptions = motDict;
         break;
@@ -146,9 +152,9 @@ export default class EventAnalysisReport extends PureComponent {
     }
 
     this.setState({
-       eventTypeOptions,
-       eventType: '',
-      });
+      eventTypeOptions,
+      eventType: '',
+    });
   }
 
   // 事件搜索
@@ -164,15 +170,15 @@ export default class EventAnalysisReport extends PureComponent {
   // 图表位置定位
   @autobind
   getChartPosition(e) {
-    let clientX = e.clientX;
-    let clientY = e.clientY;
+    const clientX = e.clientX;
+    const clientY = e.clientY;
     // 获取表格图表的dom节点
     const eventAnalysisChartDom = this.eventAnalysisChartRef.current;
     // 获取浏览器宽度
     const screenWidth = window.screen.width;
     // 让图表位置显示在鼠标位置上方50px处，当鼠标位置+图表位置一半的时候图表位置为报表的最右方
-    let eventAnalysisChartTop =  `${clientY - 374 - 50}px`;
-    let eventAnalysisChartLeft =  `${clientX - 312}px`;
+    const eventAnalysisChartTop = `${clientY - 374 - 50}px`;
+    let eventAnalysisChartLeft = `${clientX - 312}px`;
     // 图表宽度624px，高度374px
     if (clientX + 312 > screenWidth) {
       eventAnalysisChartLeft = `${screenWidth - 624 - 20}px`;
@@ -190,7 +196,7 @@ export default class EventAnalysisReport extends PureComponent {
   @autobind
   handleTableOnCell(record, type) {
     // 表格数据中有三种表格，判断type
-    if(_.isEmpty(type)){
+    if (_.isEmpty(type)) {
       return;
     }
     // 取出增加在接口数据中的eventReportList
@@ -207,7 +213,7 @@ export default class EventAnalysisReport extends PureComponent {
         // 配置项数据
         let configData = {};
         // 根据不同type获取相应数据
-        switch(type) {
+        switch (type) {
           case 'task':
             const {
               triggerTaskList = [],
@@ -282,7 +288,7 @@ export default class EventAnalysisReport extends PureComponent {
       },
       onMouseOut: () => {
         const eventAnalysisChartDom = this.eventAnalysisChartRef.current;
-        dom.setStyle(eventAnalysisChartDom,'display','none');
+        dom.setStyle(eventAnalysisChartDom, 'display', 'none');
       },
     };
   }
@@ -310,7 +316,7 @@ export default class EventAnalysisReport extends PureComponent {
       const { eventType } = col;
       return {
         ...col,
-        onCell: (record) => this.handleTableOnCell(record, eventType),
+        onCell: record => this.handleTableOnCell(record, eventType),
       };
     });
 

@@ -54,6 +54,7 @@ export default class ChartTable extends PureComponent {
     getTableInfo: () => { },
     repalce: () => { },
   }
+
   constructor(props) {
     super(props);
     this.state = {
@@ -160,44 +161,47 @@ export default class ChartTable extends PureComponent {
       off: orderIndicatorId === item.key && (orderType === 'asc'),
     });
     let titleHtml = '';
-    titleHtml = (<span
-      className={styles.columnsTitle}
-      onClick={() => { this.handleTitleClick(item); }}
-    >
-      {unitFlag && item.unit ?
-        `${item.name}(${encodeURIComponent(item.unit).indexOf(encodeURIComponent('元')) !== -1 ? `万${item.unit}` : item.unit})`
-        :
-        item.name
+    titleHtml = (
+      <span
+        className={styles.columnsTitle}
+        onClick={() => { this.handleTitleClick(item); }}
+      >
+        {unitFlag && item.unit
+          ? `${item.name}(${encodeURIComponent(item.unit).indexOf(encodeURIComponent('元')) !== -1 ? `万${item.unit}` : item.unit})`
+          : item.name
       }
-      {
-        !item.children ?
-          <span className={'ant-table-column-sorter'}>
-            <span
-              className={orderUp}
-              title="↑"
-              onClick={(e) => {
-                this.arrowHandle(e, item, 'asc');
-              }}
-            >
-              <i className={'anticon anticon-caret-up'} />
+        {
+        !item.children
+          ? (
+            <span className="ant-table-column-sorter">
+              <span
+                className={orderUp}
+                title="↑"
+                onClick={(e) => {
+                  this.arrowHandle(e, item, 'asc');
+                }}
+              >
+                <i className="anticon anticon-caret-up" />
+              </span>
+              <span
+                className={orderDown}
+                title="↓"
+                onClick={(e) => {
+                  this.arrowHandle(e, item, 'desc');
+                }}
+              >
+                <i className="anticon anticon-caret-down" />
+              </span>
             </span>
-            <span
-              className={orderDown}
-              title="↓"
-              onClick={(e) => {
-                this.arrowHandle(e, item, 'desc');
-              }}
-            >
-              <i className={'anticon anticon-caret-down'} />
-            </span>
-          </span>
-          :
-          null
+          )
+          : null
       }
 
-    </span>);
+      </span>
+    );
     return titleHtml;
   }
+
   // 根据 column 的 name 计算 column 的宽度
   @autobind
   getColumnWidth(str, unitStr = 0) {
@@ -219,6 +223,7 @@ export default class ChartTable extends PureComponent {
     // 设定最小宽度，以防 name 太短，而对应的值过大，标题会换行
     return width < 120 ? 120 : width;
   }
+
   // 获取表格头部子元素
   @autobind
   getChildren(item) {
@@ -261,6 +266,7 @@ export default class ChartTable extends PureComponent {
     }
     return threeEleArr;
   }
+
   @autobind
   @logable({ type: 'Click', payload: { name: '$args[0].name' } })
   handleTitleClick(item) {
@@ -287,6 +293,7 @@ export default class ChartTable extends PureComponent {
       categoryKey: indexID,
     });
   }
+
   // 表格标题排序箭头事件
   @autobind
   @logable({ type: 'Click', payload: { name: '$args[1].name' } })
@@ -306,45 +313,58 @@ export default class ChartTable extends PureComponent {
       categoryKey: indexID,
     });
   }
+
   // 表格第一列 tooltip 处理事件
   @autobind
   toolTipHandle(record) {
     let toolTipTittle;
     if (record.orgModel) {
       if (record.level === '3') {
-        toolTipTittle = (<div>
-          <p>{record.orgModel.level2Name}</p><p>{record.orgModel.level3Name}</p>
-        </div>);
+        toolTipTittle = (
+          <div>
+            <p>{record.orgModel.level2Name}</p>
+            <p>{record.orgModel.level3Name}</p>
+          </div>
+        );
       } else if (record.level === '4') {
-        toolTipTittle = (<div>
-          <p>
-            {record.orgModel.level2Name}
-            {_.isEmpty(record.orgModel.level3Name) ? '' : `-${record.orgModel.level3Name}`}
-          </p>
-          <p>{record.orgModel.level4Name}</p>
-        </div>);
+        toolTipTittle = (
+          <div>
+            <p>
+              {record.orgModel.level2Name}
+              {_.isEmpty(record.orgModel.level3Name) ? '' : `-${record.orgModel.level3Name}`}
+            </p>
+            <p>{record.orgModel.level4Name}</p>
+          </div>
+        );
       } else if (record.level === '5') {
-        toolTipTittle = (<div>
-          <p>
-            {record.orgModel.level2Name}
-            {_.isEmpty(record.orgModel.level3Name) ? '' : `-${record.orgModel.level3Name}`}
-            -{record.orgModel.level4Name}
-          </p>
-          <p>{record.orgModel.level5Name}{_.isEmpty(record.id) ? '' : `(${record.id})`}</p>
-        </div>);
+        toolTipTittle = (
+          <div>
+            <p>
+              {record.orgModel.level2Name}
+              {_.isEmpty(record.orgModel.level3Name) ? '' : `-${record.orgModel.level3Name}`}
+            -
+              {record.orgModel.level4Name}
+            </p>
+            <p>
+              {record.orgModel.level5Name}
+              {_.isEmpty(record.id) ? '' : `(${record.id})`}
+            </p>
+          </div>
+        );
       } else {
         toolTipTittle = '';
       }
     } else {
       toolTipTittle = '';
     }
-    return toolTipTittle ? <Popover placement="right" content={toolTipTittle} trigger="hover">
-      <div className={styles.tdWrapperDiv}>
-        {record.city}
-      </div>
-    </Popover>
-      :
-    <div className={styles.tdWrapperDiv}>{record.city}</div>;
+    return toolTipTittle ? (
+      <Popover placement="right" content={toolTipTittle} trigger="hover">
+        <div className={styles.tdWrapperDiv}>
+          {record.city}
+        </div>
+      </Popover>
+    )
+      : <div className={styles.tdWrapperDiv}>{record.city}</div>;
     // return toolTipTittle ? <Tooltip placement="right" title={toolTipTittle}>
     //   <div className={styles.tdWrapperDiv}>
     //     {record.city}
@@ -353,6 +373,7 @@ export default class ChartTable extends PureComponent {
     // :
     // <div className={styles.tdWrapperDiv}>{record.city}</div>;
   }
+
   @autobind
   unitChange(arr) {
     let value;
@@ -385,6 +406,7 @@ export default class ChartTable extends PureComponent {
     });
     return newArr;
   }
+
   // 分页事件
   @autobind
   handlePaginationChange(page) {
@@ -401,9 +423,12 @@ export default class ChartTable extends PureComponent {
       categoryKey: indexID,
     });
   }
+
   @autobind
   changeTableData(nextProps) {
-    const { chartTableInfo, scope, boardType, summaryType } = nextProps;
+    const {
+      chartTableInfo, scope, boardType, summaryType
+    } = nextProps;
     const columns = chartTableInfo.titleList;
     const data = chartTableInfo.indicatorSummuryRecordDtos;
     let temp = [];
@@ -413,13 +438,16 @@ export default class ChartTable extends PureComponent {
     if (data && data.length) {
       temp = _.reduce(data, (res, value, index) => {
         const testArr = this.unitChange(value.indicatorDataList);
-        const { id, level: itemLevel, name, orgModel = {} } = value;
+        const {
+          id, level: itemLevel, name, orgModel = {}
+        } = value;
         let city = name;
         if (itemLevel === '5') {
           city = _.isEmpty(id) ? name : `${name}(${id})`;
         }
-        const listItemData =
-          _.assign({ key: index, city, level: itemLevel, id, orgModel }, ...testArr);
+        const listItemData = _.assign({
+          key: index, city, level: itemLevel, id, orgModel
+        }, ...testArr);
         return res.concat(listItemData);
       }, []);
       tempArr = columns.map((item) => {
@@ -516,14 +544,15 @@ export default class ChartTable extends PureComponent {
           {...paginationOption}
         />
         {
-          scrollDisplay ?
-            <ScrollBar
-              allWidth={allWidth}
-              setScrollLeft={this.setScrollLeft}
-              tableScrollLeft={this.state.scrollLeft}
-            />
-            :
-            <div />
+          scrollDisplay
+            ? (
+              <ScrollBar
+                allWidth={allWidth}
+                setScrollLeft={this.setScrollLeft}
+                tableScrollLeft={this.state.scrollLeft}
+              />
+            )
+            : <div />
         }
       </div>
     );

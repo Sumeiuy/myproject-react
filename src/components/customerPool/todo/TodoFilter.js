@@ -121,8 +121,10 @@ export default class TodoFilter extends PureComponent {
         value,
       }
     } = option;
-    this.handleSelectChange({key,
-value});
+    this.handleSelectChange({
+      key,
+      value
+    });
   }
 
   // 发起人下拉框change
@@ -141,8 +143,10 @@ value});
         id,
       }
     } = option;
-    this.props.initiatorCallback({ id,
-name });
+    this.props.initiatorCallback({
+      id,
+      name
+    });
   }
 
   // select改变
@@ -166,8 +170,8 @@ name });
       type,
       /* initiatorData, */
       /* initiator */
-     } = this.props;
-     const dateRangePicker = classnames([styles.filter, styles.dateRangePickFilter]);
+    } = this.props;
+    const dateRangePicker = classnames([styles.filter, styles.dateRangePickFilter]);
     return (
       <div className={styles.reportFilter}>
         <div className="search-box">
@@ -179,7 +183,7 @@ name });
           />
         </div>
         <SingleFilter
-          filterName='类型'
+          filterName="类型"
           filterId="category"
           className={styles.category}
           data={typeData}

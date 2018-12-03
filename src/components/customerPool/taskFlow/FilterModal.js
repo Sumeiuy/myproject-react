@@ -45,7 +45,6 @@ const renderColumnTitle = [{
 
 
 export default class FilterModal extends PureComponent {
-
   static propTypes = {
     dict: PropTypes.object.isRequired,
     circlePeopleData: PropTypes.array.isRequired,
@@ -118,8 +117,7 @@ export default class FilterModal extends PureComponent {
   onCheckFilterMoreButton(obj) {
     const { allFiltersCloseIconState } = this.state;
     const { labelId } = this.props;
-    const newFilterStatusArray =
-      allFiltersCloseIconState[labelId] ? [...allFiltersCloseIconState[labelId]] : [];
+    const newFilterStatusArray = allFiltersCloseIconState[labelId] ? [...allFiltersCloseIconState[labelId]] : [];
     const index = _.findIndex(newFilterStatusArray, o => o.name === obj.name);
     const filterStatusItem = {
       name: obj.name,
@@ -159,7 +157,9 @@ export default class FilterModal extends PureComponent {
 * @param {*} pageSize 当前页条目
 */
   @autobind
-  queryPeopleOfLabel({ labelId, curPageNum = 1, pageSize = 10, filter = [] }) {
+  queryPeopleOfLabel({
+    labelId, curPageNum = 1, pageSize = 10, filter = []
+  }) {
     const { isAuthorize, orgId, getLabelPeople } = this.props;
     const { argsOfQueryCustomer } = this.state;
     // const currentLabel = _.find(circlePeopleData, item => labelId === item.id);
@@ -296,8 +296,7 @@ export default class FilterModal extends PureComponent {
     const { currentFilterObject, currentAllFilterState } = this.state;
     const { labelId } = this.props;
     const newFilterArray = currentFilterObject[labelId] ? [...currentFilterObject[labelId]] : [];
-    const newFilterAllArray =
-      currentAllFilterState[labelId] ? [...currentAllFilterState[labelId]] : [];
+    const newFilterAllArray = currentAllFilterState[labelId] ? [...currentAllFilterState[labelId]] : [];
     const index = _.findIndex(newFilterArray, o => o.split('.')[0] === obj.name);
     const filterItem = `${obj.name}.${obj.key}`;
     const filterAllItem = {
@@ -333,21 +332,27 @@ export default class FilterModal extends PureComponent {
 
   @autobind
   renderBottomButton() {
-    return (<div>
-      <Button
-        className={styles.modalButton}
-        key="cancle"
-        size="large"
-        onClick={this.handleCancel}
-      >取消</Button>
-      <Button
-        className={styles.modalButton}
-        key="confirm"
-        size="large"
-        type="primary"
-        onClick={this.handleAccept}
-      >确定</Button>
-    </div>);
+    return (
+      <div>
+        <Button
+          className={styles.modalButton}
+          key="cancle"
+          size="large"
+          onClick={this.handleCancel}
+        >
+取消
+        </Button>
+        <Button
+          className={styles.modalButton}
+          key="confirm"
+          size="large"
+          type="primary"
+          onClick={this.handleAccept}
+        >
+确定
+        </Button>
+      </div>
+    );
   }
 
   render() {
@@ -400,32 +405,36 @@ export default class FilterModal extends PureComponent {
           sightingTelescopeFilters={sightingTelescopeFilters}
         />
         {
-          _.isEmpty(custTableData) ?
-            <div className={styles.emptyContent}>
-              <span>
-                <Icon className={styles.emptyIcon} type="frown-o" />
+          _.isEmpty(custTableData)
+            ? (
+              <div className={styles.emptyContent}>
+                <span>
+                  <Icon className={styles.emptyIcon} type="frown-o" />
                 暂无数据
                 </span>
-            </div> :
-            <Table
-              pageData={{
-                curPageNum,
-                curPageSize: INITIAL_PAGE_SIZE,
-                totalRecordNum,
-              }}
-              tableClass={
+              </div>
+            )
+            : (
+              <Table
+                pageData={{
+                  curPageNum,
+                  curPageSize: INITIAL_PAGE_SIZE,
+                  totalRecordNum,
+                }}
+                tableClass={
                 classnames({
                   [styles.labelCustTable]: true,
                 })
               }
-              isFixedTitle={false}
-              onSizeChange={this.handleShowSizeChange}
-              onPageChange={this.handlePageChange}
-              listData={custTableData}
-              titleColumn={renderColumnTitle}
-              isFirstColumnLink={false}
-              columnWidth={100}
-            />
+                isFixedTitle={false}
+                onSizeChange={this.handleShowSizeChange}
+                onPageChange={this.handlePageChange}
+                listData={custTableData}
+                titleColumn={renderColumnTitle}
+                isFirstColumnLink={false}
+                columnWidth={100}
+              />
+            )
         }
       </Modal>
     );

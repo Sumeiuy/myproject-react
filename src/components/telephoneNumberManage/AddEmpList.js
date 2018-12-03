@@ -277,15 +277,16 @@ export default class AddEmpList extends PureComponent {
           />
         </div>
         {
-          isShowBatchAddModal ?
-            <BatchAddEmpList
-              visible={isShowBatchAddModal}
-              closeBatchAddModal={this.closeBatchAddModal}
-              batchAdvisorListData={batchAdvisorListData}
-              saveSelectedBatchEmpList={this.saveSelectedBatchEmpList}
-            />
-            :
-            null
+          isShowBatchAddModal
+            ? (
+              <BatchAddEmpList
+                visible={isShowBatchAddModal}
+                closeBatchAddModal={this.closeBatchAddModal}
+                batchAdvisorListData={batchAdvisorListData}
+                saveSelectedBatchEmpList={this.saveSelectedBatchEmpList}
+              />
+            )
+            : null
         }
       </div>
     );

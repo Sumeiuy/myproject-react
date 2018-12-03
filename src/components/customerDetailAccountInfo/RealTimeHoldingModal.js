@@ -13,7 +13,7 @@ import cx from 'classnames';
 import _ from 'lodash';
 
 import IfTableWrap from '../common/IfTableWrap';
-import Table from '../../components/common/table';
+import Table from '../common/table';
 import Modal from '../common/biz/CommonModal';
 import { displayMoney } from './utils';
 import { data, number } from '../../helper';
@@ -55,7 +55,9 @@ export default class RealTimeHoldingModal extends PureComponent {
   @autobind
   converStockData(securitiesData = []) {
     return _.map(securitiesData, (item) => {
-      const { profitAndLoss, presentPrice, marketValue, cost, holdingNumber, availableNumber } = item;
+      const {
+        profitAndLoss, presentPrice, marketValue, cost, holdingNumber, availableNumber
+      } = item;
       const newProfitAndLoss = number.thousandFormat(number.toFixed(profitAndLoss));
       const newPresentPrice = number.thousandFormat(number.toFixed(presentPrice));
       const newMarketValue = number.thousandFormat(number.toFixed(marketValue));
@@ -78,7 +80,9 @@ export default class RealTimeHoldingModal extends PureComponent {
   @autobind
   converProductData(productData = []) {
     return _.map(productData, (items) => {
-      const { share, netWorth, marketValue, profitAndLoss } = items;
+      const {
+        share, netWorth, marketValue, profitAndLoss
+      } = items;
       const newShare = number.thousandFormat(number.toFixed(share));
       const newNetWorth = number.thousandFormat(number.formatRound(netWorth, 2, false));
       const newMarketValue = number.thousandFormat(number.toFixed(marketValue));
@@ -98,20 +102,18 @@ export default class RealTimeHoldingModal extends PureComponent {
   renderSecuritPositionColumns() {
     const creditList = [...STOCK_REALTIME_COLUMNS];
     const custNameColumn = _.find(creditList, o => o.key === PRODUCT_CODE);
-    custNameColumn.render = (text, record) => {
-      return (
-        <div className={styles.nameCell}>
-          <span>{text}</span>
-          {
+    custNameColumn.render = (text, record) => (
+      <div className={styles.nameCell}>
+        <span>{text}</span>
+        {
             record.accountType === 'credit'
-            ? (
+              ? (
                 <span className={styles.rongIcon}>融</span>
               )
-            : null
+              : null
           }
-        </div>
-      );
-    };
+      </div>
+    );
     return creditList;
   }
 
@@ -132,7 +134,7 @@ export default class RealTimeHoldingModal extends PureComponent {
     });
   }
 
-  //tab栏切换的回调
+  // tab栏切换的回调
   @autobind
   handleTabSwitch(key) {
     this.setState({ activeKey: key });
@@ -149,7 +151,7 @@ export default class RealTimeHoldingModal extends PureComponent {
   render() {
     const { activeKey } = this.state;
     const { securitiesData, productData, realTimeAsset } = this.props;
-    //取出实时资产的数据
+    // 取出实时资产的数据
     const { rtimeAssets, availableFunds, advisableFunds } = realTimeAsset;
     // 实时资产
     const rtimeAsset = displayMoney(rtimeAssets);
@@ -171,7 +173,7 @@ export default class RealTimeHoldingModal extends PureComponent {
     return (
       <Modal
         title="实时持仓"
-        size='large'
+        size="large"
         showOkBtn={false}
         destroyOnClose
         visible
@@ -222,7 +224,8 @@ export default class RealTimeHoldingModal extends PureComponent {
             </TabPane>
             <TabPane tab="产品实时持仓" key="productRealTimeHolding">
               <IfTableWrap isRender={!hasNoProductData} text="暂无产品实时持仓数据">
-                <Table className={styles.tableContainer}
+                <Table
+                  className={styles.tableContainer}
                   columns={PRODUCT_REALTIME_COLUMNS}
                   dataSource={newProductData}
                   pagination={false}
@@ -236,4 +239,3 @@ export default class RealTimeHoldingModal extends PureComponent {
     );
   }
 }
-

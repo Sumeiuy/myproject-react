@@ -122,7 +122,8 @@ export default class CreateCollapse extends PureComponent {
           className={styles.headerLeft}
           title={`${item.subtypeCd || ''}：${item.serveRecord || ''}`}
         >
-          {_.isEmpty(item.subtypeCd) ? '' : `${item.subtypeCd}：`}{item.serveRecord || ''}
+          {_.isEmpty(item.subtypeCd) ? '' : `${item.subtypeCd}：`}
+          {item.serveRecord || ''}
         </div>
       );
     }
@@ -133,7 +134,8 @@ export default class CreateCollapse extends PureComponent {
         className={styles.headerLeft}
         title={`${item.taskName || ''}：${item.serveRecord || ''}`}
       >
-        {_.isEmpty(item.taskName) ? '' : `${item.taskName}：`}{item.serveRecord || ''}
+        {_.isEmpty(item.taskName) ? '' : `${item.taskName}：`}
+        {item.serveRecord || ''}
       </div>
     );
   }
@@ -173,20 +175,21 @@ export default class CreateCollapse extends PureComponent {
           onChange={this.handleCollapseChange}
         >
           {
-            _.map(data, (item, index) =>
+            _.map(data, (item, index) => (
               <Panel
-                header={
+                header={(
                   <div className={styles.headerContainer}>
                     <div>
                       {
-                        !_.isEmpty(serveTime) ?
-                          <div
-                            className={styles.serviceTime}
-                            key={`${serveTime[index].yearTime}${serveTime[index].dayTime}`}
-                          >
-                            <div className={styles.yearTime}>{serveTime[index].yearTime || ''}</div>
+                        !_.isEmpty(serveTime)
+                          ? (
                             <div
-                              className={
+                              className={styles.serviceTime}
+                              key={`${serveTime[index].yearTime}${serveTime[index].dayTime}`}
+                            >
+                              <div className={styles.yearTime}>{serveTime[index].yearTime || ''}</div>
+                              <div
+                                className={
                                 classnames({
                                   [styles.activeTime]: _.includes(currentActiveIndex,
                                     String(index)),
@@ -195,10 +198,11 @@ export default class CreateCollapse extends PureComponent {
                                   [styles.onlyDayTime]: _.isEmpty(serveTime[index].yearTime),
                                 })
                               }
-                            >
-                              {serveTime[index].dayTime || ''}
+                              >
+                                {serveTime[index].dayTime || ''}
+                              </div>
                             </div>
-                          </div> : null
+                          ) : null
                       }
                       <div className={styles.leftAnchor}>
                         <span
@@ -230,7 +234,7 @@ export default class CreateCollapse extends PureComponent {
                       </div>
                     </div>
                   </div>
-                }
+)}
                 className={styles.panelHeader}
                 key={index}
               >
@@ -239,11 +243,11 @@ export default class CreateCollapse extends PureComponent {
                   item={item}
                   filesList={filesList}
                 />
-              </Panel>,
-            )
+              </Panel>
+            ), )
           }
         </Collapse>
-      </div >
+      </div>
     );
   }
 
@@ -260,8 +264,8 @@ export default class CreateCollapse extends PureComponent {
     }
 
     // 左边服务时间字段
-    const serveTimeCollection = _.isEmpty(data) ?
-      EMPTY_LIST : _.filter(data, item => !_.isEmpty(item.serveTime));
+    const serveTimeCollection = _.isEmpty(data)
+      ? EMPTY_LIST : _.filter(data, item => !_.isEmpty(item.serveTime));
 
     const serveTime = this.separateDate(serveTimeCollection);
 

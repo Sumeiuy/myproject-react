@@ -6,7 +6,9 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Form, Select, Input, Mention, InputNumber } from 'antd';
+import {
+  Form, Select, Input, Mention, InputNumber
+} from 'antd';
 import { createForm } from 'rc-form';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
@@ -36,7 +38,6 @@ const MAX_LENGTH = 1000;
 
 @createForm()
 export default class TaskFormInfo extends PureComponent {
-
   static propTypes = {
     form: PropTypes.object.isRequired,
     defaultMissionName: PropTypes.string.isRequired,
@@ -92,12 +93,14 @@ export default class TaskFormInfo extends PureComponent {
     let suggestions = [];
     if (!_.isEmpty(productDescSuggestions)) {
       suggestions = _.map(productDescSuggestions, item => (
-        !_.isEmpty(item) && <Nav
+        !_.isEmpty(item) && (
+        <Nav
           value={item.type}
           data={item.type}
         >
           <span>{item.name}</span>
         </Nav>
+        )
       ));
     } else if (!_.isEmpty(templetDescSuggestion)) {
       // 初始化的时候，如果外部有标签任务提示带入mention，
@@ -105,7 +108,7 @@ export default class TaskFormInfo extends PureComponent {
       suggestions = [
         <Nav
           value={templetDescSuggestion.type}
-          data={'sightLabel'}
+          data="sightLabel"
         >
           <span>{templetDescSuggestion.name}</span>
         </Nav>,
@@ -126,7 +129,8 @@ export default class TaskFormInfo extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { isShowErrorInfo: nextError,
+    const {
+      isShowErrorInfo: nextError,
       isShowErrorExcuteType: nextExcuteTypeError,
       isShowErrorTaskType: nextTaskTypeError,
       isShowErrorIntervalValue: nextErrorIntervalValue,
@@ -140,7 +144,7 @@ export default class TaskFormInfo extends PureComponent {
       isShowErrorIntervalValue,
       isShowErrorTaskName,
       isShowErrorStrategySuggestion,
-     } = this.props;
+    } = this.props;
 
     if (nextError !== isShowErrorInfo) {
       this.setState({
@@ -176,8 +180,7 @@ export default class TaskFormInfo extends PureComponent {
 
   getCurrentTaskSubTypes(currentMissionType) {
     const { taskTypes } = this.props;
-    const currentTaskTypeCollection = _.find(taskTypes, item =>
-      item.key === currentMissionType) || {};
+    const currentTaskTypeCollection = _.find(taskTypes, item => item.key === currentMissionType) || {};
     let currentTaskSubTypeCollection = [{}];
     if (!_.isEmpty(currentTaskTypeCollection) && !_.isEmpty(currentTaskTypeCollection.children)) {
       currentTaskSubTypeCollection = currentTaskTypeCollection.children;
@@ -251,11 +254,9 @@ export default class TaskFormInfo extends PureComponent {
   handleSearchChange(value, trigger) {
     const { users, templetDescSuggestion, productDescSuggestions } = this.props;
     const searchValue = value.toLowerCase();
-    const dataSource = _.includes(PREFIX, trigger) ?
-      [...users, templetDescSuggestion, ...productDescSuggestions] : [];
-    const filtered = dataSource.filter(item =>
-      item.name && item.name.toLowerCase().indexOf(searchValue) !== -1,
-    );
+    const dataSource = _.includes(PREFIX, trigger)
+      ? [...users, templetDescSuggestion, ...productDescSuggestions] : [];
+    const filtered = dataSource.filter(item => item.name && item.name.toLowerCase().indexOf(searchValue) !== -1, );
     const suggestions = filtered.map(suggestion => (
       <Nav
         value={suggestion.type}
@@ -302,18 +303,14 @@ export default class TaskFormInfo extends PureComponent {
 
   handleCreatOptions(data) {
     if (!_.isEmpty(data)) {
-      return data.map(item =>
-        <Option key={`task${item.key}`} value={item.key}>{item.value}</Option>,
-      );
+      return data.map(item => <Option key={`task${item.key}`} value={item.key}>{item.value}</Option>, );
     }
     return null;
   }
 
   handleCreateTaskSubType(data) {
     if (!_.isEmpty(data)) {
-      return data.map(item =>
-        <Option key={`subTask_${item.key}`} value={item.key}>{item.value}</Option>,
-      );
+      return data.map(item => <Option key={`subTask_${item.key}`} value={item.key}>{item.value}</Option>, );
     }
     return null;
   }
@@ -327,7 +324,7 @@ export default class TaskFormInfo extends PureComponent {
           mentionStyle={mentionTextStyle}
           suggestionStyle={suggestionStyle}
           style={{ width: '100%', height: 100 }}
-          placeholder={'请在描述客户经理联系客户前需要了解的客户相关信息，比如持仓情况。'}
+          placeholder="请在描述客户经理联系客户前需要了解的客户相关信息，比如持仓情况。"
           prefix={PREFIX}
           onSearchChange={this.handleSearchChange}
           suggestions={suggestions}
@@ -409,7 +406,10 @@ export default class TaskFormInfo extends PureComponent {
            * 任务名称
            */}
           <li>
-            <label htmlFor="dd" className={styles.task_label}><i className={styles.required_i}>*</i>任务名称:</label>
+            <label htmlFor="dd" className={styles.task_label}>
+              <i className={styles.required_i}>*</i>
+任务名称:
+            </label>
             <FormItem
               wrapperCol={{ span: 12 }}
               {...taskNameErrorProps}
@@ -427,66 +427,79 @@ export default class TaskFormInfo extends PureComponent {
            * 任务类型
            */}
           <li>
-            <label htmlFor="dd" className={styles.task_label}><i className={styles.required_i}>*</i>任务类型:</label>
+            <label htmlFor="dd" className={styles.task_label}>
+              <i className={styles.required_i}>*</i>
+任务类型:
+            </label>
             {
-              !_.isEmpty(taskTypes) ?
-                <FormItem
-                  wrapperCol={{ span: 12 }}
-                  {...taskTypeErrorSelectProps}
-                >
-                  {getFieldDecorator('taskType',
-                    {
-                      initialValue: defaultMissionType,
-                    })(<Select
-                      onChange={this.handleTaskTypeChange}
-                    >
-                      {this.handleCreatOptions(taskTypes)}
-                    </Select>,
-                  )}
-                </FormItem>
-                :
-                <FormItem
-                  wrapperCol={{ span: 12 }}
-                  {...taskTypeErrorSelectProps}
-                >
-                  <Select defaultValue="暂无数据">
-                    <Option key="null" value="0">暂无数据</Option>
-                  </Select>
-                </FormItem>
+              !_.isEmpty(taskTypes)
+                ? (
+                  <FormItem
+                    wrapperCol={{ span: 12 }}
+                    {...taskTypeErrorSelectProps}
+                  >
+                    {getFieldDecorator('taskType',
+                      {
+                        initialValue: defaultMissionType,
+                      })(<Select
+                        onChange={this.handleTaskTypeChange}
+                      >
+                        {this.handleCreatOptions(taskTypes)}
+                         </Select>,)}
+                  </FormItem>
+                )
+                : (
+                  <FormItem
+                    wrapperCol={{ span: 12 }}
+                    {...taskTypeErrorSelectProps}
+                  >
+                    <Select defaultValue="暂无数据">
+                      <Option key="null" value="0">暂无数据</Option>
+                    </Select>
+                  </FormItem>
+                )
             }
           </li>
           {/**
            * 执行方式
            */}
           <li>
-            <label htmlFor="dd" className={styles.task_label}><i className={styles.required_i}>*</i>执行方式:</label>
+            <label htmlFor="dd" className={styles.task_label}>
+              <i className={styles.required_i}>*</i>
+执行方式:
+            </label>
             {
-              !_.isEmpty(executeTypes) ?
-                <FormItem
-                  wrapperCol={{ span: 12 }}
-                  {...excuteTypeErrorSelectProps}
-                >
-                  {getFieldDecorator('executionType',
-                    {
-                      initialValue: defaultExecutionType,
-                    })(<Select onChange={this.handleExcuteTypeChange}>
-                      {this.handleCreatOptions(executeTypes)}
-                    </Select>,
-                  )}
-                </FormItem>
-                :
-                <FormItem
-                  wrapperCol={{ span: 12 }}
-                  {...excuteTypeErrorSelectProps}
-                >
-                  <Select defaultValue="暂无数据">
-                    <Option key="null" value="0">暂无数据</Option>
-                  </Select>
-                </FormItem>
+              !_.isEmpty(executeTypes)
+                ? (
+                  <FormItem
+                    wrapperCol={{ span: 12 }}
+                    {...excuteTypeErrorSelectProps}
+                  >
+                    {getFieldDecorator('executionType',
+                      {
+                        initialValue: defaultExecutionType,
+                      })(<Select onChange={this.handleExcuteTypeChange}>
+                        {this.handleCreatOptions(executeTypes)}
+                         </Select>,)}
+                  </FormItem>
+                )
+                : (
+                  <FormItem
+                    wrapperCol={{ span: 12 }}
+                    {...excuteTypeErrorSelectProps}
+                  >
+                    <Select defaultValue="暂无数据">
+                      <Option key="null" value="0">暂无数据</Option>
+                    </Select>
+                  </FormItem>
+                )
             }
           </li>
           <li>
-            <label htmlFor="dd" className={styles.task_label}><i className={styles.required_i}>*</i>有效期(天):</label>
+            <label htmlFor="dd" className={styles.task_label}>
+              <i className={styles.required_i}>*</i>
+有效期(天):
+            </label>
             <FormItem
               wrapperCol={{ span: 12 }}
               className={styles.timelyIntervalValueItem}
@@ -507,7 +520,12 @@ export default class TaskFormInfo extends PureComponent {
         </ul>
         <div className={styles.task_textArea}>
           <p>
-            <label htmlFor="desc"><i>*</i>服务策略:<br />（适用于所有客户）</label>
+            <label htmlFor="desc">
+              <i>*</i>
+服务策略:
+              <br />
+（适用于所有客户）
+            </label>
           </p>
           <FormItem
             {...serviceStrategySuggestionErrorProps}
@@ -522,8 +540,7 @@ export default class TaskFormInfo extends PureComponent {
                 style={{ width: '100%' }}
                 maxLength={MAX_LENGTH}
                 onChange={this.handleStrategySuggestionChange}
-              />,
-            )}
+              />, )}
           </FormItem>
         </div>
         <div
@@ -538,7 +555,10 @@ export default class TaskFormInfo extends PureComponent {
           }
         >
           <p>
-            <label htmlFor="desc"><i>*</i>任务提示:</label>
+            <label htmlFor="desc">
+              <i>*</i>
+任务提示:
+            </label>
           </p>
           <FormItem
             {...errorProps}
@@ -551,8 +571,7 @@ export default class TaskFormInfo extends PureComponent {
             }
           </FormItem>
         </div>
-      </Form >
+      </Form>
     );
   }
 }
-

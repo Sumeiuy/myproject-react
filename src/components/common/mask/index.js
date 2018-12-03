@@ -12,7 +12,6 @@ import cx from 'classnames';
 import style from './index.less';
 
 export default class Mask extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = { visible: props.visible };

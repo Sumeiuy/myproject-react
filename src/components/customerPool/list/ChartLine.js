@@ -78,7 +78,7 @@ function limitDigit(value) {
     const valueStrLeft = tmpArr[0];
     if (valueStrLeft.length > 2) {
       return `${sign}${valueStrLeft}`;
-    } else if (valueStrLeft.length === 2) {
+    } if (valueStrLeft.length === 2) {
       return `${sign}${absValue.toFixed(1)}`;
     }
     return `${sign}${Number(absValue.toFixed(2))}`;
@@ -87,7 +87,6 @@ function limitDigit(value) {
 }
 
 export default class ChartLineWidget extends PureComponent {
-
   static propTypes = {
     chartData: PropTypes.array,
     formatAsset: PropTypes.func.isRequired,

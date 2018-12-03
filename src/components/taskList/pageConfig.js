@@ -14,7 +14,7 @@ const pageConfig = {
   taskList: {
     pageName: '视图',
     pageType: 'taskList', // 查询列表接口中的type值
-    status: [  // 创建者视图详情页面需要做对应的翻译
+    status: [ // 创建者视图详情页面需要做对应的翻译
       {
         show: true,
         label: '全部',

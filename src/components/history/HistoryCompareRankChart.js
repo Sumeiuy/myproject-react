@@ -202,7 +202,9 @@ export default class HistoryCompareRankChart extends PureComponent {
       orgId,
       summaryType,
     } = this.props;
-    const { orderType, scopeSelectValue, rankPage, totalPage } = this.state;
+    const {
+      orderType, scopeSelectValue, rankPage, totalPage
+    } = this.state;
     let { unit } = this.state;
     if (_.isEmpty(historyCardRecordVo)) {
       unit = '--';
@@ -212,9 +214,9 @@ export default class HistoryCompareRankChart extends PureComponent {
       hideOption: Number(level) !== 1,
     });
     const toggleScope3Option = classnames({
-      hideOption: Number(level) === 3 ||
-        Number(level) === 4 ||
-        (Number(level) === 2 && !report.isNewOrg(orgId)),
+      hideOption: Number(level) === 3
+        || Number(level) === 4
+        || (Number(level) === 2 && !report.isNewOrg(orgId)),
     });
     const toggleScope4Option = classnames({
       hideOption: Number(level) === 4,
@@ -292,7 +294,8 @@ export default class HistoryCompareRankChart extends PureComponent {
                       key={sortByTypeIndex}
                       value={item.scope}
                     >
-                      按{item.name}
+                      按
+                      {item.name}
                     </Option>
                   );
                 })
@@ -317,14 +320,12 @@ export default class HistoryCompareRankChart extends PureComponent {
         <div className={chartBdClass}>
           {
             _.isEmpty(historyCardRecordVo)
-              ?
-              (
+              ? (
                 <div className={styles.nochart}>
                   <img src={imgStr} alt="无对应数据" />
                 </div>
               )
-              :
-              (
+              : (
                 <HistoryRankChart
                   data={historyCardRecordVo.data}
                   level={level}

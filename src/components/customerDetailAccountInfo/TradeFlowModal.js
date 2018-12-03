@@ -8,17 +8,19 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { Button, Tabs, Table, Radio } from 'antd';
+import {
+  Button, Tabs, Table, Radio
+} from 'antd';
 import moment from 'moment';
 import DateRangePick from 'lego-react-date/src';
 import _ from 'lodash';
 
+import { SingleFilter, SingleFilterWithSearch } from 'lego-react-filter/src';
+import TreeFilter from 'lego-tree-filter/src';
 import { data, number } from '../../helper';
 import logable, { logCommon } from '../../decorators/logable';
 import Modal from '../common/biz/CommonModal';
 import DateFilter from '../common/htFilter/dateFilter';
-import { SingleFilter, SingleFilterWithSearch } from 'lego-react-filter/src';
-import TreeFilter from 'lego-tree-filter/src';
 import Pagination from '../common/Pagination';
 import IfTableWrap from '../common/IfTableWrap';
 import Tooltip from '../common/Tooltip';
@@ -34,6 +36,7 @@ import {
 } from './config';
 
 import styles from './tradeFlowModal.less';
+
 const NODATA_HINT = '客户暂无资金变动信息';
 const NODATA_STANDARD = '暂无普通账户交易历史信息';
 const NODATA_CREDIT = '暂无信用账户交易历史信息';
@@ -94,16 +97,16 @@ export default class TradeFlowModal extends PureComponent {
       capitalEndDate: defaultEndDateString,
       // 普通账户
       currentStandBusnTypeValue: '', // 选择的业务类别
-      currentStandPrdtValue: '',  // 选择的产品代码
-      currentAllPrdtMenuValue: '',  // 选择的产品代码,
+      currentStandPrdtValue: '', // 选择的产品代码
+      currentAllPrdtMenuValue: '', // 选择的产品代码,
       // 信用账户
       currentCreditBusnTypeValue: '', // 选择的业务类别
-      currentCreditPrdtValue: '',  // 选择的产品代码
+      currentCreditPrdtValue: '', // 选择的产品代码
       // 期权账户
-      currentOptionPrdtValue: '',  // 选择的产品代码
+      currentOptionPrdtValue: '', // 选择的产品代码
       // 资金变动
       currentCapitalBusnTypeValue: '', // 选择的业务类别
-      accountTypeRadio: 'normal',  // 选择的账户类型
+      accountTypeRadio: 'normal', // 选择的账户类型
     };
   }
 
@@ -116,19 +119,19 @@ export default class TradeFlowModal extends PureComponent {
   // 查询业务类型
   @autobind
   queryBusnTypeDict(params = {}) {
-    const { location: { query: { custId }} } = this.props;
+    const { location: { query: { custId } } } = this.props;
     // type 值用于到Home页面中区分调用哪个具体api接口
-      this.props.querytradeFlow({
-        type: 'busnType',
-        custId,
-        queryType: 'tradeFlow',
-        ...params
-      });
+    this.props.querytradeFlow({
+      type: 'busnType',
+      custId,
+      queryType: 'tradeFlow',
+      ...params
+    });
   }
 
   // 查询产品代码
   @autobind
-  queryFinProductList(value='') {
+  queryFinProductList(value = '') {
     const { location: { query: { custId } } } = this.props;
     if (!_.isEmpty(value)) {
       this.props.querytradeFlow({
@@ -224,37 +227,37 @@ export default class TradeFlowModal extends PureComponent {
 
     // 查询资金变动交易流水
     @autobind
-    queryCapitalTradeFlow(params) {
-      const { location: { query: { custId } } } = this.props;
-      const {
-        capitalStartDate,
-        capitalEndDate,
-        accountTypeRadio,
-        currentCapitalBusnTypeValue
-      } = this.state;
+  queryCapitalTradeFlow(params) {
+    const { location: { query: { custId } } } = this.props;
+    const {
+      capitalStartDate,
+      capitalEndDate,
+      accountTypeRadio,
+      currentCapitalBusnTypeValue
+    } = this.state;
       // type 值用于到Home页面中区分调用哪个具体api接口
-      this.props.querytradeFlow({
-        type: 'capital',
-        custId,
-        startDate: capitalStartDate,
-        endDate: capitalEndDate,
-        bussinessType: currentCapitalBusnTypeValue,
-        accountType: accountTypeRadio,
-        pageNum: 1,
-        pageSize: 10,
-        ...params,
-      });
-    }
+    this.props.querytradeFlow({
+      type: 'capital',
+      custId,
+      startDate: capitalStartDate,
+      endDate: capitalEndDate,
+      bussinessType: currentCapitalBusnTypeValue,
+      accountType: accountTypeRadio,
+      pageNum: 1,
+      pageSize: 10,
+      ...params,
+    });
+  }
 
   // 将接口返回的分页器数据转换成分页器组件的props
   @autobind
-  getPage(page = {}) {
-    return {
-      pageSize: 10,
-      current: page.pageNum || 1,
-      total: page.totalCount || 0,
-    };
-  }
+    getPage(page = {}) {
+      return {
+        pageSize: 10,
+        current: page.pageNum || 1,
+        total: page.totalCount || 0,
+      };
+    }
 
   @autobind
   @logable({
@@ -285,15 +288,14 @@ export default class TradeFlowModal extends PureComponent {
       // 信用账户历史交易
       this.queryBusnTypeDict({ accountType: 'credit' });
       this.queryCreditTradeFlow();
-    } else if(activeTabKey === 'capitalChange') {
+    } else if (activeTabKey === 'capitalChange') {
       // 资金变动
       this.queryBusnTypeDict({
-        accountType: this.state.accountTypeRadio ,
+        accountType: this.state.accountTypeRadio,
         queryType: 'moneyChange',
       });
       this.queryCapitalTradeFlow();
-    }
-    else {
+    } else {
       // 期权账户历史交易
       this.queryOptionTradeFlow();
     }
@@ -303,8 +305,10 @@ export default class TradeFlowModal extends PureComponent {
   @autobind
   @logable({
     type: 'Click',
-    payload: { name: '切换普通账户页码',
-    value: '$args[0]'},
+    payload: {
+      name: '切换普通账户页码',
+      value: '$args[0]'
+    },
   })
   handleStandardPageChange(pageNum) {
     this.queryStandardTradeFlow({
@@ -316,8 +320,10 @@ export default class TradeFlowModal extends PureComponent {
   @autobind
   @logable({
     type: 'Click',
-    payload: { name: '切换信用账户页码',
-    value: '$args[0]'},
+    payload: {
+      name: '切换信用账户页码',
+      value: '$args[0]'
+    },
   })
   handleCreditPageChange(pageNum) {
     this.queryCreditTradeFlow({
@@ -329,8 +335,10 @@ export default class TradeFlowModal extends PureComponent {
   @autobind
   @logable({
     type: 'Click',
-    payload: { name: '切换期权账户页码',
-    value: '$args[0]'},
+    payload: {
+      name: '切换期权账户页码',
+      value: '$args[0]'
+    },
   })
   handleOptionPageChange(pageNum) {
     this.queryOptionTradeFlow({
@@ -342,8 +350,10 @@ export default class TradeFlowModal extends PureComponent {
   @autobind
   @logable({
     type: 'Click',
-    payload: { name: '切换资金变动页码',
-    value: '$args[0]'},
+    payload: {
+      name: '切换资金变动页码',
+      value: '$args[0]'
+    },
   })
   handleCapitalPageChange(pageNum) {
     this.queryCapitalTradeFlow({
@@ -422,7 +432,7 @@ export default class TradeFlowModal extends PureComponent {
       defaultStartDate,
       defaultEndDate,
     };
-  };
+  }
 
   // 资金变动选择起止时间
   @autobind
@@ -438,8 +448,8 @@ export default class TradeFlowModal extends PureComponent {
     const [startDate, endDate] = date.value;
     const { capitalStartDate, capitalEndDate } = this.state;
     // 如果时间没有发生改变, 直接return
-    if (startDate === capitalStartDate &&
-      endDate === capitalEndDate) {
+    if (startDate === capitalStartDate
+      && endDate === capitalEndDate) {
       return;
     }
     this.setState({
@@ -447,8 +457,8 @@ export default class TradeFlowModal extends PureComponent {
       capitalEndDate: endDate,
     });
     this.queryCapitalTradeFlow({
-      startDate: startDate,
-      endDate: endDate,
+      startDate,
+      endDate,
     });
   }
 
@@ -463,9 +473,9 @@ export default class TradeFlowModal extends PureComponent {
   })
   handleFilterStandardBussinessType(current) {
     this.setState({ currentStandBusnTypeValue: current.value });
-      this.queryStandardTradeFlow({
-        bussinessType: current.value,
-      });
+    this.queryStandardTradeFlow({
+      bussinessType: current.value,
+    });
   }
 
   // 信用账户选择业务类别
@@ -479,9 +489,9 @@ export default class TradeFlowModal extends PureComponent {
   })
   handleFilterCreditBussinessType(current) {
     this.setState({ currentCreditBusnTypeValue: current.value });
-      this.queryCreditTradeFlow({
-        bussinessType: current.value,
-      });
+    this.queryCreditTradeFlow({
+      bussinessType: current.value,
+    });
   }
 
   // 资金变动选择业务类别
@@ -495,26 +505,28 @@ export default class TradeFlowModal extends PureComponent {
   })
   handleFilterCapitalBussinessType(current) {
     this.setState({ currentCapitalBusnTypeValue: current.value });
-      this.queryCapitalTradeFlow({
-        bussinessType: current.value,
-      });
+    this.queryCapitalTradeFlow({
+      bussinessType: current.value,
+    });
   }
 
   // 资金变动选择帐户类型,因为资金流水的业务类别和帐户类型有联动关系，这里需要再重新获取业务类别数据
   @autobind
   @logable({
     type: 'Click',
-    payload: { name: '账户类型',
-    value: '$args[0].target.value' },
+    payload: {
+      name: '账户类型',
+      value: '$args[0].target.value'
+    },
   })
   handleAccountTypeRadioChange(e) {
-    const {value} = e.target;
+    const { value } = e.target;
     this.setState({
       accountTypeRadio: value,
       currentCapitalBusnTypeValue: '',
     });
     this.queryBusnTypeDict({
-      accountType: value ,
+      accountType: value,
       queryType: 'moneyChange',
     });
     this.queryCapitalTradeFlow({
@@ -616,13 +628,15 @@ export default class TradeFlowModal extends PureComponent {
   // 修改部分列的显示
   @autobind
   transformColumnsData(columns) {
-    return _.map(columns, column => {
-      const { isNumber = false, isAmount = false, width, dataIndex } = column;
+    return _.map(columns, (column) => {
+      const {
+        isNumber = false, isAmount = false, width, dataIndex
+      } = column;
       if (isNumber || isAmount) {
         return this.updateMoneyColumn(column);
       }
       if (dataIndex === 'serviceIndication') {
-       return {
+        return {
           ...column,
           render: content => (
             <span>
@@ -640,7 +654,7 @@ export default class TradeFlowModal extends PureComponent {
             </Tooltip>
           )
         };
-       }
+      }
       return column;
     });
   }
@@ -648,334 +662,334 @@ export default class TradeFlowModal extends PureComponent {
 // 修改产品下拉选项
 @autobind
   getOptionItemValue({ value: { prdtCode, prdtName, prdtSortCode } }) {
-    if(!prdtSortCode){
+    if (!prdtSortCode) {
       return <span key={prdtCode} title={prdtName}>{prdtName}</span>;
     }
     return <span key={prdtCode} title={prdtName}>{`${prdtName}(${prdtSortCode})`}</span>;
   }
 
-  render() {
-    const {
-      activeTabKey,
-      standardStartDate,
-      standardEndDate,
-      currentStandBusnTypeValue,
-      currentStandPrdtValue,
-      creditStartDate,
-      creditEndDate,
-      currentCreditBusnTypeValue,
-      currentCreditPrdtValue,
-      optionStartDate,
-      optionEndDate,
-      currentOptionPrdtValue,
-      capitalStartDate,
-      capitalEndDate,
-      currentCapitalBusnTypeValue,
-      accountTypeRadio,
-    } = this.state;
-    const {
-      busnTypeDict,
-      finProductList,
-      productCatalogTree,
-      standardTradeFlowRes,
-      creditTradeFlowRes,
-      optionTradeFlowRes,
-      capitalChangeFlowRes: {
-        list = EMPTY_LIST,
-        page = EMPTY_OBJECT,
-      },
-    } = this.props;
+render() {
+  const {
+    activeTabKey,
+    standardStartDate,
+    standardEndDate,
+    currentStandBusnTypeValue,
+    currentStandPrdtValue,
+    creditStartDate,
+    creditEndDate,
+    currentCreditBusnTypeValue,
+    currentCreditPrdtValue,
+    optionStartDate,
+    optionEndDate,
+    currentOptionPrdtValue,
+    capitalStartDate,
+    capitalEndDate,
+    currentCapitalBusnTypeValue,
+    accountTypeRadio,
+  } = this.state;
+  const {
+    busnTypeDict,
+    finProductList,
+    productCatalogTree,
+    standardTradeFlowRes,
+    creditTradeFlowRes,
+    optionTradeFlowRes,
+    capitalChangeFlowRes: {
+      list = EMPTY_LIST,
+      page = EMPTY_OBJECT,
+    },
+  } = this.props;
     // 判断有没有普通账户流水数据
-    const isRenderStandard = !_.isEmpty(standardTradeFlowRes.list);
-    // 补足普通账户流水数据
-    const standardData = data.padEmptyDataForList(standardTradeFlowRes.list);
-    // 修改普通账户Table 的 columns
-    const standardTradeColumns = this.transformColumnsData(STANDARD_TRADE_FLOW_COLUMNS);
-    // 获取普通账户表格的分页器信息
-    const standardPage = this.getPage(standardTradeFlowRes.page);
-    // 判断有没有信用账户流水数据
-    const isRenderCredit = !_.isEmpty(creditTradeFlowRes.list);
-    const creditData = data.padEmptyDataForList(creditTradeFlowRes.list);
-    const creditTradeColumns = this.transformColumnsData(CREDIT_TRADE_FLOW_COLUMNS);
-    const creditPage = this.getPage(creditTradeFlowRes.page);
-    // 判断有没有期权账户流水数据
-    const isRenderOption = !_.isEmpty(optionTradeFlowRes.list);
-    const optionData = data.padEmptyDataForList(optionTradeFlowRes.list);
-    const optionTradeColumns = this.transformColumnsData(OPTION_TRADE_FLOW_COLUMNS);
-    const optionPage = this.getPage(optionTradeFlowRes.page);
-    // 资金变动表格信息 ,没有数据时展示占位图标，有数据但少于十条，用空白行补全；
-    const capitalData = data.padEmptyDataForList(list);
-    const capitalChangeColumns = this.transformColumnsData(CAPITAL_CHANGE_COLUMNS);
-    const capitalPage = this.getPage(page);
-    const isRender = !_.isEmpty(list);
-    // 弹出层的自定义关闭按钮
-    const closeBtn = [(
-      <Button onClick={this.handleModalClose}>关闭</Button>
-    )];
-    const { defaultStartDate, defaultEndDate } = this.getDefaultDate(capitalStartDate, capitalEndDate);
+  const isRenderStandard = !_.isEmpty(standardTradeFlowRes.list);
+  // 补足普通账户流水数据
+  const standardData = data.padEmptyDataForList(standardTradeFlowRes.list);
+  // 修改普通账户Table 的 columns
+  const standardTradeColumns = this.transformColumnsData(STANDARD_TRADE_FLOW_COLUMNS);
+  // 获取普通账户表格的分页器信息
+  const standardPage = this.getPage(standardTradeFlowRes.page);
+  // 判断有没有信用账户流水数据
+  const isRenderCredit = !_.isEmpty(creditTradeFlowRes.list);
+  const creditData = data.padEmptyDataForList(creditTradeFlowRes.list);
+  const creditTradeColumns = this.transformColumnsData(CREDIT_TRADE_FLOW_COLUMNS);
+  const creditPage = this.getPage(creditTradeFlowRes.page);
+  // 判断有没有期权账户流水数据
+  const isRenderOption = !_.isEmpty(optionTradeFlowRes.list);
+  const optionData = data.padEmptyDataForList(optionTradeFlowRes.list);
+  const optionTradeColumns = this.transformColumnsData(OPTION_TRADE_FLOW_COLUMNS);
+  const optionPage = this.getPage(optionTradeFlowRes.page);
+  // 资金变动表格信息 ,没有数据时展示占位图标，有数据但少于十条，用空白行补全；
+  const capitalData = data.padEmptyDataForList(list);
+  const capitalChangeColumns = this.transformColumnsData(CAPITAL_CHANGE_COLUMNS);
+  const capitalPage = this.getPage(page);
+  const isRender = !_.isEmpty(list);
+  // 弹出层的自定义关闭按钮
+  const closeBtn = [(
+    <Button onClick={this.handleModalClose}>关闭</Button>
+  )];
+  const { defaultStartDate, defaultEndDate } = this.getDefaultDate(capitalStartDate, capitalEndDate);
 
-    return (
-      <Modal
-        visible
-        size="large"
-        maskClosable={false}
-        modalKey="cust360DetailTradeFlowModal"
-        closeModal={this.handleModalClose}
-        title="交易流水"
-        selfBtnGroup={closeBtn}
-      >
-        <div className={styles.tradeFlowWrap}>
-          <Tabs onChange={this.handleTabChange} activeKey={activeTabKey} animated={false}>
-            <TabPane tab="普通账户历史交易" key="standardAccountTrade">
-              <div className={styles.tabPaneWrap}>
-                <div className={`${styles.header} clearfix`}>
-                  <div className={styles.filterArea}>
-                    <DateFilter
-                      filterName="查询日期"
-                      initialStartDate={DEFAULT_START_DATE}
-                      value={[standardStartDate,standardEndDate]}
-                      onChange={this.handleChangeStandardDate}
-                      disabledCurrentEnd={false}
-                    />
-                  </div>
-                  <div className={styles.filterArea}>
-                    <SingleFilterWithSearch
-                      filterName="业务类别"
-                      filterId="bussinessType"
-                      value={currentStandBusnTypeValue}
-                      data={busnTypeDict.list}
-                      placeholder="请输入业务类别"
-                      dropdownStyle={{
-                        maxHeight: 324,
-                        overflowY: 'auto',
-                        width: 252,
-                      }}
-                      onChange={this.handleFilterStandardBussinessType}
-                    />
-                  </div>
-                  <div className={`${styles.filterArea} ${styles.filterSpecial}`}>
-                    <SingleFilter
-                      filterName="产品代码"
-                      filterId="productCode"
-                      placeholder="请输入产品代码或产品名称"
-                      dropdownStyle={{
-                        maxHeight: 324,
-                        overflowY: 'auto',
-                        width: 252,
-                      }}
-                      dataMap={['prdtCode', 'prdtName']}
-                      needItemObj
-                      showSearch
-                      data={finProductList.list}
-                      value={currentStandPrdtValue}
-                      onInputChange={this.queryFinProductList}
-                      onChange={this.handleFilterStandardPrdt}
-                      getOptionItemValue={this.getOptionItemValue}
-                    />
-                  </div>
-                  <div className={`${styles.filterArea} ${styles.lastFilter}`}>
-                    <TreeFilter
-                      dropdownClassName={styles.allProductMenuTree}
-                      filterName="全产品目录"
-                      filterId="allProductMenuTree"
-                      // placeholder="请输入全产品目录"
-                      dropdownStyle={{zIndex: 1000}}
-                      treeData={productCatalogTree.allProductMenuTree}
-                      multiple
-                      showSearch
-                      treeCheckable
-                      onChange={this.handleFilterTree}
-                    />
-                  </div>
-                </div>
-                <IfTableWrap isRender={isRenderStandard} text={NODATA_STANDARD}>
-                  <div className={styles.body}>
-                    <Table
-                      pagination={false}
-                      dataSource={standardData}
-                      columns={standardTradeColumns}
-                      className={styles.tradeFlowTable}
-                      scroll={STANDARD_TRADE_FLOW_TABLE_SCROLL}
-                    />
-                  </div>
-                  <Pagination
-                    {...standardPage}
-                    onChange={this.handleStandardPageChange}
+  return (
+    <Modal
+      visible
+      size="large"
+      maskClosable={false}
+      modalKey="cust360DetailTradeFlowModal"
+      closeModal={this.handleModalClose}
+      title="交易流水"
+      selfBtnGroup={closeBtn}
+    >
+      <div className={styles.tradeFlowWrap}>
+        <Tabs onChange={this.handleTabChange} activeKey={activeTabKey} animated={false}>
+          <TabPane tab="普通账户历史交易" key="standardAccountTrade">
+            <div className={styles.tabPaneWrap}>
+              <div className={`${styles.header} clearfix`}>
+                <div className={styles.filterArea}>
+                  <DateFilter
+                    filterName="查询日期"
+                    initialStartDate={DEFAULT_START_DATE}
+                    value={[standardStartDate, standardEndDate]}
+                    onChange={this.handleChangeStandardDate}
+                    disabledCurrentEnd={false}
                   />
-                </IfTableWrap>
-              </div>
-            </TabPane>
-            <TabPane tab="信用账户历史交易" key="creditAccountTrade">
-              <div className={styles.tabPaneWrap}>
-                <div className={`${styles.header} clearfix`}>
-                  <div className={styles.filterArea}>
-                    <DateFilter
-                      filterName="查询日期"
-                      initialStartDate={DEFAULT_START_DATE}
-                      value={[creditStartDate,creditEndDate]}
-                      onChange={this.handleChangeCreditDate}
-                      disabledCurrentEnd={false}
-                    />
-                  </div>
-                  <div className={styles.filterArea}>
-                    <SingleFilterWithSearch
-                      filterName="业务类别"
-                      filterId="bussinessType"
-                      value={currentCreditBusnTypeValue}
-                      data={busnTypeDict.list}
-                      placeholder="请输入业务类别"
-                      dropdownStyle={{
-                        maxHeight: 324,
-                        overflowY: 'auto',
-                        width: 252,
-                      }}
-                      onChange={this.handleFilterCreditBussinessType}
-                    />
-                  </div>
-                  <div className={styles.filterArea}>
-                    <SingleFilter
-                      filterName="产品代码"
-                      filterId="productCode"
-                      placeholder="请输入产品代码或产品名称"
-                      dropdownStyle={{
-                        maxHeight: 324,
-                        overflowY: 'auto',
-                        width: 252,
-                      }}
-                      dataMap={['prdtCode', 'prdtName']}
-                      showSearch
-                      needItemObj
-                      data={finProductList.list}
-                      value={currentCreditPrdtValue}
-                      onInputChange={this.queryFinProductList}
-                      onChange={this.handleFilterCreditPrdt}
-                      getOptionItemValue={this.getOptionItemValue}
-                    />
-                  </div>
                 </div>
-                <IfTableWrap isRender={isRenderCredit} text={NODATA_CREDIT}>
-                  <div className={styles.body}>
-                    <Table
-                      pagination={false}
-                      dataSource={creditData}
-                      columns={creditTradeColumns}
-                      className={styles.tradeFlowTable}
-                      scroll={CREDIT_TRADE_FLOW_TABLE_SCROLL}
-                    />
+                <div className={styles.filterArea}>
+                  <SingleFilterWithSearch
+                    filterName="业务类别"
+                    filterId="bussinessType"
+                    value={currentStandBusnTypeValue}
+                    data={busnTypeDict.list}
+                    placeholder="请输入业务类别"
+                    dropdownStyle={{
+                      maxHeight: 324,
+                      overflowY: 'auto',
+                      width: 252,
+                    }}
+                    onChange={this.handleFilterStandardBussinessType}
+                  />
+                </div>
+                <div className={`${styles.filterArea} ${styles.filterSpecial}`}>
+                  <SingleFilter
+                    filterName="产品代码"
+                    filterId="productCode"
+                    placeholder="请输入产品代码或产品名称"
+                    dropdownStyle={{
+                      maxHeight: 324,
+                      overflowY: 'auto',
+                      width: 252,
+                    }}
+                    dataMap={['prdtCode', 'prdtName']}
+                    needItemObj
+                    showSearch
+                    data={finProductList.list}
+                    value={currentStandPrdtValue}
+                    onInputChange={this.queryFinProductList}
+                    onChange={this.handleFilterStandardPrdt}
+                    getOptionItemValue={this.getOptionItemValue}
+                  />
+                </div>
+                <div className={`${styles.filterArea} ${styles.lastFilter}`}>
+                  <TreeFilter
+                    dropdownClassName={styles.allProductMenuTree}
+                    filterName="全产品目录"
+                    filterId="allProductMenuTree"
+                      // placeholder="请输入全产品目录"
+                    dropdownStyle={{ zIndex: 1000 }}
+                    treeData={productCatalogTree.allProductMenuTree}
+                    multiple
+                    showSearch
+                    treeCheckable
+                    onChange={this.handleFilterTree}
+                  />
+                </div>
+              </div>
+              <IfTableWrap isRender={isRenderStandard} text={NODATA_STANDARD}>
+                <div className={styles.body}>
+                  <Table
+                    pagination={false}
+                    dataSource={standardData}
+                    columns={standardTradeColumns}
+                    className={styles.tradeFlowTable}
+                    scroll={STANDARD_TRADE_FLOW_TABLE_SCROLL}
+                  />
+                </div>
+                <Pagination
+                  {...standardPage}
+                  onChange={this.handleStandardPageChange}
+                />
+              </IfTableWrap>
+            </div>
+          </TabPane>
+          <TabPane tab="信用账户历史交易" key="creditAccountTrade">
+            <div className={styles.tabPaneWrap}>
+              <div className={`${styles.header} clearfix`}>
+                <div className={styles.filterArea}>
+                  <DateFilter
+                    filterName="查询日期"
+                    initialStartDate={DEFAULT_START_DATE}
+                    value={[creditStartDate, creditEndDate]}
+                    onChange={this.handleChangeCreditDate}
+                    disabledCurrentEnd={false}
+                  />
+                </div>
+                <div className={styles.filterArea}>
+                  <SingleFilterWithSearch
+                    filterName="业务类别"
+                    filterId="bussinessType"
+                    value={currentCreditBusnTypeValue}
+                    data={busnTypeDict.list}
+                    placeholder="请输入业务类别"
+                    dropdownStyle={{
+                      maxHeight: 324,
+                      overflowY: 'auto',
+                      width: 252,
+                    }}
+                    onChange={this.handleFilterCreditBussinessType}
+                  />
+                </div>
+                <div className={styles.filterArea}>
+                  <SingleFilter
+                    filterName="产品代码"
+                    filterId="productCode"
+                    placeholder="请输入产品代码或产品名称"
+                    dropdownStyle={{
+                      maxHeight: 324,
+                      overflowY: 'auto',
+                      width: 252,
+                    }}
+                    dataMap={['prdtCode', 'prdtName']}
+                    showSearch
+                    needItemObj
+                    data={finProductList.list}
+                    value={currentCreditPrdtValue}
+                    onInputChange={this.queryFinProductList}
+                    onChange={this.handleFilterCreditPrdt}
+                    getOptionItemValue={this.getOptionItemValue}
+                  />
+                </div>
+              </div>
+              <IfTableWrap isRender={isRenderCredit} text={NODATA_CREDIT}>
+                <div className={styles.body}>
+                  <Table
+                    pagination={false}
+                    dataSource={creditData}
+                    columns={creditTradeColumns}
+                    className={styles.tradeFlowTable}
+                    scroll={CREDIT_TRADE_FLOW_TABLE_SCROLL}
+                  />
                 </div>
                 <Pagination
                   {...creditPage}
                   onChange={this.handleCreditPageChange}
                 />
-                </IfTableWrap>
-              </div>
-            </TabPane>
-            <TabPane tab="期权账户历史交易" key="optionAccountTrade">
-              <div className={styles.tabPaneWrap}>
-                <div className={`${styles.header} clearfix`}>
-                  <div className={styles.filterArea}>
-                    <DateFilter
-                      filterName="查询日期"
-                      initialStartDate={DEFAULT_START_DATE}
-                      value={[optionStartDate,optionEndDate]}
-                      onChange={this.handleChangeOptionDate}
-                      disabledCurrentEnd={false}
-                    />
-                  </div>
-                  <div className={styles.filterArea}>
-                    <SingleFilter
-                      filterName="产品代码"
-                      filterId="productCode"
-                      placeholder="请输入产品代码或产品名称"
-                      dropdownStyle={{
-                        maxHeight: 324,
-                        overflowY: 'auto',
-                        width: 252,
-                      }}
-                      dataMap={['prdtCode', 'prdtName']}
-                      showSearch
-                      needItemObj
-                      data={finProductList.list}
-                      value={currentOptionPrdtValue}
-                      onInputChange={this.queryFinProductList}
-                      onChange={this.handleFilterOptionPrdt}
-                      getOptionItemValue={this.getOptionItemValue}
-                    />
-                  </div>
-                </div>
-                <IfTableWrap isRender={isRenderOption} text={NODATA_OPTION}>
-                  <div className={styles.body}>
-                    <Table
-                      pagination={false}
-                      dataSource={optionData}
-                      columns={optionTradeColumns}
-                      className={styles.tradeFlowTable}
-                      scroll={OPTION_TRADE_FLOW_TABLE_SCROLL}
-                    />
-                  </div>
-                  <Pagination
-                    {...optionPage}
-                    onChange={this.handleOptionPageChange}
+              </IfTableWrap>
+            </div>
+          </TabPane>
+          <TabPane tab="期权账户历史交易" key="optionAccountTrade">
+            <div className={styles.tabPaneWrap}>
+              <div className={`${styles.header} clearfix`}>
+                <div className={styles.filterArea}>
+                  <DateFilter
+                    filterName="查询日期"
+                    initialStartDate={DEFAULT_START_DATE}
+                    value={[optionStartDate, optionEndDate]}
+                    onChange={this.handleChangeOptionDate}
+                    disabledCurrentEnd={false}
                   />
-                </IfTableWrap>
-              </div>
-            </TabPane>
-            <TabPane tab="资金变动" key="capitalChange">
-              <div className={styles.tabPaneWrap}>
-                <div className={`${styles.header} clearfix`}>
-                  <div className={styles.filterArea}>
-                    <DateRangePick
-                      type="date"
-                      filterId="filterDate"
-                      filterName="查询日期"
-                      filterValue={[defaultStartDate, defaultEndDate]}
-                      onChange={this.handleChangeCapitalDate}
-                      disabledRange={SIX_MONTH_DAYS}
-                    />
-                  </div>
-                  <div className={styles.filterArea}>
-                    <span className={styles.label}>账户类型:</span>
-                    <RadioGroup onChange={this.handleAccountTypeRadioChange} value={accountTypeRadio} className={styles.radioGroup}>
-                      <Radio className={styles.accountTypeRadio} value="normal">普通</Radio>
-                      <Radio className={styles.accountTypeRadio} value="credit">信用</Radio>
-                      <Radio className={styles.accountTypeRadio} value="option">期权</Radio>
-                    </RadioGroup>
-                  </div>
-                  <div className={styles.filterArea}>
-                    <SingleFilterWithSearch
-                      filterName="业务类别"
-                      filterId="bussinessType"
-                      value={currentCapitalBusnTypeValue}
-                      data={busnTypeDict.list}
-                      placeholder="请输入业务类别"
-                      dropdownStyle={{
-                        maxHeight: 324,
-                        overflowY: 'auto',
-                        width: 252,
-                      }}
-                      onChange={this.handleFilterCapitalBussinessType}
-                    />
-                  </div>
                 </div>
-                <IfTableWrap isRender={isRender} text={NODATA_HINT}>
-                  <div className={styles.body}>
-                    <Table
-                      pagination={false}
-                      dataSource={capitalData}
-                      columns={capitalChangeColumns}
-                      className={styles.tradeFlowTable}
-                    />
-                  </div>
-                  <Pagination
-                    {...capitalPage}
-                    onChange={this.handleCapitalPageChange}
+                <div className={styles.filterArea}>
+                  <SingleFilter
+                    filterName="产品代码"
+                    filterId="productCode"
+                    placeholder="请输入产品代码或产品名称"
+                    dropdownStyle={{
+                      maxHeight: 324,
+                      overflowY: 'auto',
+                      width: 252,
+                    }}
+                    dataMap={['prdtCode', 'prdtName']}
+                    showSearch
+                    needItemObj
+                    data={finProductList.list}
+                    value={currentOptionPrdtValue}
+                    onInputChange={this.queryFinProductList}
+                    onChange={this.handleFilterOptionPrdt}
+                    getOptionItemValue={this.getOptionItemValue}
                   />
-                </IfTableWrap>
+                </div>
               </div>
-            </TabPane>
-          </Tabs>
-        </div>
-      </Modal>
-    );
-  }
+              <IfTableWrap isRender={isRenderOption} text={NODATA_OPTION}>
+                <div className={styles.body}>
+                  <Table
+                    pagination={false}
+                    dataSource={optionData}
+                    columns={optionTradeColumns}
+                    className={styles.tradeFlowTable}
+                    scroll={OPTION_TRADE_FLOW_TABLE_SCROLL}
+                  />
+                </div>
+                <Pagination
+                  {...optionPage}
+                  onChange={this.handleOptionPageChange}
+                />
+              </IfTableWrap>
+            </div>
+          </TabPane>
+          <TabPane tab="资金变动" key="capitalChange">
+            <div className={styles.tabPaneWrap}>
+              <div className={`${styles.header} clearfix`}>
+                <div className={styles.filterArea}>
+                  <DateRangePick
+                    type="date"
+                    filterId="filterDate"
+                    filterName="查询日期"
+                    filterValue={[defaultStartDate, defaultEndDate]}
+                    onChange={this.handleChangeCapitalDate}
+                    disabledRange={SIX_MONTH_DAYS}
+                  />
+                </div>
+                <div className={styles.filterArea}>
+                  <span className={styles.label}>账户类型:</span>
+                  <RadioGroup onChange={this.handleAccountTypeRadioChange} value={accountTypeRadio} className={styles.radioGroup}>
+                    <Radio className={styles.accountTypeRadio} value="normal">普通</Radio>
+                    <Radio className={styles.accountTypeRadio} value="credit">信用</Radio>
+                    <Radio className={styles.accountTypeRadio} value="option">期权</Radio>
+                  </RadioGroup>
+                </div>
+                <div className={styles.filterArea}>
+                  <SingleFilterWithSearch
+                    filterName="业务类别"
+                    filterId="bussinessType"
+                    value={currentCapitalBusnTypeValue}
+                    data={busnTypeDict.list}
+                    placeholder="请输入业务类别"
+                    dropdownStyle={{
+                      maxHeight: 324,
+                      overflowY: 'auto',
+                      width: 252,
+                    }}
+                    onChange={this.handleFilterCapitalBussinessType}
+                  />
+                </div>
+              </div>
+              <IfTableWrap isRender={isRender} text={NODATA_HINT}>
+                <div className={styles.body}>
+                  <Table
+                    pagination={false}
+                    dataSource={capitalData}
+                    columns={capitalChangeColumns}
+                    className={styles.tradeFlowTable}
+                  />
+                </div>
+                <Pagination
+                  {...capitalPage}
+                  onChange={this.handleCapitalPageChange}
+                />
+              </IfTableWrap>
+            </div>
+          </TabPane>
+        </Tabs>
+      </div>
+    </Modal>
+  );
+}
 }

@@ -11,7 +11,6 @@ import ChartTable from './ChartTable';
 import BoardHeader from './BoardHeader';
 
 export default class PerformanceChartBoard extends PureComponent {
-
   static propTypes = {
     boardType: PropTypes.string.isRequired,
     chartData: PropTypes.array,
@@ -111,31 +110,30 @@ export default class PerformanceChartBoard extends PureComponent {
         />
         {/* 根据 url 里的 showChart 来显示不同的组件 */}
         {
-          showChart === 'tables' ?
-          (
-            <ChartTable
-              chartTableInfo={chartTableInfo}
-              getTableInfo={getTableInfo}
-              replace={replace}
-              level={level}
-              scope={categoryScope}
-              location={location}
-              indexID={indexID}
-              boardType={boardType}
-              summaryType={summaryType}
-            />
-          )
-          :
-          (
-            <ChartBoard
-              chartData={chartData}
-              location={location}
-              level={level}
-              scope={categoryScope}
-              custRange={custRange}
-              updateQueryState={updateQueryState}
-            />
-          )
+          showChart === 'tables'
+            ? (
+              <ChartTable
+                chartTableInfo={chartTableInfo}
+                getTableInfo={getTableInfo}
+                replace={replace}
+                level={level}
+                scope={categoryScope}
+                location={location}
+                indexID={indexID}
+                boardType={boardType}
+                summaryType={summaryType}
+              />
+            )
+            : (
+              <ChartBoard
+                chartData={chartData}
+                location={location}
+                level={level}
+                scope={categoryScope}
+                custRange={custRange}
+                updateQueryState={updateQueryState}
+              />
+            )
         }
       </div>
     );

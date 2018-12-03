@@ -56,7 +56,7 @@ export default class Home extends PureComponent {
     const { query: { investAbilityTabActiveKey } } = props.location;
     this.state = {
       // 当前激活tab面板的key, 如果query中没有，默认取账户总体情况的key
-      activeTabKey: investAbilityTabActiveKey ? investAbilityTabActiveKey : 'accountTotalState',
+      activeTabKey: investAbilityTabActiveKey || 'accountTotalState',
     };
   }
 
@@ -121,8 +121,7 @@ export default class Home extends PureComponent {
             />
           </TabPane>
           <TabPane tab="资产配置分析" key="assetAllocationAnalysis">
-            <AssetConfigAnalysis
-            />
+            <AssetConfigAnalysis />
           </TabPane>
           <TabPane tab="收益归因分析" key="profitAttributionAnalysis">
             <ProfitAttributionAnalysis

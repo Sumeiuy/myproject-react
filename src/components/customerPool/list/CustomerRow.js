@@ -253,11 +253,18 @@ export default class CustomerRow extends PureComponent {
     const { listItem } = this.props;
     if (listItem.pOrO === PER_CODE) {
       // 客户性质为个人
-      return <span>{listItem.genderValue}/{listItem.age}岁</span>;
-    } else if (listItem.pOrO === ORG_CODE && listItem.orgTypeName) {
+      return (
+        <span>
+          {listItem.genderValue}
+/
+          {listItem.age}
+岁
+        </span>
+      );
+    } if (listItem.pOrO === ORG_CODE && listItem.orgTypeName) {
       // 客户性质为一般机构
       return <span>{listItem.orgTypeName}</span>;
-    } else if (listItem.pOrO === PROD_CODE && listItem.prodTypeCode) {
+    } if (listItem.pOrO === PROD_CODE && listItem.prodTypeCode) {
       // 客户性质为产品机构
       return <span>{listItem.prodTypeCode}</span>;
     }
@@ -296,8 +303,8 @@ export default class CustomerRow extends PureComponent {
   }
 
   renderRankImg(listItem = {}) {
-    return rankImgSrcConfig[listItem.levelCode] ?
-      <img className={styles.iconMoneyImage} src={rankImgSrcConfig[listItem.levelCode]} alt="" />
+    return rankImgSrcConfig[listItem.levelCode]
+      ? <img className={styles.iconMoneyImage} src={rankImgSrcConfig[listItem.levelCode]} alt="" />
       : null;
   }
 
@@ -313,16 +320,18 @@ export default class CustomerRow extends PureComponent {
       queryCustSignLabel,
     } = this.props;
     if (this.isMainService) {
-      return (<QuickMenu
-        listItem={listItem}
-        createModal={this.createModal}
-        toggleServiceRecordModal={toggleServiceRecordModal}
-        condition={condition}
-        location={location}
-        entertype={entertype}
-        goGroupOrTask={goGroupOrTask}
-        queryCustSignLabel={queryCustSignLabel}
-      />);
+      return (
+        <QuickMenu
+          listItem={listItem}
+          createModal={this.createModal}
+          toggleServiceRecordModal={toggleServiceRecordModal}
+          condition={condition}
+          location={location}
+          entertype={entertype}
+          goGroupOrTask={goGroupOrTask}
+          queryCustSignLabel={queryCustSignLabel}
+        />
+      );
     }
     return null;
   }
@@ -343,7 +352,8 @@ export default class CustomerRow extends PureComponent {
   }
 
   render() {
-    const { q, listItem, monthlyProfits, isAllSelect, selectedIds,
+    const {
+      q, listItem, monthlyProfits, isAllSelect, selectedIds,
       custIncomeReqState,
       getCustIncome,
       location,
@@ -379,9 +389,9 @@ export default class CustomerRow extends PureComponent {
     // 归集率
     let hsRate = '--';
     if (listItem.hsRate !== null) {
-      hsRate = listItem.hsRate < 0 ?
-        Number(listItem.hsRate.toFixed(2)) :
-        `${Number((listItem.hsRate * 100).toFixed(2))}%`;
+      hsRate = listItem.hsRate < 0
+        ? Number(listItem.hsRate.toFixed(2))
+        : `${Number((listItem.hsRate * 100).toFixed(2))}%`;
     }
     const currentRiskLevel = riskLevelConfig[rskLev] || {};
     return (
@@ -416,7 +426,14 @@ export default class CustomerRow extends PureComponent {
                 <span className="cutOffLine">|</span>
                 {
                   listItem.genderValue && listItem.age
-                    ? <span>{listItem.genderValue}/{listItem.age}岁</span>
+                    ? (
+                      <span>
+                        {listItem.genderValue}
+/
+                        {listItem.age}
+岁
+                      </span>
+                    )
                     : null
                 }
                 {
@@ -429,27 +446,37 @@ export default class CustomerRow extends PureComponent {
                 </span>
                 {
                   (rskLev === '' || rskLev === 'null' || _.isEmpty(currentRiskLevel))
-                    ? '' :
-                    <div
-                      className={`riskLevel ${currentRiskLevel.colorCls}`}
-                    >
-                      <div className="itemText">{`风险等级：${currentRiskLevel.title}`}</div>
-                      {currentRiskLevel.name}
-                    </div>
+                    ? ''
+                    : (
+                      <div
+                        className={`riskLevel ${currentRiskLevel.colorCls}`}
+                      >
+                        <div className="itemText">{`风险等级：${currentRiskLevel.title}`}</div>
+                        {currentRiskLevel.name}
+                      </div>
+                    )
                 }
                 {listItem.highWorthFlag ? <div className="highWorthFlag">高净值</div> : null}
                 {
-                  listItem.contactFlag ?
-                    <div className="iconSingned">
+                  listItem.contactFlag
+                    ? (
+                      <div className="iconSingned">
                       签约
-                      <div className="itemText">签约客户</div>
-                    </div> : null
+                        <div className="itemText">签约客户</div>
+                      </div>
+                    ) : null
                 }
               </div>
               <div className="row-two">
-                <span className="imputation">归集率: <em>{hsRate}</em></span>
+                <span className="imputation">
+归集率:
+                  <em>{hsRate}</em>
+                </span>
                 <span className="cutOffLine">|</span>
-                <span className="commission">佣金率: <em>{miniFee}</em></span>
+                <span className="commission">
+佣金率:
+                  <em>{miniFee}</em>
+                </span>
                 <span className="cutOffLine">|</span>
                 <span>总资产:</span>
                 <span className="asset">{assetValue}</span>

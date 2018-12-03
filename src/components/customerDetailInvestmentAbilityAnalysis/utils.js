@@ -2,9 +2,9 @@ import _ from 'lodash';
 
 // 过滤图标数据,获取指定key的数据
 function filterData(data, key) {
-  let reportData = [];
+  const reportData = [];
   if (_.isArray(data)) {
-    data.forEach(item => {
+    data.forEach((item) => {
       reportData.push(item[key]);
     });
   }

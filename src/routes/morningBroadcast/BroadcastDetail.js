@@ -106,9 +106,18 @@ export default class BroadcastDetail extends PureComponent {
             <div className={styles.header}>
               <div className={styles.title}>{ newItemDetail.title }</div>
               <div className={styles.info}>
-                <div>类型：{ newItemDetail.newsTypValue }</div>
-                <div>作者：{ newItemDetail.updatedBy || newItemDetail.createdBy }</div>
-                <div>发布日期：{ newItemDetail.created }</div>
+                <div>
+类型：
+                  { newItemDetail.newsTypValue }
+                </div>
+                <div>
+作者：
+                  { newItemDetail.updatedBy || newItemDetail.createdBy }
+                </div>
+                <div>
+发布日期：
+                  { newItemDetail.created }
+                </div>
               </div>
             </div>
             <div className={styles.body}>
@@ -127,14 +136,16 @@ export default class BroadcastDetail extends PureComponent {
                   />
                 </div>
                 {
-                  audioSource ?
-                    <a
-                      onClick={this.handleDownloadClick}
-                      href={this.getSourceSrc(audioSource)}
-                    >
-                      <Icon className="icon" type="xiazai" />
-                    </a> :
-                    null
+                  audioSource
+                    ? (
+                      <a
+                        onClick={this.handleDownloadClick}
+                        href={this.getSourceSrc(audioSource)}
+                      >
+                        <Icon className="icon" type="xiazai" />
+                      </a>
+                    )
+                    : null
                 }
               </div>
               {

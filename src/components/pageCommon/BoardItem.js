@@ -21,7 +21,6 @@ import logable from '../../decorators/logable';
 const boardTypeMap = optionsMap.boardTypeMap;
 
 export default class BoardItem extends PureComponent {
-
   static propTypes = {
     boardData: PropTypes.object.isRequired,
     visibleRanges: PropTypes.array.isRequired,
@@ -38,11 +37,16 @@ export default class BoardItem extends PureComponent {
     const getVRnames = afterSelected(all, allNode);
     return getVRnames(user, true);
   }
+
   // 发布按钮点击事件
   @autobind
   @logable({ type: 'Click', payload: { name: '发布' } })
   publishHandle() {
-    const { publish, boardData: { boardStatus, id, ownerOrgId, isPublishable } } = this.props;
+    const {
+      publish, boardData: {
+        boardStatus, id, ownerOrgId, isPublishable
+      }
+    } = this.props;
     if ((isPublishable === 'Y') && (boardStatus === 'UNRELEASE')) {
       publish({
         ownerOrgId,
@@ -50,6 +54,7 @@ export default class BoardItem extends PureComponent {
       });
     }
   }
+
   // 进入编辑页面
   @autobind
   @logable({ type: 'Click', payload: { name: '编辑' } })
@@ -57,6 +62,7 @@ export default class BoardItem extends PureComponent {
     const { id, ownerOrgId, boardType } = this.props.boardData;
     this.props.push(`/boardEdit?boardId=${id}&orgId=${ownerOrgId}&boardType=${boardType}`);
   }
+
   @autobind
   @logable({ type: 'Click', payload: { name: '删除' } })
   deleteBoardHandle() {
@@ -110,8 +116,14 @@ export default class BoardItem extends PureComponent {
             </div>
           </div>
           <div className={styles.boardInfo}>
-            <div className={styles.text}>可见范围：{seeAllow}</div>
-            <div className={styles.text}>修改时间：{updateTime || createTime}</div>
+            <div className={styles.text}>
+可见范围：
+              {seeAllow}
+            </div>
+            <div className={styles.text}>
+修改时间：
+              {updateTime || createTime}
+            </div>
           </div>
           <div className={styles.boardBtnGroup}>
             <span onClick={this.editBoardHandle}>编辑</span>

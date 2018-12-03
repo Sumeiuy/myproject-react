@@ -76,7 +76,13 @@ export default class FilialeCustTransferNotifies extends PureComponent {
       <div className={styles.notifiesInfoWrapper}>
         <HeadBreadcrumb />
         <div className={styles.notifiesTitle}>通知提醒</div>
-        <p>您的主职位已被更新为{notifiesInfo.position} {notifiesInfo.department},</p>
+        <p>
+您的主职位已被更新为
+          {notifiesInfo.position}
+          {' '}
+          {notifiesInfo.department}
+,
+        </p>
         <p> 新开户的客户服务关系将归属该职位！</p>
       </div>
     );

@@ -10,12 +10,16 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import classnames from 'classnames';
 import { autobind } from 'core-decorators';
-import { Divider, Tag, Input, List, Checkbox, Button, Modal } from 'antd';
+import {
+  Divider, Tag, Input, List, Checkbox, Button, Modal
+} from 'antd';
 
-import { dva, emp, fsp, permission, env } from '../../../helper';
-import Pagination from '../../../components/common/Pagination';
-import { Search } from '../../../components/customerPool/home';
-import Icon from '../../../components/common/Icon';
+import {
+  dva, emp, fsp, permission, env
+} from '../../../helper';
+import Pagination from '../../common/Pagination';
+import { Search } from '../../customerPool/home';
+import Icon from '../../common/Icon';
 import logable, { logPV } from '../../../decorators/logable';
 import styles from './recommendedLabel.less';
 import withRouter from '../../../decorators/withRouter';
@@ -65,7 +69,8 @@ export default class RecommendedLabel extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { queryCustLabels,
+    const {
+      queryCustLabels,
       location: { query: { sWord = '' } },
     } = props;
     // 初始化加载客户标签
@@ -86,8 +91,7 @@ export default class RecommendedLabel extends PureComponent {
   componentWillReceiveProps(nextProps) {
     const {
       hotWds,
-      location: {
-        query: { sWord = '' } },
+      location: { query: { sWord = '' } },
     } = nextProps;
     if (hotWds !== this.props.hotWds) {
       this.setState({
@@ -103,9 +107,12 @@ export default class RecommendedLabel extends PureComponent {
   onQueryLabel(sWord = '') {
     const { queryCustLabels } = this.props;
     queryCustLabels({ condition: sWord });
-    this.paginationChange({ sWord,
-pageNum: 1 });
+    this.paginationChange({
+      sWord,
+      pageNum: 1
+    });
   }
+
   // 分页(当前页，当前页数据)
   getPaginationAndData() {
     const {
@@ -125,11 +132,12 @@ pageNum: 1 });
       finalCurrent = _.ceil(total / pageSize, 0);
     }
 
-    const allLabelsToTable = custLabels.map(item => ({ ...item,
-key: item.id }));
-    const currentLabels = _.filter(allLabelsToTable, (labelItem, index) =>
-      index + 1 > (finalCurrent - 1) * pageSize &&
-      index + 1 <= finalCurrent * pageSize);
+    const allLabelsToTable = custLabels.map(item => ({
+      ...item,
+      key: item.id
+    }));
+    const currentLabels = _.filter(allLabelsToTable, (labelItem, index) => index + 1 > (finalCurrent - 1) * pageSize
+      && index + 1 <= finalCurrent * pageSize);
     return {
       pagination: {
         total: custLabels.length,
@@ -169,13 +177,14 @@ key: item.id }));
       finalSelectedLabels = _.concat(finalSelectedLabels, item);
     } else {
       finalSelectedLabels = _.filter(finalSelectedLabels,
-          selectedItem => selectedItem.id !== item.id);
+        selectedItem => selectedItem.id !== item.id);
     }
     this.setState({
       selectedLabels: finalSelectedLabels,
       rangeError: finalSelectedLabels.length > MAX_SELECT_LABEL_SIZE || finalSelectedLabels.length < MIN_SELECT_LABEL_SIZE,
     });
   }
+
   // 删除标签
   @autobind
   deleteUserLabel(e, labelId) {
@@ -183,10 +192,13 @@ key: item.id }));
     this.setState((preState) => {
       const { selectedLabels: preLabels } = preState;
       const selectedLabels = _.filter(preLabels, preLabelItem => preLabelItem.id !== labelId);
-      return { selectedLabels,
-rangeError: selectedLabels.length > MAX_SELECT_LABEL_SIZE || selectedLabels.length < MIN_SELECT_LABEL_SIZE };
+      return {
+        selectedLabels,
+        rangeError: selectedLabels.length > MAX_SELECT_LABEL_SIZE || selectedLabels.length < MIN_SELECT_LABEL_SIZE
+      };
     });
   }
+
   // 列表item
   @autobind
   renderLabelItem(item) {
@@ -207,26 +219,33 @@ rangeError: selectedLabels.length > MAX_SELECT_LABEL_SIZE || selectedLabels.leng
     const isCludeLabel = _.filter(selectedLabels, selectItem => selectItem.id === item.id).length;
     return (
       <Item.Meta
-        avatar={<Checkbox
-          checked={isCludeLabel}
-          onChange={(e) => { this.handleCheckedLabel(e, item); }}
-        />}
-        title={
+        avatar={(
+          <Checkbox
+            checked={isCludeLabel}
+            onChange={(e) => { this.handleCheckedLabel(e, item); }}
+          />
+)}
+        title={(
           <span
             dangerouslySetInnerHTML={{ __html: finalName }}
           />
-        }
-        description={<div
-          title={description}
-          dangerouslySetInnerHTML={{ __html: finalDesc }}
-        />}
+)}
+        description={(
+          <div
+            title={description}
+            dangerouslySetInnerHTML={{ __html: finalDesc }}
+          />
+)}
       />
     );
   }
+
   // 取消以选标签
   @autobind
-  @logable({ type: 'ButtonClick',
-payload: { name: '取消' } })
+  @logable({
+    type: 'ButtonClick',
+    payload: { name: '取消' }
+  })
   cancelSelectedLabel() {
     const { hotWds } = this.props;
     this.setState({
@@ -234,15 +253,19 @@ payload: { name: '取消' } })
       rangeError: hotWds.length > MAX_SELECT_LABEL_SIZE || hotWds.length < MIN_SELECT_LABEL_SIZE,
     });
   }
+
   // 预览
   @autobind
-  @logPV({ pathname: '/modal/previewLabel',
-title: '预览' })
+  @logPV({
+    pathname: '/modal/previewLabel',
+    title: '预览'
+  })
   handlePreview() {
     this.setState({
       visible: true,
     });
   }
+
   // 搜索值
   @autobind
   handleSearchChange(e) {
@@ -250,6 +273,7 @@ title: '预览' })
       searchValue: e.target.value,
     });
   }
+
   // 关闭预览
   @autobind
   handleClosePreview() {
@@ -257,17 +281,20 @@ title: '预览' })
       visible: false,
     });
   }
+
   // 提交
   @autobind
-  @logPV({ pathname: '/modal/submitLabel',
-title: '提交' })
+  @logPV({
+    pathname: '/modal/submitLabel',
+    title: '提交'
+  })
   handleSubmit() {
     const { updataCustLabels, queryHotWds3 } = this.props;
     const { onQueryLabel } = this;
     const { selectedLabels } = this.state;
-    const submitTitle = env.isInReact() ?
-      '请确认选择的标签，提交后数据将实时生效' :
-      '选择标签后请点击预览查看在首页的展示情况，标签文字超出部分将不在首页显示，如已查看，确定后将保存数据实时生效';
+    const submitTitle = env.isInReact()
+      ? '请确认选择的标签，提交后数据将实时生效'
+      : '选择标签后请点击预览查看在首页的展示情况，标签文字超出部分将不在首页显示，如已查看，确定后将保存数据实时生效';
     confirm({
       title: submitTitle,
       cancelText: '取消',
@@ -291,7 +318,9 @@ title: '提交' })
   }
 
   render() {
-    const { selectedLabels, visible, searchValue, rangeError } = this.state;
+    const {
+      selectedLabels, visible, searchValue, rangeError
+    } = this.state;
     const { currentLabels, pagination } = this.getPaginationAndData();
     const {
       location,
@@ -304,106 +333,130 @@ title: '提交' })
     });
 
     // 顶部提示语
-    const headerHelperTip = env.isInReact() ?
-      (<span>在此设置的推荐标签将显示在 <b>首页-猜你感兴趣</b> 中，实时生效。</span>) :
-      (<span>在此设置的推荐标签将显示在 <b>首页-猜你感兴趣</b> 中，实时生效，点击下方 <b>预览</b> 可预览展示效果。</span>);
+    const headerHelperTip = env.isInReact()
+      ? (
+        <span>
+在此设置的推荐标签将显示在
+          <b>首页-猜你感兴趣</b>
+          {' '}
+中，实时生效。
+        </span>
+      )
+      : (
+        <span>
+在此设置的推荐标签将显示在
+          <b>首页-猜你感兴趣</b>
+          {' '}
+中，实时生效，点击下方
+          <b>预览</b>
+          {' '}
+可预览展示效果。
+        </span>
+      );
 
     // 标签占位文字
-    const labelPlaceholder = env.isInReact() ?
-      `请在下方标签列表中选择最多${MAX_SELECT_LABEL_SIZE}个推荐标签，最少${MIN_SELECT_LABEL_SIZE}个推荐标签` : '请在下方标签列表中选择最多5个推荐标签';
+    const labelPlaceholder = env.isInReact()
+      ? `请在下方标签列表中选择最多${MAX_SELECT_LABEL_SIZE}个推荐标签，最少${MIN_SELECT_LABEL_SIZE}个推荐标签` : '请在下方标签列表中选择最多5个推荐标签';
 
     const errorMessageCls = classnames({
       [styles.errorMessage]: true,
       [styles.hidden]: !rangeError,
     });
 
-    return (<div className={styles.recommendedLabelWrap}>
-      <div className={styles.headerTip}>
-        {headerHelperTip}
-      </div>
-      <div className={styles.title}>
-        <Divider type="vertical" className={styles.itemDivider} />
+    return (
+      <div className={styles.recommendedLabelWrap}>
+        <div className={styles.headerTip}>
+          {headerHelperTip}
+        </div>
+        <div className={styles.title}>
+          <Divider type="vertical" className={styles.itemDivider} />
         选择标签
-      </div>
-      {
-        env.isInReact() ?
-          <div className={errorMessageCls}><span className="iconfont icon-guanbi"></span>{`最多只能选择${MAX_SELECT_LABEL_SIZE}个推荐标签，最少需要选择${MIN_SELECT_LABEL_SIZE}个推荐标签`}</div>
-        : null
-      }
-      <div>
+        </div>
         {
-          selectedLabels.length ?
-          _.map(selectedLabels, item => (
-            <Tag
-              key={item.id}
-              color="gold"
-              closable
-              onClose={(e) => {
-                this.deleteUserLabel(e, item.id);
-              }}
-            >
-              {item.name}
-            </Tag>
-          )) :
-            (<span>{labelPlaceholder}</span>)
+        env.isInReact()
+          ? (
+            <div className={errorMessageCls}>
+              <span className="iconfont icon-guanbi" />
+              {`最多只能选择${MAX_SELECT_LABEL_SIZE}个推荐标签，最少需要选择${MIN_SELECT_LABEL_SIZE}个推荐标签`}
+            </div>
+          )
+          : null
+      }
+        <div>
+          {
+          selectedLabels.length
+            ? _.map(selectedLabels, item => (
+              <Tag
+                key={item.id}
+                color="gold"
+                closable
+                onClose={(e) => {
+                  this.deleteUserLabel(e, item.id);
+                }}
+              >
+                {item.name}
+              </Tag>
+            ))
+            : (<span>{labelPlaceholder}</span>)
         }
-      </div>
-      <div className={styles.searchWrap}>
-        <Input.Search
-          enterButton
-          placeholder="标签名称"
-          onSearch={this.onQueryLabel}
-          style={{ width: 200 }}
-          value={searchValue}
-          onChange={this.handleSearchChange}
-        />
-        <Button onClick={this.handlePreview} className={previewCls}>
-          <Icon type="yulan" />
+        </div>
+        <div className={styles.searchWrap}>
+          <Input.Search
+            enterButton
+            placeholder="标签名称"
+            onSearch={this.onQueryLabel}
+            style={{ width: 200 }}
+            value={searchValue}
+            onChange={this.handleSearchChange}
+          />
+          <Button onClick={this.handlePreview} className={previewCls}>
+            <Icon type="yulan" />
           预览
-        </Button>
-      </div>
-      <div className={styles.transferWrap}>
-        <List
-          itemLayout="horizontal"
-          dataSource={currentLabels}
-          renderItem={item => (
-            <Item>
-              {
+          </Button>
+        </div>
+        <div className={styles.transferWrap}>
+          <List
+            itemLayout="horizontal"
+            dataSource={currentLabels}
+            renderItem={item => (
+              <Item>
+                {
                 this.renderLabelItem(item)
               }
-            </Item>
-          )}
-        />
-        <Pagination
-          {...pagination}
-          wrapClassName={styles.PaginationWrap}
-          onChange={(pageNum) => { this.paginationChange({ pageNum }); }}
-        />
-      </div>
-      <div className={styles.btnWrap}>
-        <Button onClick={this.cancelSelectedLabel}>取消</Button>
-        {
-          env.isInReact() ?
-            <Button type="primary" disabled={rangeError} onClick={this.handleSubmit}>提交</Button>
+              </Item>
+            )}
+          />
+          <Pagination
+            {...pagination}
+            wrapClassName={styles.PaginationWrap}
+            onChange={(pageNum) => { this.paginationChange({ pageNum }); }}
+          />
+        </div>
+        <div className={styles.btnWrap}>
+          <Button onClick={this.cancelSelectedLabel}>取消</Button>
+          {
+          env.isInReact()
+            ? <Button type="primary" disabled={rangeError} onClick={this.handleSubmit}>提交</Button>
             : <Button type="primary" onClick={this.handleSubmit}>提交</Button>
         }
+        </div>
+        <Modal
+          visible={visible}
+          width={790}
+          footer={null}
+          onCancel={this.handleClosePreview}
+        >
+          <Search
+            location={location}
+            push={push}
+            hotWdsList={selectedLabels}
+            possibleWordsData={selectedLabels}
+            authority={AUTHORITY}
+            orgId={ORG_ID}
+            isPreview
+          />
+        </Modal>
       </div>
-      <Modal
-        visible={visible}
-        width={790}
-        footer={null}
-        onCancel={this.handleClosePreview}
-      >
-        <Search
-          location={location}
-          push={push}
-          hotWdsList={selectedLabels}
-          possibleWordsData={selectedLabels}
-          authority={AUTHORITY}
-          orgId={ORG_ID}
-          isPreview
-        />
-      </Modal>
-    </div>);
+    );
   }
 }

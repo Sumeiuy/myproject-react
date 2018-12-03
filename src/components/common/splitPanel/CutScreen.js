@@ -63,7 +63,7 @@ export default class CutScreen extends PureComponent {
     };
     this.resize = null;
     this.fnResize = null;
-    if(!(env.isInReact() && props.isAutoHeight)) {
+    if (!(env.isInReact() && props.isAutoHeight)) {
       this.splitHeight = props.isAutoHeight ? 'auto' : this.getViewHeight();
     }
   }
@@ -80,7 +80,7 @@ export default class CutScreen extends PureComponent {
       this.setUTBContentMargin('10px', '10px', 0);
     }
 
-    if(!(env.isInReact() && isAutoHeight)) {
+    if (!(env.isInReact() && isAutoHeight)) {
       // 监听window.onResize事件
       this.registerWindowResize();
       this.setDocumentScroll();
@@ -121,6 +121,7 @@ export default class CutScreen extends PureComponent {
     dom.setStyle(this.UTBContentElem, 'marginRight', right);
     dom.setStyle(this.UTBContentElem, 'marginBottom', bottom);
   }
+
   // 设置split下列表和详情区域的高度
   @autobind
   setSplitMainHeight() {
@@ -234,6 +235,7 @@ export default class CutScreen extends PureComponent {
   registerWindowResize() {
     window.addEventListener('resize', this.onResizeChange, false);
   }
+
   // 注销window的resize事件
   @autobind
   cancelWindowResize() {
@@ -245,6 +247,7 @@ export default class CutScreen extends PureComponent {
   splitRef(input) {
     this.splitPanel = input;
   }
+
   // splitWrap
   @autobind
   splitMainRef(input) {
@@ -317,7 +320,11 @@ export default class CutScreen extends PureComponent {
           <div className={styles.listWrap} ref={this.listWrapRef}>
             <leftPanel.type {...leftPanel.props} onShrink={this.shrinkList} />
           </div>
-          <div className={stretchEmptyCls}> { /** 留着占位置 */} </div>
+          <div className={stretchEmptyCls}>
+            {' '}
+            { /** 留着占位置 */}
+            {' '}
+          </div>
           <div className={hasFoldCls}>
             {
               _.isEmpty(rightPanel) ? null

@@ -178,25 +178,29 @@ export default class GroupToLabel extends PureComponent {
       possibleLabelListInfo,
       clearPossibleLabels,
     } = this.props;
-    let node = (<FirstContent
-      queryCustGroupList={queryCustGroupList}
-      custGroupListInfo={custGroupListInfo}
-      handleSelectGroup={this.handleSelectGroup}
-      currentSelectRow={currentSelectGroup}
-    />);
+    let node = (
+      <FirstContent
+        queryCustGroupList={queryCustGroupList}
+        custGroupListInfo={custGroupListInfo}
+        handleSelectGroup={this.handleSelectGroup}
+        currentSelectRow={currentSelectGroup}
+      />
+    );
     if (step === 2) {
-      node = (<SecondContent
-        ref={this.saveRef}
-        currentSelectGroup={currentSelectGroup}
-        queryGroupCustList={queryGroupCustList}
-        groupCustInfo={groupCustInfo}
-        queryPossibleLabels={queryPossibleLabels}
-        possibleLabelListInfo={possibleLabelListInfo}
-        clearPossibleLabels={clearPossibleLabels}
-        onClickLabelOption={this.handleClickLabelOption}
-        clickedLabelOption={clickedLabelOption}
-        findLabel={this.findLabel}
-      />);
+      node = (
+        <SecondContent
+          ref={this.saveRef}
+          currentSelectGroup={currentSelectGroup}
+          queryGroupCustList={queryGroupCustList}
+          groupCustInfo={groupCustInfo}
+          queryPossibleLabels={queryPossibleLabels}
+          possibleLabelListInfo={possibleLabelListInfo}
+          clearPossibleLabels={clearPossibleLabels}
+          onClickLabelOption={this.handleClickLabelOption}
+          clickedLabelOption={clickedLabelOption}
+          findLabel={this.findLabel}
+        />
+      );
     }
     return node;
   }

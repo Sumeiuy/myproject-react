@@ -296,14 +296,14 @@ const fspRoutes = [
     containerId: 'FSP_PP_M_PRIPROD',
     url: '/priProd/initmain',
   },
-   // 私募产品信息
+  // 私募产品信息
   {
     path: '/fsp/priProd/showPriProdTask',
     action: 'loadInTab',
     containerId: '',
     url: /\/priProd\/showPriProdTask\?.*detail$/,
   },
-   // 私募产品信息编辑
+  // 私募产品信息编辑
   {
     path: '/fsp/priProd/showPriProdTaskManage',
     action: 'loadInTab',
@@ -360,7 +360,7 @@ const fspRoutes = [
     url: /\/knowledge\/showUpdKnowledge\?.*details$/,
   },
   // 新建专项业务知识
-   {
+  {
     path: '/fsp/knowledgeEdit',
     action: 'loadInTab',
     containerId: 'edit_btn_showDetailsKnowledge',
@@ -382,4 +382,3 @@ const fspRoutes = [
 ];
 
 export default fspRoutes;
-

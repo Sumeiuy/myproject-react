@@ -12,7 +12,7 @@ import _ from 'lodash';
 import PropTypes from 'prop-types';
 import { backRoutePathList } from '../../helper/url';
 import { linkTo } from '../../utils';
-import Icon from '../../components/common/Icon';
+import Icon from '../common/Icon';
 import styles from './header.less';
 
 function linkGenerator(menuItem, parentPath, push) {
@@ -35,8 +35,10 @@ function linkGenerator(menuItem, parentPath, push) {
   return (
     <a
       onClick={() => { linkTo(linkToParam); }}
-      style={{fontSize: '14px'}}
-    >{menuItem.name}</a>
+      style={{ fontSize: '14px' }}
+    >
+      {menuItem.name}
+    </a>
   );
 }
 
@@ -48,7 +50,7 @@ function getMenus(menu, parentPath, push, preventItem) {
           <Menu.Item key={menuItem.path}>
             {
               preventItem.path === menuItem.path
-                ? <a style={{fontSize: '14px'}}>{menuItem.name}</a>
+                ? <a style={{ fontSize: '14px' }}>{menuItem.name}</a>
                 : linkGenerator(menuItem, parentPath, push, preventItem)
             }
           </Menu.Item>
@@ -102,8 +104,11 @@ export default class Header extends PureComponent {
     menu: PropTypes.array.isRequired,
     push: PropTypes.func.isRequired,
   };
+
   render() {
-    const { location: { pathname }, matchPath, menu, push } = this.props;
+    const {
+      location: { pathname }, matchPath, menu, push
+    } = this.props;
     const pathList = backRoutePathList(pathname, matchPath);
     const navItemList = getNavItemList(menu, pathList);
     let parentPath = matchPath;
@@ -118,7 +123,9 @@ export default class Header extends PureComponent {
                   <div key={index} className={styles.navItem}>
                     <Dropdown overlay={getMenus(preventMenu, parentPath, push, preventItem)} trigger={['click']}>
                       <div className={styles.navItemCtn}>
-                        {preventItem.name || '未知'} <Icon type="xiangxia" />
+                        {preventItem.name || '未知'}
+                        {' '}
+                        <Icon type="xiangxia" />
                       </div>
                     </Dropdown>
                   </div>
@@ -135,4 +142,3 @@ export default class Header extends PureComponent {
     );
   }
 }
-

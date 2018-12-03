@@ -14,7 +14,9 @@ import IfWrap from '../../common/biz/IfWrap';
 import { number, data } from '../../../helper';
 import IECharts from '../../IECharts';
 import { filterData, filterXAxisDate } from '../utils';
-import { FUND_INVEST, ASSET_MARKET, assetChangeChartTip, chartOption } from '../config';
+import {
+  FUND_INVEST, ASSET_MARKET, assetChangeChartTip, chartOption
+} from '../config';
 
 import styles from './assetChangeChart.less';
 
@@ -79,6 +81,7 @@ export default class AssetChangeChart extends PureComponent {
     };
     return option;
   }
+
   render() {
     const { assetChangeReportData } = this.props;
     const option = this.getChartOption();

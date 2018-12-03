@@ -37,8 +37,10 @@ export default function ViewAndCombination(props, context) {
   ];
 
   const openNewTab = (url, query, editPane) => {
-    const param = { id: 'RTC_TAB_VIEWPOINT',
-title: '资讯' };
+    const param = {
+      id: 'RTC_TAB_VIEWPOINT',
+      title: '资讯'
+    };
     const { push } = props;
     openRctTab({
       routerAction: push,
@@ -88,8 +90,8 @@ title: '资讯' };
   // 分割成段，展示，过滤掉非p标签，因为自带样式不符合需求
   const isEmptyText = _.isEmpty(abstract);
   const newFormateAbstract = isEmptyText
-  ? `<div class=${styles.noData}>暂无内容</div>`
-  : (
+    ? `<div class=${styles.noData}>暂无内容</div>`
+    : (
       abstract.replace(
         /<(\/?)([^\s>]+)[^>]*?>/g,
         (all, isEnd, tagName) => {
@@ -149,22 +151,24 @@ title: '资讯' };
   // 渲染 tab 标签
   const renderTab = () => {
     const { location: { query: { activeTab = tabArray[0].key } } } = props;
-    const navArray = tabArray.map(item => {
+    const navArray = tabArray.map((item) => {
       const linkClass = classnames({
         [styles.active]: item.key === activeTab,
       });
-      return (<div key={item.key} className={styles.item}>
-        <a
-          className={linkClass}
-          onClick={() => handleTabClick(item)}
-          id={item.name === '组合推荐'
-            ? NEW_HOME_INTRO_SEVENTH_SEEP_IDNAME
-            : null
+      return (
+        <div key={item.key} className={styles.item}>
+          <a
+            className={linkClass}
+            onClick={() => handleTabClick(item)}
+            id={item.name === '组合推荐'
+              ? NEW_HOME_INTRO_SEVENTH_SEEP_IDNAME
+              : null
           }
-        >
-        {item.name}
-        </a>
-      </div>);
+          >
+            {item.name}
+          </a>
+        </div>
+      );
     });
     return (
       <div className={styles.nav}>
@@ -193,7 +197,10 @@ title: '资讯' };
       case tabArray[1].key:
         contentElement = (
           <div className={styles.view}>
-            <h2 className={styles.combinationTitle}><span>近30天收益率</span>组合名称</h2>
+            <h2 className={styles.combinationTitle}>
+              <span>近30天收益率</span>
+组合名称
+            </h2>
             <CommonCell {...combinationProps} />
           </div>
         );
@@ -209,7 +216,7 @@ title: '资讯' };
       <div className={styles.tab}>
         {renderTab()}
         <div className={styles.content}>
-        {renderContent()}
+          {renderContent()}
         </div>
       </div>
     </div>

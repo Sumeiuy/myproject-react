@@ -55,7 +55,9 @@ function FeedbackRow(props) {
               [styles.close]: status === 'CLOSED',
             },
           )}
-        >{statusInfo}</div>
+        >
+          {statusInfo}
+        </div>
       </div>
       <div className={classnames(styles.bottomContainer, activeClass)}>
         <div className={styles.desc}>{description}</div>

@@ -2,7 +2,9 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { Menu, Dropdown, Checkbox, Button } from 'antd';
+import {
+  Menu, Dropdown, Checkbox, Button
+} from 'antd';
 
 import logable from '../../../decorators/logable';
 import styles from './newMutiFilter.less';
@@ -13,7 +15,7 @@ const generateCheckStatus = (v, k, valueArray) => {
   }
   if (_.isEmpty(v) && k === '') {
     return true;
-  } else if (v.indexOf(k) > -1) {
+  } if (v.indexOf(k) > -1) {
     return true;
   }
   return false;
@@ -29,6 +31,7 @@ export default class MultiFilter extends PureComponent {
     separator: PropTypes.string,
     valueArray: PropTypes.array,
   }
+
   static defaultProps = {
     filterField: [],
     separator: ',',
@@ -56,9 +59,10 @@ export default class MultiFilter extends PureComponent {
   @logable({ type: 'Click', payload: { name: '$props.filterLabel' } })
   handleClick({ key, value, filterLabel }) {
     const { keyArr } = this.state;
-    const { separator, filter, onChange, valueArray } = this.props;
-    const valueArr =
-      _.includes(valueArray, value) ? valueArray.filter(v => v !== value) : [...valueArray, value];
+    const {
+      separator, filter, onChange, valueArray
+    } = this.props;
+    const valueArr = _.includes(valueArray, value) ? valueArray.filter(v => v !== value) : [...valueArray, value];
     if (key) {
       this.setState({
         keyArr: _.includes(keyArr, key) ? keyArr.filter(v => v !== key) : [...keyArr, key],

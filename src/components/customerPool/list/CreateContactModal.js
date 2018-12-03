@@ -231,27 +231,29 @@ export default class CreateContactModal extends PureComponent {
     return (
       <div className={styles.mainContact}>
         {
-          (custType === 'org' && !_.isEmpty(mainContactInfo.nameInfo)) &&
-          `主要联系人：${mainContactInfo.nameInfo.name || '--'}（${mainContactInfo.nameInfo.custRela || '--'}）`
+          (custType === 'org' && !_.isEmpty(mainContactInfo.nameInfo))
+          && `主要联系人：${mainContactInfo.nameInfo.name || '--'}（${mainContactInfo.nameInfo.custRela || '--'}）`
         }
         {
           (custType === 'per' && isPersonHasContact
-            && personalContactInfo.mainTelInfo) &&
-          '主要联系电话：'
+            && personalContactInfo.mainTelInfo)
+          && '主要联系电话：'
         }
         {
-          (!_.isEmpty(mainContactInfo.cellInfo) || !_.isEmpty(personalContactInfo.mainTelInfo)) &&
+          (!_.isEmpty(mainContactInfo.cellInfo) || !_.isEmpty(personalContactInfo.mainTelInfo))
+          && (
           <Phone
             onConnected={this.handlePhoneConnected}
             onEnd={this.handlePhoneEnd}
-            number={custType === 'per' ?
-              personalContactInfo.mainTelInfo :
-              mainContactInfo.cellInfo}
+            number={custType === 'per'
+              ? personalContactInfo.mainTelInfo
+              : mainContactInfo.cellInfo}
             custType={custType}
             name={encodeURIComponent(currentCustName)}
             disable={false}
             userData={userData}
           />
+          )
         }
       </div>
     );
@@ -309,8 +311,8 @@ export default class CreateContactModal extends PureComponent {
           // 主联系人的手机，住宅，单位，其他电话信息
           mainContactInfo = {
             nameInfo: mainContactNameInfo,
-            cellInfo: _.isEmpty(mainContactAllInfo.cellPhones) ? '' :
-              mainContactAllInfo.cellPhones[0].contactValue,
+            cellInfo: _.isEmpty(mainContactAllInfo.cellPhones) ? ''
+              : mainContactAllInfo.cellPhones[0].contactValue,
             telInfo: _.omitBy(_.pick(mainContactAllInfo, ['workTels', 'homeTels', 'otherTels']), _.isEmpty),
           };
           if (!_.isEmpty(_.pick(mainContactAllInfo, ['workTels', 'homeTels', 'otherTels', 'cellPhones']))) {
@@ -355,7 +357,7 @@ export default class CreateContactModal extends PureComponent {
       <Modal
         wrapClassName={styles.contactModal}
         visible={visible}
-        title={'联系客户'}
+        title="联系客户"
         maskClosable={false}
         width={892}
         onCancel={this.handleCancel}
@@ -379,22 +381,24 @@ export default class CreateContactModal extends PureComponent {
           </div>
           <div className={styles.right}>
             {
-              (!isPersonHasContact && !isOrgMainContactHasTel) ? null :
-              <ContactInfoPopover
-                custType={custType}
-                personalContactInfo={personalContactInfo.otherTelInfo}
-                orgCustomerContactInfoList={orgCustomerContactInfoList}
-                handlePhoneEnd={this.handlePhoneEnd}
-                handlePhoneConnected={this.handlePhoneConnected}
-                disablePhone={false}
-                name={encodeURIComponent(currentCustName)}
-                userData={userData}
-              >
-                <div className={styles.moreLinkman}>
-                  <Icon type="lianxifangshi" className={styles.phoneIcon} />
-                  <span className={styles.phoneText}>更多联系人</span>
-                </div>
-              </ContactInfoPopover>
+              (!isPersonHasContact && !isOrgMainContactHasTel) ? null
+                : (
+                  <ContactInfoPopover
+                    custType={custType}
+                    personalContactInfo={personalContactInfo.otherTelInfo}
+                    orgCustomerContactInfoList={orgCustomerContactInfoList}
+                    handlePhoneEnd={this.handlePhoneEnd}
+                    handlePhoneConnected={this.handlePhoneConnected}
+                    disablePhone={false}
+                    name={encodeURIComponent(currentCustName)}
+                    userData={userData}
+                  >
+                    <div className={styles.moreLinkman}>
+                      <Icon type="lianxifangshi" className={styles.phoneIcon} />
+                      <span className={styles.phoneText}>更多联系人</span>
+                    </div>
+                  </ContactInfoPopover>
+                )
             }
           </div>
         </div>

@@ -15,7 +15,7 @@ export default class AssetConfigAnalysis extends PureComponent {
     return (
       <div className={styles.assetConfigAnalysis}>
         <CountPeriod />
-        <InfoTitle title="期末资产配置"/>
+        <InfoTitle title="期末资产配置" />
       </div>
     );
   }
