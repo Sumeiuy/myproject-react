@@ -22,17 +22,17 @@ import ServiceRecord from './tabpages/serviceRecord/Home';
 import DiscountCoupon from './tabpages/discountCoupon/connectedHome';
 import { logCommon } from '../../decorators/logable';
 import ProductOrder from './tabpages/productOrder/Home';
-/* import InvestmentAbilityAnalysis from './tabpages/investmentAbilityAnalysis/Home'; */
+import InvestmentAbilityAnalysis from './tabpages/investmentAbilityAnalysis/Home';
 import ContractManage from './tabpages/contractManage/Home';
 import {
   ACCOUNT_INFO_TAB_KEY,
   CUSTOMER_INFO_TAB_KEY,
-  /* INVEST_ANALYZE_TAB_KEY, */
+  INVEST_ANALYZE_TAB_KEY,
   BUNESSINESS_PROCESS_TAB_KEY,
   SERVICE_RECORD_TAB_KEY,
   SERVICE_RELATION_TAB_KEY,
   CONTRACT_MANAGE_TAB_KEY,
-  /* INVESTOR_ASSESSMENT_TAB_KEY, */
+  INVESTOR_ASSESSMENT_TAB_KEY,
   PRODUCT_ORDER_TAB_KEY,
   DISCOUNT_COUPON_TAB_KEY,
   custDetailTabMap,
@@ -249,6 +249,14 @@ export default class Home extends PureComponent {
       </TabPane>
     );
 
+    const investAnlyzeTabpane = (
+      <TabPane tab='投资能力分析' kye={INVEST_ANALYZE_TAB_KEY}>
+        <InvestmentAbilityAnalysis
+          location={location}
+        />
+      </TabPane>
+    );
+
     const businessHandTabPane = (
       <TabPane tab="业务办理" key={BUNESSINESS_PROCESS_TAB_KEY}>
         <BusinessHand location={location} />
@@ -316,6 +324,7 @@ export default class Home extends PureComponent {
           >
             {this.renderTabPane(accountInfoTabPane, accountInfoTabPermission)}
             {this.renderTabPane(custPropertyTabPane, custPropertyTabPermission)}
+            {this.renderTabPane(investAnlyzeTabpane, businessHandTabPermission)}
             {this.renderTabPane(businessHandTabPane, businessHandTabPermission)}
             {this.renderTabPane(serviceRecordTabPane, serviceRecordTabPermission)}
             {this.renderTabPane(serviceRelationshipTabPane, serviceRelationshipTabPermission)}
