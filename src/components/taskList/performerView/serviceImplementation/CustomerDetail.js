@@ -72,37 +72,49 @@ export default class CustomerDetail extends PureComponent {
     // 下面的calssName可以提出来使用，使得代码整洁干净
     return (
       <div className={`${styles.nameTips}`}>
-        <h6><span>手机号码：</span>
+        <h6>
+          <span>手机号码：</span>
           <span
             className={classnames({
               [styles.perfectRate]: targetCustDetail.cellPhoneCR === COMPLETION,
               [styles.noPerfectRate]: targetCustDetail.cellPhoneCR === NOTCOMPLETION,
             })}
-          >{this.handleEmpty(targetCustDetail.cellPhoneCR)}</span>
+          >
+            {this.handleEmpty(targetCustDetail.cellPhoneCR)}
+          </span>
         </h6>
-        <h6><span>联系地址：</span>
+        <h6>
+          <span>联系地址：</span>
           <span
             className={classnames({
               [styles.perfectRate]: targetCustDetail.contactAddressCR === COMPLETION,
               [styles.noPerfectRate]: targetCustDetail.contactAddressCR === NOTCOMPLETION,
             })}
-          >{this.handleEmpty(targetCustDetail.contactAddressCR)}</span>
+          >
+            {this.handleEmpty(targetCustDetail.contactAddressCR)}
+          </span>
         </h6>
-        <h6><span>电子邮箱：</span>
+        <h6>
+          <span>电子邮箱：</span>
           <span
             className={classnames({
               [styles.perfectRate]: targetCustDetail.emailCR === COMPLETION,
               [styles.noPerfectRate]: targetCustDetail.emailCR === NOTCOMPLETION,
             })}
-          >{this.handleEmpty(targetCustDetail.emailCR)}</span>
+          >
+            {this.handleEmpty(targetCustDetail.emailCR)}
+          </span>
         </h6>
-        <h6><span>风险偏好：</span>
+        <h6>
+          <span>风险偏好：</span>
           <span
             className={classnames({
               [styles.perfectRate]: targetCustDetail.riskPreferenceCR === COMPLETION,
               [styles.noPerfectRate]: targetCustDetail.riskPreferenceCR === NOTCOMPLETION,
             })}
-          >{this.handleEmpty(targetCustDetail.riskPreferenceCR)}</span>
+          >
+            {this.handleEmpty(targetCustDetail.riskPreferenceCR)}
+          </span>
         </h6>
       </div>
     );
@@ -164,7 +176,9 @@ export default class CustomerDetail extends PureComponent {
     },
   })
   openFsp360TabAction({ param, targetCustDetail }) {
-    const { custNature, custId, rowId, ptyId } = targetCustDetail;
+    const {
+      custNature, custId, rowId, ptyId
+    } = targetCustDetail;
     const type = (!custNature || custNature === PER_CODE) ? PER_CODE : ORG_CODE;
     const url = `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`;
     const pathname = '/fsp/customerCenter/customer360';
@@ -202,21 +216,21 @@ export default class CustomerDetail extends PureComponent {
     let miniFee = '--';
     if (!_.isEmpty(targetCustDetail.commissionRate)) {
       const newCommissionRate = Number(targetCustDetail.commissionRate);
-      miniFee = newCommissionRate < 0 ?
-        newCommissionRate :
-        `${(newCommissionRate * 1000).toFixed(2)}‰`;
+      miniFee = newCommissionRate < 0
+        ? newCommissionRate
+        : `${(newCommissionRate * 1000).toFixed(2)}‰`;
     }
     // 归集率
     let hsRate = '--';
     if (!_.isEmpty(targetCustDetail.hsRate)) {
       const newHsRate = Number(targetCustDetail.hsRate);
-      hsRate = newHsRate < 0 ?
-        Number(newHsRate.toFixed(2)) :
-        `${Number((newHsRate * 100).toFixed(2))}%`;
+      hsRate = newHsRate < 0
+        ? Number(newHsRate.toFixed(2))
+        : `${Number((newHsRate * 100).toFixed(2))}%`;
     }
     // 信息完备率
-    const infoCompletionRate = targetCustDetail.infoCompletionRate ?
-      `${Number(targetCustDetail.infoCompletionRate) * 100}%` : '--';
+    const infoCompletionRate = targetCustDetail.infoCompletionRate
+      ? `${Number(targetCustDetail.infoCompletionRate) * 100}%` : '--';
 
     return (
       <div className={styles.customerDetail}>
@@ -232,17 +246,19 @@ export default class CustomerDetail extends PureComponent {
                 <div className={styles.itemLabel}>总资产:</div>
                 <div className={styles.itemContent}>
                   {getFormatedAsset(assets)}
-                  {!_.isEmpty(assets) ?
-                    <div className={styles.wordTips}>
-                      <SixMonthEarnings
-                        listItem={targetCustDetail}
-                        monthlyProfits={monthlyProfits}
-                        custIncomeReqState={isCustIncomeRequested}
-                        getCustIncome={getCustIncome}
-                        formatAsset={formatAsset}
-                        displayText="峰值和最近收益"
-                      />
-                    </div> : null
+                  {!_.isEmpty(assets)
+                    ? (
+                      <div className={styles.wordTips}>
+                        <SixMonthEarnings
+                          listItem={targetCustDetail}
+                          monthlyProfits={monthlyProfits}
+                          custIncomeReqState={isCustIncomeRequested}
+                          getCustIncome={getCustIncome}
+                          formatAsset={formatAsset}
+                          displayText="峰值和最近收益"
+                        />
+                      </div>
+                    ) : null
                   }
                 </div>
               </div>
@@ -295,8 +311,12 @@ export default class CustomerDetail extends PureComponent {
               <div className={styles.item}>
                 <div className={styles.itemLabel}>最近一次服务:</div>
                 <div className={styles.itemContent}>
-                  （{this.handleEmpty(recentServiceTime)}）
-                  {this.handleEmpty(missionType)} -
+                  （
+                  {this.handleEmpty(recentServiceTime)}
+）
+                  {this.handleEmpty(missionType)}
+                  {' '}
+-
                   {this.handleEmpty(missionTitle)}
                 </div>
               </div>

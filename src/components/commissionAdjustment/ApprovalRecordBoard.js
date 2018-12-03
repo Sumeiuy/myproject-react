@@ -68,7 +68,8 @@ export default class ApprovalRecordBoard extends PureComponent {
             <span className={infoCls}>{basicInfo}</span>
             <span className={infoCls}>{orgInfo}</span>
             <span className={infoCls}>
-              <span className={styles.statusLabel}>状态: </span>{statusInfo}
+              <span className={styles.statusLabel}>状态: </span>
+              {statusInfo}
             </span>
           </div>
           <InfoTitle head="审批记录" />

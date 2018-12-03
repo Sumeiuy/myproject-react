@@ -10,7 +10,9 @@ import { autobind } from 'core-decorators';
 import Resize from 'element-resize-detector';
 import _ from 'lodash';
 
-import { AxisOptions, gridOptions, stackBarColors, barShadow } from './ChartGeneralOptions';
+import {
+  AxisOptions, gridOptions, stackBarColors, barShadow
+} from './ChartGeneralOptions';
 import {
   filterOrgModelData,
   getStackSeries,
@@ -28,7 +30,7 @@ import { iconTypeMap, ZHUNICODE, constants } from '../../config';
 import report from '../../helper/page/report';
 import Icon from '../common/Icon';
 import styles from './ChartBar.less';
-import imgSrc from '../chartRealTime/noChart.png';
+import imgSrc from './noChart.png';
 import { logCommon } from '../../decorators/logable';
 
 const {
@@ -42,7 +44,6 @@ const getIcon = iconTypeMap.getIcon;
 const defaultFilialeLevel = constants.filialeLevel;
 
 export default class ChartBarStack extends PureComponent {
-
   static propTypes = {
     location: PropTypes.object,
     level: PropTypes.string.isRequired,
@@ -190,8 +191,8 @@ export default class ChartBarStack extends PureComponent {
             orgId: item.id,
             custRangeLevel: item.level,
             level: item.level,
-            scope: item.level && item.level === defaultFilialeLevel && !report.isNewOrg(item.id) ?
-              (Number(item.level) + 2) : (Number(item.level) + 1),
+            scope: item.level && item.level === defaultFilialeLevel && !report.isNewOrg(item.id)
+              ? (Number(item.level) + 2) : (Number(item.level) + 1),
           });
         }
       });
@@ -443,8 +444,8 @@ export default class ChartBarStack extends PureComponent {
                 let title = '';
                 let tooltipEmpInfo = `${axisValue}`;
                 // 针对不同的机构级别需要显示不同的分类
-                if ((levelAndScope === 4 && axisValue !== '--' && !hasFundCenter) ||
-                  (levelAndScope === 3 && axisValue !== '--')) {
+                if ((levelAndScope === 4 && axisValue !== '--' && !hasFundCenter)
+                  || (levelAndScope === 3 && axisValue !== '--')) {
                   // 3为财富中心，需要显示南京分公司名称
                   // 4为营业部,只需要显示xx公司名称(非南京分公司没有财富中心)
                   title = `${levelCompanyArr[dataIndex]}`;
@@ -456,7 +457,7 @@ export default class ChartBarStack extends PureComponent {
                   title = `${levelCompanyArr[dataIndex]} - ${levelWealthArr[dataIndex]} - ${levelStoreArr[dataIndex]}`;
                   tooltipEmpInfo = `${axisValue}(${id})`;
                 } else if (levelAndScope === 5 && axisValue !== '--' && !hasFundCenter) {
-                   // 5为投顾或服务经理,需要显示xx公司名称-营业部(非南京分公司没有有财富中心)
+                  // 5为投顾或服务经理,需要显示xx公司名称-营业部(非南京分公司没有有财富中心)
                   title = `${levelCompanyArr[dataIndex]} - ${levelStoreArr[dataIndex]}`;
                   tooltipEmpInfo = `${axisValue}(${id})`;
                 }
@@ -629,23 +630,21 @@ export default class ChartBarStack extends PureComponent {
         <div className={styles.chartWrapper}>
           {
             (stackSeries && stackSeries.length > 0)
-            ?
-            (
-              <IECharts
-                onReady={this.onReady}
-                option={options}
-                resizable
-                style={{
-                  height: this.state.wrapperH,
-                }}
-              />
-            )
-            :
-            (
-              <div className={styles.noChart}>
-                <img src={imgSrc} alt="图表不可见" />
-              </div>
-            )
+              ? (
+                <IECharts
+                  onReady={this.onReady}
+                  option={options}
+                  resizable
+                  style={{
+                    height: this.state.wrapperH,
+                  }}
+                />
+              )
+              : (
+                <div className={styles.noChart}>
+                  <img src={imgSrc} alt="图表不可见" />
+                </div>
+              )
           }
         </div>
       </div>

@@ -58,7 +58,6 @@ const INITIAL_TOTAL_COUNT = 10;
 
 const NOOP = _.noop;
 export default class CustDetail extends PureComponent {
-
   static propTypes = {
     // 表格数据
     data: PropTypes.object,
@@ -126,7 +125,8 @@ export default class CustDetail extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { data: { list: nextData = EMPTY_LIST },
+    const {
+      data: { list: nextData = EMPTY_LIST },
       feedbackIdL1: nextFeedbackIdL1,
       feedbackIdL2: nextFeedbackIdL2,
     } = nextProps;
@@ -213,6 +213,7 @@ export default class CustDetail extends PureComponent {
       currentSelectFeedbackIdL2: key,
     });
   }
+
   /**
  * 改变每一页的条目
  * @param {*} currentPageNum 当前页码
@@ -275,7 +276,9 @@ export default class CustDetail extends PureComponent {
       - HTSC 客户资料管理岗（无隐私）
    */
   @autobind
-  toDetail({ custNature, custId, rowId, ptyId, empId }) {
+  toDetail({
+    custNature, custId, rowId, ptyId, empId
+  }) {
     const type = (!custNature || custNature === PER_CODE) ? PER_CODE : ORG_CODE;
     const { push, hideCustDetailModal } = this.props;
     const { empInfo: { empInfo = {} } } = this.context;
@@ -322,8 +325,8 @@ export default class CustDetail extends PureComponent {
 
   @autobind
   renderCustTypeIcon({ levelCode }) {
-    return rankImgSrcConfig[levelCode] ?
-      <img className={styles.iconMoneyImage} src={rankImgSrcConfig[levelCode]} alt="" />
+    return rankImgSrcConfig[levelCode]
+      ? <img className={styles.iconMoneyImage} src={rankImgSrcConfig[levelCode]} alt="" />
       : null;
   }
 
@@ -419,8 +422,7 @@ export default class CustDetail extends PureComponent {
       return EMPTY_LIST;
     }
     // 构造二级客户反馈
-    const currentFeedbackL1Object = _.find(currentFeedback, item =>
-      item.feedbackIdL1 === currentSelectFeedbackIdL1);
+    const currentFeedbackL1Object = _.find(currentFeedback, item => item.feedbackIdL1 === currentSelectFeedbackIdL1);
 
     if (!_.isEmpty(currentFeedbackL1Object) && !_.isEmpty(currentFeedbackL1Object.childList)) {
       const feedbackL2List = _.map(currentFeedbackL1Object.childList, item => ({
@@ -430,8 +432,8 @@ export default class CustDetail extends PureComponent {
 
       // 如果当前选中的二级反馈和一级反馈一模一样，也不展示二级反馈
       // 如果都是所有，需要显示二级，默认进来，两个都是所有反馈
-      if (_.size(feedbackL2List) === 1 &&
-        currentFeedbackL1Object.feedbackName === feedbackL2List[0].value
+      if (_.size(feedbackL2List) === 1
+        && currentFeedbackL1Object.feedbackName === feedbackL2List[0].value
         && !_.isEmpty(currentSelectFeedbackIdL1)) {
         return EMPTY_LIST;
       }
@@ -498,73 +500,85 @@ export default class CustDetail extends PureComponent {
     return (
       <div className={styles.custDetailWrapper}>
         {
-          isShowFeedbackFilter ?
-            <div className={styles.header}>
-              {/**
+          isShowFeedbackFilter
+            ? (
+              <div className={styles.header}>
+                {/**
               * 饼图或者客户总数下钻，展示筛选客户反馈
               */}
-              {isEntryFromPie || isEntryFromCustTotal ?
-                <div className={styles.filterSection}>
-                  {
-                    !_.isEmpty(feedbackL1List) ?
-                      <div
-                        className={styles.filter}
-                      >
-                        <SingleFilter
-                          value={currentSelectFeedbackIdL1 || ''}
-                          filterLabel="客户反馈"
-                          filter="custFeedbackL1"
-                          filterField={feedbackL1List}
-                          onChange={this.handleFeedbackL1Change}
-                        />
-                      </div> : null
+                {isEntryFromPie || isEntryFromCustTotal
+                  ? (
+                    <div className={styles.filterSection}>
+                      {
+                    !_.isEmpty(feedbackL1List)
+                      ? (
+                        <div
+                          className={styles.filter}
+                        >
+                          <SingleFilter
+                            value={currentSelectFeedbackIdL1 || ''}
+                            filterLabel="客户反馈"
+                            filter="custFeedbackL1"
+                            filterField={feedbackL1List}
+                            onChange={this.handleFeedbackL1Change}
+                          />
+                        </div>
+                      ) : null
                   }
-                  {
-                    !_.isEmpty(feedbackL2List) ?
-                      <div className={styles.filter}>
-                        <SingleFilter
-                          value={currentSelectFeedbackIdL2 || ''}
-                          filterLabel=""
-                          filter="custFeedbackL2"
-                          filterField={feedbackL2List}
-                          onChange={this.handleFeedbackL2Change}
-                        />
-                      </div> : null
+                      {
+                    !_.isEmpty(feedbackL2List)
+                      ? (
+                        <div className={styles.filter}>
+                          <SingleFilter
+                            value={currentSelectFeedbackIdL2 || ''}
+                            filterLabel=""
+                            filter="custFeedbackL2"
+                            filterField={feedbackL2List}
+                            onChange={this.handleFeedbackL2Change}
+                          />
+                        </div>
+                      ) : null
                   }
-                </div>
-                : null
+                    </div>
+                  )
+                  : null
               }
-            </div> : <div className={styles.emptyHeader} />
+              </div>
+            ) : <div className={styles.emptyHeader} />
         }
         <div className={styles.custDetailTableSection}>
-          {!_.isEmpty(dataSource) ?
-            <Table
-              pageData={{
-                curPageNum: pageNum,
-                curPageSize: INITIAL_PAGE_SIZE,
-                totalRecordNum: totalCount,
-              }}
-              listData={dataSource}
-              onSizeChange={this.handleShowSizeChange}
-              onPageChange={this.handlePageChange}
-              tableClass={`${styles.custDetailTable}`}
-              columnWidth={columnWidth}
-              titleColumn={titleColumn}
-              isFirstColumnLink
-              firstColumnHandler={this.handleCustNameClick}
-              operationColumnClass={styles.custNameLink}
+          {!_.isEmpty(dataSource)
+            ? (
+              <Table
+                pageData={{
+                  curPageNum: pageNum,
+                  curPageSize: INITIAL_PAGE_SIZE,
+                  totalRecordNum: totalCount,
+                }}
+                listData={dataSource}
+                onSizeChange={this.handleShowSizeChange}
+                onPageChange={this.handlePageChange}
+                tableClass={`${styles.custDetailTable}`}
+                columnWidth={columnWidth}
+                titleColumn={titleColumn}
+                isFirstColumnLink
+                firstColumnHandler={this.handleCustNameClick}
+                operationColumnClass={styles.custNameLink}
               // 分页器样式
-              paginationClass="selfPagination"
-              needPagination={totalCount > INITIAL_TOTAL_COUNT}
-              scrollX={1030}
-              isFixedColumn
-            /> :
-            <div className={styles.emptyContent}>
-              <span>
-                <Icon className={styles.emptyIcon} type="frown-o" />
+                paginationClass="selfPagination"
+                needPagination={totalCount > INITIAL_TOTAL_COUNT}
+                scrollX={1030}
+                isFixedColumn
+              />
+            )
+            : (
+              <div className={styles.emptyContent}>
+                <span>
+                  <Icon className={styles.emptyIcon} type="frown-o" />
                 暂无数据
-              </span>
-            </div>}
+                </span>
+              </div>
+            )}
         </div>
       </div>
     );

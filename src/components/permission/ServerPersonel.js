@@ -48,6 +48,7 @@ export default class ServerPersonel extends PureComponent {
       removeSelectedValue: {},
     };
   }
+
   componentWillMount() {
     this.setState({ serverInfo: this.props.info });
   }
@@ -86,22 +87,25 @@ export default class ServerPersonel extends PureComponent {
             />
           </div>
           {
-            !_.isEmpty(this.state.addSelectedValue) ?
-              <Button
-                type="primary"
-                onClick={this.addServerPerson}
-                className={style.spAddBtn}
-              >
+            !_.isEmpty(this.state.addSelectedValue)
+              ? (
+                <Button
+                  type="primary"
+                  onClick={this.addServerPerson}
+                  className={style.spAddBtn}
+                >
               添加
-            </Button>
-            :
-              <Button
-                type="primary"
-                disabled
-                className={style.spAddBtn}
-              >
+                </Button>
+              )
+              : (
+                <Button
+                  type="primary"
+                  disabled
+                  className={style.spAddBtn}
+                >
               添加
-            </Button>
+                </Button>
+              )
           }
         </div>
       );

@@ -136,7 +136,7 @@ export default class CreateApply extends PureComponent {
       if (this.isValidateError) {
         return;
       }
-      if(!err) {
+      if (!err) {
         const { theme, remark } = values;
         const { formData } = this.state;
         this.setState({
@@ -154,16 +154,20 @@ export default class CreateApply extends PureComponent {
   // 校验数据
   @autobind
   validateData() {
-    const { formData: { roomNo, startTime, endTime, participant, outerPersonFlag } } = this.state;
-    if(_.isEmpty(roomNo)) {
-      this.setState({isShowRoomStatusError: true});
+    const {
+      formData: {
+        roomNo, startTime, endTime, participant, outerPersonFlag
+      }
+    } = this.state;
+    if (_.isEmpty(roomNo)) {
+      this.setState({ isShowRoomStatusError: true });
       this.isValidateError = true;
     }
-    if(_.isEmpty(startTime) || _.isEmpty(endTime)) {
-      this.setState({isShowPeriodStatusError: true});
+    if (_.isEmpty(startTime) || _.isEmpty(endTime)) {
+      this.setState({ isShowPeriodStatusError: true });
       this.isValidateError = true;
     }
-    if(_.isEmpty(participant) || _.isEmpty(participant.participantName)) {
+    if (_.isEmpty(participant) || _.isEmpty(participant.participantName)) {
       this.setState({
         isShowParticipantStatusError: true,
         participantStatusErrorMessage: '请输入参与人',
@@ -229,9 +233,9 @@ export default class CreateApply extends PureComponent {
   @autobind
   doCloseModalAfterSubmit() {
     const { submitResult: { applyId } } = this.props;
-      if (applyId) {
-        this.props.onClose('isShowCreateModal', true);
-      }
+    if (applyId) {
+      this.props.onClose('isShowCreateModal', true);
+    }
   }
 
   @autobind
@@ -246,15 +250,14 @@ export default class CreateApply extends PureComponent {
 
   @autobind
   getSelfBtnGroup() {
-    return this.state.isCreateApply ?
-      (
+    return this.state.isCreateApply
+      ? (
         <div>
           <Button className={styles.cancelButton} onClick={this.handleModalClose}>取消</Button>
           <Button type="primary" className={styles.submitButton} onClick={this.handleSubmit}>提交</Button>
         </div>
       )
-      :
-      (
+      : (
         <div>
           <Button className={styles.cancelButton} onClick={this.handleEdit}>返回修改</Button>
           <Button type="primary" className={styles.submitButton} onClick={this.handleConfirm}>确定</Button>
@@ -292,25 +295,28 @@ export default class CreateApply extends PureComponent {
         wrapClassName={styles.createAdvisorSpaceModal}
       >
         {
-          isCreateApply ?
-            <AdvisorSpaceForm
-              action={action}
-              formData={formData}
-              wrappedComponentRef={this.setAdvisorSpaceFormRef}
-              createRoomData={createRoomData}
-              getRoomList={getRoomList}
-              onChange={this.handleChange}
-              participantData={participantData}
-              getParticipantList={getParticipantList}
-              isShowRoomStatusError={isShowRoomStatusError}
-              isShowPeriodStatusError={isShowPeriodStatusError}
-              isShowParticipantStatusError={isShowParticipantStatusError}
-              participantStatusErrorMessage={participantStatusErrorMessage}
-            />
-          :
-            <ConfirmForm
-              formData={formData}
-            />
+          isCreateApply
+            ? (
+              <AdvisorSpaceForm
+                action={action}
+                formData={formData}
+                wrappedComponentRef={this.setAdvisorSpaceFormRef}
+                createRoomData={createRoomData}
+                getRoomList={getRoomList}
+                onChange={this.handleChange}
+                participantData={participantData}
+                getParticipantList={getParticipantList}
+                isShowRoomStatusError={isShowRoomStatusError}
+                isShowPeriodStatusError={isShowPeriodStatusError}
+                isShowParticipantStatusError={isShowParticipantStatusError}
+                participantStatusErrorMessage={participantStatusErrorMessage}
+              />
+            )
+            : (
+              <ConfirmForm
+                formData={formData}
+              />
+            )
         }
       </CommonModal>
     );

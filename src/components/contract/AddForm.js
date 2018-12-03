@@ -227,6 +227,7 @@ export default class AddForm extends PureComponent {
       },
     }, this.showModal('addClauseModal'));
   }
+
   // 表格删除事件
   @autobind
   @logable({
@@ -317,10 +318,9 @@ export default class AddForm extends PureComponent {
             isRequired
           />
           {
-            operationType === subscribe ?
-              <Button {...buttonProps}>新建</Button>
-            :
-            null
+            operationType === subscribe
+              ? <Button {...buttonProps}>新建</Button>
+              : null
           }
           <CommonTable
             data={termsData}
@@ -333,25 +333,26 @@ export default class AddForm extends PureComponent {
           attachmentList={EMPTY_ARRAY}
           edit={BOOL_TRUE}
           uploadAttachment={this.handleUploadSuccess}
-          attachment={''}
+          attachment=""
           needDefaultText={false}
         />
         <div className={styles.cutSpace} />
         {
-          addClauseModal ?
-            <AddClause
-              isShow={addClauseModal}
-              onConfirm={this.handleAddClause}
-              onCloseModal={() => this.closeModal('addClauseModal')}
-              edit={editClause}
-              clauseNameList={clauseNameList}
-              departmentList={cooperDeparment}
-              searchDepartment={searchCooperDeparment}
-              defaultData={defaultData}
-              clearDepartmentData={clearDepartmentData}
-            />
-          :
-            null
+          addClauseModal
+            ? (
+              <AddClause
+                isShow={addClauseModal}
+                onConfirm={this.handleAddClause}
+                onCloseModal={() => this.closeModal('addClauseModal')}
+                edit={editClause}
+                clauseNameList={clauseNameList}
+                departmentList={cooperDeparment}
+                searchDepartment={searchCooperDeparment}
+                defaultData={defaultData}
+                clearDepartmentData={clearDepartmentData}
+              />
+            )
+            : null
         }
       </div>
     );

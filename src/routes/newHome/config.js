@@ -57,12 +57,12 @@ const NEW_HOME_INTRO_NINTH_SEEP_IDNAME = 'homePageIntroNinthStep';
 
 // intro引导要判断
 const stepIds = {
-  tabMenu: { id: '第一个', name: '主导航',step:0},
-  homePageIntroThirdStep: { id: '第二个', name:'重点关注客户',step:1},
-  homePageIntroFifthStep: { id: '第三个', name:'客户分析' ,step:2},
-  homePageIntroSixthStep: { id: '第四个', name: '产品日历',step:3},
-  homePageIntroSeventhStep: { id: '第五个', name: '组合推荐',step:4},
-  homePageIntroNinthStep: { id: '第六个', name: '每日晨报',step:5},
+  tabMenu: { id: '第一个', name: '主导航', step: 0 },
+  homePageIntroThirdStep: { id: '第二个', name: '重点关注客户', step: 1 },
+  homePageIntroFifthStep: { id: '第三个', name: '客户分析', step: 2 },
+  homePageIntroSixthStep: { id: '第四个', name: '产品日历', step: 3 },
+  homePageIntroSeventhStep: { id: '第五个', name: '组合推荐', step: 4 },
+  homePageIntroNinthStep: { id: '第六个', name: '每日晨报', step: 5 },
 };
 
 export {

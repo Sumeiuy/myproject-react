@@ -472,27 +472,27 @@ export default class CustRelationshipsHome extends PureComponent {
           leftWidth={LEFT_PANEL_WIDTH}
         />
         {
-          !isShowCreateModal ? null :
-          (
-            <CreateApply
-              onCloseModal={this.handleCloseCreateModal}
-              custDetail={custDetail}
-              custList={custList}
-              getCustDetail={getCustDetail}
-              queryCustList={queryCustList}
-              relationshipTree={relationshipTree}
-              getRelationshipTree={getRelationshipTree}
-              approval={approval}
-              getApprovalInfo={getApprovalInfo}
-              validateData={validateData}
-              validateResult={validateResult}
-              submitResult={submitResult}
-              submitApply={submitApply}
-              chgCustRelaiton={chgCustRelaiton}
-              flowResult={flowResult}
-              doApproveFlow={doApproveFlow}
-            />
-          )
+          !isShowCreateModal ? null
+            : (
+              <CreateApply
+                onCloseModal={this.handleCloseCreateModal}
+                custDetail={custDetail}
+                custList={custList}
+                getCustDetail={getCustDetail}
+                queryCustList={queryCustList}
+                relationshipTree={relationshipTree}
+                getRelationshipTree={getRelationshipTree}
+                approval={approval}
+                getApprovalInfo={getApprovalInfo}
+                validateData={validateData}
+                validateResult={validateResult}
+                submitResult={submitResult}
+                submitApply={submitApply}
+                chgCustRelaiton={chgCustRelaiton}
+                flowResult={flowResult}
+                doApproveFlow={doApproveFlow}
+              />
+            )
         }
       </div>
     );

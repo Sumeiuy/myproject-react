@@ -685,10 +685,12 @@ export default class CreateApply extends PureComponent {
       help: customerStatusErrorMessage,
     } : null;
     // 下一步按钮
-    const selfBtnGroup = (<ApprovalBtnGroup
-      approval={createButtonListData}
-      onClick={this.handleSubmit}
-    />);
+    const selfBtnGroup = (
+      <ApprovalBtnGroup
+        approval={createButtonListData}
+        onClick={this.handleSubmit}
+      />
+    );
     const searchProps = {
       visible: nextApproverModal,
       onOk: this.sendDoApproveRequest,

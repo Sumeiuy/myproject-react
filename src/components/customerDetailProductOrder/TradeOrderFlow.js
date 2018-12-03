@@ -48,15 +48,15 @@ export default class TradeOrderFlow extends PureComponent {
 
   @autobind
   transformColumnsData(columns) {
-    return _.map(columns, column => {
+    return _.map(columns, (column) => {
       let newColumn;
-      switch(column.dataIndex) {
+      switch (column.dataIndex) {
         case 'riskMatched':
         case 'timeMacthed':
         case 'varietyMatched':
           newColumn = {
             ...column,
-            render: isBool => isBool ? '是' : '否',
+            render: isBool => (isBool ? '是' : '否'),
           };
           break;
         case 'money':
@@ -73,15 +73,15 @@ export default class TradeOrderFlow extends PureComponent {
               <span>
                 {
                   _.isEmpty(content)
-                  ? '--'
-                  : <Tooltip title={content}>{content}</Tooltip>
+                    ? '--'
+                    : <Tooltip title={content}>{content}</Tooltip>
                 }
               </span>
             )
           };
           break;
         case 'orderTime':
-          const renderFunc = date => {
+          const renderFunc = (date) => {
             const timeStr = moment(date).format(DATE_FORMATE_STR);
             const timeStrDetail = moment(date).format(DATE_FORMATE_STR_DETAIL);
             return (

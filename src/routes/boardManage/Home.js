@@ -131,7 +131,9 @@ export default class BoardManageHome extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const { createLoading: preCL, deleteLoading: preDL, publishLoading: prePL } = this.props;
-    const { push, operateData, createLoading, deleteLoading, publishLoading } = nextProps;
+    const {
+      push, operateData, createLoading, deleteLoading, publishLoading
+    } = nextProps;
     if (preCL && !createLoading) {
       // 创建完成后，需要跳转到Edit
       // 首先判断创建成功与否
@@ -151,6 +153,7 @@ export default class BoardManageHome extends PureComponent {
       push(`/statisticalQuery/report?boardId=${id}`);
     }
   }
+
   componentWillUnmount() {
     if (fsp) {
       window.removeEventListener('scroll', this.onScroll);
@@ -159,6 +162,7 @@ export default class BoardManageHome extends PureComponent {
       hideBtn.removeEventListener('click', this.toggleLeft);
     }
   }
+
   // resize 事件
   @autobind
   onWindowResize() {
@@ -167,6 +171,7 @@ export default class BoardManageHome extends PureComponent {
       width: fsp ? `${parseInt(contentWidth, 10) - marginWidth}px` : '100%',
     });
   }
+
   // 监听页面滚动事件，设置头部的 left 值
   @autobind
   onScroll() {
@@ -176,6 +181,7 @@ export default class BoardManageHome extends PureComponent {
       left: leftWidth - scrollX,
     });
   }
+
   // didmount 时添加监听事件
   @autobind
   didMountAddEventListener() {
@@ -191,12 +197,14 @@ export default class BoardManageHome extends PureComponent {
       });
     }
   }
+
   // 监听 FSP 侧边栏显示隐藏按钮点击事件
   @autobind
   addEventListenerClick() {
     showBtn.addEventListener('click', this.toggleLeft, false);
     hideBtn.addEventListener('click', this.toggleLeft, false);
   }
+
   @autobind
   toggleLeft() {
     const leftWidth = parseInt(dom.getCssStyle(contentWrapper, 'left'), 10) + marginLeftWidth;
@@ -276,7 +284,9 @@ export default class BoardManageHome extends PureComponent {
       deleteBoardModal,
       publishConfirmModal,
     } = this.state;
-    const { location, replace, push, collectData } = this.props;
+    const {
+      location, replace, push, collectData
+    } = this.props;
     const {
       visibleRanges,
       visibleBoards,
@@ -395,4 +405,3 @@ export default class BoardManageHome extends PureComponent {
     );
   }
 }
-

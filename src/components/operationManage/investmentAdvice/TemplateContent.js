@@ -23,6 +23,7 @@ export default class TemplateContent extends Component {
     tempLiateId: PropTypes.string.isRequired,
     onPopoverVisibleChange: PropTypes.func.isRequired,
   }
+
   static getDerivedStateFromProps(nextProps) {
     return {
       visiblePopover: nextProps.visiblePopover,
@@ -75,27 +76,26 @@ export default class TemplateContent extends Component {
           dangerouslySetInnerHTML={content} // eslint-disable-line
         />
         {
-          !visibleMore ? null :
-          (
-            <Popover
-              visible={visiblePopover}
-              onVisibleChange={this.handlePopoverVisibleChange}
-              getPopupContainer={getPopupContainer}
-              trigger="click"
-              placement="topRight"
-              content={
-                <div
-                  className={styles.popoverContent}
-                  dangerouslySetInnerHTML={content} // eslint-disable-line
-                />
-              }
-            >
-              <div className={styles.more}>[更多]</div>
-            </Popover>
-          )
+          !visibleMore ? null
+            : (
+              <Popover
+                visible={visiblePopover}
+                onVisibleChange={this.handlePopoverVisibleChange}
+                getPopupContainer={getPopupContainer}
+                trigger="click"
+                placement="topRight"
+                content={(
+                  <div
+                    className={styles.popoverContent}
+                    dangerouslySetInnerHTML={content}
+                  />
+)}
+              >
+                <div className={styles.more}>[更多]</div>
+              </Popover>
+            )
         }
       </div>
     );
   }
 }
-

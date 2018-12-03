@@ -91,7 +91,7 @@ export default class ListSwiper extends PureComponent {
         </div>
         {
           !isDepute ? null
-          : (<div className={styles.isDepute}>委</div>)
+            : (<div className={styles.isDepute}>委</div>)
         }
       </div>
     );
@@ -99,7 +99,9 @@ export default class ListSwiper extends PureComponent {
 
   @autobind
   renderListItem() {
-    const { targetCustList, parameter, onCustomerClick, currentTargetList } = this.props;
+    const {
+      targetCustList, parameter, onCustomerClick, currentTargetList
+    } = this.props;
     const { page: { pageSize, pageNum, totalCount } } = targetCustList;
     const { activeIndex } = parameter;
     // 当activeIndex大于总数的时候，取最后一个
@@ -127,7 +129,11 @@ export default class ListSwiper extends PureComponent {
             <div className={styles.contentBox}>
               {this.renderAvator(item)}
               <p className={styles.name} title={item.custName}>{item.custName}</p>
-              <p className={styles.status}>-{item.missionStatusValue}-</p>
+              <p className={styles.status}>
+-
+                {item.missionStatusValue}
+-
+              </p>
               <span className={styles.triangle} />
             </div>
           </div>

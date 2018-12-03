@@ -11,7 +11,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import classnames from 'classnames';
 import Icon from '../Icon';
-import Pagination from '../../common/Pagination';
+import Pagination from '../Pagination';
 import logable from '../../../decorators/logable';
 import styles from './index.less';
 
@@ -56,10 +56,12 @@ export default class ApplicationList extends PureComponent {
     return (
       <div className={styles.pageCommonList}>
         {
-          fixedTitle &&
+          fixedTitle
+          && (
           <div className={styles.fixedTitle}>
             {fixedTitle}
           </div>
+          )
         }
         <div className={styles.listScroll}>
           {

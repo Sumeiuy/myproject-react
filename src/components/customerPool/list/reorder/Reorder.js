@@ -26,8 +26,8 @@ export default class Reorder extends PureComponent {
 
   isActive(item, index) {
     const { value: { sortType, sortDirection } } = this.props;
-    return sortType === item.sortType &&
-      sortDirection === item.sortDirections[index];
+    return sortType === item.sortType
+      && sortDirection === item.sortDirections[index];
   }
 
   // 处理点击排序按钮

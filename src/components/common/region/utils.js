@@ -16,10 +16,10 @@ const utils = {
     if (start === '' && end === '') {
       // 两个都是空，则显示一个不限
       return '不限';
-    } else if (start === '' && end !== '') {
+    } if (start === '' && end !== '') {
       // 开始为空，结束不为空
       return `不限-${end}`;
-    } else if (start !== '' && end === '') {
+    } if (start !== '' && end === '') {
       // 开始不为空，结束为空
       return `${start}-不限`;
     }

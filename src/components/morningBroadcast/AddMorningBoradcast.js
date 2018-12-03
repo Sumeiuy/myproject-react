@@ -4,7 +4,9 @@
  * @author xzqiang(crazy_zhiqiang@sina.com)
  */
 import React, { PureComponent } from 'react';
-import { Modal, Form, Input, Select, Upload, Button, message } from 'antd';
+import {
+  Modal, Form, Input, Select, Upload, Button, message
+} from 'antd';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
@@ -66,7 +68,8 @@ export default class AddMorningBoradcast extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { saveboradcastInfo,
+    const {
+      saveboradcastInfo,
       handleOk,
       onHandleGetList,
       visible,
@@ -132,7 +135,9 @@ export default class AddMorningBoradcast extends PureComponent {
   @autobind()
   @logable({ type: 'ButtonClick', payload: { name: '取消' } })
   onHandleCancel() {
-    const { handleCancel, newsId, uploaderFile, getUuid } = this.props;
+    const {
+      handleCancel, newsId, uploaderFile, getUuid
+    } = this.props;
     const { isUpdateFile } = this.state;
     if (this.formWrapRef) {
       this.formWrapRef.scrollTop = 0;
@@ -305,7 +310,9 @@ export default class AddMorningBoradcast extends PureComponent {
 
   setSourceValue(itemDetail) {
     const { resourceToUpload } = this;
-    const { audioFileList, audioFileId, otherFileList, otherFileId } = itemDetail;
+    const {
+      audioFileList, audioFileId, otherFileList, otherFileId
+    } = itemDetail;
     if (itemDetail) {
       this.setState({
         audioFileList: resourceToUpload(audioFileList, audioFileId),
@@ -468,9 +475,7 @@ export default class AddMorningBoradcast extends PureComponent {
               })(
                 <Select placeholder="晨报类型">
                   {
-                    morningBoradcastType.map(item =>
-                      <Option key={item.key} value={item.key}>{item.value}</Option>,
-                    )
+                    morningBoradcastType.map(item => <Option key={item.key} value={item.key}>{item.value}</Option>, )
                   }
                 </Select>,
               )}
@@ -524,7 +529,7 @@ export default class AddMorningBoradcast extends PureComponent {
               {...formItemLayout}
               label="添加音频"
             >
-              <Upload {...audioProps} fileList={audioFileList} >
+              <Upload {...audioProps} fileList={audioFileList}>
                 <div>
                   <i
                     className="icon iconfont icon-yinpinwenjian"
@@ -545,7 +550,7 @@ export default class AddMorningBoradcast extends PureComponent {
               label="其他文件"
             >
               <Upload {...otherProps} fileList={otherFileList}>
-                <Button type="primary" icon="plus" >
+                <Button type="primary" icon="plus">
                   添加文件
                 </Button>
               </Upload>

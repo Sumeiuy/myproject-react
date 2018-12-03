@@ -20,17 +20,17 @@ import styles from './accountInfoHeader.less';
 export default class AccountInfoHeader extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
-    //证券实时持仓的数据
+    // 证券实时持仓的数据
     securitiesData: PropTypes.array.isRequired,
-    //实时资产的数据
+    // 实时资产的数据
     realTimeAsset: PropTypes.object.isRequired,
-    //产品实时持仓的数据
+    // 产品实时持仓的数据
     productData: PropTypes.array.isRequired,
-    //查询证券实时持仓数据
+    // 查询证券实时持仓数据
     getSecuritiesHolding: PropTypes.func.isRequired,
-    //查询实时资产的数据
+    // 查询实时资产的数据
     getRealTimeAsset: PropTypes.func.isRequired,
-    //查询产品实时持仓数据
+    // 查询产品实时持仓数据
     getProductHoldingData: PropTypes.func.isRequired,
     // 是否有正在执行中的流程
     hasDoingFlow: PropTypes.bool.isRequired,
@@ -90,7 +90,7 @@ export default class AccountInfoHeader extends PureComponent {
   @autobind
   @logable({
     type: 'Click',
-    payload: { name: '关闭历史持仓'},
+    payload: { name: '关闭历史持仓' },
   })
   handleHistoryHoldingModalClose() {
     this.setState({ historyHoldModalVisible: false });
@@ -110,7 +110,7 @@ export default class AccountInfoHeader extends PureComponent {
   @autobind
   @logable({
     type: 'Click',
-    payload: { name: '关闭交易流水'},
+    payload: { name: '关闭交易流水' },
   })
   handleTradeFlowModalClose() {
     this.setState({ tradeFlowModalVisible: false });
@@ -120,11 +120,12 @@ export default class AccountInfoHeader extends PureComponent {
   @autobind
   @logable({
     type: 'Click',
-    payload: { name: '关闭实时持仓'}
+    payload: { name: '关闭实时持仓' }
   })
   handleRealTimeHoldModalClose() {
     this.setState({ realTimeHoldModalVisible: false });
   }
+
   // 打开实时持仓的弹出层
   @autobind
   @logPV({
@@ -137,19 +138,19 @@ export default class AccountInfoHeader extends PureComponent {
     this.props.getRealTimeAsset({ custId }).then(() => {
       this.setState({ realTimeHoldModalVisible: true });
     });
-    //进入需要查询下证券实时持仓数据, 默认查全部
+    // 进入需要查询下证券实时持仓数据, 默认查全部
     this.props.getSecuritiesHolding({
       custId,
       accountType: 'all',
     });
-    //进入需要查询下产品实时持仓数据
+    // 进入需要查询下产品实时持仓数据
     this.props.getProductHoldingData({ custId });
   }
 
   // 跳转到资产配置页面
   @autobind
   handleLinkToAssetAllocation() {
-    const { hasDoingFlow, location: { query: { custId = ''} } } = this.props;
+    const { hasDoingFlow, location: { query: { custId = '' } } } = this.props;
     // 新建
     let pathname = '/fsp/implementation/initsee';
     // 新建 url
@@ -196,7 +197,7 @@ export default class AccountInfoHeader extends PureComponent {
     return (
       <div>
         <div className={styles.accountHeaderContainer}>
-          <Button className={styles.accountHeader} onClick={this.handleRealTimeHoldModalOpen} >实时持仓</Button>
+          <Button className={styles.accountHeader} onClick={this.handleRealTimeHoldModalOpen}>实时持仓</Button>
           <Button className={styles.accountHeader} onClick={this.handleHistoryHoldingModalOpen}>历史持仓</Button>
           <Button className={styles.accountHeader} style={{ display: 'none' }} onClick={this.handleTradeFlowModalOpen}>交易流水</Button>
           <Button className={styles.accountHeader} onClick={this.handleLinkToAssetAllocation}>资产配置</Button>
@@ -208,7 +209,7 @@ export default class AccountInfoHeader extends PureComponent {
             queryHistoryHolding={queryHistoryHolding}
             stockHistoryHolding={stockHistoryHolding}
             productHistoryHolding={productHistoryHolding}
-            optionHistoryHolding ={optionHistoryHolding}
+            optionHistoryHolding={optionHistoryHolding}
           />
         </IfWrap>
         <IfWrap isRender={realTimeHoldModalVisible}>
@@ -228,11 +229,11 @@ export default class AccountInfoHeader extends PureComponent {
             querytradeFlow={querytradeFlow}
             busnTypeDict={busnTypeDict}
             finProductList={finProductList}
-            productCatalogTree ={productCatalogTree}
-            standardTradeFlowRes ={standardTradeFlowRes}
-            creditTradeFlowRes ={creditTradeFlowRes}
-            optionTradeFlowRes ={optionTradeFlowRes}
-            capitalChangeFlowRes ={capitalChangeFlowRes}
+            productCatalogTree={productCatalogTree}
+            standardTradeFlowRes={standardTradeFlowRes}
+            creditTradeFlowRes={creditTradeFlowRes}
+            optionTradeFlowRes={optionTradeFlowRes}
+            capitalChangeFlowRes={capitalChangeFlowRes}
           />
         </IfWrap>
       </div>

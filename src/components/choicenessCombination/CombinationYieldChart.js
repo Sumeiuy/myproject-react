@@ -14,7 +14,7 @@ import { autobind } from 'core-decorators';
 import IECharts from '../IECharts';
 import styles from './combinationYieldChart.less';
 import logable from '../../decorators/logable';
-import { chartTabList } from '../../components/choicenessCombination/config';
+import { chartTabList } from './config';
 
 const TabPane = Tabs.TabPane;
 // const EMPTY_OBJECT = {};

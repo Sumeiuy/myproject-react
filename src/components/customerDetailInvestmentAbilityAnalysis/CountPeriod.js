@@ -14,7 +14,6 @@ import styles from './countPeriod.less';
 const COUNT_PERIOD = `${lastYearDataOfLastMonth}-${endDateOfLastMonth}(一年期)`;
 
 export default function CountPeriod(props) {
-
   return (
     <div className={styles.countPeriod}>
       <span className={styles.label}>

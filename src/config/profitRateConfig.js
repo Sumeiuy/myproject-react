@@ -48,7 +48,7 @@ const profitRateConfig = {
 
 export default profitRateConfig;
 
-export  {
+export {
   timeList,
   codeList,
 };

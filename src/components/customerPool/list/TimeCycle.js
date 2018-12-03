@@ -60,8 +60,7 @@ export default class TimeCycle extends PureComponent {
             onChange={this.handleChange}
             key="dateSelect"
           >
-            {cycle.map(item =>
-              <Select.Option key={item.key} value={item.key}>{item.value}</Select.Option>)}
+            {cycle.map(item => <Select.Option key={item.key} value={item.key}>{item.value}</Select.Option>)}
           </Select>
         </div>
       </div>

@@ -92,7 +92,9 @@ export default class BottomFixedBox extends PureComponent {
 
   // 点击发起任务按钮
   @autobind
-  switchToRoute({ url, title, id, shouldStay, editPane }) {
+  switchToRoute({
+    url, title, id, shouldStay, editPane
+  }) {
     const {
       page,
       condition,
@@ -142,10 +144,14 @@ export default class BottomFixedBox extends PureComponent {
   // 跳转到创建任务页面
   @autobind
   toCreateTaskPage() {
-    const { location: { query: {
-      source,
-      labelMapping,
-    } }, clearCreateTaskData } = this.props;
+    const {
+      location: {
+        query: {
+          source,
+          labelMapping,
+        }
+      }, clearCreateTaskData
+    } = this.props;
 
     const url = '/customerPool/createTask';
     const title = '自建任务';
@@ -242,8 +248,7 @@ export default class BottomFixedBox extends PureComponent {
     source,
     fr,
     shouldStay,
-    editPane,
-  ) {
+    editPane, ) {
     const tmpArr = [];
     _(ids).forEach((item) => {
       tmpArr.push(item.split('.')[0]);
@@ -260,7 +265,9 @@ export default class BottomFixedBox extends PureComponent {
       condition: condt,
       fr,
     };
-    this.props.onClick({ id, title, url, obj, shouldStay, editPane });
+    this.props.onClick({
+      id, title, url, obj, shouldStay, editPane
+    });
   }
 
   // 全选按钮选中时跳转到发起任务
@@ -274,8 +281,7 @@ export default class BottomFixedBox extends PureComponent {
     source,
     fr,
     shouldStay,
-    editPane,
-  ) {
+    editPane, ) {
     // 全选时取整个列表的第一个数据的name属性值传给后续页面
     const name = encodeURIComponent(this.props.custList[0].name);
     const condt = encodeURIComponent(JSON.stringify(condition));
@@ -287,7 +293,9 @@ export default class BottomFixedBox extends PureComponent {
       name,
       fr,
     };
-    this.props.onClick({ id, title, url, obj, shouldStay, editPane });
+    this.props.onClick({
+      id, title, url, obj, shouldStay, editPane
+    });
   }
 
   @autobind
@@ -347,7 +355,8 @@ export default class BottomFixedBox extends PureComponent {
       <p className="left">
         已选&nbsp;
         <span className="marked">{selectCount}</span>
-        &nbsp;户，选择目标用户以创建自定义任务{str}
+        &nbsp;户，选择目标用户以创建自定义任务
+        {str}
       </p>
     );
   }
@@ -372,12 +381,14 @@ export default class BottomFixedBox extends PureComponent {
           {this.renderCreateTaskBtn()}
         </div>
         {
-          visible ?
-            <InfoModal
-              visible
-              content={modalContent}
-              onConfirm={this.handleConfirm}
-            /> : null
+          visible
+            ? (
+              <InfoModal
+                visible
+                content={modalContent}
+                onConfirm={this.handleConfirm}
+              />
+            ) : null
         }
       </div>
     );

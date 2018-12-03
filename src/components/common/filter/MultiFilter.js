@@ -30,7 +30,7 @@ const currentClass = 'current';
 const generateCls = (v, k) => {
   if (_.isEmpty(v) && k === '') {
     return currentClass;
-  } else if (v.indexOf(k) > -1) {
+  } if (v.indexOf(k) > -1) {
     return currentClass;
   }
   return '';
@@ -166,7 +166,10 @@ export default class MultiFilter extends PureComponent {
     const foldClass = classnames({ up: !fold });
     return (
       <div className={styles.filter}>
-        <span title={filterLabel}>{filterLabel}:</span>
+        <span title={filterLabel}>
+          {filterLabel}
+:
+        </span>
         <ul
           className={fold ? 'single' : 'multi'}
           ref={r => this.domNode = r}
@@ -175,12 +178,15 @@ export default class MultiFilter extends PureComponent {
             this.renderList()
           }
           {
-            moreBtnVisible ?
-              <li className={styles.moreBtn} onClick={this.handleMore}>
-                { fold ? '展开' : '收起' }&nbsp;
-                <Icon type="more-down-copy" className={foldClass} />
-              </li> :
-            null
+            moreBtnVisible
+              ? (
+                <li className={styles.moreBtn} onClick={this.handleMore}>
+                  { fold ? '展开' : '收起' }
+&nbsp;
+                  <Icon type="more-down-copy" className={foldClass} />
+                </li>
+              )
+              : null
           }
         </ul>
       </div>

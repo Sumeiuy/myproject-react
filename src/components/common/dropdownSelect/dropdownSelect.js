@@ -210,7 +210,9 @@ export default class DropdownSelect extends React.Component {
   }
 
   render() {
-    const { value, disable, placement, getPopupContainer } = this.props;
+    const {
+      value, disable, placement, getPopupContainer
+    } = this.props;
     const { visible } = this.state;
     const dropdownToggleCls = cx({
       [styles.dropdownToggle]: true,
@@ -240,5 +242,4 @@ export default class DropdownSelect extends React.Component {
       </Popover>
     );
   }
-
 }

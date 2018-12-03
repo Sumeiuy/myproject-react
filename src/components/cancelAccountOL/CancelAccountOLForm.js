@@ -11,7 +11,9 @@ import PropTypes from 'prop-types';
 import cx from 'classnames';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { AutoComplete, Input, Row, Col } from 'antd';
+import {
+  AutoComplete, Input, Row, Col
+} from 'antd';
 import { MultiFilter } from 'lego-react-filter/src';
 
 import InfoTitle from '../common/InfoTitle';
@@ -345,7 +347,7 @@ export default class CancelAccountOLForm extends PureComponent {
     const { brokerNumber, custName } = cust;
     const text = `${custName}（${brokerNumber}）`;
     return (
-      <Option key={brokerNumber} value={text} >
+      <Option key={brokerNumber} value={text}>
         <span className={styles.custAutoCompleteOptionValue} title={text}>{text}</span>
       </Option>
     );
@@ -373,7 +375,7 @@ export default class CancelAccountOLForm extends PureComponent {
           </div>
         </InfoCell>
       );
-    } else if (hasSelectLostDirection && !isTransfer) {
+    } if (hasSelectLostDirection && !isTransfer) {
       return (
         <InfoCell label="投资品种" labelWidth={100}>
           <div className={styles.infoCellInput}>
@@ -391,17 +393,16 @@ export default class CancelAccountOLForm extends PureComponent {
           </div>
           {
             !formData.hasSelecOtherVar ? null
-            :
-            (
-              <div className={`${styles.infoCellInput} ${styles.ml15} ${styles.autoWidth}`}>
-                <Input
-                  disabled={disablePage}
-                  placeholder="详细投资品种"
-                  value={formData.otherVarDetail || ''}
-                  onChange={this.handleOtherVarDetailChange}
-                />
-              </div>
-            )
+              : (
+                <div className={`${styles.infoCellInput} ${styles.ml15} ${styles.autoWidth}`}>
+                  <Input
+                    disabled={disablePage}
+                    placeholder="详细投资品种"
+                    value={formData.otherVarDetail || ''}
+                    onChange={this.handleOtherVarDetailChange}
+                  />
+                </div>
+              )
           }
         </InfoCell>
       );
@@ -437,29 +438,28 @@ export default class CancelAccountOLForm extends PureComponent {
         <Row type="flex" gutter={16} align="middle">
           <Col span={10}>
             {
-              isCreate ?
-              (
-                <InfoCell label="客户" labelWidth={90}>
-                  <SimilarAutoComplete
-                    style={{ width: '180px' }}
-                    placeholder="经纪客户号/客户名称"
-                    optionList={custList}
-                    optionKey="brokerNumber"
-                    needConfirmWhenClear
-                    clearConfirmTips="切换或者删除客户，将导致所有的数据清空或者重置"
-                    onSelect={this.handleSelectCust}
-                    onSearch={this.handleSearchCustList}
-                    renderOptionNode={this.renderCustAutoCompleteOption}
-                  />
-                </InfoCell>
-              )
-              :
-              (
-                <div className={styles.rejectCust}>
-                  <span className={styles.rejectCustLabel}>客户：</span>
-                  <span className={styles.rejectCustName}>{`${formData.cust.custName}(${formData.cust.custId})`}</span>
-                </div>
-              )
+              isCreate
+                ? (
+                  <InfoCell label="客户" labelWidth={90}>
+                    <SimilarAutoComplete
+                      style={{ width: '180px' }}
+                      placeholder="经纪客户号/客户名称"
+                      optionList={custList}
+                      optionKey="brokerNumber"
+                      needConfirmWhenClear
+                      clearConfirmTips="切换或者删除客户，将导致所有的数据清空或者重置"
+                      onSelect={this.handleSelectCust}
+                      onSearch={this.handleSearchCustList}
+                      renderOptionNode={this.renderCustAutoCompleteOption}
+                    />
+                  </InfoCell>
+                )
+                : (
+                  <div className={styles.rejectCust}>
+                    <span className={styles.rejectCustLabel}>客户：</span>
+                    <span className={styles.rejectCustName}>{`${formData.cust.custName}(${formData.cust.custId})`}</span>
+                  </div>
+                )
             }
           </Col>
           <Col span={14}>
@@ -507,17 +507,16 @@ export default class CancelAccountOLForm extends PureComponent {
               </div>
               {
                 !formData.hasSelectOtherReason ? null
-                :
-                (
-                  <div className={`${styles.infoCellInput} ${styles.ml15} ${styles.autoWidth}`}>
-                    <Input
-                      disabled={disablePage}
-                      placeholder="详细原因"
-                      value={formData.otherReasonDetail || ''}
-                      onChange={this.handleOtherLostResonDetailChange}
-                    />
-                  </div>
-                )
+                  : (
+                    <div className={`${styles.infoCellInput} ${styles.ml15} ${styles.autoWidth}`}>
+                      <Input
+                        disabled={disablePage}
+                        placeholder="详细原因"
+                        value={formData.otherReasonDetail || ''}
+                        onChange={this.handleOtherLostResonDetailChange}
+                      />
+                    </div>
+                  )
               }
             </InfoCell>
           </Col>

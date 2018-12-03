@@ -84,8 +84,7 @@ export default function AppItem(props) {
   }
   // 获取descText
   function getDescText(currentMissionTypeCode) {
-    const currentMissionTypeObject = _.find(missionTypeDict, item =>
-      item.key === currentMissionTypeCode) || {};
+    const currentMissionTypeObject = _.find(missionTypeDict, item => item.key === currentMissionTypeCode) || {};
     return currentMissionTypeObject;
   }
   // 是否渲染出创建者和工号，只有是自建任务才需要展示
@@ -138,28 +137,30 @@ export default function AppItem(props) {
           })}
         >
           {
-            data.executionTypeCode === 'Mission' ?
-              <span>
-                <span
-                  className={
+            data.executionTypeCode === 'Mission'
+              ? (
+                <span>
+                  <span
+                    className={
                     cx({
                       [styles.biText]: true,
                       [styles.active]: active,
                     })
                   }
-                >
+                  >
                   必
-                </span>
-                <Icon
-                  className={
+                  </span>
+                  <Icon
+                    className={
                     cx({
                       [styles.biIcon]: true,
                       [styles.active]: active,
                     })
                   }
-                  type="bi"
-                />
-              </span> : null
+                    type="bi"
+                  />
+                </span>
+              ) : null
           }
           <span
             className={cx({
@@ -167,7 +168,9 @@ export default function AppItem(props) {
               [styles.active]: active,
             })}
             title={data.missionName || '无'}
-          >{data.missionName || '无'}</span>
+          >
+            {data.missionName || '无'}
+          </span>
         </div>
         <div
           className={cx({
@@ -192,26 +195,30 @@ export default function AppItem(props) {
               [styles.typeName]: true,
               [styles.active]: active,
             })}
-          >{renderMissionTypeName(data.typeCode)}</div>
+          >
+            {renderMissionTypeName(data.typeCode)}
+          </div>
           {
-            isRenderCreator(data.typeCode) && data.creator ?
-              <Tooltip
-                placement="right"
-                title={() => renderCreatorTooltip(data.creator, data.creatorId)}
-                getPopupContainer={getPopupContainer}
-                overlayStyle={{ minWidth: '120px' }}
-              >
-                <div
-                  className={cx({
-                    [styles.creatorArea]: true,
-                    [styles.active]: active,
-                  })}
-                  ref={saveCreatorAreaRef}
+            isRenderCreator(data.typeCode) && data.creator
+              ? (
+                <Tooltip
+                  placement="right"
+                  title={() => renderCreatorTooltip(data.creator, data.creatorId)}
+                  getPopupContainer={getPopupContainer}
+                  overlayStyle={{ minWidth: '120px' }}
                 >
-                  <span className={styles.separator}>|</span>
-                  <span>{!_.isEmpty(data.creator) ? data.creator : ''}</span>
-                </div>
-              </Tooltip> : null
+                  <div
+                    className={cx({
+                      [styles.creatorArea]: true,
+                      [styles.active]: active,
+                    })}
+                    ref={saveCreatorAreaRef}
+                  >
+                    <span className={styles.separator}>|</span>
+                    <span>{!_.isEmpty(data.creator) ? data.creator : ''}</span>
+                  </div>
+                </Tooltip>
+              ) : null
           }
         </div>
         <div
@@ -221,19 +228,21 @@ export default function AppItem(props) {
           })}
         >
           {
-            _.includes(needProgress, data.missionViewType) ?
-              <div
-                className={
+            _.includes(needProgress, data.missionViewType)
+              ? (
+                <div
+                  className={
                   cx({
                     [styles.progress]: true,
                     [styles.active]: active,
                   })
                 }
-              >
-                <span className={styles.done}>{data.doneFlowNum}</span>
-                <span>/</span>
-                <span>{data.flowNum}</span>
-              </div> : null
+                >
+                  <span className={styles.done}>{data.doneFlowNum}</span>
+                  <span>/</span>
+                  <span>{data.flowNum}</span>
+                </div>
+              ) : null
           }
           <Tag type={tagStatusType} clsName={styles.tag} text={data.statusName} />
         </div>

@@ -47,7 +47,6 @@ const TASK_TYPE_CODES = {
 };
 
 export default class CreateServiceRecord extends PureComponent {
-
   static propTypes = {
     onToggleServiceRecordModal: PropTypes.func.isRequired,
     addServeRecord: PropTypes.func.isRequired,
@@ -216,7 +215,9 @@ export default class CreateServiceRecord extends PureComponent {
   @autobind
   handleFileUpload(lastFile) {
     // 当前上传的file
-    const { currentFile = {}, uploadedFileKey = '', originFileName = '', custUuid } = lastFile;
+    const {
+      currentFile = {}, uploadedFileKey = '', originFileName = '', custUuid
+    } = lastFile;
     this.setState({
       currentFile,
       uploadedFileKey,
@@ -251,7 +252,11 @@ export default class CreateServiceRecord extends PureComponent {
     const title = (
       <p className={styles.title}>
         创建服务记录:
-        <span>&nbsp;{name}/{id}</span>
+        <span>
+          {name}
+/
+          {id}
+        </span>
       </p>
     );
 
@@ -260,9 +265,11 @@ export default class CreateServiceRecord extends PureComponent {
         <a className={styles.cancelBtn} onClick={this.handleCancel}>取消</a>
         <a className={styles.submitBtn} onClick={this.handleSubmit}>提交</a>
       </div>
-    ) : (<div className={styles.customPhoneFooter}>
-      <a className={styles.submitBtn} onClick={this.handleSubmit}>提交</a>
-    </div>);
+    ) : (
+      <div className={styles.customPhoneFooter}>
+        <a className={styles.submitBtn} onClick={this.handleSubmit}>提交</a>
+      </div>
+    );
 
     // 从客户列表进入创建服务记录的均是自建任务
     const serviceReocrd = {
@@ -283,28 +290,29 @@ export default class CreateServiceRecord extends PureComponent {
         footer={footer}
       >
         {
-          !loading ?
-            <div className={styles.contentWrapper}>
-              <ServiceRecordContent
-                ref={ref => (this.serviceRecordContentRef = ref)}
-                dict={dict}
-                empInfo={empInfo}
-                custUuid={custUuid}
-                onDeleteFile={this.handleDeleteFile}
-                deleteFileResult={deleteFileResult}
-                formData={serviceReocrd}
-                queryCustFeedbackList4ZLFins={queryCustFeedbackList4ZLFins}
-                queryApprovalList={queryApprovalList}
-                custFeedbackList={custFeedbackList}
-                zhangleApprovalList={zhangleApprovalList}
-                serviceRecordInfo={serviceRecordInfo}
-                testWallCollision={testWallCollision}
-                testWallCollisionStatus={testWallCollisionStatus}
-                isPhoneCall={isPhoneCall}
-              />
-            </div>
-            :
-            <Loading loading={loading} />
+          !loading
+            ? (
+              <div className={styles.contentWrapper}>
+                <ServiceRecordContent
+                  ref={ref => (this.serviceRecordContentRef = ref)}
+                  dict={dict}
+                  empInfo={empInfo}
+                  custUuid={custUuid}
+                  onDeleteFile={this.handleDeleteFile}
+                  deleteFileResult={deleteFileResult}
+                  formData={serviceReocrd}
+                  queryCustFeedbackList4ZLFins={queryCustFeedbackList4ZLFins}
+                  queryApprovalList={queryApprovalList}
+                  custFeedbackList={custFeedbackList}
+                  zhangleApprovalList={zhangleApprovalList}
+                  serviceRecordInfo={serviceRecordInfo}
+                  testWallCollision={testWallCollision}
+                  testWallCollisionStatus={testWallCollisionStatus}
+                  isPhoneCall={isPhoneCall}
+                />
+              </div>
+            )
+            : <Loading loading={loading} />
         }
       </Modal>
     );

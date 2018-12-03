@@ -250,16 +250,16 @@ export default class BasicInfo extends PureComponent {
           {
             data.isListed
               ? (
-              <div className={styles.infoItemBox}>
-                <InfoItem
-                  width={INFO_ITEM_WITDH_110}
-                  label="证券代码"
-                  value={data.stockCode || DEFAULT_VALUE}
-                  className={styles.infoItem}
-                  isNeedValueTitle={checkIsNeedTitle(data.stockCode || DEFAULT_VALUE)}
-                  isNeedOverFlowEllipsis
-                />
-              </div>
+                <div className={styles.infoItemBox}>
+                  <InfoItem
+                    width={INFO_ITEM_WITDH_110}
+                    label="证券代码"
+                    value={data.stockCode || DEFAULT_VALUE}
+                    className={styles.infoItem}
+                    isNeedValueTitle={checkIsNeedTitle(data.stockCode || DEFAULT_VALUE)}
+                    isNeedOverFlowEllipsis
+                  />
+                </div>
               ) : null
           }
         </div>

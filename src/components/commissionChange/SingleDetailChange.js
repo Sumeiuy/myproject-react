@@ -110,7 +110,9 @@ export default class SingleDetailChange extends PureComponent {
       const userBaseCommission = this.pickUserOtherCommission();
       // 初始化将父产品的三匹配信息提取出来并保存
       const initMatchs = filterList.map((p) => {
-        const { riskRankMhrt, investProdMhrt, investTypeMhrt, prodCode, isMatch } = p;
+        const {
+          riskRankMhrt, investProdMhrt, investTypeMhrt, prodCode, isMatch
+        } = p;
         const matchInfo = {
           productCode: prodCode,
           riskMatch: riskRankMhrt,
@@ -453,7 +455,9 @@ export default class SingleDetailChange extends PureComponent {
 
   @autobind
   merge3MatchInfo(info) {
-    const { riskRankMhrt, investProdMhrt, investTypeMhrt, productCode, isMatch } = info;
+    const {
+      riskRankMhrt, investProdMhrt, investTypeMhrt, productCode, isMatch
+    } = info;
     const matchInfo = {
       productCode,
       riskMatch: riskRankMhrt,
@@ -631,7 +635,7 @@ export default class SingleDetailChange extends PureComponent {
                   label="目标股基佣金率"
                   labelWidth="110px"
                   needInputBox={false}
-                  extra={
+                  extra={(
                     <span
                       style={{
                         fontSize: '14px',
@@ -642,7 +646,7 @@ export default class SingleDetailChange extends PureComponent {
                     >
                       ‰
                     </span>
-                  }
+)}
                 >
                   <AutoComplete
                     initValue={newCommission}

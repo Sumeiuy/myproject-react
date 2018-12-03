@@ -31,7 +31,6 @@ const ORG_CODE = 'org';
 
 
 export default class ContactInfoPopover extends PureComponent {
-
   static propTypes = {
     custType: PropTypes.string.isRequired,
     personalContactInfo: PropTypes.object,
@@ -142,13 +141,14 @@ export default class ContactInfoPopover extends PureComponent {
       return (
         <div className={styles.popoverLayer}>
           {
-            _.map(list, item => (<ContactGroup
-              key={DISPLAY_NAME_TEL[item.key]}
-              {...this.props}
-              groupTitle={DISPLAY_NAME_TEL[item.key]}
-              telList={item.value}
-            />),
-            )
+            _.map(list, item => (
+              <ContactGroup
+                key={DISPLAY_NAME_TEL[item.key]}
+                {...this.props}
+                groupTitle={DISPLAY_NAME_TEL[item.key]}
+                telList={item.value}
+              />
+            ), )
           }
         </div>
       );

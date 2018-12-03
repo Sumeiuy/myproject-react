@@ -7,7 +7,7 @@
  */
 import _ from 'lodash';
 import { dva } from '../helper';
-import{ constants } from '../config';
+import { constants } from '../config';
 
 // 神策埋点中的value需为string类型，否则报错
 function convertToString(payload) {
@@ -77,8 +77,10 @@ function makeLogger({ type, payload = {} }) {
     function log(...args) {
       try {
         if (_.isString(type) && !_.isEmpty(type)) {
-          dva.dispatch({ type,
-payload: replaceValue(payload, this, args) });
+          dva.dispatch({
+            type,
+            payload: replaceValue(payload, this, args)
+          });
         }
       } catch (e) {
         dva.dispatch({
@@ -164,8 +166,10 @@ function logCommon({ type = 'Click', payload = {} }) {
   };
   try {
     if (_.isString(type) && !_.isEmpty(type)) {
-      dva.dispatch({ type,
-payload: convertToString(fixedPayload) });
+      dva.dispatch({
+        type,
+        payload: convertToString(fixedPayload)
+      });
     }
   } catch (e) {
     dva.dispatch({

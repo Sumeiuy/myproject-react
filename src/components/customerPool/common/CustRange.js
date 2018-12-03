@@ -18,10 +18,8 @@ function transformCustRangeData(list, parent = '') {
     const obj = {
       label: item.name,
       value: parent
-        ?
-        `${item.level}#${item.id}#${parent}#${item.name}`
-        :
-        `${item.level}#${item.id}#${item.name}`,
+        ? `${item.level}#${item.id}#${parent}#${item.name}`
+        : `${item.level}#${item.id}#${item.name}`,
       key: item.id,
     };
     if (item.children && item.children.length) {
@@ -51,10 +49,9 @@ function findOrgNameByOrgId(orgId) {
     if (Array.isArray(orgArr)) {
       for (let i = 0; i < orgArr.length; i++) {
         if (orgArr[i].key === orgId) {
-          custRangeNameDedault = parent !== '' ?
-            `${parent}/${orgArr[i].label}`
-            :
-            `${orgArr[i].label}`;
+          custRangeNameDedault = parent !== ''
+            ? `${parent}/${orgArr[i].label}`
+            : `${orgArr[i].label}`;
         }
       }
     }
@@ -63,7 +60,6 @@ function findOrgNameByOrgId(orgId) {
 
 @mouseWheel({ eventDom: '.ant-select-dropdown' })
 export default class CustRange extends PureComponent {
-
   static propTypes = {
     collectData: PropTypes.func.isRequired,
     updateQueryState: PropTypes.func.isRequired,
@@ -117,8 +113,7 @@ export default class CustRange extends PureComponent {
     const changedValue = {
       label: custRangeName,
       value: custRangeName
-        ?
-        `${custRangeLevel}#${orgId}#${custRangeName}`
+        ? `${custRangeLevel}#${orgId}#${custRangeName}`
         : custRange[0].id,
     };
     this.setState({
@@ -168,7 +163,9 @@ export default class CustRange extends PureComponent {
   }
 
   render() {
-    const { custRange, expandAll, selectBoxStyle, dropdownWidth, isDown } = this.props;
+    const {
+      custRange, expandAll, selectBoxStyle, dropdownWidth, isDown
+    } = this.props;
     const { value } = this.state;
     const formatCustRange = transformCustRangeData(custRange);
     const widthDown = isDown ? 160 : dropdownWidth;
@@ -181,7 +178,7 @@ export default class CustRange extends PureComponent {
         treeDefaultExpandAll={expandAll}
         treeData={formatCustRange}
         onChange={this.onChange}
-        treeNodeFilterProp={'title'}
+        treeNodeFilterProp="title"
         showSearch
         style={selectBoxStyle}
         labelInValue

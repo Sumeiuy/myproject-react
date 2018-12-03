@@ -152,7 +152,7 @@ export default {
 
     // 查询可以受托的组织机构和服务经理
     queryCanDeputeEmp: [
-      function * ({ payload }, { put, call }) {
+      function* ({ payload }, { put, call }) {
         const response = yield call(api.queryCanDeputeEmp, payload);
         yield put({
           type: 'queryCanDeputeEmpSuccess',

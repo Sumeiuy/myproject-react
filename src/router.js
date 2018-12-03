@@ -11,7 +11,7 @@ import {
   routerRedux,
 } from 'dva/router';
 
-import { getRouterData } from '../src/common/router';
+import { getRouterData } from './common/router';
 import App from './layouts/Main';
 
 const { ConnectedRouter } = routerRedux;
@@ -34,4 +34,3 @@ Routers.propTypes = {
   history: PropTypes.object.isRequired,
   app: PropTypes.object.isRequired,
 };
-

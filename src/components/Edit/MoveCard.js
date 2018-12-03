@@ -30,8 +30,9 @@ const cardTarget = {
     }
 
     // Determine rectangle on screen
-    const hoverBoundingRect =
-      component.decoratedComponentInstance.findNodeRef().getBoundingClientRect();
+    const hoverBoundingRect = component.decoratedComponentInstance
+      .findNodeRef()
+      .getBoundingClientRect();
 
     // Get vertical middle
     // const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
@@ -95,10 +96,12 @@ export default class MoveCard extends Component {
   setTagRef(node) {
     this.selectItem = node;
   }
+
   @autobind
   findNodeRef() {
     return this.selectItem;
   }
+
   render() {
     const {
       text,
@@ -117,10 +120,9 @@ export default class MoveCard extends Component {
         ref={this.setTagRef}
       >
         {
-          parentName ?
-            `${parentName} - ${text}`
-          :
-            `${text}`
+          parentName
+            ? `${parentName} - ${text}`
+            : `${text}`
         }
         <Icon type="close" onClick={() => onRemove(data)} />
       </a>,

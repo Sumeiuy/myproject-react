@@ -125,4 +125,6 @@ function changeSubmitUnSubProList(list) {
   return newSubmitUnSubscriProList;
 }
 
-export { permil, getApprovalBtnID, changeSubmitSubProList, changeSubmitUnSubProList };
+export {
+  permil, getApprovalBtnID, changeSubmitSubProList, changeSubmitUnSubProList
+};

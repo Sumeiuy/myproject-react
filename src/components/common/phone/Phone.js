@@ -152,7 +152,7 @@ export default class Phone extends PureComponent {
               }
             }
             // 点击打电话
-            if(this.props.onClick) {
+            if (this.props.onClick) {
               this.props.onClick().then(() => {
                 this.prepareCall(number);
               });
@@ -209,53 +209,59 @@ export default class Phone extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click',
-payload: { name: '拨打电话' } })
-  handleClick() {
-    const { number, custType, onClick } = this.props;
-    if (this.canCall() !== true) {
-      return;
-    }
-    // 在ie下才需要检测打电话控件是否安装
-    if (bowser.msie) {
-      if (!memoizeCheck()) {
-        this.handlePluginError();
-        return;
-      }
-    }
-    // 检测chrome、firefox浏览器的版本号， 部分高版本chrome、firefox无法支持PC拨打电话
-    if (env.isChrome() || env.isFirefox()) {
-      if (checkBowserVersion()) {
-        this.handleBowserVersionError();
-        return;
-      }
-    }
-    if(onClick) {
-      onClick({
-        number,
-        custType,
+  @logable({
+    type: 'Click',
+    payload: { name: '拨打电话' }
+  })
+   handleClick() {
+     const { number, custType, onClick } = this.props;
+     if (this.canCall() !== true) {
+       return;
+     }
+     // 在ie下才需要检测打电话控件是否安装
+     if (bowser.msie) {
+       if (!memoizeCheck()) {
+         this.handlePluginError();
+         return;
+       }
+     }
+     // 检测chrome、firefox浏览器的版本号， 部分高版本chrome、firefox无法支持PC拨打电话
+     if (env.isChrome() || env.isFirefox()) {
+       if (checkBowserVersion()) {
+         this.handleBowserVersionError();
+         return;
+       }
+     }
+     if (onClick) {
+       onClick({
+         number,
+         custType,
        }).then(() => {
-        this.prepareCall(number);
-      });
-    } else {
-      this.prepareCall(number);
-    }
-    this.showMask();
-  }
+         this.prepareCall(number);
+       });
+     } else {
+       this.prepareCall(number);
+     }
+     this.showMask();
+   }
 
 
   // 显示通话蒙版
   @autobind
-  @logable({ type: 'Click',
-payload: { name: '显示' } })
+  @logable({
+    type: 'Click',
+    payload: { name: '显示' }
+  })
   showMask() {
     this.setState({ showMask: true });
   }
 
   // 隐藏通话蒙版
   @autobind
-  @logable({ type: 'Click',
-payload: { name: '隐藏' } })
+  @logable({
+    type: 'Click',
+    payload: { name: '隐藏' }
+  })
   hideMask() {
     this.setState({ showMask: false });
   }
@@ -271,10 +277,14 @@ payload: { name: '隐藏' } })
   }
 
   call(number) {
-    const { custType, config, name, userData } = this.props;
+    const {
+      custType, config, name, userData
+    } = this.props;
     const {
       sipInfo: { sipID, sipDomain, sipPasswd },
-      wssInfo: { wssIp, wssPort, sipIp, sipPort },
+      wssInfo: {
+        wssIp, wssPort, sipIp, sipPort
+      },
     } = config;
 
     const configQueryString = [
@@ -330,9 +340,9 @@ payload: { name: '隐藏' } })
     return (
       <div>
         <div
-        className={className}
-        onClick={this.handleClick}
-        style={style}
+          className={className}
+          onClick={this.handleClick}
+          style={style}
         >
           {number}
         </div>

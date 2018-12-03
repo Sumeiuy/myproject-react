@@ -10,7 +10,7 @@
 const config = {
   TEN_LEVEL_TEMPLATE_ID: '1-43OZSYG', // 十档行情模板ID
   ZJKCD_ID: '507070', // 紫金快车道子类型ID
-  ZJKCD_NAME: '紫金快车道协议',  // 紫金快车道子类型名称
+  ZJKCD_NAME: '紫金快车道协议', // 紫金快车道子类型名称
   GSTD_ID: '507050', // 高速通道子类型ID
   GSTD_NAME: '高速通道类协议', // 高速通道子类型名称
   ARBIRAGE_ID: '507095', // 套利软件类型ID

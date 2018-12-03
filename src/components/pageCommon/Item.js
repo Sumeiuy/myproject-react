@@ -15,7 +15,6 @@ import commonStyles from '../../routes/reports/common.less' // eslint-disable-li
 const reactApp = fspContainer.reactApp;
 
 export default class Item extends PureComponent {
-
   static propTypes = {
     data: PropTypes.object,
   }
@@ -23,6 +22,7 @@ export default class Item extends PureComponent {
   static defaultProps = {
     data: {},
   }
+
   // tooltip
   @autobind
   getTooltipContainer() {
@@ -30,18 +30,23 @@ export default class Item extends PureComponent {
   }
 
   render() {
-    const { data: { unit, value, name, parentName, description } } = this.props;
+    const {
+      data: {
+        unit, value, name, parentName, description
+      }
+    } = this.props;
     const data = report.toUnit(value, unit, 5);
     const newName = parentName ? `${parentName}-${name}` : name;
-    const toolTipHtnml = (<div className={styles.summuryToolTip}>
-      <h3>{newName}</h3>
-      {
-        description ?
-          <h4>{description}</h4>
-        :
-          null
+    const toolTipHtnml = (
+      <div className={styles.summuryToolTip}>
+        <h3>{newName}</h3>
+        {
+        description
+          ? <h4>{description}</h4>
+          : null
       }
-    </div>);
+      </div>
+    );
     return (
       <div className={styles.content}>
         <div className={styles.contentBorder}>

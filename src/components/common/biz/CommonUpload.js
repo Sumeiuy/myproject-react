@@ -29,7 +29,9 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Progress, Popconfirm, Upload, message, Popover } from 'antd';
+import {
+  Progress, Popconfirm, Upload, message, Popover
+} from 'antd';
 import { autobind } from 'core-decorators';
 import moment from 'moment';
 import _ from 'lodash';
@@ -149,8 +151,10 @@ export default class CommonUpload extends PureComponent {
 
   // 上传事件
   @autobind
-  @logable({ type: 'ButtonClick',
-payload: { name: '上传附件' } })
+  @logable({
+    type: 'ButtonClick',
+    payload: { name: '上传附件' }
+  })
   onChange(info) {
     const { uploadAttachment, maxFileSize } = this.props;
     const uploadFile = info.file;
@@ -221,18 +225,24 @@ payload: { name: '上传附件' } })
   }
 
   // 空方法，用于日志上传
-  @logable({ type: 'Click',
-payload: { name: '下载' } })
+  @logable({
+    type: 'Click',
+    payload: { name: '下载' }
+  })
   handleDownloadClick() {}
 
   // 获取上传数据
   @autobind
   getUploadData() {
-    const { empId, file, attachment, fileList } = this.state;
+    const {
+      empId, file, attachment, fileList
+    } = this.state;
     const { isFalseDelete } = this.props;
-    const defaultData = { empId,
-file,
-attachment };
+    const defaultData = {
+      empId,
+      file,
+      attachment
+    };
     if (isFalseDelete) {
       const attachId = fileList[0];
       return {
@@ -307,21 +317,22 @@ attachment };
                     <span className={styles.popFileName}>{fileName}</span>
                     <span className={styles.btnBox}>
                       {
-                        edit ?
-                          <em>
-                            <Popconfirm
-                              placement="top"
-                              onConfirm={() => this.onRemove(item.attachId)}
-                              okText="是"
-                              cancelText="否"
-                              title={'是否删除该附件？'}
-                            >
-                              <Icon type="shanchu" />
-                              <i className={styles.cutline} />
-                            </Popconfirm>
-                          </em>
-                        :
-                          null
+                        edit
+                          ? (
+                            <em>
+                              <Popconfirm
+                                placement="top"
+                                onConfirm={() => this.onRemove(item.attachId)}
+                                okText="是"
+                                cancelText="否"
+                                title="是否删除该附件？"
+                              >
+                                <Icon type="shanchu" />
+                                <i className={styles.cutline} />
+                              </Popconfirm>
+                            </em>
+                          )
+                          : null
                       }
                       <em>
                         <a
@@ -334,11 +345,16 @@ attachment };
                     </span>
                   </h3>
                   <h3 className={styles.uploadText}>
-                    <span className="fileListItemSize">大小：{`${item.size} KB`}</span>
-                    上传人：{item.creator}
+                    <span className="fileListItemSize">
+大小：
+                      {`${item.size} KB`}
+                    </span>
+                    上传人：
+                    {item.creator}
                   </h3>
                   <h3 className={styles.uploadTime}>
-                    上传于：{moment(item.createTime).format('YYYY-MM-DD')}
+                    上传于：
+                    {moment(item.createTime).format('YYYY-MM-DD')}
                   </h3>
                 </div>
               );
@@ -362,14 +378,15 @@ attachment };
                     trigger="hover"
                   >
                     {
-                      (index === fileList.length - 1 && Number(percent) !== 0) ?
-                        <Progress
-                          percent={Number.parseInt(percent, 10)}
-                          strokeWidth={4}
-                          status={status}
-                        />
-                      :
-                        null
+                      (index === fileList.length - 1 && Number(percent) !== 0)
+                        ? (
+                          <Progress
+                            percent={Number.parseInt(percent, 10)}
+                            strokeWidth={4}
+                            status={status}
+                          />
+                        )
+                        : null
                     }
                   </Popover>
                 </div>
@@ -393,23 +410,24 @@ attachment };
     return (
       <div className={`${styles.fileListMain} fileListMain`}>
         {
-          _.isEmpty(title) ?
-            null
-          :
-            <h3 className={styles.title}>{title}</h3>
+          _.isEmpty(title)
+            ? null
+            : <h3 className={styles.title}>{title}</h3>
         }
         { fileListElement }
         {
-          edit ?
-            <div className={styles.fileUploadItem}>
-              <Upload {...uploadProps} {...this.props}>
-                <Button className={styles.commonUploadBtn}>
-                  <Icon type="fujian1" />上传附件
-                </Button>
-              </Upload>
-            </div>
-          :
-            null
+          edit
+            ? (
+              <div className={styles.fileUploadItem}>
+                <Upload {...uploadProps} {...this.props}>
+                  <Button className={styles.commonUploadBtn}>
+                    <Icon type="fujian1" />
+上传附件
+                  </Button>
+                </Upload>
+              </div>
+            )
+            : null
         }
       </div>
     );

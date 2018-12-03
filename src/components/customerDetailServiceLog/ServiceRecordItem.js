@@ -73,7 +73,7 @@ export default class ServiceRecordItem extends PureComponent {
     const renderSpan = _.map(value, (item, index) => {
       const type = getIconType(item.name);
       return (
-        <span title={item.name}  key={index}>
+        <span title={item.name} key={index}>
           <Icon
             type={type}
             className={classnames({
@@ -84,9 +84,11 @@ export default class ServiceRecordItem extends PureComponent {
             className={styles.seeCust}
             ref={ref => this.sendEmail = ref}
             onClick={this.handleDownloadClick}
-            href={_.isEmpty(item.attachId) && _.isEmpty(item.name) ? NO_EMAIL_HREF :
-              `${request.prefix}/file/ceFileDownload2?attachId=${item.attachId}&empId=${emp.getId()}&filename=${item.name}`}
-          >{item.name}</a>
+            href={_.isEmpty(item.attachId) && _.isEmpty(item.name) ? NO_EMAIL_HREF
+              : `${request.prefix}/file/ceFileDownload2?attachId=${item.attachId}&empId=${emp.getId()}&filename=${item.name}`}
+          >
+            {item.name}
+          </a>
         </span>
       );
     });
@@ -124,12 +126,12 @@ export default class ServiceRecordItem extends PureComponent {
     }
     // 显示的时间格式进行转换
     // 2018/07/16-2018/11/16  => 2018-07-16 ~ 2018-11-16
-    if(title === '处理期限') {
-      let newContent = content.replace('-', '~').replace(/\//g, '-').split('~');
+    if (title === '处理期限') {
+      const newContent = content.replace('-', '~').replace(/\//g, '-').split('~');
       return `${newContent[0]} ~ ${newContent[1]}`;
     }
 
-    if(title === '反馈时间') {
+    if (title === '反馈时间') {
       return content.replace(/\//g, '-');
     }
     return content;
@@ -189,13 +191,13 @@ export default class ServiceRecordItem extends PureComponent {
       <IfWrap isRender={isShouleRender}>
         <div className={styles.serviceItem}>
           <span className={styles.serviceTitle}>
-            {title}<span className={styles.serviceDivide}>:</span>
+            {title}
+            <span className={styles.serviceDivide}>:</span>
           </span>
           {
-            isHaveFileList ?
-              <div className={styles.iconsWords}>{this.renderIcon(filesList)}</div>
-              :
-              this.renderContent(newContent)
+            isHaveFileList
+              ? <div className={styles.iconsWords}>{this.renderIcon(filesList)}</div>
+              : this.renderContent(newContent)
           }
         </div>
       </IfWrap>

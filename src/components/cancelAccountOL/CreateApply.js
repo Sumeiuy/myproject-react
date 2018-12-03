@@ -136,7 +136,9 @@ export default class CreateApply extends PureComponent {
 
   @autobind
   doApproval() {
-    const { cust, operate, auditors, groupName, itemId } = this.state;
+    const {
+      cust, operate, auditors, groupName, itemId
+    } = this.state;
     // 新建走流程，flowId 传空字符串
     this.props.doApproval({
       flowId: '',

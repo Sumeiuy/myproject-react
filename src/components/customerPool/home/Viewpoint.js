@@ -26,8 +26,10 @@ export default class Viewpoint extends PureComponent {
 
   @autobind
   openNewTab(url, query, editPane) {
-    const param = { id: 'RTC_TAB_VIEWPOINT',
-title: '资讯' };
+    const param = {
+      id: 'RTC_TAB_VIEWPOINT',
+      title: '资讯'
+    };
     const { push } = this.props;
     openRctTab({
       routerAction: push,
@@ -40,8 +42,10 @@ title: '资讯' };
   }
 
   @autobind
-  @logable({ type: 'Click',
-payload: { name: '更多 >' } })
+  @logable({
+    type: 'Click',
+    payload: { name: '更多 >' }
+  })
   handleMoreClick() {
     // 跳转到资讯列表界面
     this.openNewTab('/strategyCenter/latestView/viewpointList', null,
@@ -52,17 +56,19 @@ payload: { name: '更多 >' } })
   }
 
   @autobind
-  @logable({ type: 'Click',
-payload: { name: '详情' } })
+  @logable({
+    type: 'Click',
+    payload: { name: '详情' }
+  })
   handleDetailClick(id) {
     // 跳转到资讯详情界面
     this.openNewTab('/strategyCenter/latestView/viewpointDetail', {
       id,
     },
-      {
-        name: '资讯详情',
-        path: '/strategyCenter/latestView/viewpointDetail',
-      });
+    {
+      name: '资讯详情',
+      path: '/strategyCenter/latestView/viewpointDetail',
+    });
   }
 
   @autobind
@@ -109,22 +115,24 @@ payload: { name: '详情' } })
     const newFormateAbstract = _.isEmpty(abstract) ? (
       '<p>暂无内容</p>'
     ) : (
-        abstract.replace(
-          /<(\/?)([^\s>]+)[^>]*?>/g,
-          (all, isEnd, tagName) => {
-            if (_.includes(['p', 'pre'], tagName)) {
-              return _.isEmpty(isEnd) ? '<p>' : '</p>';
-            }
-            return '';
-          },
-        )
-      );
+      abstract.replace(
+        /<(\/?)([^\s>]+)[^>]*?>/g,
+        (all, isEnd, tagName) => {
+          if (_.includes(['p', 'pre'], tagName)) {
+            return _.isEmpty(isEnd) ? '<p>' : '</p>';
+          }
+          return '';
+        },
+      )
+    );
     // ↵ 是个符号，可以直接写，过滤掉。写 \n 过滤不掉 ↵ 符号
     const formateAbstract = newFormateAbstract.replace('↵', '');
     const isShowMore = infoVOList.length > 12;
     const isHiddenDetail = _.isEmpty(abstract);
-    const newInfoVOList = _.map(infoVOList, (item, index) => ({ ...item,
-id: `${index}` }));
+    const newInfoVOList = _.map(infoVOList, (item, index) => ({
+      ...item,
+      id: `${index}`
+    }));
     return (
       <div className={styles.container}>
         <div className={styles.head}>首席投顾观点</div>
@@ -155,20 +163,22 @@ id: `${index}` }));
             <div className={classnames(styles.head, styles.listHead)}>资讯列表</div>
             {
               isShowMore ? (
-                <div className={styles.fold} >
+                <div className={styles.fold}>
                   <a onClick={this.handleMoreClick}>{'更多 >'}</a>
                 </div>
               ) : (
-                  null
-                )
+                null
+              )
             }
           </div>
           {
-            _.isEmpty(newInfoVOList) ?
-              <div className={styles.descri}>暂无数据</div> :
-              <div className={classnames(styles.descriContainer, { [styles.descri]: !isShowMore })}>
-                {this.renderContent(newInfoVOList)}
-              </div>
+            _.isEmpty(newInfoVOList)
+              ? <div className={styles.descri}>暂无数据</div>
+              : (
+                <div className={classnames(styles.descriContainer, { [styles.descri]: !isShowMore })}>
+                  {this.renderContent(newInfoVOList)}
+                </div>
+              )
           }
         </div>
       </div>

@@ -10,9 +10,9 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { Input, message } from 'antd';
 import _ from 'lodash';
-import CommonModal from '../../components/common/biz/CommonModal';
+import CommonModal from '../common/biz/CommonModal';
 import InfoForm from '../common/infoForm';
-import Select from '../../components/common/Select';
+import Select from '../common/Select';
 import AutoComplete from '../common/similarAutoComplete';
 import styles from './addClause.less';
 import logable from '../../decorators/logable';
@@ -260,7 +260,7 @@ export default class EditForm extends PureComponent {
     } = this.state;
     return (
       <div className={styles.addClauseBox}>
-        <CommonModal {...clasueProps} >
+        <CommonModal {...clasueProps}>
           <div className={styles.editWrapper}>
             <InfoForm label="条款名称" required>
               <Select

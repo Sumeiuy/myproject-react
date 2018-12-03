@@ -12,7 +12,6 @@ export default (options = {}) => (ComposedComponent) => {
   const { container = '.react-app', eventDom = '' } = options;
 
   class HOCComponent extends PureComponent {
-
     componentDidMount() {
       this.bindMousewheel();
     }

@@ -95,9 +95,13 @@ export default class Stock extends PureComponent {
 
   @autobind
   handleRowClick(record) {
-    const { id, title, code, eventType, stockName } = record;
+    const {
+      id, title, code, eventType, stockName
+    } = record;
     const { push } = this.props;
-    const { type, pageSize, pageNum, keyword } = this.state;
+    const {
+      type, pageSize, pageNum, keyword
+    } = this.state;
     const urlQuery = {
       // 点击的列表 ID
       id,
@@ -262,9 +266,11 @@ export default class Stock extends PureComponent {
     if (!_.isEmpty(array)) {
       resultArr = array.map((item) => {
         const newItem = item;
-        newItem.render = text => <div className={divClassName} title={text || EMPTY_PARAM}>
-          {text || EMPTY_PARAM}
-        </div>;
+        newItem.render = text => (
+          <div className={divClassName} title={text || EMPTY_PARAM}>
+            {text || EMPTY_PARAM}
+          </div>
+        );
         return newItem;
       });
     }
@@ -272,7 +278,9 @@ export default class Stock extends PureComponent {
   }
 
   render() {
-    const { type, keyword, pageNum, pageSize, total } = this.state;
+    const {
+      type, keyword, pageNum, pageSize, total
+    } = this.state;
     const { list } = this.props;
     // 分页
     const paginationOption = {
@@ -303,18 +311,20 @@ export default class Stock extends PureComponent {
         </div>
         <Tabs defaultActiveKey={type} onChange={this.tabChangeHandle}>
           {
-            typeList.map(item => (<TabPane tab={`个股${config[item].name}`} key={item}>
-              <Table
-                columns={this.wrapperTD(config[item].titleList)}
-                dataSource={list}
-                pagination={false}
-                onRow={record => ({
-                  onClick: () => this.handleRowClick(record),       // 点击行
-                })}
-                rowKey="id"
-              />
-              <Pagination {...paginationOption} />
-            </TabPane>))
+            typeList.map(item => (
+              <TabPane tab={`个股${config[item].name}`} key={item}>
+                <Table
+                  columns={this.wrapperTD(config[item].titleList)}
+                  dataSource={list}
+                  pagination={false}
+                  onRow={record => ({
+                    onClick: () => this.handleRowClick(record), // 点击行
+                  })}
+                  rowKey="id"
+                />
+                <Pagination {...paginationOption} />
+              </TabPane>
+            ))
           }
         </Tabs>
       </div>

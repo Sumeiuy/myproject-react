@@ -255,7 +255,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
         approverId,
         custLists,
       } = this.batchBoard.userSelectData();
-       // 判断什么时候能够提交
+      // 判断什么时候能够提交
       if (_.isEmpty(targetProduct)) {
         message.error('请选择目标产品');
         result = false;
@@ -634,6 +634,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
   querySubscribelProList(param) {
     this.props.getSubscribelProList(param);
   }
+
   // 查询资讯退订调整产品
   @autobind
   queryUnSubscribelProList(param) {
@@ -782,7 +783,9 @@ export default class CreateNewApprovalBoard extends PureComponent {
     getCustDetailInfo({ brokerNumber: custEcom }).then(
       () => {
         const { custDetailInfo } = this.props;
-        const { custType, ptyId, custId, rowId } = custDetailInfo || {};
+        const {
+          custType, ptyId, custId, rowId
+        } = custDetailInfo || {};
         // pOrO代表个人客户，机构客户
         const type = (!custType || custType === PER_CODE) ? PER_CODE : ORG_CODE;
         const url = `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`;
@@ -862,111 +865,111 @@ export default class CreateNewApprovalBoard extends PureComponent {
               </CommissionLine>
               {
                 !this.judgeSubtypeNow([commadj.single]) ? null
-                : (
-                  <CommissionLine label="客户" labelWidth="90px" needInputBox={false}>
-                    <SelectAssembly
-                      dataSource={singleCustList}
-                      onSearchValue={this.handleChangeSingleAssembly}
-                      onSelectValue={this.handleSelectAssembly}
-                      onValidateCust={onValidateSingleCust}
-                      validResult={singleCustVResult}
-                      subType={commadj.single}
-                      unfinishRoute={this.orderFlowRoute}
-                    />
-                  </CommissionLine>
-                )
+                  : (
+                    <CommissionLine label="客户" labelWidth="90px" needInputBox={false}>
+                      <SelectAssembly
+                        dataSource={singleCustList}
+                        onSearchValue={this.handleChangeSingleAssembly}
+                        onSelectValue={this.handleSelectAssembly}
+                        onValidateCust={onValidateSingleCust}
+                        validResult={singleCustVResult}
+                        subType={commadj.single}
+                        unfinishRoute={this.orderFlowRoute}
+                      />
+                    </CommissionLine>
+                  )
               }
               {
                 // 资讯订阅
                 !this.judgeSubtypeNow([commadj.subscribe]) ? null
-                : (
-                  <CommissionLine label="客户" labelWidth="90px" needInputBox={false}>
-                    <SelectAssembly
-                      dataSource={subscribeCustList}
-                      onSearchValue={this.handleChangeSubscribeAssembly}
-                      onSelectValue={this.handleSelectAssembly}
-                      onValidateCust={onCheckSubsciCust}
-                      validResult={sciCheckCustomer}
-                      subType={commadj.subscribe}
-                    />
-                  </CommissionLine>
-                )
+                  : (
+                    <CommissionLine label="客户" labelWidth="90px" needInputBox={false}>
+                      <SelectAssembly
+                        dataSource={subscribeCustList}
+                        onSearchValue={this.handleChangeSubscribeAssembly}
+                        onSelectValue={this.handleSelectAssembly}
+                        onValidateCust={onCheckSubsciCust}
+                        validResult={sciCheckCustomer}
+                        subType={commadj.subscribe}
+                      />
+                    </CommissionLine>
+                  )
               }
               {
                 !this.judgeSubtypeNow([commadj.unsubscribe]) ? null
-                : (
-                  <CommissionLine label="客户" labelWidth="90px" needInputBox={false}>
-                    <SelectAssembly
-                      dataSource={subscribeCustList}
-                      onSearchValue={this.handleChangeSubscribeAssembly}
-                      onSelectValue={this.handleSelectAssembly}
-                      subType={commadj.unsubscribe}
-                      shouldeCheck={false}
-                    />
-                  </CommissionLine>
-                )
+                  : (
+                    <CommissionLine label="客户" labelWidth="90px" needInputBox={false}>
+                      <SelectAssembly
+                        dataSource={subscribeCustList}
+                        onSearchValue={this.handleChangeSubscribeAssembly}
+                        onSelectValue={this.handleSelectAssembly}
+                        subType={commadj.unsubscribe}
+                        shouldeCheck={false}
+                      />
+                    </CommissionLine>
+                  )
               }
               {
                 this.judgeSubtypeNow(commadj.noSelected) ? null
-                : (
-                  <CommissionLine label="备注" labelWidth="90px">
-                    <TextArea
-                      placeholder="备注内容"
-                      value={remark}
-                      onChange={this.handleChangeRemark}
-                      style={{
-                        fontSize: '14px',
-                      }}
-                    />
-                  </CommissionLine>
-                )
+                  : (
+                    <CommissionLine label="备注" labelWidth="90px">
+                      <TextArea
+                        placeholder="备注内容"
+                        value={remark}
+                        onChange={this.handleChangeRemark}
+                        style={{
+                          fontSize: '14px',
+                        }}
+                      />
+                    </CommissionLine>
+                  )
               }
             </div>
             {/* 批量佣金调整 */}
             {
               !this.judgeSubtypeNow(commadj.batch) ? null
-              : (
-                <BatchCreateBoard
-                  otherRatios={otherRatios}
-                  empInfo={empInfo}
-                  ref={this.batchCreateBoardRef}
-                />
-              )
+                : (
+                  <BatchCreateBoard
+                    otherRatios={otherRatios}
+                    empInfo={empInfo}
+                    ref={this.batchCreateBoardRef}
+                  />
+                )
             }
             {/* 单佣金调整 */}
             {
               !this.judgeSubtypeNow(commadj.single) ? null
-              : (
-                <SingleCreatBoard
-                  otherRations={singleOtherRatio}
-                  customer={customer}
-                  empInfo={empInfo}
-                  ref={this.singleCreateBoardRef}
-                />
-              )
+                : (
+                  <SingleCreatBoard
+                    otherRations={singleOtherRatio}
+                    customer={customer}
+                    empInfo={empInfo}
+                    ref={this.singleCreateBoardRef}
+                  />
+                )
             }
             {/* 资讯订阅 */}
             {
               !this.judgeSubtypeNow(commadj.subscribe) ? null
-              : (
-                <SubscribeCreateBoard
-                  customer={customer}
-                  empInfo={empInfo}
-                  subscribelProList={subscribelProList}
-                  ref={this.subscriCreateBoardRef}
-                />
-              )
+                : (
+                  <SubscribeCreateBoard
+                    customer={customer}
+                    empInfo={empInfo}
+                    subscribelProList={subscribelProList}
+                    ref={this.subscriCreateBoardRef}
+                  />
+                )
             }
             {/* 资讯退订 */}
             {
               !this.judgeSubtypeNow(commadj.unsubscribe) ? null
-              : (
-                <UnSubscribeCreateBoard
-                  customer={customer}
-                  empInfo={empInfo}
-                  ref={this.unSubscriCreateBoardRef}
-                />
-              )
+                : (
+                  <UnSubscribeCreateBoard
+                    customer={customer}
+                    empInfo={empInfo}
+                    ref={this.unSubscriCreateBoardRef}
+                  />
+                )
             }
           </div>
         </CommonModal>

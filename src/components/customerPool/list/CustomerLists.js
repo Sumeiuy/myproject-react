@@ -22,7 +22,9 @@ import { url as urlHelper, emp, number } from '../../../helper';
 import NoData from '../common/NoData';
 import Pagination from '../../common/Pagination';
 import RestoreScrollTop from '../../../decorators/restoreScrollTop';
-import { ENTERLIST_PERMISSION_TASK_MANAGE, ENTERLIST_PERMISSION_INDEX_QUERY, MAIN_MAGEGER_ID, ALL_DEPARTMENT_ID } from '../../../routes/customerPool/config';
+import {
+  ENTERLIST_PERMISSION_TASK_MANAGE, ENTERLIST_PERMISSION_INDEX_QUERY, MAIN_MAGEGER_ID, ALL_DEPARTMENT_ID
+} from '../../../routes/customerPool/config';
 import logable, { logCommon } from '../../../decorators/logable';
 import styles from './customerLists.less';
 
@@ -237,9 +239,9 @@ export default class CustomerLists extends PureComponent {
       tmpStr = cur;
     } else {
       const selectedIdsArr = selectedIds.split(',');
-      tmpStr = _.includes(selectedIdsArr, cur) ?
-        selectedIdsArr.filter(v => v !== cur).join(',') :
-        [...selectedIdsArr, cur].join(',');
+      tmpStr = _.includes(selectedIdsArr, cur)
+        ? selectedIdsArr.filter(v => v !== cur).join(',')
+        : [...selectedIdsArr, cur].join(',');
     }
     replace({
       pathname,
@@ -370,7 +372,9 @@ export default class CustomerLists extends PureComponent {
 
   // 跳转到分组页面或新建任务页面
   @autobind
-  goGroupOrTask({ id, title, url, obj, shouldStay, editPane }) {
+  goGroupOrTask({
+    id, title, url, obj, shouldStay, editPane
+  }) {
     const { push, dataForNextPage } = this.props;
     const newurl = `${url}?${urlHelper.stringify({ ...obj, ...dataForNextPage })}`;
     const param = {
@@ -408,9 +412,9 @@ export default class CustomerLists extends PureComponent {
       isNotSaleDepartment,
     } = this.props;
     // 潜在业务客户进入，判断当前用户岗位是否在分公司或经总，在分公司或经总，再判断是否任务管理权限，反之dou
-    return (_.includes(ENTERLIST_PERMISSION_TASK_MANAGE, source) && hasTkMampPermission) ||
-      (_.includes(ENTERLIST_PERMISSION_INDEX_QUERY, source) && hasIndexViewPermission) ||
-      (source === 'business' && isNotSaleDepartment && hasTkMampPermission);
+    return (_.includes(ENTERLIST_PERMISSION_TASK_MANAGE, source) && hasTkMampPermission)
+      || (_.includes(ENTERLIST_PERMISSION_INDEX_QUERY, source) && hasIndexViewPermission)
+      || (source === 'business' && isNotSaleDepartment && hasTkMampPermission);
   }
 
   /**
@@ -472,6 +476,7 @@ export default class CustomerLists extends PureComponent {
       currentSignLabelCustId: '',
     });
   }
+
   // 添加单客户标签 -- end
   render() {
     const {
@@ -576,8 +581,8 @@ export default class CustomerLists extends PureComponent {
     if (page.total) {
       curTotal = Number(page.total);
     }
-    const selectIdsArr = selectedIds ?
-      selectedIds.split(',') : EMPTY_ARRAY;
+    const selectIdsArr = selectedIds
+      ? selectedIds.split(',') : EMPTY_ARRAY;
     const isAllSelectBool = !((!selectAll || selectAll === 'false'));
     // 是否显示底部的发起任务和分组，全选或者有选中数据时才显示
     const BottomFixedBoxVisible = (!_.isEmpty(selectIdsArr) || isAllSelectBool);
@@ -660,48 +665,52 @@ export default class CustomerLists extends PureComponent {
           </div>
         </div>
         {
-          !_.isEmpty(custList) ?
-            <div className="list-wrapper">
-              {
+          !_.isEmpty(custList)
+            ? (
+              <div className="list-wrapper">
+                {
                 custList.map(
-                  item => <CustomerRow
-                    empInfo={empInfo}
-                    handleCheck={handleCheck}
-                    dict={dict}
-                    location={location}
-                    getCustIncome={getCustIncome}
-                    monthlyProfits={monthlyProfits}
-                    listItem={item}
-                    q={q}
-                    isAllSelect={isAllSelectBool}
-                    selectedIds={selectIdsArr}
-                    onChange={this.handleSingleSelect}
-                    createContact={this.showCreateContact}
-                    key={`${item.empId}-${item.custId}-${item.idNum}-${item.telephone}-${item.asset}`}
-                    custIncomeReqState={custIncomeReqState}
-                    toggleServiceRecordModal={toggleServiceRecordModal}
-                    formatAsset={formatAsset}
-                    queryCustUuid={queryCustUuid}
-                    condition={condition}
-                    entertype={entertype}
-                    goGroupOrTask={this.goGroupOrTask}
-                    push={push}
-                    custServedByPostnResult={custServedByPostnResult}
-                    hasNPCTIQPermission={hasNPCTIQPermission}
-                    hasPCTIQPermission={hasPCTIQPermission}
-                    queryHoldingProduct={queryHoldingProduct}
-                    holdingProducts={holdingProducts}
-                    queryHoldingProductReqState={queryHoldingProductReqState}
-                    queryHoldingSecurityRepetition={queryHoldingSecurityRepetition}
-                    holdingSecurityData={holdingSecurityData}
-                    queryHoldingIndustryDetail={queryHoldingIndustryDetail}
-                    industryDetail={industryDetail}
-                    queryHoldingIndustryDetailReqState={queryHoldingIndustryDetailReqState}
-                    queryCustSignLabel={this.queryCustSignLabel}
-                  />,
+                  item => (
+                    <CustomerRow
+                      empInfo={empInfo}
+                      handleCheck={handleCheck}
+                      dict={dict}
+                      location={location}
+                      getCustIncome={getCustIncome}
+                      monthlyProfits={monthlyProfits}
+                      listItem={item}
+                      q={q}
+                      isAllSelect={isAllSelectBool}
+                      selectedIds={selectIdsArr}
+                      onChange={this.handleSingleSelect}
+                      createContact={this.showCreateContact}
+                      key={`${item.empId}-${item.custId}-${item.idNum}-${item.telephone}-${item.asset}`}
+                      custIncomeReqState={custIncomeReqState}
+                      toggleServiceRecordModal={toggleServiceRecordModal}
+                      formatAsset={formatAsset}
+                      queryCustUuid={queryCustUuid}
+                      condition={condition}
+                      entertype={entertype}
+                      goGroupOrTask={this.goGroupOrTask}
+                      push={push}
+                      custServedByPostnResult={custServedByPostnResult}
+                      hasNPCTIQPermission={hasNPCTIQPermission}
+                      hasPCTIQPermission={hasPCTIQPermission}
+                      queryHoldingProduct={queryHoldingProduct}
+                      holdingProducts={holdingProducts}
+                      queryHoldingProductReqState={queryHoldingProductReqState}
+                      queryHoldingSecurityRepetition={queryHoldingSecurityRepetition}
+                      holdingSecurityData={holdingSecurityData}
+                      queryHoldingIndustryDetail={queryHoldingIndustryDetail}
+                      industryDetail={industryDetail}
+                      queryHoldingIndustryDetailReqState={queryHoldingIndustryDetailReqState}
+                      queryCustSignLabel={this.queryCustSignLabel}
+                    />
+                  ),
                 )
               }
-            </div>
+              </div>
+            )
             : <NoData />
         }
         <div
@@ -713,49 +722,53 @@ export default class CustomerLists extends PureComponent {
           />
         </div>
         {
-          BottomFixedBoxVisible ?
-            <BottomFixedBox
-              selectCount={selectCount}
-              mainServiceManager={this.mainServiceManager}
-              page={page}
-              condition={condition}
-              location={location}
-              push={push}
-              custList={custList}
-              entertype={entertype}
-              clearCreateTaskData={clearCreateTaskData}
-              onClick={this.goGroupOrTask}
-              hasTkMampPermission={hasTkMampPermission}
-              sendCustsServedByPostnResult={sendCustsServedByPostnResult}
-              isSendCustsServedByPostn={isSendCustsServedByPostn}
-              handleSignLabelClick={this.switchMultiCustSignLabel}
-            /> : null
+          BottomFixedBoxVisible
+            ? (
+              <BottomFixedBox
+                selectCount={selectCount}
+                mainServiceManager={this.mainServiceManager}
+                page={page}
+                condition={condition}
+                location={location}
+                push={push}
+                custList={custList}
+                entertype={entertype}
+                clearCreateTaskData={clearCreateTaskData}
+                onClick={this.goGroupOrTask}
+                hasTkMampPermission={hasTkMampPermission}
+                sendCustsServedByPostnResult={sendCustsServedByPostnResult}
+                isSendCustsServedByPostn={isSendCustsServedByPostn}
+                handleSignLabelClick={this.switchMultiCustSignLabel}
+              />
+            ) : null
         }
         {
-          isShowContactModal ?
-            <CreateContactModal
-              handleCollapseClick={handleCollapseClick}
-              handleAddServiceRecord={handleAddServiceRecord}
-              handleCloseClick={handleCloseClick}
-              key={modalKey}
-              visible={isShowContactModal}
-              custContactData={finalContactData}
-              serviceRecordData={finalServiceRecordData}
-              custType={custType}
-              createServiceRecord={toggleServiceRecordModal} /* 创建服务记录 */
-              onClose={this.resetModalState}
-              currentCustId={currentCustId}
-              currentCustName={custName}
-              executeTypes={executeTypes}
-              serveWay={serveWay}
-              getCeFileList={getCeFileList}
-              filesList={filesList}
-              toggleServiceRecordModal={toggleServiceRecordModal}
-              addServeRecord={addServeRecord}
-              motSelfBuiltFeedbackList={motSelfBuiltFeedbackList}
-              addCallRecord={addCallRecord}
-              currentCommonServiceRecord={currentCommonServiceRecord}
-            /> : null
+          isShowContactModal
+            ? (
+              <CreateContactModal
+                handleCollapseClick={handleCollapseClick}
+                handleAddServiceRecord={handleAddServiceRecord}
+                handleCloseClick={handleCloseClick}
+                key={modalKey}
+                visible={isShowContactModal}
+                custContactData={finalContactData}
+                serviceRecordData={finalServiceRecordData}
+                custType={custType}
+                createServiceRecord={toggleServiceRecordModal} /* 创建服务记录 */
+                onClose={this.resetModalState}
+                currentCustId={currentCustId}
+                currentCustName={custName}
+                executeTypes={executeTypes}
+                serveWay={serveWay}
+                getCeFileList={getCeFileList}
+                filesList={filesList}
+                toggleServiceRecordModal={toggleServiceRecordModal}
+                addServeRecord={addServeRecord}
+                motSelfBuiltFeedbackList={motSelfBuiltFeedbackList}
+                addCallRecord={addCallRecord}
+                currentCommonServiceRecord={currentCommonServiceRecord}
+              />
+            ) : null
         }
         <SignCustomerLabel
           currentPytMng={currentPtyMngId}

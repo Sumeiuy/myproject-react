@@ -51,7 +51,10 @@ export default class ZijinClockDetailModal extends PureComponent {
         wrapClassName={styles.detailModal}
         onOk={() => closeModal(modalKey)}
       >
-        <h3>当前周期：{name}</h3>
+        <h3>
+当前周期：
+          {name}
+        </h3>
         <dl className={styles.modalDl}>
           <dt>发布日期：</dt>
           <dd>{timeHelper.format(time, dateFormatStr)}</dd>

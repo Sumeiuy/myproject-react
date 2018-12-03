@@ -25,9 +25,8 @@ export default function ProfitAbilityLevel(props) {
     return (
       <div className={styles.steps}>
         <div className={stepCls}>
-          <div className={styles.itemTail}>
-          </div>
-          <div className={styles.itemIcon}></div>
+          <div className={styles.itemTail} />
+          <div className={styles.itemIcon} />
           <div className={styles.itemContent}>{levelName}</div>
         </div>
       </div>

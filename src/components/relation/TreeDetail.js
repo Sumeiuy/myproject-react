@@ -65,8 +65,10 @@ export default class TreeDetail extends Component {
   }
 
   @autobind
-  @logPV({ pathname: '/modal/editManager',
-title: '编辑负责人' })
+  @logPV({
+    pathname: '/modal/editManager',
+    title: '编辑负责人'
+  })
   handleEditClick(obj, flag, category, hasManager) {
     this.props.onUpdate(obj, flag, category, hasManager);
   }
@@ -74,7 +76,9 @@ title: '编辑负责人' })
   @autobind
   renderHeader(obj) {
     const { category, headerLine } = this.props;
-    const { orgName, postnDesc, login, loginName, postnId } = obj || {};
+    const {
+      orgName, postnDesc, login, loginName, postnId
+    } = obj || {};
     const hasManager = !_.isEmpty(postnId);
     const isHiddenManager = _.isEmpty(login) && _.isEmpty(login);
     const title = this.getTitle(headerLine, category, postnDesc, orgName);
@@ -84,7 +88,7 @@ title: '编辑负责人' })
           <div className={styles.title}>{title}</div>
         </div>
         <div className={styles.managerRow}>
-          <div className={styles.info}>{'负责人：'}</div>
+          <div className={styles.info}>负责人：</div>
           {
             isHiddenManager ? null : (
               <div className={classnames(styles.info, styles.value)}>
@@ -95,7 +99,7 @@ title: '编辑负责人' })
           {
             category === COMPANY_TABLE ? null : (
               <Icon
-                type={'beizhu'}
+                type="beizhu"
                 onClick={() => { this.handleEditClick(obj, true, category, hasManager); }}
                 className={styles.editIcon}
               />
@@ -107,22 +111,26 @@ title: '编辑负责人' })
   }
 
   render() {
-    const { detail, category, onDelete, onUpdate, onAdd } = this.props;
+    const {
+      detail, category, onDelete, onUpdate, onAdd
+    } = this.props;
     const { postnTree = [], currentPostn } = detail || {};
     const screenHeight = document.documentElement.clientHeight;
     const style = { height: `${(screenHeight - 109)}px` };
     // 给定唯一的key
     const newInfo = _.map(
       postnTree,
-      (item, index) => ({ ...item,
-curId: `${index}` }),
+      (item, index) => ({
+        ...item,
+        curId: `${index}`
+      }),
     );
     return (
       <div className={styles.detailContainer} style={style}>
         {this.renderHeader(currentPostn)}
         <DetailTable
           category={category}
-          rowKey={'curId'}
+          rowKey="curId"
           tableData={newInfo}
           onDelete={onDelete}
           onUpdate={onUpdate}

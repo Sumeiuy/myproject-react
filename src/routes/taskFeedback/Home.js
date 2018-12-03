@@ -51,7 +51,6 @@ const mapDispatchToProps = {
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 export default class TaskFeedback extends PureComponent {
-
   static propTypes = {
     questionInfoList: PropTypes.object.isRequired,
     queryQuestions: PropTypes.func.isRequired,
@@ -161,18 +160,19 @@ export default class TaskFeedback extends PureComponent {
           {...this.props}
         />
         {
-          modalVisible ?
-            <AddQuestionModal
-              title="新增任务反馈问题"
-              visible={modalVisible}
-              closable
-              maskClosable={false}
-              onOk={values => this.submitOneQuestion(values)}
-              onCancel={() => this.setModalVisible(false)}
-            /> : null
+          modalVisible
+            ? (
+              <AddQuestionModal
+                title="新增任务反馈问题"
+                visible={modalVisible}
+                closable
+                maskClosable={false}
+                onOk={values => this.submitOneQuestion(values)}
+                onCancel={() => this.setModalVisible(false)}
+              />
+            ) : null
         }
       </div>
     );
   }
 }
-

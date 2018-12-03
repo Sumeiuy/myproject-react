@@ -25,6 +25,7 @@ export default class ServiceRecordItem extends PureComponent {
     panelContent: PropTypes.bool,
     feedbackStatus: PropTypes.node,
   }
+
   static defaultProps = {
     content: '--',
     title: '--',
@@ -70,9 +71,11 @@ export default class ServiceRecordItem extends PureComponent {
             className={styles.seeCust}
             ref={ref => this.sendEmail = ref}
             onClick={this.handleDownloadClick}
-            href={_.isEmpty(item.attachId) && _.isEmpty(item.name) ? NO_EMAIL_HREF :
-              `${request.prefix}/file/ceFileDownload2?attachId=${item.attachId}&empId=${emp.getId()}&filename=${item.name}`}
-          >{item.name}</a>
+            href={_.isEmpty(item.attachId) && _.isEmpty(item.name) ? NO_EMAIL_HREF
+              : `${request.prefix}/file/ceFileDownload2?attachId=${item.attachId}&empId=${emp.getId()}&filename=${item.name}`}
+          >
+            {item.name}
+          </a>
         </span>
       );
     });
@@ -142,7 +145,9 @@ export default class ServiceRecordItem extends PureComponent {
   }
 
   render() {
-    const { title, type, content, executeTypes, isShowChild, filesList } = this.props;
+    const {
+      title, type, content, executeTypes, isShowChild, filesList
+    } = this.props;
     let newContent = content;
     if (!_.isEmpty(executeTypes)) {
       // 当前为执行方式
@@ -160,10 +165,9 @@ export default class ServiceRecordItem extends PureComponent {
       >
         <span>{title || '--'}</span>
         {
-          isShowChild ?
-            <div className={styles.iconsWords}>{this.renderIcon(filesList)}</div>
-            :
-            this.renderContent(newContent)
+          isShowChild
+            ? <div className={styles.iconsWords}>{this.renderIcon(filesList)}</div>
+            : this.renderContent(newContent)
         }
 
       </div>

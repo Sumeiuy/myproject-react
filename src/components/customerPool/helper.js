@@ -3,8 +3,10 @@
  */
 import _ from 'lodash';
 import moment from 'moment';
-import { sourceFilter, kPIDateScopeType, PER_CODE, ORG_CODE, CONFIG_TAB_PRODUCTCENTER } from './config';
-import { dynamicInsertQuota } from '../customerPool/list/sort/config';
+import {
+  sourceFilter, kPIDateScopeType, PER_CODE, ORG_CODE, CONFIG_TAB_PRODUCTCENTER
+} from './config';
+import { dynamicInsertQuota } from './list/sort/config';
 import filterMark from '../../config/filterSeperator';
 import { openFspTab, openFspIframeTab } from '../../utils';
 import { url as urlHelper, dva } from '../../helper';
@@ -123,7 +125,9 @@ const helper = {
    * @param {*} routerAction 跳转的方式：  push、replace
    */
   handleOpenFsp360TabAction({ itemData, keyword, routerAction }) {
-    const { pOrO, custId, rowId, ptyId } = itemData;
+    const {
+      pOrO, custId, rowId, ptyId
+    } = itemData;
     const type = (!pOrO || pOrO === PER_CODE) ? PER_CODE : ORG_CODE;
     const url = `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}&keyword=${keyword}`;
     const pathname = '/fsp/customerCenter/customer360';
@@ -165,7 +169,9 @@ const helper = {
    *   empInfo  登录用户的信息
    *   customerData  当前客户的信息
    */
-  getDetailBtnVisible({ hasNPCTIQPermission, hasPCTIQPermission, empInfo, customerData }) {
+  getDetailBtnVisible({
+    hasNPCTIQPermission, hasPCTIQPermission, empInfo, customerData
+  }) {
     const { isPrivateCustomer, empId } = customerData;
     // 默认不展示查看详情的按钮
     let isShowDetailBtn = false;

@@ -10,7 +10,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
-import { Input  } from 'antd';
+import { Input } from 'antd';
 import { SingleFilter } from 'lego-react-filter/src';
 import logable from '../../decorators/logable';
 import styles from './filter.less';

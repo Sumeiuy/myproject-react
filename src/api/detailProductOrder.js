@@ -27,4 +27,4 @@ export default function detailProductOrder(api) {
     // 查询是否可跳转佣金调整的信息
     queryCustCanChangeCommission: query => api.post('/groovynoauth/fsp/cust/serviceorder/queryCustHasActiveArg', query),
   };
-};
+}

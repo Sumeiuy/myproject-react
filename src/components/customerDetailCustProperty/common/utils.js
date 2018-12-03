@@ -9,15 +9,15 @@ import _ from 'lodash';
 
 import { SOURCE_CODE } from './config';
 
- // 判断是否来自综柜、财富通、95597渠道的都不允许修改
- export function isFromNoSupportUpdateSource(code) {
+// 判断是否来自综柜、财富通、95597渠道的都不允许修改
+export function isFromNoSupportUpdateSource(code) {
   return _.includes([SOURCE_CODE.zonggui, SOURCE_CODE.zhangle, SOURCE_CODE.callCenter], code);
- };
+}
 
 // 判断是新建联系方式还是修改联系方式
 export function isCreateContact(action) {
   return action === 'CREATE';
-};
+}
 
 // 联系方式code,用于判断用户能否新增修改记录的联系方式Code
 const CONTACT_CODE = {
@@ -33,7 +33,7 @@ export function hasMainContact(data) {
 }
 
 // 判断是否电子邮件
-export function isEmailContactWay (contactWayCode) {
+export function isEmailContactWay(contactWayCode) {
   return contactWayCode === CONTACT_CODE.email;
 }
 

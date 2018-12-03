@@ -183,8 +183,7 @@ export default class StockDetail extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: '查看持仓客户' } })
   openCustomerListPage() {
-    const {
-      location: { query: { code = '', name = '' } } } = this.props;
+    const { location: { query: { code = '', name = '' } } } = this.props;
     const { push } = this.props;
     // 组合 productId
     const productId = `${securityType[0].shortName}${code}`;
@@ -245,59 +244,75 @@ export default class StockDetail extends PureComponent {
       <Layout className={styles.detailWrapper}>
         <Header className={styles.header}>
           <h2>{title || EMPTY_PARAM}</h2>
-          <h3>作者：{author || EMPTY_PARAM}　　　发布日期：{pubdate || EMPTY_PARAM}</h3>
+          <h3>
+作者：
+            {author || EMPTY_PARAM}
+　　　发布日期：
+            {pubdate || EMPTY_PARAM}
+          </h3>
         </Header>
         <Content className={styles.content}>
           {
             detail
-            ?
-              splitArray.map((item, index) => {
+              ? splitArray.map((item, index) => {
                 const itemKey = `item${index}`;
-                return (<div
-                  key={itemKey}
-                  className={styles.contentDiv}
-                  dangerouslySetInnerHTML={{ __html: _.trim(item) }}
-                />);
+                return (
+                  <div
+                    key={itemKey}
+                    className={styles.contentDiv}
+                    dangerouslySetInnerHTML={{ __html: _.trim(item) }}
+                  />
+                );
               })
-            :
-              <div>{EMPTY_PARAM}</div>
+              : <div>{EMPTY_PARAM}</div>
           }
         </Content>
         <Footer className={styles.footer}>
           <div className={styles.left}>
             {
               pdfDownloadUrl
-              ?
-                <a
-                  onClick={this.handleDownloadClick}
-                  href={pdfDownloadUrl}
-                  download
-                >
-                  <Icon type="pdf1" />PDF 全文
-                </a>
-              :
-                null
+                ? (
+                  <a
+                    onClick={this.handleDownloadClick}
+                    href={pdfDownloadUrl}
+                    download
+                  >
+                    <Icon type="pdf1" />
+PDF 全文
+                  </a>
+                )
+                : null
             }
             {
               wordDownloadUrl
-              ?
-                <a
-                  onClick={this.handleDownload}
-                  href={wordDownloadUrl}
-                  download
-                >
-                  <Icon type="word1" />WORD 全文
-                </a>
-              :
-                null
+                ? (
+                  <a
+                    onClick={this.handleDownload}
+                    href={wordDownloadUrl}
+                    download
+                  >
+                    <Icon type="word1" />
+WORD 全文
+                  </a>
+                )
+                : null
             }
-            <a onClick={this.openCustomerListPage}><Icon type="chakan" />查看持仓客户</a>
+            <a onClick={this.openCustomerListPage}>
+              <Icon type="chakan" />
+查看持仓客户
+            </a>
           </div>
           <div className={styles.right}>
-            <a onClick={this.goBackHandle}><Icon type="fanhui1" />返回</a>
+            <a onClick={this.goBackHandle}>
+              <Icon type="fanhui1" />
+返回
+            </a>
             {
               filterTypeList.map(item => (
-                <a onClick={() => this.hrefHandle(item)} key={item}>相关{config[item].name}</a>
+                <a onClick={() => this.hrefHandle(item)} key={item}>
+相关
+                  {config[item].name}
+                </a>
               ))
             }
           </div>

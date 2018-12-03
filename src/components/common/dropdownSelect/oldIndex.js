@@ -60,7 +60,9 @@ export default class DropdownSelect extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { searchList, presetOptionList, defaultSearchValue, value } = props;
+    const {
+      searchList, presetOptionList, defaultSearchValue, value
+    } = props;
     // 搜索框为空，显示预置下拉列表
     const isEmptySearchInput = _.isEmpty(defaultSearchValue);
     const optionList = isEmptySearchInput ? presetOptionList : searchList;
@@ -108,7 +110,9 @@ export default class DropdownSelect extends PureComponent {
   }
 
   getSearchListDom(datList) {
-    const { emitSelectItem, showObjKey, objId, name } = this.props;
+    const {
+      emitSelectItem, showObjKey, objId, name
+    } = this.props;
     let searchValue = '';
     if (this.hackSearchComonent) {
       searchValue = this.hackSearchComonent.getValue();
@@ -192,12 +196,14 @@ export default class DropdownSelect extends PureComponent {
   }
 
   render() {
-    const { theme, disable, getPopupContainer, defaultSearchValue } = this.props;
+    const {
+      theme, disable, getPopupContainer, defaultSearchValue
+    } = this.props;
     const modalClass = classnames([style.ddsDrapMenu,
-    { [style.hide]: !this.state.isSHowModal },
+      { [style.hide]: !this.state.isSHowModal },
     ]);
     const ddsShowBoxClass = classnames([style.ddsShowBox,
-    { [style.active]: this.state.isSHowModal },
+      { [style.active]: this.state.isSHowModal },
     ]);
     const ddsShowBoxClass2 = classnames([
       style.ddsShowBox2,

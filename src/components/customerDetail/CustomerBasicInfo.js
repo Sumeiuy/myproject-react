@@ -121,37 +121,35 @@ export default class CustomerBasicInfo extends PureComponent {
   }
 
    static defaultProps = {
-    customerBasicInfo: {},
-    motSelfBuiltFeedbackList: [],
-  }
+     customerBasicInfo: {},
+     motSelfBuiltFeedbackList: [],
+   }
 
-  getAccountOpenDate() {
-    const { customerBasicInfo } = this.props;
-    if(customerBasicInfo && customerBasicInfo.accountOpenDate) {
-      if(customerBasicInfo.accountOpenDateYear <= 0) {
-        return '一年内新开户';
-      } else {
-        return `开户${customerBasicInfo.accountOpenDateYear}年`;
-      }
-    } else {
-      return null;
-    }
-  }
+   getAccountOpenDate() {
+     const { customerBasicInfo } = this.props;
+     if (customerBasicInfo && customerBasicInfo.accountOpenDate) {
+       if (customerBasicInfo.accountOpenDateYear <= 0) {
+         return '一年内新开户';
+       }
+       return `开户${customerBasicInfo.accountOpenDateYear}年`;
+     }
+     return null;
+   }
 
   // 添加标签
   @autobind
   @logable({ type: 'Click', payload: { name: '添加标签' } })
-  handleAddTagClick() {
-    const { customerBasicInfo } = this.props;
-    dva.dispatch({
-      type: 'customerLabel/addSignLabelCust',
-      payload: {
-        currentPytMng: { ptyMngId: emp.getId() }, // 服务经理id
-        currentSignLabelCustId: customerBasicInfo.custId, // 当前客户id
-        mainPosition: true, // 是否为主服务经理
-			},
-    });
-  }
+   handleAddTagClick() {
+     const { customerBasicInfo } = this.props;
+     dva.dispatch({
+       type: 'customerLabel/addSignLabelCust',
+       payload: {
+         currentPytMng: { ptyMngId: emp.getId() }, // 服务经理id
+         currentSignLabelCustId: customerBasicInfo.custId, // 当前客户id
+         mainPosition: true, // 是否为主服务经理
+       },
+     });
+   }
 
   // 添加服务记录
   @autobind
@@ -248,38 +246,53 @@ export default class CustomerBasicInfo extends PureComponent {
               <span className={styles.name}>{renderCustomerBasicInfo.name}</span>
               <div className={styles.iconGroup}>
                 {
-                  renderCustomerBasicInfo.isHighWorth &&
-                  <span className={styles.highWorth} title="客户类型：高净值">高</span>
+                  renderCustomerBasicInfo.isHighWorth
+                  && <span className={styles.highWorth} title="客户类型：高净值">高</span>
                 }
                 {
-                  renderCustomerBasicInfo.riskLevel &&
+                  renderCustomerBasicInfo.riskLevel
+                  && (
                   <span className={styles.riskLevel} title={`风险等级：${renderCustomerBasicInfo.riskLevel.title}`}>
                     {renderCustomerBasicInfo.riskLevel.name}
                   </span>
+                  )
                 }
                 {
-                  renderCustomerBasicInfo.isSign &&
+                  renderCustomerBasicInfo.isSign
+                  && (
                   <span
                     className={styles.sign}
-                    title={`投顾签约：${renderCustomerBasicInfo.signMode}`}>签</span>
+                    title={`投顾签约：${renderCustomerBasicInfo.signMode}`}
+                  >
+签
+                  </span>
+                  )
                 }
                 {
-                  renderCustomerBasicInfo.isPrivate &&
-                  <span className={styles.private} title="私密客户">私</span>
+                  renderCustomerBasicInfo.isPrivate
+                  && <span className={styles.private} title="私密客户">私</span>
                 }
                 {
-                  renderCustomerBasicInfo.rankImg &&
+                  renderCustomerBasicInfo.rankImg
+                  && (
                   <img
                     className={styles.rank}
                     title={`客户等级：${renderCustomerBasicInfo.rankImg.title}`}
-                    src={renderCustomerBasicInfo.rankImg.src} alt="" />
+                    src={renderCustomerBasicInfo.rankImg.src}
+                    alt=""
+                  />
+                  )
                 }
                 {
-                  renderCustomerBasicInfo.vipImg &&
+                  renderCustomerBasicInfo.vipImg
+                  && (
                   <img
                     className={styles.vip}
                     title={`财富通会员等级：${renderCustomerBasicInfo.vipImg.title}`}
-                    src={renderCustomerBasicInfo.vipImg.src} alt="" />
+                    src={renderCustomerBasicInfo.vipImg.src}
+                    alt=""
+                  />
+                  )
                 }
               </div>
             </div>
@@ -302,24 +315,29 @@ export default class CustomerBasicInfo extends PureComponent {
                 </span>
               </div>
               {
-                renderCustomerBasicInfo.isMainEmp ?
-                  <div className={styles.actionGroup}>
-                    <span className={styles.connectCust}>
-                      <ConnectCustomer {...connectCustomerProps}>
-                        <i className="iconfont icon-dianhua1" /><span className={styles.text}>联系客户</span>
-                      </ConnectCustomer>
-                    </span>
-                    <span className={styles.addTag} onClick={this.handleAddTagClick}>
-                      <i className="iconfont icon-kehubiaoqian" /><span className={styles.text}>添加标签</span>
-                    </span>
-                    <span className={styles.addServiceLog} onClick={this.handleAddServiceClick}>
-                      <i className="iconfont icon-daichuli1" /><span className={styles.text}>添加服务记录</span>
-                    </span>
-                    <span className={styles.navToTask} onClick={this.hanldeNavToTaskListClick}>
-                      <i className="iconfont icon-daichuli1" />
-                      <span className={styles.text}>{`待处理任务（${renderCustomerBasicInfo.taskNum}）`}</span>
-                    </span>
-                  </div> : null
+                renderCustomerBasicInfo.isMainEmp
+                  ? (
+                    <div className={styles.actionGroup}>
+                      <span className={styles.connectCust}>
+                        <ConnectCustomer {...connectCustomerProps}>
+                          <i className="iconfont icon-dianhua1" />
+                          <span className={styles.text}>联系客户</span>
+                        </ConnectCustomer>
+                      </span>
+                      <span className={styles.addTag} onClick={this.handleAddTagClick}>
+                        <i className="iconfont icon-kehubiaoqian" />
+                        <span className={styles.text}>添加标签</span>
+                      </span>
+                      <span className={styles.addServiceLog} onClick={this.handleAddServiceClick}>
+                        <i className="iconfont icon-daichuli1" />
+                        <span className={styles.text}>添加服务记录</span>
+                      </span>
+                      <span className={styles.navToTask} onClick={this.hanldeNavToTaskListClick}>
+                        <i className="iconfont icon-daichuli1" />
+                        <span className={styles.text}>{`待处理任务（${renderCustomerBasicInfo.taskNum}）`}</span>
+                      </span>
+                    </div>
+                  ) : null
               }
             </div>
           </div>

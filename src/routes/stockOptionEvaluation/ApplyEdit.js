@@ -72,7 +72,7 @@ const mapDispatchToProps = {
   getDetailInfo: effect(effects.getDetailInfo, { forceFull: true }),
   // 附件列表
   getAttachmentList: effect(effects.getAttachmentList, { forceFull: true }),
-   // 获取客户基本信息
+  // 获取客户基本信息
   getCustInfo: effect(effects.getCustInfo, { forceFull: true }),
   // 获取基本信息的多个select数据
   getSelectMap: effect(effects.getSelectMap, { forceFull: true }),
@@ -154,6 +154,7 @@ export default class ApplyEdit extends PureComponent {
         });
       });
   }
+
   render() {
     const {
       location,

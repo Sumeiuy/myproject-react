@@ -41,18 +41,18 @@ function calcDate(value) {
 export default {
   namespace: 'combinationDetail',
   state: {
-    overview: EMPTY_OBJECT,  // 组合概览
-    compositionPie: EMPTY_LIST,  // 组合构成-饼图
-    compositionTable: EMPTY_LIST,  // 组合构成-表格
+    overview: EMPTY_OBJECT, // 组合概览
+    compositionPie: EMPTY_LIST, // 组合构成-饼图
+    compositionTable: EMPTY_LIST, // 组合构成-表格
     adjustWarehouseHistoryData: EMPTY_OBJECT, // 调仓历史数据
-    tableHistoryList: EMPTY_OBJECT,  // 弹窗调仓历史表格数据
+    tableHistoryList: EMPTY_OBJECT, // 弹窗调仓历史表格数据
     combinationAdjustHistoryData: EMPTY_OBJECT, // 组合调仓数据
     combinationTreeList: EMPTY_LIST, // 组合树
     combinationLineChartData: EMPTY_OBJECT, // 组合折线趋势图
     orderCustData: EMPTY_OBJECT, // 订购客户数据
     reportHistoryData: EMPTY_OBJECT, // 组合详情-历史报告模块数据
     modalReportHistoryData: EMPTY_OBJECT, // 组合详情-历史报告弹窗数据
-    custRepeatData: EMPTY_OBJECT,  // 客户持仓重合数据
+    custRepeatData: EMPTY_OBJECT, // 客户持仓重合数据
   },
   reducers: {
     // 组合详情-概览
@@ -213,8 +213,8 @@ export default {
     * getReportHistoryList({ payload }, { call, put }) {
       const response = yield call(api.getReportHistoryList, payload);
       // 如果pageSize为6走组合详情-历史报告模块数据，否则走历史报告弹窗
-      const type = payload.pageSize === 6 ?
-        'getReportHistoryListSuccess' : 'getModalReportHistoryListSuccess';
+      const type = payload.pageSize === 6
+        ? 'getReportHistoryListSuccess' : 'getModalReportHistoryListSuccess';
       yield put({
         type,
         payload: response,

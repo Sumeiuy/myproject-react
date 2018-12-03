@@ -34,7 +34,8 @@ export default class ZJMemberInfo extends PureComponent {
     // 获取紫金积分会员积分兑换流水
     queryZjPointExchangeFlow: PropTypes.func.isRequired,
   }
-  constructor(props){
+
+  constructor(props) {
     super(props);
     this.state = {
       // 积分兑换流水弹框
@@ -44,7 +45,7 @@ export default class ZJMemberInfo extends PureComponent {
 
   // 打开积分兑换流水弹框
   @autobind
-  @logPV ({
+  @logPV({
     pathname: '/modal/integralFlowModal',
     title: '积分兑换流水弹框',
   })
@@ -71,7 +72,7 @@ export default class ZJMemberInfo extends PureComponent {
   @logable({
     type: 'ButtonClick',
     payload: { name: '紫金会员兑换流水' },
- })
+  })
   handleIntegralFlowModalClose() {
     this.setState({ integralFlowModalVisible: false });
   }
@@ -101,7 +102,7 @@ export default class ZJMemberInfo extends PureComponent {
           <span className={styles.colorBlock} />
           <span className={styles.titleText}>紫金积分会员</span>
           <span className={styles.iconButton}>
-            <Icon type='jifenduihuanliushui1' />
+            <Icon type="jifenduihuanliushui1" />
             <span onClick={this.handleIntegralFlowModalOpen}>积分兑换流水</span>
             <ZJMemeberInfoModal
               location={location}

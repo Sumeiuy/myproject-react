@@ -54,9 +54,9 @@ function shouldHideLastButton(current, pageSize, total) {
 // 修正10页以内，也就是总页数为 7， 8， 9 时， antd会显示全部页码
 // 从而导致的页码折行问题
 function shouldFixPagination(current, totalPageNumber, needFixPageNum, isShortPageList) {
-  if (isShortPageList &&
-    (totalPageNumber >= needFixPageNum) &&
-    (totalPageNumber <= PAGE_NINE)) {
+  if (isShortPageList
+    && (totalPageNumber >= needFixPageNum)
+    && (totalPageNumber <= PAGE_NINE)) {
     if (needFixPageNum === PAGE_SENVEN && current > 4) {
       return true;
     }
@@ -76,8 +76,8 @@ function shouldHiddenPage(current, totalPageNumber, isShortPageList, needHiddenP
       return true;
     }
     if (totalPageNumber === PAGE_NINE
-      && current === 5 &&
-      needHiddenPageNum === PAGE_EIGHT) {
+      && current === 5
+      && needHiddenPageNum === PAGE_EIGHT) {
       return true;
     }
   }
@@ -103,6 +103,7 @@ export default class PaginationComponent extends Component {
     // 已选中的条数
     selectedNumber: PropTypes.number,
   };
+
   static defaultProps = {
     current: 1,
     pageSize: 20,
@@ -120,7 +121,9 @@ export default class PaginationComponent extends Component {
 
   constructor(props) {
     super(props);
-    const { current, pageSize, total, isHideLastButton } = props;
+    const {
+      current, pageSize, total, isHideLastButton
+    } = props;
     this.state = isHideLastButton ? {
       current,
       shouldHideLastButton: shouldHideLastButton(current, pageSize, total),
@@ -248,8 +251,19 @@ export default class PaginationComponent extends Component {
       >
         {
           selectedNumber
-          ? <h3 className={styles.selectedTitle}>已选中<span> {selectedNumber} </span> 条</h3>
-          : null
+            ? (
+              <h3 className={styles.selectedTitle}>
+已选中
+                <span>
+                  {' '}
+                  {selectedNumber}
+                  {' '}
+                </span>
+                {' '}
+条
+              </h3>
+            )
+            : null
         }
         <Pagination
           key={paginationKey}

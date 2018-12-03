@@ -4,7 +4,9 @@
  * @Date: 2018/7/4
  */
 import React, { PureComponent } from 'react';
-import { Modal, Form, Input, Select } from 'antd';
+import {
+  Modal, Form, Input, Select
+} from 'antd';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
@@ -31,7 +33,8 @@ export default class CreateLabelType extends PureComponent {
 
   @autobind
   handleCreateLabelSubmit() {
-    const { addLabel,
+    const {
+      addLabel,
       closeModal,
       form: { validateFields, getFieldsError },
       queryLabelList,
@@ -91,6 +94,7 @@ export default class CreateLabelType extends PureComponent {
       }
     });
   }
+
   render() {
     const { closeModal, visible, allLabels } = this.props;
     const { getFieldDecorator } = this.props.form;

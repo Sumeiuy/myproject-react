@@ -35,7 +35,7 @@ function RectFrame(props) {
   let contentCls = styles.content;
   if (noMargin) {
     contentCls = '';
-  } else if(isNewHome) {
+  } else if (isNewHome) {
     contentCls = isfromAsset ? classes.assetContent : classes.content;
   }
 
@@ -50,8 +50,8 @@ function RectFrame(props) {
           )
         }
         {
-          desc ?
-            (
+          desc
+            ? (
               <Popover
                 title={title}
                 content={desc}
@@ -61,11 +61,13 @@ function RectFrame(props) {
               >
                 <div className={trueStyles.title}>{title}</div>
               </Popover>
-            ) :
-            <div className={trueStyles.titleContent}>
-              <span className={trueStyles.title}>{title}</span>
-              <span className={trueStyles.unit}>{unit}</span>
-            </div>
+            )
+            : (
+              <div className={trueStyles.titleContent}>
+                <span className={trueStyles.title}>{title}</span>
+                <span className={trueStyles.unit}>{unit}</span>
+              </div>
+            )
         }
       </div>
       <div className={contentCls}>{children}</div>

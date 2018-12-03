@@ -25,7 +25,7 @@ export default {
     attachmentList: EMPTY_LIST, // 附件信息
     cooperDeparment: EMPTY_LIST, // 合作部门
     clauseNameList: EMPTY_LIST, // 条款名称列表
-    flowHistory: EMPTY_LIST,  // 审批记录
+    flowHistory: EMPTY_LIST, // 审批记录
     flowStepInfo: EMPTY_OBJECT, // 审批人
     unsubFlowStepInfo: EMPTY_OBJECT, // 退订审批人
     doApprove: EMPTY_OBJECT,

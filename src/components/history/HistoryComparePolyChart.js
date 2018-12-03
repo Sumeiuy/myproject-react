@@ -113,10 +113,14 @@ export default class HistoryComparePolyChart extends PureComponent {
       });
 
       // 默认选中第一条展示信息
-      const { date: currentDate, value: currentValue,
-        name, weekDay: curWeekDay } = curSeries[0] || EMPTY_ARRAY;
-      const { date: previousDate, value: previousValue,
-        weekDay: prevWeekDay } = previousSeries[0] || EMPTY_ARRAY;
+      const {
+        date: currentDate, value: currentValue,
+        name, weekDay: curWeekDay
+      } = curSeries[0] || EMPTY_ARRAY;
+      const {
+        date: previousDate, value: previousValue,
+        weekDay: prevWeekDay
+      } = previousSeries[0] || EMPTY_ARRAY;
 
       this.setState({
         chartOptions: options, // 折线图配置项
@@ -171,22 +175,22 @@ export default class HistoryComparePolyChart extends PureComponent {
     if (!_.isEmpty(array)) {
       if (yAxisUnit.indexOf(YUANNIAN) !== -1) {
         return toFixedNewMoney(array);
-      } else if (yAxisUnit.indexOf(YUAN) !== -1) {
+      } if (yAxisUnit.indexOf(YUAN) !== -1) {
         return toFixedMoney(array);
-      } else if (yAxisUnit.indexOf(HU) !== -1) {
+      } if (yAxisUnit.indexOf(HU) !== -1) {
         return toFixedCust(array);
-      } else if (yAxisUnit.indexOf(REN) !== -1) {
+      } if (yAxisUnit.indexOf(REN) !== -1) {
         return toFixedRen(array);
-      } else if (yAxisUnit.indexOf(GE) !== -1) {
+      } if (yAxisUnit.indexOf(GE) !== -1) {
         return toFixedGE(array);
-      } else if (yAxisUnit.indexOf(CI) !== -1) {
+      } if (yAxisUnit.indexOf(CI) !== -1) {
         return toFixedCI(array);
-      } else if (yAxisUnit.indexOf(PERCENT) !== -1) {
+      } if (yAxisUnit.indexOf(PERCENT) !== -1) {
         return {
           newSeries: toFixedPercent(array, isCommissionRate),
           newUnit: yAxisUnit,
         };
-      } else if (yAxisUnit.indexOf(PERMILLAGE) !== -1) {
+      } if (yAxisUnit.indexOf(PERMILLAGE) !== -1) {
         return {
           newSeries: toFixedPermillage(array, isCommissionRate),
           newUnit: yAxisUnit,
@@ -354,7 +358,7 @@ export default class HistoryComparePolyChart extends PureComponent {
       currentDate,
       previousDate,
       isShowTooltip,
-     } = this.state;
+    } = this.state;
 
     if (_.isEmpty(chartOptions)) {
       return null;
@@ -365,7 +369,11 @@ export default class HistoryComparePolyChart extends PureComponent {
         <div className={styles.chartHd}>
           <div className={styles.headerLeft}>
             <span className={styles.chartHdCaption}>历史对比</span>
-            <span className={styles.chartUnit}>({unit})</span>
+            <span className={styles.chartUnit}>
+(
+              {unit}
+)
+            </span>
           </div>
         </div>
         <div className={styles.chartMain}>
@@ -382,36 +390,41 @@ export default class HistoryComparePolyChart extends PureComponent {
           />
         </div>
         {
-          isShowTooltip ?
-            <div className={styles.chartFoot}>
-              <div className={styles.leftGuide}>
-                <span className={styles.tipDot} />
-                {/* 指标名称 */}
-                <span className={styles.tipIndicator}>{name}对比:</span>
-              </div>
-              <div className={styles.descriptionSection}>
-                <div className={styles.currentDescription}>
-                  <i className={styles.currentIndicatior} />
-                  <span>本期</span>
-                  {/* 本期时间 */}
-                  <span className={styles.tipTime}>{currentDate ? `${currentDate}${curWeekDay ? `(${curWeekDay})` : ''}:` : ''}</span>
-                  {/* 本期Value */}
-                  <span className={styles.currentValue}>{(currentValue === 0 || currentValue) ? `${currentValue}` : ''}</span>
-                  {/* 本期Vlaue单位 */}
-                  <span className={styles.tipUnit}>{(currentValue === 0 || currentValue) ? `${unit}` : ''}</span>
+          isShowTooltip
+            ? (
+              <div className={styles.chartFoot}>
+                <div className={styles.leftGuide}>
+                  <span className={styles.tipDot} />
+                  {/* 指标名称 */}
+                  <span className={styles.tipIndicator}>
+                    {name}
+对比:
+                  </span>
                 </div>
-                <div className={styles.previousDescription}>
-                  <i className={styles.previousIndicatior} />
-                  <span>上期</span>
-                  {/* 上期时间 */}
-                  <span className={styles.tipTime}>{previousDate ? `${previousDate}${prevWeekDay ? `(${prevWeekDay})` : ''}:` : ''}</span>
-                  {/* 本期Vlaue */}
-                  <span className={styles.contrastValue}>{(previousValue === 0 || previousValue) ? `${previousValue}` : ''}</span>
-                  {/* 本期Vlaue单位 */}
-                  <span className={styles.tipUnit}>{(previousValue === 0 || previousValue) ? `${unit}` : ''}</span>
+                <div className={styles.descriptionSection}>
+                  <div className={styles.currentDescription}>
+                    <i className={styles.currentIndicatior} />
+                    <span>本期</span>
+                    {/* 本期时间 */}
+                    <span className={styles.tipTime}>{currentDate ? `${currentDate}${curWeekDay ? `(${curWeekDay})` : ''}:` : ''}</span>
+                    {/* 本期Value */}
+                    <span className={styles.currentValue}>{(currentValue === 0 || currentValue) ? `${currentValue}` : ''}</span>
+                    {/* 本期Vlaue单位 */}
+                    <span className={styles.tipUnit}>{(currentValue === 0 || currentValue) ? `${unit}` : ''}</span>
+                  </div>
+                  <div className={styles.previousDescription}>
+                    <i className={styles.previousIndicatior} />
+                    <span>上期</span>
+                    {/* 上期时间 */}
+                    <span className={styles.tipTime}>{previousDate ? `${previousDate}${prevWeekDay ? `(${prevWeekDay})` : ''}:` : ''}</span>
+                    {/* 本期Vlaue */}
+                    <span className={styles.contrastValue}>{(previousValue === 0 || previousValue) ? `${previousValue}` : ''}</span>
+                    {/* 本期Vlaue单位 */}
+                    <span className={styles.tipUnit}>{(previousValue === 0 || previousValue) ? `${unit}` : ''}</span>
+                  </div>
                 </div>
               </div>
-            </div>
+            )
             : <div className={styles.noneTooltip} />
         }
       </div>

@@ -8,7 +8,7 @@
 import _ from 'lodash';
 
 const seibel = {
-   /**
+  /**
    * 构造入参
    * @param {*} query 查询
    * @param {*} newPageNum 当前页

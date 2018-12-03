@@ -42,7 +42,6 @@ const SERVE_CUSTS = 'SERVE_CUSTS';
 const MOT_FEEDBACK_CUSTS = 'MOT_FEEDBACK_CUSTS';
 
 export default class ManagerViewDetail extends PureComponent {
-
   static propTypes = {
     // 视图是否处于折叠状态
     isFold: PropTypes.bool,
@@ -720,45 +719,48 @@ export default class ManagerViewDetail extends PureComponent {
           <div className={styles.basicInfoSection}>
             <InfoArea
               data={basicInfoData}
-              headLine={'基本信息'}
+              headLine="基本信息"
             />
             <InfoArea
               data={targetCustInfoData}
-              headLine={'目标客户'}
+              headLine="目标客户"
             />
             {/**
              * close时destory弹框
              */}
             {
-              !destroyOnClose ?
-                <GroupModal
-                  wrapperClass={`${styles.custDetailContainer} custDetailContainer`}
-                  closable
-                  visible={isShowCustDetailModal}
-                  title="客户明细"
-                  onCancel={this.handleCloseModal}
-                  footer={
-                    <div className={styles.operationBtnSection}>
-                      <Button
-                        className={styles.cancel}
-                        onClick={this.handleCloseModal}
-                      >
+              !destroyOnClose
+                ? (
+                  <GroupModal
+                    wrapperClass={`${styles.custDetailContainer} custDetailContainer`}
+                    closable
+                    visible={isShowCustDetailModal}
+                    title="客户明细"
+                    onCancel={this.handleCloseModal}
+                    footer={(
+                      <div className={styles.operationBtnSection}>
+                        <Button
+                          className={styles.cancel}
+                          onClick={this.handleCloseModal}
+                        >
                         取消
-                      </Button>
-                      {/**
+                        </Button>
+                        {/**
                        * 暂时隐藏导出按钮,等后台性能恢复，再放开
                        */}
-                      {
+                        {
                         falseValue ? (
                           <Button className={styles.export}>
                             <a
                               onClick={this.handleDownloadClick}
                               href={`${request.prefix}/excel/custlist/exportExcel?orgId=${urlParams.orgId}&missionName=${urlParams.missionName}&missionId=${urlParams.missionId}&serviceTips=${urlParams.serviceTips}&servicePolicy=${urlParams.servicePolicy}`}
-                            >导出</a>
+                            >
+导出
+                            </a>
                           </Button>
                         ) : null
                       }
-                      {
+                        {
                         canLaunchTask ? (
                           <Button
                             className={styles.launchTask}
@@ -770,49 +772,50 @@ export default class ManagerViewDetail extends PureComponent {
                           </Button>
                         ) : null
                       }
-                    </div>
-                  }
-                  modalContent={
-                    <CustDetail
-                      ref={ref => (this.custDetailRef = ref)}
-                      getCustDetailData={this.handleCustDetail}
-                      data={custDetailResult}
-                      onClose={this.handleCloseModal}
-                      hideCustDetailModal={this.hideCustDetailModal}
-                      push={push}
-                      custServedByPostnResult={custServedByPostnResult}
+                      </div>
+)}
+                    modalContent={(
+                      <CustDetail
+                        ref={ref => (this.custDetailRef = ref)}
+                        getCustDetailData={this.handleCustDetail}
+                        data={custDetailResult}
+                        onClose={this.handleCloseModal}
+                        hideCustDetailModal={this.hideCustDetailModal}
+                        push={push}
+                        custServedByPostnResult={custServedByPostnResult}
                       // 代表是否是从进度条点击的
-                      isEntryFromProgressDetail={isEntryFromProgressDetail}
+                        isEntryFromProgressDetail={isEntryFromProgressDetail}
                       // 代表是否是从饼图过来的
-                      isEntryFromPie={isEntryFromPie}
+                        isEntryFromPie={isEntryFromPie}
                       // scrollTop恢复
-                      scrollModalBodyToTop={this.scrollModalBodyToTop}
+                        scrollModalBodyToTop={this.scrollModalBodyToTop}
                       // 当前一级二级反馈
-                      currentFeedback={currentFeedback}
+                        currentFeedback={currentFeedback}
                       // 当前选中的一级反馈条件
-                      feedbackIdL1={feedbackIdL1}
+                        feedbackIdL1={feedbackIdL1}
                       // 当前选中的二级级反馈条件
-                      feedbackIdL2={feedbackIdL2}
+                        feedbackIdL2={feedbackIdL2}
                       // 代表是从客户总数过来的
-                      isEntryFromCustTotal={isEntryFromCustTotal}
+                        isEntryFromCustTotal={isEntryFromCustTotal}
                       // 是否可以发起任务
-                      canLaunchTask={canLaunchTask}
+                        canLaunchTask={canLaunchTask}
                       // 进度条下钻、已服务、微未服务、已完成、未完成、已达标、未达标下钻
-                      missionProgressStatus={missionProgressStatus}
+                        missionProgressStatus={missionProgressStatus}
                       // Y或者N，代表已或者未
-                      progressFlag={progressFlag}
+                        progressFlag={progressFlag}
                       // 是否显示客户反馈筛选，只有已服务客户总数大于0，才需要展示客户反馈
-                      isShowFeedbackFilter={servedNums > 0}
+                        isShowFeedbackFilter={servedNums > 0}
                       // 结果达标进度条下钻标记
-                      isEntryFromResultStatisfy={isEntryFromResultStatisfy}
+                        isEntryFromResultStatisfy={isEntryFromResultStatisfy}
                       // 服务经理维度entertype
-                      enterType={enterType}
+                        enterType={enterType}
                       // recordId
-                      recordId={recordId}
-                    />
-                  }
-                  modalWidth={1090}
-                />
+                        recordId={recordId}
+                      />
+)}
+                    modalWidth={1090}
+                  />
+                )
                 : null
             }
           </div>
@@ -844,7 +847,8 @@ export default class ManagerViewDetail extends PureComponent {
           </div>
           {
             // 按服务经理过滤器筛选时，不显示任务反馈
-            _.isEmpty(ptyMngId) && <div className={styles.missionFeedbackSection}>
+            _.isEmpty(ptyMngId) && (
+            <div className={styles.missionFeedbackSection}>
               <MissionFeedback
                 missionFeedbackData={missionFeedbackData}
                 isFold={isFold}
@@ -854,6 +858,7 @@ export default class ManagerViewDetail extends PureComponent {
                 ref={ref => (this.missionFeedbackElem = ref)}
               />
             </div>
+            )
           }
         </div>
       </div>

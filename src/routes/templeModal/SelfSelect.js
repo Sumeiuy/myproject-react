@@ -5,7 +5,9 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Icon, Checkbox, Row, Col } from 'antd';
+import {
+  Icon, Checkbox, Row, Col
+} from 'antd';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
@@ -67,7 +69,7 @@ export default class SelfSelect extends PureComponent {
         id: 'all',
         name: '所有分公司',
       };
-    } else if (level === '2') {
+    } if (level === '2') {
       return {
         id: 'all',
         name: '所有营业部',
@@ -157,6 +159,7 @@ export default class SelfSelect extends PureComponent {
     });
     document.removeEventListener('click', this.unExpandSelfSelect);
   }
+
   // 打开下拉列表
   @autobind
   expandSelect() {
@@ -169,7 +172,9 @@ export default class SelfSelect extends PureComponent {
   render() {
     const { options, style } = this.props;
     const firstRequiredCheck = options[0];
-    const { expand, checkAll, groupCheckedList, visibleRangeNames } = this.state;
+    const {
+      expand, checkAll, groupCheckedList, visibleRangeNames
+    } = this.state;
     const iconType = expand ? 'up' : 'down';
     const selfSelectHd = classnames({
       [styles.selfSelectHeader]: true,
@@ -215,12 +220,11 @@ export default class SelfSelect extends PureComponent {
             <Row>
               {
                 options.slice(1).map(
-                  item =>
-                    (
-                      <Col key={item.id} span={24}>
-                        <Checkbox value={item.id}>{item.name}</Checkbox>
-                      </Col>
-                    ),
+                  item => (
+                    <Col key={item.id} span={24}>
+                      <Checkbox value={item.id}>{item.name}</Checkbox>
+                    </Col>
+                  ),
                 )
               }
             </Row>
@@ -230,4 +234,3 @@ export default class SelfSelect extends PureComponent {
     );
   }
 }
-

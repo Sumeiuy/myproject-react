@@ -1,15 +1,17 @@
 import ZHUNICODE from './unicode';
 
-const { REN, HU, PERCENT, PERMILLAGE, CI, GE } = ZHUNICODE;
+const {
+  REN, HU, PERCENT, PERMILLAGE, CI, GE
+} = ZHUNICODE;
 
 const iconTypeMap = {
 
   getIcon(unit) {
     if (unit === PERCENT || unit === PERMILLAGE) {
       return 'bilv';
-    } else if (unit === HU || unit === REN) {
+    } if (unit === HU || unit === REN) {
       return 'kehu';
-    } else if (unit === GE || unit === CI) {
+    } if (unit === GE || unit === CI) {
       return 'ge';
     }
     return 'yuan';
@@ -18,9 +20,9 @@ const iconTypeMap = {
   getCoreIcon(unit) {
     if (unit === PERCENT || unit === PERMILLAGE) {
       return 'pie';
-    } else if (unit === HU || unit === REN) {
+    } if (unit === HU || unit === REN) {
       return 'ren';
-    } else if (unit === GE || unit === CI) {
+    } if (unit === GE || unit === CI) {
       return 'shuju';
     }
     return 'money';
@@ -29,9 +31,9 @@ const iconTypeMap = {
   getCoreIconColor(unit) {
     if (unit === PERCENT || unit === PERMILLAGE) {
       return '#756fb8';
-    } else if (unit === HU || unit === REN) {
+    } if (unit === HU || unit === REN) {
       return '#5d95f3';
-    } else if (unit === GE || unit === CI) {
+    } if (unit === GE || unit === CI) {
       return '#ffa32c';
     }
     return '#38d8e8';

@@ -37,7 +37,6 @@ function transformDate(date) { // 2017-01-31 12:33:55.0
 }
 
 export default class TaskSearchRow extends PureComponent {
-
   static propTypes = {
     dict: PropTypes.object.isRequired,
     circlePeopleData: PropTypes.array.isRequired,
@@ -55,6 +54,7 @@ export default class TaskSearchRow extends PureComponent {
     sightingTelescopeFilters: PropTypes.object.isRequired,
     storedData: PropTypes.object.isRequired,
   }
+
   static defaultProps = {
     condition: '',
     orgId: null,
@@ -152,7 +152,7 @@ export default class TaskSearchRow extends PureComponent {
           >
             <div className={styles.selectFiltersInfoActive}>
               查看筛选条件
-          </div>
+            </div>
           </Tooltip>
         );
       }
@@ -178,8 +178,12 @@ export default class TaskSearchRow extends PureComponent {
  * @param {*} pageSize 当前页条目
  */
   @autobind
-  queryPeopleOfLabel({ labelId, curPageNum = 1, pageSize = 10, filter = [] }) {
-    const { isAuthorize, orgId, getLabelPeople, onChange } = this.props;
+  queryPeopleOfLabel({
+    labelId, curPageNum = 1, pageSize = 10, filter = []
+  }) {
+    const {
+      isAuthorize, orgId, getLabelPeople, onChange
+    } = this.props;
     const { argsOfQueryCustomer } = this.state;
     // const currentLabel = _.find(circlePeopleData, item => labelId === item.id);
     let payload = {
@@ -348,8 +352,8 @@ export default class TaskSearchRow extends PureComponent {
     const { filterNumObject, currentAllFilterState } = this.state;
     return _.map(circlePeopleData,
       (item, index) => {
-        const currentFilterNum = (`${item.id}` in filterNumObject ?
-          filterNumObject[item.id] : item.customNum) || 0;
+        const currentFilterNum = (`${item.id}` in filterNumObject
+          ? filterNumObject[item.id] : item.customNum) || 0;
         const currentSelectFilters = currentAllFilterState[item.id];
         let newDesc = item.labelDesc;
         let newTitle = item.labelName;
@@ -393,14 +397,16 @@ export default class TaskSearchRow extends PureComponent {
                    * 没有创建人或者创建时间，不展示
                    */}
                   {
-                    (item.createrName && item.createDate) ?
-                      <span>
-                        <span>由</span>
-                        <i>{item.createrName || '--'}</i>
-                        <span>创建于</span>
-                        <i>{transformDate(item.createDate)}</i>
-                        <span>- </span>
-                      </span> : null
+                    (item.createrName && item.createDate)
+                      ? (
+                        <span>
+                          <span>由</span>
+                          <i>{item.createrName || '--'}</i>
+                          <span>创建于</span>
+                          <i>{transformDate(item.createDate)}</i>
+                          <span>- </span>
+                        </span>
+                      ) : null
                   }
                   <span>客户总数：</span>
                   <i>{transformNumber(item.customNum)}</i>
@@ -415,7 +421,8 @@ export default class TaskSearchRow extends PureComponent {
             </div>
             <div className={styles.divider} />
             <div className={styles.filterCount}>
-              已选客户数：<i>{transformNumber(currentFilterNum)}</i>
+              已选客户数：
+              <i>{transformNumber(currentFilterNum)}</i>
             </div>
             {this.getSelectFiltersInfo(currentSelectFilters)}
             {
@@ -434,25 +441,27 @@ export default class TaskSearchRow extends PureComponent {
 
   @autobind
   renderBottomButton() {
-    return (<div>
-      <Button
-        className={styles.modalButton}
-        key="back"
-        size="large"
-        onClick={this.handleCancel}
-      >
+    return (
+      <div>
+        <Button
+          className={styles.modalButton}
+          key="back"
+          size="large"
+          onClick={this.handleCancel}
+        >
         取消
-      </Button>
-      <Button
-        className={styles.modalButton}
-        key="back"
-        size="large"
-        type="primary"
-        onClick={this.handleAccept}
-      >
+        </Button>
+        <Button
+          className={styles.modalButton}
+          key="back"
+          size="large"
+          type="primary"
+          onClick={this.handleAccept}
+        >
         确定
-      </Button>
-    </div>);
+        </Button>
+      </div>
+    );
   }
 
   @autobind

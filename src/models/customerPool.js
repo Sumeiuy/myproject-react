@@ -54,10 +54,10 @@ const assessType = 'MOT_EMP_FEEDBACK';
 export default {
   namespace: 'customerPool',
   state: {
-    custCount: [],   // 经营指标中的新增客户数指标
-    information: {},     // 资讯
-    performanceIndicators: EMPTY_OBJECT,  // 投顾指标
-    managerIndicators: EMPTY_OBJECT,  // 经营指标
+    custCount: [], // 经营指标中的新增客户数指标
+    information: {}, // 资讯
+    performanceIndicators: EMPTY_OBJECT, // 投顾指标
+    managerIndicators: EMPTY_OBJECT, // 经营指标
     custAnalyticsIndicators: EMPTY_OBJECT,
     // 存放从服务端获取的全部代办数据
     todolist: [],
@@ -366,8 +366,10 @@ export default {
       const { resultData: { monthlyProfits } } = yield call(api.getCustIncome, payload);
       yield put({
         type: 'getCustIncomeSuccess',
-        payload: { ...payload,
-monthlyProfits },
+        payload: {
+          ...payload,
+          monthlyProfits
+        },
       });
     },
     // 默认推荐词及热词推荐列表及历史搜索数据
@@ -471,15 +473,19 @@ monthlyProfits },
       }
       yield put({
         type: 'getCustContactSuccess',
-        payload: { resultData,
-custId },
+        payload: {
+          resultData,
+          custId
+        },
       });
       // 唤起电话联系弹窗时，获取自建任务平台的服务类型、任务反馈字典，为打电话做准备
       yield put({
         type: 'app/getMotCustfeedBackDict',
-        payload: { pageNum: 1,
-pageSize: 10000,
-type: 2 },
+        payload: {
+          pageNum: 1,
+          pageSize: 10000,
+          type: 2
+        },
       });
     },
     * getCustEmail({ payload }, { call, put, select }) {
@@ -494,8 +500,10 @@ type: 2 },
       }
       yield put({
         type: 'getCustEmailSuccess',
-        payload: { resultData,
-custId },
+        payload: {
+          resultData,
+          custId
+        },
       });
     },
     // 获取最近五次服务记录
@@ -513,15 +521,19 @@ custId },
         const { resultData: fileResultData } = fileListRes;
         yield put({
           type: 'getServiceRecordSuccess',
-          payload: { resultData,
-custId,
-fileResultData },
+          payload: {
+            resultData,
+            custId,
+            fileResultData
+          },
         });
       } else {
         yield put({
           type: 'getServiceRecordSuccess',
-          payload: { resultData,
-custId },
+          payload: {
+            resultData,
+            custId
+          },
         });
       }
     },
@@ -581,7 +593,9 @@ custId },
     },
     // 新增，编辑客户分组
     * operateGroup({ payload }, { call, put }) {
-      const { request, request: { groupId }, keyWord, pageNum, pageSize } = payload;
+      const {
+        request, request: { groupId }, keyWord, pageNum, pageSize
+      } = payload;
       const response = yield call(api.operateGroup, request);
       const { resultData } = response;
       let message;
@@ -626,7 +640,9 @@ custId },
     },
     // 删除客户分组
     * deleteGroup({ payload }, { call, put }) {
-      const { request, keyWord, pageNum, pageSize } = payload;
+      const {
+        request, keyWord, pageNum, pageSize
+      } = payload;
       const response = yield call(api.deleteGroup, request);
       const { resultData } = response;
       yield put({
@@ -650,13 +666,17 @@ custId },
     },
     * deleteCustomerFromGroup({ payload }, { call, put }) {
       const response = yield call(api.deleteCustomerFromGroup, payload);
-      const { custId, groupId, keyWord, curPageNum, curPageSize } = payload;
+      const {
+        custId, groupId, keyWord, curPageNum, curPageSize
+      } = payload;
       const { resultData } = response;
       yield put({
         type: 'deleteCustomerFromGroupSuccess',
-        payload: { resultData,
-custId,
-groupId },
+        payload: {
+          resultData,
+          custId,
+          groupId
+        },
       });
       yield put({
         type: 'toastM',
@@ -711,10 +731,14 @@ groupId },
         yield put({
           type: 'getSearchServerPersonListSuccess',
           payload: [
-            { ptyMngName: '所有人',
-ptyMngId: '' },
-            { ptyMngName: '我的',
-ptyMngId: emp.getId() },
+            {
+              ptyMngName: '所有人',
+              ptyMngId: ''
+            },
+            {
+              ptyMngName: '我的',
+              ptyMngId: emp.getId()
+            },
           ],
         });
       } else {
@@ -865,8 +889,10 @@ ptyMngId: emp.getId() },
     },
     // 根据问题IdList生成模板id
     * generateTemplateId({ payload }, { call, put }) {
-      const { resultData } = yield call(api.generateTemplateId, { ...payload,
-assessType });
+      const { resultData } = yield call(api.generateTemplateId, {
+        ...payload,
+        assessType
+      });
       yield put({
         type: 'generateTemplateIdSuccess',
         payload: resultData,
@@ -941,18 +967,15 @@ assessType });
           list: resultData.object || {},
         };
       }
-      const allSightingTelescopeFilters =
-        yield select(state => state.customerPool.allSightingTelescopeFilters);
+      const allSightingTelescopeFilters = yield select(state => state.customerPool.allSightingTelescopeFilters);
 
       const { sightingTelescopeList } = payload;
       let resultData = [];
 
-      const reqestSightingTelescopes = _.filter(sightingTelescopeList, key =>
-        !_.some(allSightingTelescopeFilters, item => item.key === key));
+      const reqestSightingTelescopes = _.filter(sightingTelescopeList, key => !_.some(allSightingTelescopeFilters, item => item.key === key));
 
       if (!_.isEmpty(reqestSightingTelescopes)) {
-        resultData =
-          yield _.map(reqestSightingTelescopes, key => getFiltersOfSightingTelescopewithKey(key));
+        resultData = yield _.map(reqestSightingTelescopes, key => getFiltersOfSightingTelescopewithKey(key));
       }
       resultData = allSightingTelescopeFilters.concat(resultData);
       yield put({
@@ -973,8 +996,10 @@ assessType });
       const { resultData } = yield call(api.queryHoldingProduct, payload);
       yield put({
         type: 'queryHoldingProductSuccess',
-        payload: { ...payload,
-resultData },
+        payload: {
+          ...payload,
+          resultData
+        },
       });
     },
     // 添加电话记录，关联打电话自动生成的服务记录
@@ -1021,8 +1046,10 @@ resultData },
       if (code === '0') {
         yield put({
           type: 'queryHoldingIndustryDetailSuccess',
-          payload: { ...payload,
-resultData: resultData.detail },
+          payload: {
+            ...payload,
+            resultData: resultData.detail
+          },
         });
       }
     },
@@ -1143,9 +1170,11 @@ resultData: resultData.detail },
       let custRange = [];
       if (resultData) {
         custRange = [
-          { id: resultData.id,
-name: resultData.name,
-level: resultData.level },
+          {
+            id: resultData.id,
+            name: resultData.name,
+            level: resultData.level
+          },
           ...resultData.children,
         ];
       }
@@ -1229,7 +1258,9 @@ level: resultData.level },
     // 获取客户分组列表
     getGroupListSuccess(state, action) {
       const { payload: { resultData } } = action;
-      const { custGroupDTOList, curPageNum, pageSize, totalRecordNum } = resultData;
+      const {
+        custGroupDTOList, curPageNum, pageSize, totalRecordNum
+      } = resultData;
       if (!resultData) {
         return {
           ...state,
@@ -1806,8 +1837,10 @@ level: resultData.level },
     queryHoldingIndustryDetailSuccess(state, action) {
       const { payload: { industryId, custId, resultData } } = action;
       // 在集合里面添加一个industryNameCode，存的是已经组合在一起的name/code，方便页面中展示
-      const currentList = _.map(resultData, item => ({ ...item,
-industryNameCode: `${item.name}/${item.code}` }));
+      const currentList = _.map(resultData, item => ({
+        ...item,
+        industryNameCode: `${item.name}/${item.code}`
+      }));
       return {
         ...state,
         industryDetail: {
@@ -1833,7 +1866,7 @@ industryNameCode: `${item.name}/${item.code}` }));
     },
     // 获取审批列表成功
     getApproveListSuccess(state, action) {
-      const { payload: { resultData = {} }} = action;
+      const { payload: { resultData = {} } } = action;
       return {
         ...state,
         approveList: resultData,
@@ -1841,7 +1874,7 @@ industryNameCode: `${item.name}/${item.code}` }));
     },
     // 发起人下拉框
     getInitiatorSuccess(state, action) {
-      const { payload: { resultData: { empInfo = [] } }} = action;
+      const { payload: { resultData: { empInfo = [] } } } = action;
       return {
         ...state,
         initiator: empInfo,

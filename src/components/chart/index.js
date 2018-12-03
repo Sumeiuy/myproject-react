@@ -15,4 +15,6 @@ Chart.Pie = ChartPie;
 Chart.Bar = ChartBar;
 
 export default Chart;
-export { Series, ChartLine as Line, ChartPie as Pie, ChartBar as Bar };
+export {
+  Series, ChartLine as Line, ChartPie as Pie, ChartBar as Bar
+};

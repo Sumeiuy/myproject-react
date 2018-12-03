@@ -8,7 +8,12 @@ function getFilterValue(value) {
   let postFix = '';
 
   if (!value || (!value[0] && !value[1])) {
-    return (<span>最近一次服务时间:<span style={{ marginLeft: 8 }}>不限</span></span>);
+    return (
+      <span>
+最近一次服务时间:
+        <span style={{ marginLeft: 8 }}>不限</span>
+      </span>
+    );
   }
 
   if (value[0]) {
@@ -50,4 +55,3 @@ export default function LastServiceDateFilter(props) {
     />
   );
 }
-

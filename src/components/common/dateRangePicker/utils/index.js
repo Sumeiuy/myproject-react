@@ -13,4 +13,6 @@ const exported = {
 };
 
 export default exported;
-export { isAfterDay, isBeforeDay, isSameDay, isInclusivelyAfterDay, isInclusivelyBeforeDay };
+export {
+  isAfterDay, isBeforeDay, isSameDay, isInclusivelyAfterDay, isInclusivelyBeforeDay
+};

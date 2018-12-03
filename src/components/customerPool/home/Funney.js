@@ -155,7 +155,7 @@ function Funney({ dataSource, push }) {
     <div className={styles.container}>
       <div className={styles.uintRow}>
         <div />
-        <div>{'户数/资产'}</div>
+        <div>户数/资产</div>
       </div>
       <div className={styles.content}>
         <div className={styles.left}>

@@ -5,14 +5,16 @@
  */
 
 import React, { PureComponent } from 'react';
-import { Divider, List, Tag, Form, Input, Button } from 'antd';
+import {
+  Divider, List, Tag, Form, Input, Button
+} from 'antd';
 import { connect } from 'dva';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import styles from './userInfoApproval.less';
 import withRouter from '../../decorators/withRouter';
 import logable from '../../decorators/logable';
-import { closeRctTab } from '../../../src/utils';
+import { closeRctTab } from '../../utils';
 
 // 标签项的标识
 const LABELS = 'labels';
@@ -143,7 +145,8 @@ export default class PersonalInfoApproval extends PureComponent {
     return (
       <div className={styles.infoApprovalWrap}>
         <div className={styles.header}>
-          {approvalInfo.name || '--'}的审批
+          {approvalInfo.name || '--'}
+的审批
         </div>
         <Divider className={styles.titleDivider} />
         <div className={styles.body}>
@@ -161,19 +164,25 @@ export default class PersonalInfoApproval extends PureComponent {
                     const labelDesc = approvalInfo[item.id] || [];
                     return (
                       <div className={styles.infoItem}>
-                        <div className={styles.infoLabel}>{item.desc}:</div>
+                        <div className={styles.infoLabel}>
+                          {item.desc}
+:
+                        </div>
                         {
-                          labelDesc.length ?
-                          labelDesc
-                            .map(label => <Tag color="gold" key={label.id}>{label.name}</Tag>) :
-                            (<div className={styles.infoDesc}>暂未设置标签</div>)
+                          labelDesc.length
+                            ? labelDesc
+                              .map(label => <Tag color="gold" key={label.id}>{label.name}</Tag>)
+                            : (<div className={styles.infoDesc}>暂未设置标签</div>)
                         }
                       </div>
                     );
                   }
                   return (
                     <div className={styles.infoItem}>
-                      <div className={styles.infoLabel}>{item.desc}:</div>
+                      <div className={styles.infoLabel}>
+                        {item.desc}
+:
+                      </div>
                       <div className={styles.infoDesc}>{approvalInfo[item.id] || '--'}</div>
                     </div>
                   );
@@ -183,8 +192,8 @@ export default class PersonalInfoApproval extends PureComponent {
           </div>
           {
             // 判断入口，如果是从消息提醒入口进入的则不显示
-            remind ? null :
-              (
+            remind ? null
+              : (
                 <span>
                   <Divider className={styles.titleDivider} />
                   <div className={styles.item}>
@@ -222,7 +231,14 @@ export default class PersonalInfoApproval extends PureComponent {
                   const uniqueId = item.date + index;
                   return (
                     <div key={uniqueId} className={styles.recordItem}>
-                      <div>审批人： {item.approver || '--'}于{item.date || '--'}，步骤名称：{item.flowName || '--'}</div>
+                      <div>
+审批人：
+                        {item.approver || '--'}
+于
+                        {item.date || '--'}
+，步骤名称：
+                        {item.flowName || '--'}
+                      </div>
                       <div>
                         <div className={styles.approverDesc}>{item.approverDesc || '--'}</div>
                       </div>
@@ -234,8 +250,8 @@ export default class PersonalInfoApproval extends PureComponent {
           </div>
           {
             // 判断入口，如果是从消息提醒入口进入的则不显示
-            remind ? null :
-              (
+            remind ? null
+              : (
                 <div className={styles.btnGroup}>
                   {
                     flowButtons.map(item => (
@@ -244,7 +260,9 @@ export default class PersonalInfoApproval extends PureComponent {
                         size="large"
                         type={item.operate === BTN_ADOPT_STATE ? 'primary' : ''}
                         onClick={() => { this.handleApproval(item.operate); }}
-                      >{item.btnName}</Button>
+                      >
+                        {item.btnName}
+                      </Button>
                     ))
                   }
                 </div>

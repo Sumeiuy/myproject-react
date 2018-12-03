@@ -15,7 +15,9 @@ let rememberSearch = '';
 
 const withRouter = (Component) => {
   const C = (props) => {
-    const { wrappedComponentRef, replace, push, ...remainingProps } = props;
+    const {
+      wrappedComponentRef, replace, push, ...remainingProps
+    } = props;
 
     function hackReplace(...args) {
       if (typeof args[0] === 'string') {
@@ -46,7 +48,7 @@ const withRouter = (Component) => {
         rememberQuery = _.mapValues(parse(search), (value) => {
           if (value === 'true') {
             return true;
-          } else if (value === 'false') {
+          } if (value === 'false') {
             return false;
           }
           return value;

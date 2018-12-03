@@ -180,7 +180,12 @@ export default class CreateTaskSuccess extends PureComponent {
               <p>提交成功！</p>
               <p>创建任务请求已提交，后台需要一些时间处理。</p>
               <p>5~10分钟后，您可以通过 任务中心-&gt; 任务管理 查看并执行该任务。</p>
-              <p>页面会在 <b>{changeTime}</b> 秒内自动关闭</p>
+              <p>
+页面会在
+                <b>{changeTime}</b>
+                {' '}
+秒内自动关闭
+              </p>
             </div>
             <div className={styles.taskSuccess_btn}>
               <Button

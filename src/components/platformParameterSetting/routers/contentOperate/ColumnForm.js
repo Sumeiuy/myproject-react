@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { Form, Input  } from 'antd';
+import { Form, Input } from 'antd';
 import { urlRegExp, acceptType } from './config';
 import CommonUpload from '../../../common/biz/CommonUpload';
 import InfoCell from './InfoCell';
@@ -98,7 +98,7 @@ export default class ColumnForm extends PureComponent {
     if (!_.isEmpty(value)) {
       const trimValue = value.trim();
       if (trimValue.length > 1000) {
-          callback('最多1000个字');
+        callback('最多1000个字');
       }
     }
     callback();
@@ -163,8 +163,10 @@ export default class ColumnForm extends PureComponent {
               {getFieldDecorator('link', {
                 validateTrigger: ['onBlur'],
                 rules: [
-                  { required: true,
-message: '请输入图片链接' },
+                  {
+                    required: true,
+                    message: '请输入图片链接'
+                  },
                   { validator: this.validateLink },
                 ],
                 initialValue: link,
@@ -182,19 +184,22 @@ message: '请输入图片链接' },
                 {getFieldDecorator('description', {
                   validateTrigger: ['onBlur'],
                   rules: [
-                    { validator: this.validateDescription}
+                    { validator: this.validateDescription }
                   ],
                   initialValue: description,
                 })(
 
-                    <TextArea
-                      placeholder="最多1000个字"
-                      onChange={this.handleChangeDesc}
-                    />
+                  <TextArea
+                    placeholder="最多1000个字"
+                    onChange={this.handleChangeDesc}
+                  />
                 )}
-                <span className={styles.descCount}>{descriptionCount}/1000</span>
+                <span className={styles.descCount}>
+                  {descriptionCount}
+/1000
+                </span>
               </div>
-          </FormItem>
+            </FormItem>
           </InfoCell>
         </Form>
       </div>

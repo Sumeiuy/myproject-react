@@ -69,7 +69,7 @@ export default class CreateApply extends PureComponent {
   }
 
   componentDidMount() {
-   // 获取下一步骤按钮列表
+    // 获取下一步骤按钮列表
     this.props.getButtonList();
   }
 
@@ -115,7 +115,7 @@ export default class CreateApply extends PureComponent {
     if (_.isEmpty(finalEmplists)) {
       message.error('请添加服务经理');
       return;
-    } else if (finalEmplistsSize > MAXSELECTNUM) {
+    } if (finalEmplistsSize > MAXSELECTNUM) {
       message.error(`服务经理最多只能添加${MAXSELECTNUM}条`);
       return;
     }
@@ -157,7 +157,7 @@ export default class CreateApply extends PureComponent {
     }).then(() => {
       const { validateResultData } = this.props;
       const { isValid, msg } = validateResultData;
-       // isValid为true，代码数据验证通过，此时可以往下走，为false弹出错误信息
+      // isValid为true，代码数据验证通过，此时可以往下走，为false弹出错误信息
       if (isValid) {
         updateBindingFlow({
           advisorBindingList: finalEmplists,
@@ -215,10 +215,12 @@ export default class CreateApply extends PureComponent {
       buttonList,
     } = this.props;
     const { advisorList } = advisorListData;
-    const selfBtnGroup = (<BottonGroup
-      list={buttonList}
-      onEmitEvent={this.handleSubmit}
-    />);
+    const selfBtnGroup = (
+      <BottonGroup
+        list={buttonList}
+        onEmitEvent={this.handleSubmit}
+      />
+    );
     const searchProps = {
       visible: nextApproverModal,
       onOk: this.sendCreateRequest,

@@ -89,9 +89,10 @@ export default class TextCollapse extends Component {
           {children}
         </div>
         {
-          btnVisible &&
+          btnVisible
+          && (
           <div className={styles.btnWrapper}>
-            <div {...buttonProps} >
+            <div {...buttonProps}>
               {fold ? '收起' : '展开'}
               <Icon
                 type={fold ? 'shouqi2' : 'zhankai1'}
@@ -99,6 +100,7 @@ export default class TextCollapse extends Component {
               />
             </div>
           </div>
+          )
         }
       </div>
     );

@@ -150,7 +150,9 @@ export default class ChartsTab extends PureComponent {
   }
 
   @autobind
-  getIndicators({ begin, end, orgId, cycleSelect, custType }) {
+  getIndicators({
+    begin, end, orgId, cycleSelect, custType
+  }) {
     const {
       getPerformanceIndicators,
       getCustAnalyticsIndicators,
@@ -250,7 +252,7 @@ export default class ChartsTab extends PureComponent {
             indicators={managerIndicators}
             location={location}
             cycle={cycle}
-            category={'manager'}
+            category="manager"
             isNewHome
           />
         </TabPane>
@@ -262,7 +264,7 @@ export default class ChartsTab extends PureComponent {
                 location={location}
                 cycle={cycle}
                 custCount={custCount}
-                category={'performance'}
+                category="performance"
                 isNewHome
               />
             </TabPane>

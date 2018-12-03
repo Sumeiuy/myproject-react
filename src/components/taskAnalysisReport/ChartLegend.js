@@ -21,17 +21,17 @@ export default function ChartLegend(props) {
     [styles.chartLegend]: true,
     [styles[className]]: !_.isEmpty(className),
   });
-  const legendListData = _.map(legendList, item => {
+  const legendListData = _.map(legendList, (item) => {
     const { type, color, name } = item;
     const iconClass = classnames({
-        [styles.icon]: true,
-        [styles.square]: type === 'square',
-        [styles.line]: type === 'line',
+      [styles.icon]: true,
+      [styles.square]: type === 'square',
+      [styles.line]: type === 'line',
     });
     return (
       <div className={styles.legendItem} key={data.uuid()}>
         <div className={styles.customerNumberLegend}>
-          <span className={iconClass} style={{background: color}}></span>
+          <span className={iconClass} style={{ background: color }} />
           <span className={styles.name}>{name}</span>
         </div>
       </div>

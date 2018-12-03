@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'dva';
 import { dva } from '../../../../helper';
 import BusinessHand from '../../../../components/customerDetailBusinessHand/BusinessHand';
+
 const effect = dva.generateEffect;
 const mapStateToProps = state => ({
   // 业务办理下已开通业务数据
@@ -22,9 +23,9 @@ const mapDispatchToProps = {
   // 查询业务办理下已开通业务信息
   getOpenBusiness: effect('detailBusinessHand/getOpenBusiness'),
   // 查询业务办理下未开通业务信息
- getNotOpenBusiness: effect('detailBusinessHand/getNotOpenBusiness'),
+  getNotOpenBusiness: effect('detailBusinessHand/getNotOpenBusiness'),
   // 查询业务办理下未开通业务中的操作弹框信息
- getDetailOperation: effect('detailBusinessHand/getDetailOperation'),
+  getDetailOperation: effect('detailBusinessHand/getDetailOperation'),
   // 清除Redux中的数据
   clearReduxData: effect('detailBusinessHand/clearReduxData', { loading: false }),
 };

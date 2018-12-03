@@ -18,7 +18,6 @@ import logable from '../../../decorators/logable';
 const Option = AutoComplete.Option;
 
 export default class SearchSelect extends PureComponent {
-
   static propTypes = {
     labelName: PropTypes.string.isRequired,
     dataSource: PropTypes.array.isRequired,
@@ -68,10 +67,17 @@ export default class SearchSelect extends PureComponent {
 
   @autobind
   renderOption(cust) {
-    const { cusId, custId, custName, econNum, brokerNumber } = cust;
+    const {
+      cusId, custId, custName, econNum, brokerNumber
+    } = cust;
     return (
       <Option key={cusId || custId} value={custName} text={custName}>
-        <span className={styles.prodValue}>{custName}({brokerNumber || econNum})</span>
+        <span className={styles.prodValue}>
+          {custName}
+(
+          {brokerNumber || econNum}
+)
+        </span>
       </Option>
     );
   }

@@ -237,7 +237,7 @@ export default class RejectionAndAmendment extends PureComponent {
           clearReduxState={clearReduxState}
         />
       );
-    } else if (type === 'SUBSCRIBE') {
+    } if (type === 'SUBSCRIBE') {
       // 咨讯订阅
       const {
         location,
@@ -267,7 +267,7 @@ export default class RejectionAndAmendment extends PureComponent {
           onUpdateFlow={updateFlow}
         />
       );
-    } else if (type === 'UNSUBSCRIBE') {
+    } if (type === 'UNSUBSCRIBE') {
       // 咨讯退订
       const {
         location,

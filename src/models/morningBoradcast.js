@@ -14,7 +14,7 @@ const downloadName = 'ceFileDownload2';
 
 // 后端返回数据没有预览地址，需要转化成预览地址
 function activityColumnUrlTransform(list) {
-  return _.map(list, item => {
+  return _.map(list, (item) => {
     const { attaches } = item;
     const { name, attachId, creator } = attaches[0];
     return {
@@ -31,16 +31,16 @@ export default {
     newsListQuery: {
       FROM_DATE: null, // 查询参数创建时间：开始时间的缓存
       TO_DATE: null, // 查询参数创建时间：结束的缓存
-      TITLE: '',  // 查询参数：标题
-      CREATE_BY: '',  // 查询参数：作者
+      TITLE: '', // 查询参数：标题
+      CREATE_BY: '', // 查询参数：作者
     },
     boradcastList: [], // 晨报列表
-    initBoradcastList: [],  // 初始化列表数据，为首页服务
-    initBoradcastFile: {},  // 首页数据文件
-    pagination: {},  // 分页信息
-    boradcastDetail: {},  // 晨报详情
-    saveboradcastInfo: {},  // 添加晨报结果信息
-    delBoradcastInfo: {},  // 删除晨报结果信息
+    initBoradcastList: [], // 初始化列表数据，为首页服务
+    initBoradcastFile: {}, // 首页数据文件
+    pagination: {}, // 分页信息
+    boradcastDetail: {}, // 晨报详情
+    saveboradcastInfo: {}, // 添加晨报结果信息
+    delBoradcastInfo: {}, // 删除晨报结果信息
     newUuid: [],
     delSourceFile: {},
     // 活动栏目
@@ -165,7 +165,7 @@ export default {
     },
     // 获取活动栏目成功
     queryContentSuccess(state, action) {
-      const { payload: { resultData = [] }} = action;
+      const { payload: { resultData = [] } } = action;
       return {
         ...state,
         activityColumnList: activityColumnUrlTransform(resultData),

@@ -118,7 +118,7 @@ export default class CombinationRank extends PureComponent {
       value: '$args[0].value',
     },
   })
-  handleCreatorSelectChange({value}) {
+  handleCreatorSelectChange({ value }) {
     const {
       onTypeChange,
       rankTabActiveKey,
@@ -131,7 +131,7 @@ export default class CombinationRank extends PureComponent {
         adviserId: value.empId || '',
       }
     });
-    if(!_.isEmpty(value)) {
+    if (!_.isEmpty(value)) {
       onTypeChange({
         type: rankTabActiveKey,
         adviser: value,
@@ -165,9 +165,15 @@ export default class CombinationRank extends PureComponent {
   }
 
   @autobind
-  getOptionItemValue({value: { empId, empName }}) {
+  getOptionItemValue({ value: { empId, empName } }) {
     const showEmpId = empId ? `(${empId})` : '';
-    return (<span>{empName}  {showEmpId}</span>);
+    return (
+      <span>
+        {empName}
+        {' '}
+        {showEmpId}
+      </span>
+    );
   }
 
   render() {

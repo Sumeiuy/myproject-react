@@ -18,7 +18,6 @@ const showBtn = document.querySelector(fspContainer.showBtn);
 const hideBtn = document.querySelector(fspContainer.hideBtn);
 
 export default class ScrollBar extends PureComponent {
-
   static propTypes = {
     allWidth: PropTypes.number.isRequired,
     tableScrollLeft: PropTypes.number.isRequired,
@@ -81,6 +80,7 @@ export default class ScrollBar extends PureComponent {
   reportScrollBar(input) {
     this.reportScroll = input;
   }
+
   render() {
     const { clientWidth } = this.state;
     const { allWidth } = this.props;

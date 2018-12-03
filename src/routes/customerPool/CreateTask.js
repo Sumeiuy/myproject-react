@@ -84,13 +84,12 @@ const mapDispatchToProps = {
   getTaskBasicInfo: fetchDataFunction(true, effects.getTaskBasicInfo),
 };
 
-const systemCode = '102330';  // 系统代码（理财服务平台为102330）
+const systemCode = '102330'; // 系统代码（理财服务平台为102330）
 
 
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 export default class CreateTask extends PureComponent {
-
   static propTypes = {
     location: PropTypes.object.isRequired,
     data: PropTypes.array,
@@ -159,14 +158,18 @@ export default class CreateTask extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { createTaskResult: preCreateTaskResult,
+    const {
+      createTaskResult: preCreateTaskResult,
       getApprovalListLoading,
       updateTaskResult: preUpdateTaskResult,
-      approvalList = EMPTY_ARRAY } = this.props;
-    const { createTaskResult: nextcreateTaskResult,
+      approvalList = EMPTY_ARRAY
+    } = this.props;
+    const {
+      createTaskResult: nextcreateTaskResult,
       updateTaskResult: nextUpdateTaskResult,
       approvalList: nextList = EMPTY_ARRAY,
-      getApprovalListLoading: nextApprovalListLoading } = nextProps;
+      getApprovalListLoading: nextApprovalListLoading
+    } = nextProps;
     if (preCreateTaskResult !== nextcreateTaskResult) {
       this.handleCreateTaskSuccess(nextcreateTaskResult);
     }
@@ -289,41 +292,45 @@ export default class CreateTask extends PureComponent {
     const { isSuccess, isApprovalListLoadingEnd, isShowApprovalModal } = this.state;
     return (
       <div className={styles.taskBox}>
-        {!isSuccess ?
-          <CreateTaskFormFlow
-            location={location}
-            dict={dict}
-            createTask={this.handleCreateTask}
-            updateTask={this.handleUpdateTask}
-            storedCreateTaskData={storedCreateTaskData}
-            saveCreateTaskData={saveCreateTaskData}
-            approvalList={approvalList}
-            getApprovalList={getApprovalList}
-            push={push}
-            orgId={orgId}
-            isShowApprovalModal={isShowApprovalModal}
-            isApprovalListLoadingEnd={isApprovalListLoadingEnd}
-            onCancel={this.resetLoading}
-            templateId={templateId}
-            generateTemplateId={generateTemplateId}
-            onCloseTab={this.handleCancleTab}
-            creator={creator}
-            approvalBtn={approvalBtn}
-            getApprovalBtn={getApprovalBtn}
-            submitApporvalResult={submitApporvalResult}
-            submitApproval={submitApproval}
-            sendCustsServedByPostnResult={sendCustsServedByPostnResult}
-            isSendCustsServedByPostn={isSendCustsServedByPostn}
-            taskBasicInfo={taskBasicInfo}
-            industryList={industryList}
-            definedLabelsInfo={definedLabelsInfo}
-          /> :
-          <CreateTaskSuccess
-            successType={isSuccess}
-            push={push}
-            location={location}
-            onCloseTab={this.handleCancleTab}
-          />
+        {!isSuccess
+          ? (
+            <CreateTaskFormFlow
+              location={location}
+              dict={dict}
+              createTask={this.handleCreateTask}
+              updateTask={this.handleUpdateTask}
+              storedCreateTaskData={storedCreateTaskData}
+              saveCreateTaskData={saveCreateTaskData}
+              approvalList={approvalList}
+              getApprovalList={getApprovalList}
+              push={push}
+              orgId={orgId}
+              isShowApprovalModal={isShowApprovalModal}
+              isApprovalListLoadingEnd={isApprovalListLoadingEnd}
+              onCancel={this.resetLoading}
+              templateId={templateId}
+              generateTemplateId={generateTemplateId}
+              onCloseTab={this.handleCancleTab}
+              creator={creator}
+              approvalBtn={approvalBtn}
+              getApprovalBtn={getApprovalBtn}
+              submitApporvalResult={submitApporvalResult}
+              submitApproval={submitApproval}
+              sendCustsServedByPostnResult={sendCustsServedByPostnResult}
+              isSendCustsServedByPostn={isSendCustsServedByPostn}
+              taskBasicInfo={taskBasicInfo}
+              industryList={industryList}
+              definedLabelsInfo={definedLabelsInfo}
+            />
+          )
+          : (
+            <CreateTaskSuccess
+              successType={isSuccess}
+              push={push}
+              location={location}
+              onCloseTab={this.handleCancleTab}
+            />
+          )
         }
       </div>
     );

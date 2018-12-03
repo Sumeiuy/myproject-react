@@ -34,14 +34,14 @@ export const NOT_TOUGU_SUBTYPE = {
 };
 
 export const AGREEMENT_TYPE_MAP = {
-  '739001': '生效',
-  '739004': '已处理',
-  '736003': '生效',
-  '736007': '购回申报',
-  '273010': '开仓未归还',
-  '273020': '部分归还',
-  '2': '生效',
-  '3': '已处理',
+  739001: '生效',
+  739004: '已处理',
+  736003: '生效',
+  736007: '购回申报',
+  273010: '开仓未归还',
+  273020: '部分归还',
+  2: '生效',
+  3: '已处理',
 };
 
 // 账户服务费模式
@@ -85,7 +85,7 @@ export const PROTOCOL_COLUMNS = [
     key: 'node',
     dataIndex: 'node',
     title: '当前处理节点',
-    render: text => _.isEmpty(text) ? DEFAULT_TEXT : text,
+    render: text => (_.isEmpty(text) ? DEFAULT_TEXT : text),
     width: 115,
   },
   {
@@ -220,7 +220,7 @@ export const AGREEMENT_COLUMNS = [
     title: '合同金额(万元)',
     width: 105,
     align: 'right',
-    render: text => _.isNumber(text) ? text : DEFAULT_TEXT,
+    render: text => (_.isNumber(text) ? text : DEFAULT_TEXT),
   },
   {
     key: 'statusCode',

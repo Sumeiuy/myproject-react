@@ -263,6 +263,7 @@ export default class EditBasicInfo extends PureComponent {
     },
   })
   upd
+
   updateBusPrcDiv(name, value) {
     const {
       onChange,
@@ -341,9 +342,7 @@ export default class EditBasicInfo extends PureComponent {
   // 生产select的option
   @autobind
   getSelectOption(item) {
-    return !_.isEmpty(item) ? item.map(i =>
-      <Option key={i.value} value={i.value}>{i.label}</Option>,
-    ) : null;
+    return !_.isEmpty(item) ? item.map(i => <Option key={i.value} value={i.value}>{i.label}</Option>, ) : null;
   }
 
   render() {
@@ -496,7 +495,7 @@ export default class EditBasicInfo extends PureComponent {
                 <FormItem
                   {
                     ...this.getErrorMessage(isShowCustTransLvStatusError,
-                    custTransLvStatusErrorMessage)
+                      custTransLvStatusErrorMessage)
                   }
                 >
                   {custTransLvName || EMPTY_INFO}
@@ -511,16 +510,16 @@ export default class EditBasicInfo extends PureComponent {
                 客户类型
                 <span className={styles.colon}>:</span>
               </div>
-              <div className={styles.value} >
+              <div className={styles.value}>
                 {
                   isEdit ? (
                     <FormItem>
                       {stockCustTypeName || EMPTY_INFO}
                     </FormItem>
-                    )
-                  : (
-                    <FormItem>
-                      {
+                  )
+                    : (
+                      <FormItem>
+                        {
                         getFieldDecorator('stockCustType', {
                           rules: [{
                             required: true, message: '请选择客户类型',
@@ -535,8 +534,8 @@ export default class EditBasicInfo extends PureComponent {
                           </Select>,
                         )
                       }
-                    </FormItem>
-                  )
+                      </FormItem>
+                    )
                 }
               </div>
             </div>
@@ -553,9 +552,9 @@ export default class EditBasicInfo extends PureComponent {
                         {reqTypeName || EMPTY_INFO}
                       </FormItem>
                     )
-                    : (
-                      <FormItem>
-                        {
+                      : (
+                        <FormItem>
+                          {
                           getFieldDecorator('reqType', {
                             rules: [{
                               required: true, message: '请选择申请类型',
@@ -570,8 +569,8 @@ export default class EditBasicInfo extends PureComponent {
                             </Select>,
                           )
                         }
-                      </FormItem>
-                    )
+                        </FormItem>
+                      )
                 }
               </div>
             </div>
@@ -628,7 +627,7 @@ export default class EditBasicInfo extends PureComponent {
                 受理时间
                 <span className={styles.colon}>:</span>
               </div>
-              <div className={styles.value} >
+              <div className={styles.value}>
                 <FormItem>
                   {(accptTime && accptTime.slice(0, 10)) || EMPTY_INFO}
                 </FormItem>
@@ -640,7 +639,7 @@ export default class EditBasicInfo extends PureComponent {
                 申报事项
                 <span className={styles.colon}>:</span>
               </div>
-              <div className={styles.value} >
+              <div className={styles.value}>
                 <div className={styles.applyContent}>
                   <FormItem>
                     {
@@ -665,22 +664,22 @@ export default class EditBasicInfo extends PureComponent {
             </div>
           </div>
           {
-            isShowDegreePrompt ?
-            (
-              <div className={styles.promptBox}>
-                <div className={styles.head}>
-                  <Icon type="jingshi" className={styles.promptIcon} />
-                  <span className={styles.title}>客户的年龄条件不符合要求，请确认客户是否满足以下条件：</span>
-                </div>
-                <div className={styles.row}>
-                  <div className={`${styles.label} ${styles.labelDegree}`}>
-                    <i className={styles.isRequired}>*</i>
-                      已提供大专及以上的学历证明材料
-                    <span className={styles.colon}>:</span>
+            isShowDegreePrompt
+              ? (
+                <div className={styles.promptBox}>
+                  <div className={styles.head}>
+                    <Icon type="jingshi" className={styles.promptIcon} />
+                    <span className={styles.title}>客户的年龄条件不符合要求，请确认客户是否满足以下条件：</span>
                   </div>
-                  <div className={styles.value} >
-                    <FormItem>
-                      {
+                  <div className={styles.row}>
+                    <div className={`${styles.label} ${styles.labelDegree}`}>
+                      <i className={styles.isRequired}>*</i>
+                      已提供大专及以上的学历证明材料
+                      <span className={styles.colon}>:</span>
+                    </div>
+                    <div className={styles.value}>
+                      <FormItem>
+                        {
                         getFieldDecorator('degreeFlag', {
                           rules: [{
                             required: true, message: '请选择已提供大专及以上的学历证明材料',
@@ -693,30 +692,30 @@ export default class EditBasicInfo extends PureComponent {
                           </RadioGroup>,
                         )
                       }
-                    </FormItem>
+                      </FormItem>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ) : null
+              ) : null
           }
           {
-            isShowInvPrompt ?
-            (
-              <div className={styles.promptBox}>
-                <div className={styles.head}>
-                  <Icon type="jingshi" className={styles.promptIcon} />
-                  <span className={styles.title}>客户在我公司投资经历评估不符合要求，请确认客户是否满足以下条件：</span>
-                </div>
-                <div className={styles.options}>
-                  <div className={styles.coloumn}>
-                    <div className={`${styles.label} ${styles.labelPrompt}`}>
-                      <i className={styles.isRequired}>*</i>
+            isShowInvPrompt
+              ? (
+                <div className={styles.promptBox}>
+                  <div className={styles.head}>
+                    <Icon type="jingshi" className={styles.promptIcon} />
+                    <span className={styles.title}>客户在我公司投资经历评估不符合要求，请确认客户是否满足以下条件：</span>
+                  </div>
+                  <div className={styles.options}>
+                    <div className={styles.coloumn}>
+                      <div className={`${styles.label} ${styles.labelPrompt}`}>
+                        <i className={styles.isRequired}>*</i>
                       A股账户开立时间6个月以上
-                      <span className={styles.colon}>:</span>
-                    </div>
-                    <div className={styles.value} >
-                      <FormItem>
-                        {
+                        <span className={styles.colon}>:</span>
+                      </div>
+                      <div className={styles.value}>
+                        <FormItem>
+                          {
                           getFieldDecorator('aAcctOpenTimeFlag', {
                             rules: [{
                               required: true, message: '请选择A股账户开立时间6个月以上',
@@ -729,18 +728,18 @@ export default class EditBasicInfo extends PureComponent {
                             </RadioGroup>,
                           )
                         }
-                      </FormItem>
+                        </FormItem>
+                      </div>
                     </div>
-                  </div>
-                  <div className={styles.coloumn}>
-                    <div className={`${styles.label} ${styles.labelPrompt}`}>
-                      <i className={styles.isRequired}>*</i>
+                    <div className={styles.coloumn}>
+                      <div className={`${styles.label} ${styles.labelPrompt}`}>
+                        <i className={styles.isRequired}>*</i>
                       已开立融资融券账户
-                      <span className={styles.colon}>:</span>
-                    </div>
-                    <div className={styles.value} >
-                      <FormItem>
-                        {
+                        <span className={styles.colon}>:</span>
+                      </div>
+                      <div className={styles.value}>
+                        <FormItem>
+                          {
                           getFieldDecorator('rzrqzqAcctFlag', {
                             rules: [{
                               required: true, message: '请选择已开立融资融券账户',
@@ -753,18 +752,18 @@ export default class EditBasicInfo extends PureComponent {
                             </RadioGroup>,
                           )
                         }
-                      </FormItem>
+                        </FormItem>
+                      </div>
                     </div>
-                  </div>
-                  <div className={styles.coloumn}>
-                    <div className={`${styles.label} ${styles.labelPrompt}`}>
-                      <i className={styles.isRequired}>*</i>
+                    <div className={styles.coloumn}>
+                      <div className={`${styles.label} ${styles.labelPrompt}`}>
+                        <i className={styles.isRequired}>*</i>
                       已提供金融期货交易证明
-                      <span className={styles.colon}>:</span>
-                    </div>
-                    <div className={styles.value} >
-                      <FormItem>
-                        {
+                        <span className={styles.colon}>:</span>
+                      </div>
+                      <div className={styles.value}>
+                        <FormItem>
+                          {
                           getFieldDecorator('jrqhjyFlag', {
                             rules: [{
                               required: true, message: '请选择已提供金融期货交易证明',
@@ -777,12 +776,12 @@ export default class EditBasicInfo extends PureComponent {
                             </RadioGroup>,
                           )
                         }
-                      </FormItem>
+                        </FormItem>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ) : null
+              ) : null
           }
         </Form>
       </div>

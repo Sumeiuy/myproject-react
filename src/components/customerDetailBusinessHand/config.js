@@ -8,6 +8,7 @@ import React from 'react';
 import _ from 'lodash';
 import Icon from '../common/Icon';
 import styles from './businessHand.less';
+
 const config = {
   // 已开通业务
   openBusinessColumns: [
@@ -53,12 +54,11 @@ const config = {
       dataIndex: 'recordFile',
       key: 'recordFile',
       className: 'rightStyle',
-      render: text => {
-        if(!_.isEmpty(text)) {
-         return (<Icon type='chakanshipin' className={styles.businessHandlIcon} />);
-        }else {
-          return null;
+      render: (text) => {
+        if (!_.isEmpty(text)) {
+          return (<Icon type="chakanshipin" className={styles.businessHandlIcon} />);
         }
+        return null;
       }
     },
   ],

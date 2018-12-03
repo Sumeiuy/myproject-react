@@ -108,7 +108,7 @@ export default class CreateLabelType extends PureComponent {
     });
   }
 
-    // 实时校验标签名是否重复
+  // 实时校验标签名是否重复
   @autobind
   handleCheckLabelName() {
     const { checkDuplicationName, form } = this.props;
@@ -170,7 +170,7 @@ export default class CreateLabelType extends PureComponent {
           >
             {getFieldDecorator('labelName', {
               rules: [{
-                  required: true, message: '请输入标签名称',
+                required: true, message: '请输入标签名称',
               }, {
                 max: 8, message: '最多为8个字',
               }, {

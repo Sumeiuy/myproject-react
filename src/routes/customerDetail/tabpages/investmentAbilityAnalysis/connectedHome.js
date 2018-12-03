@@ -36,7 +36,7 @@ const mapStateToProps = state => ({
   assetChangeList: state.detailInvestmentAbilityAnalysis.assetChangeList,
   // 账户资产变动图表数据
   assetChangeReportData: state.detailInvestmentAbilityAnalysis.assetChangeReportData,
-  //账户收益走势图表数据
+  // 账户收益走势图表数据
   profitTrendData: state.detailInvestmentAbilityAnalysis.profitTrendData,
   // brinson归因数据
   attributionData: state.detailInvestmentAbilityAnalysis.attributionData,

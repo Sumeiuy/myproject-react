@@ -19,7 +19,7 @@ export function formatBowserName(name) {
 
 
 function getFirstMatch(regex) {
-  var match = navigator.userAgent.match(regex);
+  const match = navigator.userAgent.match(regex);
   return (match && match.length > 1 && match[1]) || '';
 }
 

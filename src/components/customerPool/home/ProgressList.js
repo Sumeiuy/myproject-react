@@ -26,7 +26,6 @@ import styles from './progressList.less';
 const newCustomerLinkIdx = ['817001', '817002', '817003', '817004'];
 
 export default class ProgressList extends PureComponent {
-
   static propTypes = {
     dataSource: PropTypes.array.isRequired,
     cycle: PropTypes.array,
@@ -99,7 +98,7 @@ export default class ProgressList extends PureComponent {
     const param = {
       source: 'custIndicator',
       type: 'customerType',
-      value: newCustomerLinkIdx[index],  // 提供给列表页传给后端的customerType的值
+      value: newCustomerLinkIdx[index], // 提供给列表页传给后端的customerType的值
       bname,
       cycle,
       push,
@@ -143,7 +142,8 @@ export default class ProgressList extends PureComponent {
         return (
           <div
             onClick={() => { this.handleClick(index, item); }}
-            className={styles.row} style={style}
+            className={styles.row}
+            style={style}
             key={item.id}
             ref={ref => (this[rowId] = ref)}
           >
@@ -174,13 +174,16 @@ export default class ProgressList extends PureComponent {
                    */
                 }
                 {
-                  type === 'productSale' ?
-                    <div>
-                      <span title={item.value}>{item.value}</span>
-                      <span title={item.unit}>{item.unit}</span>
-                    </div> :
-                    <span title={item.thousandsCount}>{item.thousandsCount}</span>
-                }</div>
+                  type === 'productSale'
+                    ? (
+                      <div>
+                        <span title={item.value}>{item.value}</span>
+                        <span title={item.unit}>{item.unit}</span>
+                      </div>
+                    )
+                    : <span title={item.thousandsCount}>{item.thousandsCount}</span>
+                }
+              </div>
             </div>
             <Progress
               percent={(item.percent < 0 ? 0 : item.percent)}

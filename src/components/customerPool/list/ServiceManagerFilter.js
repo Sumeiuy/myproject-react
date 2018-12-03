@@ -14,7 +14,6 @@ import { fspContainer } from '../../../config';
 import styles from './saleDepartmentFilter.less';
 
 export default class ServiceManagerFilter extends PureComponent {
-
   static propTypes = {
     searchServerPersonList: PropTypes.array.isRequired,
     serviceManagerDefaultValue: PropTypes.string.isRequired,

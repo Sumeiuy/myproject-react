@@ -23,7 +23,6 @@ import {
 import styles from './detail.less';
 
 export default class Singlecommissiondetail extends PureComponent {
-
   static propTypes = {
     location: PropTypes.object.isRequired,
     data: PropTypes.object.isRequired,
@@ -31,7 +30,9 @@ export default class Singlecommissiondetail extends PureComponent {
 
   render() {
     const {
-      data: { base, attachmentList, approvalHistory, currentStep },
+      data: {
+        base, attachmentList, approvalHistory, currentStep
+      },
       location: { query: { currentId = '' } },
     } = this.props;
     if (_.isEmpty(base)) return null;
@@ -190,4 +191,3 @@ export default class Singlecommissiondetail extends PureComponent {
     );
   }
 }
-

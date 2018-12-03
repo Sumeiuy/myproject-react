@@ -25,7 +25,7 @@ import IEWarningModal from '../components/common/IEWarningModal';
 import PhoneWrapper from './PhoneWrapper';
 import styles from './main.less';
 import '../css/skin.less';
-import { redirectRoutes } from '../../src/common/router';
+import { redirectRoutes } from '../common/router';
 
 const effects = {
   dictionary: 'app/getDictionary',
@@ -84,7 +84,6 @@ const PHONE = 'phone';
 @withRouter
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Main extends Component {
-
   static propTypes = {
     loading: PropTypes.number.isRequired,
     loadingForceFull: PropTypes.bool,
@@ -175,7 +174,7 @@ export default class Main extends Component {
     const isPhoneCall = caller === PHONE;
     return (
       <LocaleProvider locale={zhCN}>
-        <ContextProvider {...this.props} >
+        <ContextProvider {...this.props}>
           <IEWarningModal />
           <ErrorBoundary location={location}>
             <div className={styles.layout}>
@@ -184,11 +183,12 @@ export default class Main extends Component {
                   <div className={styles.content} id="content">
                     <Loading loading={loading} forceFull={loadingForceFull} />
                     {
-                      (!_.isEmpty(interfaceState) &&
-                        !_.isEmpty(empInfo) &&
-                        !interfaceState[effects.dictionary] &&
-                        !interfaceState[effects.customerScope] &&
-                        !interfaceState[effects.empInfo]) ?
+                      (!_.isEmpty(interfaceState)
+                        && !_.isEmpty(empInfo)
+                        && !interfaceState[effects.dictionary]
+                        && !interfaceState[effects.customerScope]
+                        && !interfaceState[effects.empInfo])
+                        ? (
                           <div>
                             {this.renderRoutes()}
                             <ConnectedCreateServiceRecord
@@ -216,6 +216,7 @@ export default class Main extends Component {
                               toggleServiceRecordModal={toggleServiceRecordModal}
                             />
                           </div>
+                        )
                         : null
                     }
                   </div>

@@ -21,7 +21,6 @@ const Option = AutoComplete.Option;
 const { comsubs: commadj } = seibelConfig;
 
 export default class SelectAssembly extends PureComponent {
-
   static propTypes = {
     name: PropTypes.string,
     dataSource: PropTypes.array.isRequired,
@@ -195,7 +194,7 @@ export default class SelectAssembly extends PureComponent {
     const { custName, custEcom, riskLevelLabel = '' } = cust;
     const text = `${custName}（${custEcom}） - ${riskLevelLabel}`;
     return (
-      <Option key={custEcom} value={text} >
+      <Option key={custEcom} value={text}>
         <span className={styles.prodValue} title={text}>{text}</span>
       </Option>
     );

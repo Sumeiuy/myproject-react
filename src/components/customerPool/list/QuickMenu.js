@@ -13,7 +13,6 @@ import { logPV } from '../../../decorators/logable';
 import styles from './quickMenu.less';
 
 export default class QuickMenu extends PureComponent {
-
   static propTypes = {
     listItem: PropTypes.object.isRequired,
     createModal: PropTypes.func.isRequired,

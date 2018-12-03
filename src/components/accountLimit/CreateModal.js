@@ -8,7 +8,9 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { message, DatePicker, Input, Select as AntdSelect, Radio, Modal, Upload, Popconfirm } from 'antd';
+import {
+  message, DatePicker, Input, Select as AntdSelect, Radio, Modal, Upload, Popconfirm
+} from 'antd';
 import moment from 'moment';
 import _ from 'lodash';
 
@@ -40,10 +42,10 @@ const getPopupContainerFunction = () => document.querySelector(`.${styles.modalC
 // 表头
 const {
   tableTitle: { custList: custTitleList, approvalList, moreList },
-  LIMIT_COUNT,  // 添加客户的限制条数
-  STRING_LIMIT_LENGTH,  // 字符串长度限制
+  LIMIT_COUNT, // 添加客户的限制条数
+  STRING_LIMIT_LENGTH, // 字符串长度限制
   operateTypeArray,
-  SET_CODE,  // 限制设置 value
+  SET_CODE, // 限制设置 value
   attachmentMap,
   bankConfirmArray,
   EDIT_MESSAGE,
@@ -197,21 +199,27 @@ export default class CreateModal extends PureComponent {
       // 对接人
       const managerIdColumn = _.find(titleList, o => o.key === KEY_MANAGERID) || {};
       managerIdColumn.render = (text, record) => {
-        const { edit = false, custId, dockingList = [], managerId, managerName } = record;
+        const {
+          edit = false, custId, dockingList = [], managerId, managerName
+        } = record;
         const showName = managerId ? `${managerName} (${managerId || ''})` : '';
         return edit
-          ? <span><AutoComplete
-            key={custId}
-            placeholder="客户号/客户名称"
-            showNameKey="ptyMngName"
-            showIdKey="ptyMngId"
-            optionList={dockingList}
-            defaultValue={showName}
-            onSelect={v => this.handleSelectEmp(v, record)}
-            onSearch={v => this.handleSearchEmp(v, record)}
-            dropdownMatchSelectWidth={false}
-            style={autoCompleteStyle}
-          /></span>
+          ? (
+            <span>
+              <AutoComplete
+                key={custId}
+                placeholder="客户号/客户名称"
+                showNameKey="ptyMngName"
+                showIdKey="ptyMngId"
+                optionList={dockingList}
+                defaultValue={showName}
+                onSelect={v => this.handleSelectEmp(v, record)}
+                onSearch={v => this.handleSearchEmp(v, record)}
+                dropdownMatchSelectWidth={false}
+                style={autoCompleteStyle}
+              />
+            </span>
+          )
           : <div title={showName}>{showName}</div>;
       };
       // 禁止转出金额
@@ -219,14 +227,16 @@ export default class CreateModal extends PureComponent {
       limitAmountColumn.render = (text, record) => {
         const { edit = false, newLimitAmount = '', limitAmount = '' } = record;
         if (edit) {
-          return (<div>
-            <Input
-              value={newLimitAmount}
-              placeholder="请输入禁止转出金额"
-              style={{ maxWidth: '160px' }}
-              onChange={e => this.handleLimitAmountChange(e, record)}
-            />
-          </div>);
+          return (
+            <div>
+              <Input
+                value={newLimitAmount}
+                placeholder="请输入禁止转出金额"
+                style={{ maxWidth: '160px' }}
+                onChange={e => this.handleLimitAmountChange(e, record)}
+              />
+            </div>
+          );
         }
         return (<div>{limitAmount}</div>);
       };
@@ -239,17 +249,21 @@ export default class CreateModal extends PureComponent {
       render: (text, record) => {
         const { edit } = record;
         const editElement = isLimit
-        ? <Icon type="beizhu" onClick={() => this.editCustomerInfo(record)} />
-        : null;
+          ? <Icon type="beizhu" onClick={() => this.editCustomerInfo(record)} />
+          : null;
         return edit
-        ? <div className={styles.operateColumn}>
-          <a onClick={() => this.cancelOperateClick(record)}>取消</a>
-          <a onClick={() => this.submitOperateClick(record)}>确定</a>
-        </div>
-        : <div className={styles.operateColumn}>
-          {editElement}
-          {this.renderPopconfirm(record)}
-        </div>;
+          ? (
+            <div className={styles.operateColumn}>
+              <a onClick={() => this.cancelOperateClick(record)}>取消</a>
+              <a onClick={() => this.submitOperateClick(record)}>确定</a>
+            </div>
+          )
+          : (
+            <div className={styles.operateColumn}>
+              {editElement}
+              {this.renderPopconfirm(record)}
+            </div>
+          );
       },
       width: 100,
     });
@@ -778,8 +792,8 @@ export default class CreateModal extends PureComponent {
   disabledEndDate(current) {
     const { limitStartTime, isLimit } = this.state;
     return isLimit
-    ? current < moment(limitStartTime).endOf('day')
-    : current < moment().startOf('day');
+      ? current < moment(limitStartTime).endOf('day')
+      : current < moment().startOf('day');
   }
 
   // 替换关键字颜色
@@ -1000,7 +1014,8 @@ export default class CreateModal extends PureComponent {
       name: '选择限制解除事件',
       type: '账户限制管理',
       subType: '账户限制管理',
-    } })
+    }
+  })
   handleApproverModalOK(auth) {
     const { flowAuditors, submitData } = this.state;
     const payload = {
@@ -1015,7 +1030,9 @@ export default class CreateModal extends PureComponent {
   @autobind
   sendRequest(payload) {
     const { saveChange } = this.props;
-    const { isLimit, limitStartTime, bankConfirm, amountConfirm } = this.state;
+    const {
+      isLimit, limitStartTime, bankConfirm, amountConfirm
+    } = this.state;
     const newPayload = { ...payload, amountConfirm };
     // 如果是限制类型
     if (isLimit) {
@@ -1031,15 +1048,17 @@ export default class CreateModal extends PureComponent {
   // 渲染点击删除按钮后的确认框
   @autobind
   renderPopconfirm(record) {
-    return (<Popconfirm
-      placement="top"
-      onConfirm={() => this.handleDeleteTableData(record)}
-      okText="是"
-      cancelText="否"
-      title={'是否删除此条数据？'}
-    >
-      <Icon type="shanchu" />
-    </Popconfirm>);
+    return (
+      <Popconfirm
+        placement="top"
+        onConfirm={() => this.handleDeleteTableData(record)}
+        okText="是"
+        cancelText="否"
+        title="是否删除此条数据？"
+      >
+        <Icon type="shanchu" />
+      </Popconfirm>
+    );
   }
 
   render() {
@@ -1085,10 +1104,12 @@ export default class CreateModal extends PureComponent {
     }
 
     // 新建弹窗按钮
-    const selfBtnGroup = (<BottonGroup
-      list={newButtonData}
-      onEmitEvent={this.handleSubmit}
-    />);
+    const selfBtnGroup = (
+      <BottonGroup
+        list={newButtonData}
+        onEmitEvent={this.handleSubmit}
+      />
+    );
 
     const uploadProps = {
       data: {
@@ -1115,12 +1136,13 @@ export default class CreateModal extends PureComponent {
     // 是否上传过
     const isUploaded = !_.isEmpty(attachment);
     // 上传过，或者未上传但有数据
-    const uploadElement = (isUploaded || (!isUploaded && addedCustData.length > 0)) ?
-      (<span><a onClick={this.handleImportData}>批量导入数据</a></span>)
-    :
-      (<Upload {...uploadProps}>
-        <a>批量导入数据</a>
-      </Upload>);
+    const uploadElement = (isUploaded || (!isUploaded && addedCustData.length > 0))
+      ? (<span><a onClick={this.handleImportData}>批量导入数据</a></span>)
+      : (
+        <Upload {...uploadProps}>
+          <a>批量导入数据</a>
+        </Upload>
+      );
     // 客户标题列表
     const custTitle = this.getColumnsCustTitle();
     // 表格需要滚动的宽度
@@ -1185,16 +1207,18 @@ export default class CreateModal extends PureComponent {
             </InfoForm>
             {
               isLimit
-              ? null
-              : <InfoForm label="是否银行确认" style={{ width: '160px' }} className={styles.inlineInfoForm} required>
-                <RadioGroup onChange={this.handleBankConfirmChange} value={bankConfirm}>
-                  {
+                ? null
+                : (
+                  <InfoForm label="是否银行确认" style={{ width: '160px' }} className={styles.inlineInfoForm} required>
+                    <RadioGroup onChange={this.handleBankConfirmChange} value={bankConfirm}>
+                      {
                     bankConfirmArray.map(item => (
                       <Radio value={item.value} key={item.value}>{item.label}</Radio>
                     ))
                   }
-                </RadioGroup>
-              </InfoForm>
+                    </RadioGroup>
+                  </InfoForm>
+                )
             }
           </div>
           <div className={styles.contentItem}>
@@ -1217,7 +1241,8 @@ export default class CreateModal extends PureComponent {
               <span className={styles.linkSpan}>
                 <a
                   onClick={this.handleDownloadClick}
-                  href={CustAllotXLS} className={styles.downloadLink}
+                  href={CustAllotXLS}
+                  className={styles.downloadLink}
                 >
                   下载导入模板
                 </a>
@@ -1252,20 +1277,20 @@ export default class CreateModal extends PureComponent {
                 optionFilterProp="children"
                 getPopupContainer={getPopupContainerFunction}
               >
-                {limitList.map(item =>
-                  <Option key={item.key}>{this.replaceKeyWord(item.label, selectValue)}</Option>,
-                )}
+                {limitList.map(item => <Option key={item.key}>{this.replaceKeyWord(item.label, selectValue)}</Option>, )}
               </AntdSelect>
             </InfoForm>
             {
               isLimit
-              ? <InfoForm label="账户限制设置日期" style={{ width: '160px' }} className={styles.inlineInfoForm} required>
-                <DatePicker
-                  disabledDate={this.disabledStartDate}
-                  onChange={this.handleStartDatePickerChange}
-                />
-              </InfoForm>
-              : null
+                ? (
+                  <InfoForm label="账户限制设置日期" style={{ width: '160px' }} className={styles.inlineInfoForm} required>
+                    <DatePicker
+                      disabledDate={this.disabledStartDate}
+                      onChange={this.handleStartDatePickerChange}
+                    />
+                  </InfoForm>
+                )
+                : null
             }
             <InfoForm label="账户限制解除日期" style={{ width: '160px' }} className={styles.inlineInfoForm} required>
               <DatePicker

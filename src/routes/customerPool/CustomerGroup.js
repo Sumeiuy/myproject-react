@@ -12,7 +12,9 @@ import { routerRedux } from 'dva/router';
 import { autobind } from 'core-decorators';
 import { connect } from 'dva';
 import _ from 'lodash';
-import { Tabs, Input, Row, Col, message } from 'antd';
+import {
+  Tabs, Input, Row, Col, message
+} from 'antd';
 
 import Button from '../../components/common/Button';
 import CustomerGrouplist from '../../components/customerPool/group/CustomerGrouplist';
@@ -389,7 +391,11 @@ export default class CustomerGroup extends PureComponent {
       cusgroupPage,
       replace,
       location,
-      location: { query: { count = '', curPageNum, curPageSize, isOperateSuccess } },
+      location: {
+        query: {
+          count = '', curPageNum, curPageSize, isOperateSuccess
+        }
+      },
     } = this.props;
 
     const {
@@ -408,82 +414,93 @@ export default class CustomerGroup extends PureComponent {
     return (
       <div>
         {
-          showOperateGroupSuccess || isShowSuccess ?
-            <div>
-              <AddCusSuccess
-                closeTab={this.closeTab}
-                groupName={groupName}
-                groupId={cusgroupId}
-                onDestroy={this.clearSuccessFlag}
-                push={push}
-                location={location}
-                replace={replace}
-              />
-            </div> :
-            <div className={styles.customerGroup}>
-              <div className={styles.text}>添加分组</div>
-              <hr />
-              <Tabs
-                defaultActiveKey="addhasGroup"
-                type="card"
-                onTabClick={this.handleTabClick}
-              >
-                <TabPane tab="添加到已有分组" key="addhasGroup">
-                  <div className={styles.Grouplist}>
-                    <Row type="flex" justify="start" align="middle">
-                      <Col span={24}>
-                        <div className={styles.searchBox}>
-                          <Input.Search
-                            className="search-input"
-                            placeholder="请输入分组名称"
-                            onSearch={this.handleSearch}
-                            width={200}
-                            enterButton
-                          />
-                        </div>
-                      </Col>
-                    </Row>
-                    <Row className="groupListRow">
-                      <CustomerGrouplist
-                        className="CustomerGrouplist"
-                        data={cusgroupList}
-                        pageData={{
-                          totalRecordNum: totalRecordNum || CUR_PAGE_COUNT,
-                          curPageNum: curPageNum || CUR_PAGE,
-                          curPageSize: curPageSize || CUR_PAGESIZE,
-                        }}
-                        onPageChange={this.handlePageChange}
-                        onSizeChange={this.handleShowSizeChange}
-                        onRowSelectionChange={this.handleRowSelectionChange}
-                        onSingleRowSelectionChange={this.handleSingleRowSelectionChange}
-                        currentSelectRowKeys={currentSelectRowKeys}
-                      />
-                    </Row>
-                    <Row className={styles.BtnContent}>
-                      <Col span={12}>
-                        <p className={styles.description}>已选目标客户<b>&nbsp;{count}&nbsp;</b>户</p>
-                      </Col>
-                      <Col span={12}>
-                        <Button onClick={this.handleCancel}>取消</Button>
-                        <Button type="primary" onClick={this.handleSubmit}>保存</Button>
-                      </Col>
-                    </Row>
-                  </div>
-                </TabPane>
-                <TabPane tab="添加到新建分组" key="addNewGroup">
-                  <div className={styles.newGroupForm}>
-                    <Row className={styles.groupForm}>
-                      <AddNewGroup
-                        goBack={this.handleCancel}
-                        onSubmit={this.handleNewGroupSubmit}
-                        count={count}
-                      />
-                      <Row className={styles.BtnContent} />
-                    </Row>
-                  </div>
-                </TabPane>
-              </Tabs>
-            </div>
+          showOperateGroupSuccess || isShowSuccess
+            ? (
+              <div>
+                <AddCusSuccess
+                  closeTab={this.closeTab}
+                  groupName={groupName}
+                  groupId={cusgroupId}
+                  onDestroy={this.clearSuccessFlag}
+                  push={push}
+                  location={location}
+                  replace={replace}
+                />
+              </div>
+            )
+            : (
+              <div className={styles.customerGroup}>
+                <div className={styles.text}>添加分组</div>
+                <hr />
+                <Tabs
+                  defaultActiveKey="addhasGroup"
+                  type="card"
+                  onTabClick={this.handleTabClick}
+                >
+                  <TabPane tab="添加到已有分组" key="addhasGroup">
+                    <div className={styles.Grouplist}>
+                      <Row type="flex" justify="start" align="middle">
+                        <Col span={24}>
+                          <div className={styles.searchBox}>
+                            <Input.Search
+                              className="search-input"
+                              placeholder="请输入分组名称"
+                              onSearch={this.handleSearch}
+                              width={200}
+                              enterButton
+                            />
+                          </div>
+                        </Col>
+                      </Row>
+                      <Row className="groupListRow">
+                        <CustomerGrouplist
+                          className="CustomerGrouplist"
+                          data={cusgroupList}
+                          pageData={{
+                            totalRecordNum: totalRecordNum || CUR_PAGE_COUNT,
+                            curPageNum: curPageNum || CUR_PAGE,
+                            curPageSize: curPageSize || CUR_PAGESIZE,
+                          }}
+                          onPageChange={this.handlePageChange}
+                          onSizeChange={this.handleShowSizeChange}
+                          onRowSelectionChange={this.handleRowSelectionChange}
+                          onSingleRowSelectionChange={this.handleSingleRowSelectionChange}
+                          currentSelectRowKeys={currentSelectRowKeys}
+                        />
+                      </Row>
+                      <Row className={styles.BtnContent}>
+                        <Col span={12}>
+                          <p className={styles.description}>
+已选目标客户
+                            <b>
+                              {count}
+&nbsp;
+                            </b>
+户
+                          </p>
+                        </Col>
+                        <Col span={12}>
+                          <Button onClick={this.handleCancel}>取消</Button>
+                          <Button type="primary" onClick={this.handleSubmit}>保存</Button>
+                        </Col>
+                      </Row>
+                    </div>
+                  </TabPane>
+                  <TabPane tab="添加到新建分组" key="addNewGroup">
+                    <div className={styles.newGroupForm}>
+                      <Row className={styles.groupForm}>
+                        <AddNewGroup
+                          goBack={this.handleCancel}
+                          onSubmit={this.handleNewGroupSubmit}
+                          count={count}
+                        />
+                        <Row className={styles.BtnContent} />
+                      </Row>
+                    </div>
+                  </TabPane>
+                </Tabs>
+              </div>
+            )
         }
       </div>
     );

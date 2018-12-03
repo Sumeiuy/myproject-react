@@ -27,7 +27,11 @@ export default {
   },
   reducers: {
     queryQuestionsSuccess(state, action) {
-      const { payload: { pageNum, pageSize, totalCount, totalPage, quesInfoList } } = action;
+      const {
+        payload: {
+          pageNum, pageSize, totalCount, totalPage, quesInfoList
+        }
+      } = action;
       return {
         ...state,
         questionInfoList: {

@@ -51,7 +51,6 @@ const NOOP = _.noop;
 const dateFormat = 'YYYY年MM月DD日';
 
 export default class RightPanel extends PureComponent {
-
   static propTypes = {
     onPreview: PropTypes.func.isRequired,
     priviewCustFileData: PropTypes.object,
@@ -174,7 +173,9 @@ export default class RightPanel extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: '编辑' } })
   handleModifyTask() {
-    const { push, taskBasicInfo, flowId, clearCreateTaskData } = this.props;
+    const {
+      push, taskBasicInfo, flowId, clearCreateTaskData
+    } = this.props;
     if (!_.isEmpty(taskBasicInfo) || !_.isEmpty(flowId)) {
       // 发起任务之前
       clearCreateTaskData(RETURN_TASK_FROM_TASKLIST);
@@ -233,7 +234,8 @@ export default class RightPanel extends PureComponent {
       finProductVO = {},
       traceOpVO = {},
       threshold,
-      indexUnit } = resultTraceVO;
+      indexUnit
+    } = resultTraceVO;
     let indicatorText = '';
     if (traceOpVO.key === 'COMPLETE') {
       indicatorText = `完善${indexCateName}`;
@@ -250,8 +252,7 @@ export default class RightPanel extends PureComponent {
 
   @autobind
   renderOption(optionRespDtoList = []) {
-    return _.map(optionRespDtoList, (item, index) =>
-      <span key={index} className={styles.quesRight}>{`${getAlphaIndex(index)}.${item.optionValue}`}</span>);
+    return _.map(optionRespDtoList, (item, index) => <span key={index} className={styles.quesRight}>{`${getAlphaIndex(index)}.${item.optionValue}`}</span>);
   }
 
   // 问卷调查数据处理
@@ -261,15 +262,19 @@ export default class RightPanel extends PureComponent {
     const quesData = _.map(quesVO, (item, key) => {
       const { quesType = {}, optionRespDtoList = [] } = item;
       if (quesType.key === TYPE.radioType || quesType.key === TYPE.checkboxType) {
-        return (<div key={key} className={styles.rowBottom}>
-          <p>{`${key + 1}.${item.value}(${quesType.value})`}</p>
-          <p>{this.renderOption(optionRespDtoList)}</p>
-        </div>);
+        return (
+          <div key={key} className={styles.rowBottom}>
+            <p>{`${key + 1}.${item.value}(${quesType.value})`}</p>
+            <p>{this.renderOption(optionRespDtoList)}</p>
+          </div>
+        );
       }
-      return (<div key={key} className={styles.rowBottom}>
-        <p>{`${key + 1}.${item.value}(${quesType.value})`}</p>
-        <p>{item.remark}</p>
-      </div>);
+      return (
+        <div key={key} className={styles.rowBottom}>
+          <p>{`${key + 1}.${item.value}(${quesType.value})`}</p>
+          <p>{item.remark}</p>
+        </div>
+      );
     });
     return quesData;
   }
@@ -282,20 +287,21 @@ export default class RightPanel extends PureComponent {
         <div className={styles.wrap}>
           <span>客户连接&nbsp;:</span>
           {
-            tagetCustModel.dataName ?
-              <span className={styles.value}>
-                <Icon type="excel" className={styles.excel} />
+            tagetCustModel.dataName
+              ? (
+                <span className={styles.value}>
+                  <Icon type="excel" className={styles.excel} />
                 客户列表
                   <a onClick={this.handleSeeCust} className={styles.seeCust}>
                   查看预览
                   </a>
-              </span>
-              :
-              <span className={styles.value}>--</span>
+                </span>
+              )
+              : <span className={styles.value}>--</span>
           }
         </div>
       );
-    } else if (tagetCustModel.custSource === '标签圈人') {
+    } if (tagetCustModel.custSource === '标签圈人') {
       return (
         <div>
           <h4>标签描述&nbsp;:</h4>
@@ -317,7 +323,9 @@ export default class RightPanel extends PureComponent {
     const { resultTraceVO: resultTraceVOList = {}, quesVO = [] } = motDetailModel;
     const resultTraceVO = _.isEmpty(resultTraceVOList) ? {} : resultTraceVOList;
     const { trackDeadline } = resultTraceVO;
-    const { isShowTable, curPageNum, curPageSize, totalRecordNum } = this.state;
+    const {
+      isShowTable, curPageNum, curPageSize, totalRecordNum
+    } = this.state;
 
     const columns = _.head(priviewCustFileData.custInfos);
     const columnSize = _.size(columns);
@@ -331,8 +339,7 @@ export default class RightPanel extends PureComponent {
       scrollX,
     } : null;
     const scrollY = (INITIAL_PAGE_SIZE * COLUMN_HEIGHT);
-    const dataSource =
-      this.addIdToDataSource(this.renderDataSource(columns, _.drop(priviewCustFileData.custInfos)));
+    const dataSource = this.addIdToDataSource(this.renderDataSource(columns, _.drop(priviewCustFileData.custInfos)));
     const titleColumn = this.renderColumnTitle(columns);
     const custNum = tagetCustModel.custNum || '--';
 
@@ -348,11 +355,15 @@ export default class RightPanel extends PureComponent {
               * 驳回修改的任务增加快捷入口
               */}
               {
-                motDetailModel.status === STATE_REJECT_CODE ?
-                  <div
-                    className={styles.editTask}
-                    onClick={this.handleModifyTask}
-                  >编辑</div>
+                motDetailModel.status === STATE_REJECT_CODE
+                  ? (
+                    <div
+                      className={styles.editTask}
+                      onClick={this.handleModifyTask}
+                    >
+编辑
+                    </div>
+                  )
                   : null
               }
             </div>
@@ -376,32 +387,39 @@ export default class RightPanel extends PureComponent {
                 {this.renderMention()}
               </div>
             </div>
-            {_.isEmpty(resultTraceVO) ? null :
-            <div className={styles.module}>
-              <InfoTitle head="结果跟踪" />
-              <div className={styles.modContent}>
-                <div className={styles.rowWidth}>
-                  <span>跟踪截止日期&nbsp;:</span>
-                  <span>{trackDeadline ? moment(trackDeadline).format(dateFormat) : '--'}</span>
-                </div>
-                <div>
-                  <span>{resultTraceVO.indexName}&nbsp;:</span>
-                  <span>{this.renderResultData() || '--'}</span>
-                </div>
-              </div>
-            </div>
-            }
-            {
-              _.isEmpty(quesVO) ? null :
-              <div className={styles.module}>
-                <InfoTitle head="任务调查" />
-                <div className={styles.modContent}>
-                  <div>
-                    <span>调查内容&nbsp;:</span>
-                    <span>{this.renderTaskSurvey() || '--'}</span>
+            {_.isEmpty(resultTraceVO) ? null
+              : (
+                <div className={styles.module}>
+                  <InfoTitle head="结果跟踪" />
+                  <div className={styles.modContent}>
+                    <div className={styles.rowWidth}>
+                      <span>跟踪截止日期&nbsp;:</span>
+                      <span>{trackDeadline ? moment(trackDeadline).format(dateFormat) : '--'}</span>
+                    </div>
+                    <div>
+                      <span>
+                        {resultTraceVO.indexName}
+&nbsp;:
+                      </span>
+                      <span>{this.renderResultData() || '--'}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
+              )
+            }
+            {
+              _.isEmpty(quesVO) ? null
+                : (
+                  <div className={styles.module}>
+                    <InfoTitle head="任务调查" />
+                    <div className={styles.modContent}>
+                      <div>
+                        <span>调查内容&nbsp;:</span>
+                        <span>{this.renderTaskSurvey() || '--'}</span>
+                      </div>
+                    </div>
+                  </div>
+                )
             }
             <div id="approvalRecord" className={styles.lastModule}>
               <InfoTitle head="审批意见" />
@@ -411,46 +429,48 @@ export default class RightPanel extends PureComponent {
             </div>
           </div>
         </div>
-        {isShowTable ?
-          <GroupModal
-            visible={isShowTable}
-            title={'客户预览'}
-            okText={'提交'}
-            okType={'primary'}
-            onOk={this.handleCloseModal}
-            onCancel={this.handleCloseModal}
-            footer={
-              <Button
-                type="primary"
-                size="default"
-                onClick={this.handleCloseModal}
-              >
+        {isShowTable
+          ? (
+            <GroupModal
+              visible={isShowTable}
+              title="客户预览"
+              okText="提交"
+              okType="primary"
+              onOk={this.handleCloseModal}
+              onCancel={this.handleCloseModal}
+              footer={(
+                <Button
+                  type="primary"
+                  size="default"
+                  onClick={this.handleCloseModal}
+                >
                 确定
-              </Button>
-            }
-            width={700}
-            modalContent={
-              <Table
-                pageData={{
-                  curPageNum,
-                  curPageSize,
-                  totalRecordNum,
-                }}
-                listData={dataSource}
-                onSizeChange={this.handleShowSizeChange}
-                onPageChange={this.handlePageChange}
-                tableClass={styles.custListTable}
-                titleColumn={titleColumn}
+                </Button>
+)}
+              width={700}
+              modalContent={(
+                <Table
+                  pageData={{
+                    curPageNum,
+                    curPageSize,
+                    totalRecordNum,
+                  }}
+                  listData={dataSource}
+                  onSizeChange={this.handleShowSizeChange}
+                  onPageChange={this.handlePageChange}
+                  tableClass={styles.custListTable}
+                  titleColumn={titleColumn}
                 // title fixed
-                isFixedTitle
+                  isFixedTitle
                 // 纵向滚动
-                scrollY={scrollY}
-                {...scrollXProps}
-                columnWidth={COLUMN_WIDTH}
-                bordered
-              />
-            }
-          /> : null
+                  scrollY={scrollY}
+                  {...scrollXProps}
+                  columnWidth={COLUMN_WIDTH}
+                  bordered
+                />
+)}
+            />
+          ) : null
         }
       </div>
     );

@@ -54,14 +54,18 @@ export default class PhoneWrapper extends Component {
 
   // 点击电话号码打电话
   @autobind
-  @logable({ type: 'Click',
-payload: { name: '点击号码拨打电话' } })
+  @logable({
+    type: 'Click',
+    payload: { name: '点击号码拨打电话' }
+  })
   handleClickPhone() {
     this.startTime = '';
-     // 获取打完电话发服务记录时需要的字典信息
-    return this.props.getMotCustfeedBackDict({ pageNum: 1,
-pageSize: 10000,
-type: 2 });
+    // 获取打完电话发服务记录时需要的字典信息
+    return this.props.getMotCustfeedBackDict({
+      pageNum: 1,
+      pageSize: 10000,
+      type: 2
+    });
   }
 
   // 电话接通方法

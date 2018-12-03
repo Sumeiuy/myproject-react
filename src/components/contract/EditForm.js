@@ -160,6 +160,7 @@ export default class EditForm extends PureComponent {
       this.closeModal('addClauseModal');
     });
   }
+
   // 表格编辑事件
   @autobind
   @logable({
@@ -178,6 +179,7 @@ export default class EditForm extends PureComponent {
       },
     }, this.showModal('addClauseModal'));
   }
+
   // 表格删除事件
   @autobind
   @logable({
@@ -199,6 +201,7 @@ export default class EditForm extends PureComponent {
       this.props.onChangeForm(this.state.formData);
     });
   }
+
   // 打开弹窗
   @autobind
   @logPV({ pathname: '/modal/addClauseModal', title: '合约条款弹窗' })
@@ -207,6 +210,7 @@ export default class EditForm extends PureComponent {
       [modalKey]: true,
     });
   }
+
   // 关闭弹窗
   @autobind
   closeModal(modalKey) {
@@ -266,7 +270,10 @@ export default class EditForm extends PureComponent {
     return (
       <div className={styles.editComponent}>
         <div className={styles.dcHeader}>
-          <span className={styles.dcHaderNumb}>编号{baseInfo.applyId}</span>
+          <span className={styles.dcHaderNumb}>
+编号
+            {baseInfo.applyId}
+          </span>
         </div>
         <BaseInfoEdit
           contractName="合约名称"
@@ -281,10 +288,9 @@ export default class EditForm extends PureComponent {
             isRequired
           />
           {
-            isSubscribe ?
-              null
-            :
-              <Button {...buttonProps}>新建</Button>
+            isSubscribe
+              ? null
+              : <Button {...buttonProps}>新建</Button>
           }
           <CommonTable
             data={formData.terms}
@@ -310,23 +316,23 @@ export default class EditForm extends PureComponent {
         </div>
         <div className={styles.cutSpace} />
         {
-          addClauseModal ?
-            <AddClause
-              isShow={addClauseModal}
-              onConfirm={this.handleAddClause}
-              onCloseModal={() => this.closeModal('addClauseModal')}
-              edit={editClause}
-              clauseNameList={clauseNameList}
-              departmentList={cooperDeparment}
-              searchDepartment={searchCooperDeparment}
-              defaultData={defaultData}
-              clearDepartmentData={clearDepartmentData}
-            />
-          :
-            null
+          addClauseModal
+            ? (
+              <AddClause
+                isShow={addClauseModal}
+                onConfirm={this.handleAddClause}
+                onCloseModal={() => this.closeModal('addClauseModal')}
+                edit={editClause}
+                clauseNameList={clauseNameList}
+                departmentList={cooperDeparment}
+                searchDepartment={searchCooperDeparment}
+                defaultData={defaultData}
+                clearDepartmentData={clearDepartmentData}
+              />
+            )
+            : null
         }
       </div>
     );
   }
-
 }

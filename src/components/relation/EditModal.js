@@ -68,6 +68,7 @@ export default class EditModal extends Component {
     const { defultItem } = props;
     this.state = this.getDefultValue(defultItem);
   }
+
   // 弹框的默认显示
   getDefultValue(defultItem) {
     let select = {};
@@ -79,6 +80,7 @@ export default class EditModal extends Component {
     }
     return { select, teamName: postnDesc };
   }
+
   // 校验数据
   @autobind
   vetifyData() {
@@ -119,7 +121,9 @@ export default class EditModal extends Component {
     } else if (modalType !== TEAM_MODAL && isSameSelect) {
       isUpdate = false;
     }
-    onOk({ select, teamName, modalType, isUpdate });
+    onOk({
+      select, teamName, modalType, isUpdate
+    });
   }
 
   @autobind

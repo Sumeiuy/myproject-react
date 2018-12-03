@@ -46,7 +46,6 @@ const {
 const defaultFilialeLevel = constants.filialeLevel;
 
 export default class ChartBarNormal extends PureComponent {
-
   static propTypes = {
     location: PropTypes.object,
     level: PropTypes.string.isRequired,
@@ -111,8 +110,8 @@ export default class ChartBarNormal extends PureComponent {
             orgId: item.id,
             custRangeLevel: item.level,
             level: item.level,
-            scope: item.level && item.level === defaultFilialeLevel && !report.isNewOrg(item.id) ?
-              (Number(item.level) + 2) : (Number(item.level) + 1),
+            scope: item.level && item.level === defaultFilialeLevel && !report.isNewOrg(item.id)
+              ? (Number(item.level) + 2) : (Number(item.level) + 1),
           });
         }
       });
@@ -207,7 +206,7 @@ export default class ChartBarNormal extends PureComponent {
         // 全是正数
         // return medianValue.plus > item ? 'right' : 'insideRight';
         return positions.topRight;
-      } else if (plusMax <= 0) {
+      } if (plusMax <= 0) {
         // 全是负数
         // return medianValue.minus < item ? 'left' : 'insideLeft';
         return medianValue.minus < item ? [-howmanyno(item), -14] : [8, -14];
@@ -230,7 +229,7 @@ export default class ChartBarNormal extends PureComponent {
         // return medianValue.plus > item ? 'right' : 'insideRight';
         return medianValue.plus > item ? [8, -14] : ['60%', -14];
         // return ['60%', -14];
-      } else if (item < 0) {
+      } if (item < 0) {
         // return medianValue.minus < item ? 'left' : 'insideLeft';
         return medianValue.minus < item ? [-howmanyno(item), -14] : [8, -14];
       }
@@ -412,8 +411,8 @@ export default class ChartBarNormal extends PureComponent {
               <td>${levelCompanyArr[dataIndex]} - ${levelWealthArr[dataIndex]}</td>
             </tr>
           `;
-        } else if ((levelAndScope === 4 && axisValue !== '--' && !hasFundCenter) ||
-          (levelAndScope === 3 && axisValue !== '--')) {
+        } else if ((levelAndScope === 4 && axisValue !== '--' && !hasFundCenter)
+          || (levelAndScope === 3 && axisValue !== '--')) {
           // 3为财富中心，需要显示南京分公司
           // 4为营业部,只需要显示xx公司名称(非南京分公司没有有财富中心)
           tooltipHead = `
@@ -555,23 +554,21 @@ export default class ChartBarNormal extends PureComponent {
         <div className={styles.chartWrapper}>
           {
             (orgModel && orgModel.length > 0)
-            ?
-            (
-              <IECharts
-                onReady={this.onReady}
-                option={options}
-                resizable
-                style={{
-                  height: '335px',
-                }}
-              />
-            )
-            :
-            (
-              <div className={styles.noChart}>
-                <img src={imgSrc} alt="图表不可见" />
-              </div>
-            )
+              ? (
+                <IECharts
+                  onReady={this.onReady}
+                  option={options}
+                  resizable
+                  style={{
+                    height: '335px',
+                  }}
+                />
+              )
+              : (
+                <div className={styles.noChart}>
+                  <img src={imgSrc} alt="图表不可见" />
+                </div>
+              )
           }
         </div>
       </div>

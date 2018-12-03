@@ -10,7 +10,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 
-import Icon from '../../components/common/Icon';
+import Icon from '../common/Icon';
 import styles from './headBreadcrumb.less';
 
 export default class HeadBreadcrumb extends PureComponent {

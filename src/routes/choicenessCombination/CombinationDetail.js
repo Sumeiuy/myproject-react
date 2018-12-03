@@ -24,7 +24,9 @@ import CustomerRepeatAnalyze from '../../components/choicenessCombination/combin
 import Overview from '../../components/choicenessCombination/combinationDetail/Overview';
 import Composition from '../../components/choicenessCombination/combinationDetail/Composition';
 import { openRctTab } from '../../utils';
-import { permission, dva, url as urlHelper, emp } from '../../helper';
+import {
+  permission, dva, url as urlHelper, emp
+} from '../../helper';
 import { seperator } from '../../config';
 import { chartTabList, sourceType, securityType } from '../../components/choicenessCombination/config';
 import logable from '../../decorators/logable';
@@ -82,33 +84,51 @@ const mapStateToProps = state => ({
 });
 const mapDispatchToProps = {
   getOverview: dispatch(effects.getOverview,
-    { loading: true,
-forceFull: true }),
+    {
+      loading: true,
+      forceFull: true
+    }),
   getCompositionPie: dispatch(effects.getCompositionPie,
-    { loading: true,
-forceFull: true }),
+    {
+      loading: true,
+      forceFull: true
+    }),
   querySecurityList: dispatch(effects.querySecurityList,
-    { loading: true,
-forceFull: true }),
+    {
+      loading: true,
+      forceFull: true
+    }),
   getAdjustWarehouseHistory: dispatch(effects.getAdjustWarehouseHistory,
-    { loading: true,
-forceFull: true }),
+    {
+      loading: true,
+      forceFull: true
+    }),
   getCombinationTree: dispatch(effects.getCombinationTree,
-    { loading: true,
-forceFull: true }),
+    {
+      loading: true,
+      forceFull: true
+    }),
   getCombinationLineChart: dispatch(effects.getCombinationLineChart,
-    { loading: true,
-forceFull: true }),
+    {
+      loading: true,
+      forceFull: true
+    }),
   getOrderingCustList: dispatch(effects.getOrderingCustList,
-    { loading: true,
-forceFull: true }),
+    {
+      loading: true,
+      forceFull: true
+    }),
   getReportHistoryList: dispatch(effects.getReportHistoryList,
-    { loading: true,
-forceFull: true }),
+    {
+      loading: true,
+      forceFull: true
+    }),
   push: routerRedux.push,
   queryHoldRepeatProportion: dispatch(effects.queryHoldRepeatProportion,
-    { loading: true,
-forceFull: true }),
+    {
+      loading: true,
+      forceFull: true
+    }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -201,8 +221,8 @@ export default class CombinationDetail extends PureComponent {
     }).then(() => {
       const { overview } = this.props;
       // 如果是资产配置类组合默认查询一年的数据
-      const key = _.isNull(overview.weekEarnings) ?
-        chartTabList[1].key : chartTabList[0].key;
+      const key = _.isNull(overview.weekEarnings)
+        ? chartTabList[1].key : chartTabList[0].key;
       // 趋势图
       getCombinationLineChart({
         combinationCode: id,
@@ -322,7 +342,9 @@ export default class CombinationDetail extends PureComponent {
   })
   openCustomerListPage(obj) {
     const { push } = this.context;
-    const { name, code, type, source, combinationCode } = obj;
+    const {
+      name, code, type, source, combinationCode
+    } = obj;
     const query = {
       source,
     };
@@ -430,7 +452,11 @@ export default class CombinationDetail extends PureComponent {
       modalReportHistoryData,
       custRepeatData,
       location,
-      location: { query: { id, visible = false, modalType = '', name } },
+      location: {
+        query: {
+          id, visible = false, modalType = '', name
+        }
+      },
     } = this.props;
     const {
       hasTkMampPermission,
@@ -493,34 +519,37 @@ export default class CombinationDetail extends PureComponent {
             openReportDetailPage={this.openReportDetailPage}
           />
           {
-            hasTkMampPermission ?
-              <CustomerRepeatAnalyze
-                combinationCode={id}
-                data={custRepeatData}
-                combinationData={overview}
-                openCustomerListPage={this.openCustomerListPage}
-              />
-              :
-              <OrderingCustomer
-                combinationCode={id}
-                data={orderCustData}
-                pageChange={this.handleOrderCustPageChange}
-                combinationData={overview}
-                openCustomerListPage={this.openCustomerListPage}
-              />
+            hasTkMampPermission
+              ? (
+                <CustomerRepeatAnalyze
+                  combinationCode={id}
+                  data={custRepeatData}
+                  combinationData={overview}
+                  openCustomerListPage={this.openCustomerListPage}
+                />
+              )
+              : (
+                <OrderingCustomer
+                  combinationCode={id}
+                  data={orderCustData}
+                  pageChange={this.handleOrderCustPageChange}
+                  combinationData={overview}
+                  openCustomerListPage={this.openCustomerListPage}
+                />
+              )
           }
         </div>
         {
           visible
-          ?
-            <CombinationModal
-              location={location}
+            ? (
+              <CombinationModal
+                location={location}
               // 关闭弹窗
-              closeModal={this.closeModal}
-              {...modalProps[modalType]}
-            />
-          :
-            null
+                closeModal={this.closeModal}
+                {...modalProps[modalType]}
+              />
+            )
+            : null
         }
       </div>
     );

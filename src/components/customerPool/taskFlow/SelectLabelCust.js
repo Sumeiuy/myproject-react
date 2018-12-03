@@ -121,7 +121,9 @@ export default class SelectLabelCust extends PureComponent {
     const { circlePeopleData } = this.props;
     const { shouldclearBottomLabel, currentFilterNum, currentSelectLabelName } = this.state;
     const matchedData = _.find(circlePeopleData, item => item.id === labelId);
-    const { labelDesc = '', labelMapping, labelName = '', customNum = 0, source } = matchedData || EMPTY_OBJECT;
+    const {
+      labelDesc = '', labelMapping, labelName = '', customNum = 0, source
+    } = matchedData || EMPTY_OBJECT;
 
     const sightingScopeBool = isSightingLabel(source);
 
@@ -266,7 +268,11 @@ export default class SelectLabelCust extends PureComponent {
           defaultValue={condition}
           enterButton
         />
-        <h4 className={styles.tipsWord}>共有<span>{tipsSize}</span>条可选标签</h4>
+        <h4 className={styles.tipsWord}>
+共有
+          <span>{tipsSize}</span>
+条可选标签
+        </h4>
         <TaskSearchRow
           ref={(ref) => {
             if (ref) {
@@ -294,4 +300,3 @@ export default class SelectLabelCust extends PureComponent {
     );
   }
 }
-

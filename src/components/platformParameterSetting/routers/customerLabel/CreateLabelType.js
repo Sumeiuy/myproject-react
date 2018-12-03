@@ -25,7 +25,8 @@ export default class CreateLabelType extends PureComponent {
 
   @autobind
   handleCreateTypeSubmit() {
-    const { addLabelType,
+    const {
+      addLabelType,
       closeModal,
       form: { validateFields, getFieldsError },
       queryLabelType,

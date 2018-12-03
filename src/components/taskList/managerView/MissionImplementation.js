@@ -37,7 +37,6 @@ const EMPTY_CONTENT = '本机构无服务客户';
 const MAIN_MAGEGER_ID = 'msm';
 
 export default class MissionImplementation extends PureComponent {
-
   static propTypes = {
     // 任务实施进度
     missionImplementationProgress: PropTypes.object,
@@ -184,7 +183,9 @@ export default class MissionImplementation extends PureComponent {
    * 获取服务经理维度任务统计
    */
   @autobind
-  getCustManagerScope({ pageNum, pageSize, orgId, enterType }) {
+  getCustManagerScope({
+    pageNum, pageSize, orgId, enterType
+  }) {
     this.props.getCustManagerScope({
       orgId: orgId || this.getCurrentOrgId(),
       pageNum,
@@ -403,7 +404,7 @@ export default class MissionImplementation extends PureComponent {
           </Tooltip>
         </div>
       );
-    } else if (createTime) {
+    } if (createTime) {
       return (
         <div className={styles.downLoading}>
           <span className={styles.line}>|</span>
@@ -417,7 +418,10 @@ export default class MissionImplementation extends PureComponent {
             onClick={this.handleDownload}
             href={this.getSourceSrc(currentMissionReport)}
           >
-            <span>{createTime}报告</span>
+            <span>
+              {createTime}
+报告
+            </span>
           </a>
         </div>
       );
@@ -445,14 +449,14 @@ export default class MissionImplementation extends PureComponent {
     } = currentMissionReport;
 
     const notMissionCust = _.isEmpty(missionImplementationProgress) && _.isEmpty(custFeedback);
-    const canCreateReport = _.isBoolean(isCreatingMotReport) ?
-      notMissionCust || isCreatingMotReport :
-      true;
+    const canCreateReport = _.isBoolean(isCreatingMotReport)
+      ? notMissionCust || isCreatingMotReport
+      : true;
     return (
       <div className={styles.missionImplementationSection}>
         <div className={styles.title}>
           <div className={styles.leftSection}>
-            <LabelInfo value={'任务实施简报'} />
+            <LabelInfo value="任务实施简报" />
           </div>
           <div className={styles.rightSection}>
             <div className={styles.report}>
@@ -476,35 +480,41 @@ export default class MissionImplementation extends PureComponent {
         </div>
         {this.renderTabsExtra()}
         {
-          notMissionCust ?
-            <div className={styles.emptyContent}>
-              <img src={emptyImg} alt={EMPTY_CONTENT} />
-              <div className={styles.tip}>{EMPTY_CONTENT}</div>
-            </div> :
-            <ServiceResultLayout
-              missionImplementationProgress={missionImplementationProgress}
-              onPreviewCustDetail={this.handlePreview}
-              custFeedback={custFeedback}
-            />
+          notMissionCust
+            ? (
+              <div className={styles.emptyContent}>
+                <img src={emptyImg} alt={EMPTY_CONTENT} />
+                <div className={styles.tip}>{EMPTY_CONTENT}</div>
+              </div>
+            )
+            : (
+              <ServiceResultLayout
+                missionImplementationProgress={missionImplementationProgress}
+                onPreviewCustDetail={this.handlePreview}
+                custFeedback={custFeedback}
+              />
+            )
         }
         {
-          !notMissionCust ?
-            <div className={styles.custManagerDetailSection}>
-              <CustManagerDetailScope
-                location={location}
-                detailData={custManagerScopeData}
-                currentOrgLevel={level}
-                isFold={isFold}
-                getCustManagerScope={this.getCustManagerScope}
-                currentScopeList={currentScopeList}
+          !notMissionCust
+            ? (
+              <div className={styles.custManagerDetailSection}>
+                <CustManagerDetailScope
+                  location={location}
+                  detailData={custManagerScopeData}
+                  currentOrgLevel={level}
+                  isFold={isFold}
+                  getCustManagerScope={this.getCustManagerScope}
+                  currentScopeList={currentScopeList}
                 // 当前任务id
-                currentId={currentId}
-                custRange={custRange}
-                orgId={this.getCurrentOrgId()}
-                onPreviewCustDetail={onPreviewCustDetail}
-                currentFeedback={currentFeedback}
-              />
-            </div> : null
+                  currentId={currentId}
+                  custRange={custRange}
+                  orgId={this.getCurrentOrgId()}
+                  onPreviewCustDetail={onPreviewCustDetail}
+                  currentFeedback={currentFeedback}
+                />
+              </div>
+            ) : null
         }
       </div>
     );

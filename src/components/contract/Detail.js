@@ -132,15 +132,21 @@ export default class Detail extends PureComponent {
     return (
       <div className={styles.detailComponent}>
         <div className={styles.dcHeader}>
-          <span className={styles.dcHaderNumb}>编号{baseInfo.applyId}</span>
+          <span className={styles.dcHaderNumb}>
+编号
+            {baseInfo.applyId}
+          </span>
           {
-            hasEditPermission ?
-              <span
-                onClick={this.handleShowEditModal}
-                className={modifyBtnClass}
-              >修改</span>
-            :
-              null
+            hasEditPermission
+              ? (
+                <span
+                  onClick={this.handleShowEditModal}
+                  className={modifyBtnClass}
+                >
+修改
+                </span>
+              )
+              : null
           }
         </div>
         <div className={styles.detailWrapper}>

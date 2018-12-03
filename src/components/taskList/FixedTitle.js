@@ -46,7 +46,9 @@ export default class FixedTitle extends PureComponent {
 
   static getDerivedStateFromProps(nextProps, prevState) {
     const { viewType } = prevState;
-    const { sortKey, sortDirection, viewType: nextViewType, sortContent } = nextProps;
+    const {
+      sortKey, sortDirection, viewType: nextViewType, sortContent
+    } = nextProps;
     // 视图不一样的时候，update组件
     if (viewType !== nextViewType) {
       return {
@@ -224,4 +226,3 @@ export default class FixedTitle extends PureComponent {
     );
   }
 }
-

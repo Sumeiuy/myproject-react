@@ -12,7 +12,6 @@ import logable from '../../../../decorators/logable';
 const custRangeStyle = { width: 'auto', maxWidth: 150 };
 
 export default class SaleDepartmentFilter extends PureComponent {
-
   static propTypes = {
     collectCustRange: PropTypes.func,
     updateQueryState: PropTypes.func.isRequired,

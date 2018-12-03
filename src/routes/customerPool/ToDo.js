@@ -516,7 +516,9 @@ export default class ToDo extends PureComponent {
       initiator,
     } = this.props;
     const { push, replace } = this.context;
-    const { applyType, approveType, initiatorValue, startTime, endTime } = this.state;
+    const {
+      applyType, approveType, initiatorValue, startTime, endTime
+    } = this.state;
     const {
       query: {
         keyword,

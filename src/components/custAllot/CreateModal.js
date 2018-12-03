@@ -8,17 +8,19 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { message, Modal, Upload, Radio, Popconfirm, AutoComplete as AntdAutoComplete } from 'antd';
+import {
+  message, Modal, Upload, Radio, Popconfirm, AutoComplete as AntdAutoComplete
+} from 'antd';
 import _ from 'lodash';
 
 import InfoTitle from '../common/InfoTitle';
 import InfoForm from '../common/infoForm';
 import CommonModal from '../common/biz/CommonModal';
-import Button from '../../components/common/Button';
-import Pagination from '../../components/common/Pagination';
-import CommonTable from '../../components/common/biz/CommonTable';
-import Icon from '../../components/common/Icon';
-import AutoComplete from '../../components/common/similarAutoComplete';
+import Button from '../common/Button';
+import Pagination from '../common/Pagination';
+import CommonTable from '../common/biz/CommonTable';
+import Icon from '../common/Icon';
+import AutoComplete from '../common/similarAutoComplete';
 import logable, { logPV, logCommon } from '../../decorators/logable';
 import { request } from '../../config';
 import { emp } from '../../helper';
@@ -133,8 +135,10 @@ export default class CreateModal extends PureComponent {
 
   // 导入数据
   @autobind
-  @logPV({ pathname: '/modal/custAllotImportData',
-title: '分公司客户分配导入数据' })
+  @logPV({
+    pathname: '/modal/custAllotImportData',
+    title: '分公司客户分配导入数据'
+  })
   onImportHandle() {
     this.setState({
       importVisible: true,
@@ -149,7 +153,13 @@ title: '分公司客户分配导入数据' })
     // 客户
     const custNameColumn = _.find(titleList, o => o.key === KEY_CUSTNAME);
     custNameColumn.render = (text, record) => (
-      <div>{text} ({record.custId})</div>
+      <div>
+        {text}
+        {' '}
+(
+        {record.custId}
+)
+      </div>
     );
     // 状态
     const statusColumn = _.find(titleList, o => o.key === KEY_STATUS);
@@ -162,10 +172,9 @@ title: '分公司客户分配导入数据' })
     oldEmpNameColumn.render = (text, record) => (
       <div>
         {
-          text ?
-            `${text} (${record.oldEmpId})`
-          :
-            null
+          text
+            ? `${text} (${record.oldEmpId})`
+            : null
         }
       </div>
     );
@@ -173,24 +182,24 @@ title: '分公司客户分配导入数据' })
     const isTouguColumn = _.find(titleList, o => o.key === KEY_ISTOUGU);
     isTouguColumn.render = (text, record) => {
       const isTouGu = text ? '是' : '否';
-      return (<div>
-        {
-          record.oldEmpName ?
-            isTouGu
-          :
-            null
+      return (
+        <div>
+          {
+          record.oldEmpName
+            ? isTouGu
+            : null
         }
-      </div>);
+        </div>
+      );
     };
     // 开发经理
     const dmNameColumn = _.find(titleList, o => o.key === KEY_DMNAME);
     dmNameColumn.render = (text, record) => (
       <div>
         {
-          text ?
-            `${text} (${record.dmId})`
-          :
-            null
+          text
+            ? `${text} (${record.dmId})`
+            : null
         }
       </div>
     );
@@ -233,7 +242,7 @@ title: '分公司客户分配导入数据' })
     updateList({
       ...payload,
       attachment,
-      operateType: operateType[0],  // add
+      operateType: operateType[0], // add
     }).then(() => {
       const { updateData: { appId }, queryAddedCustList } = this.props;
       this.setState({
@@ -253,8 +262,10 @@ title: '分公司客户分配导入数据' })
 
   // 上传事件
   @autobind
-  @logable({ type: 'Click',
-payload: { name: '分公司客户分配客户导入' } })
+  @logable({
+    type: 'Click',
+    payload: { name: '分公司客户分配客户导入' }
+  })
   handleFileChange(info) {
     const uploadFile = info.file;
     const { size } = uploadFile;
@@ -288,8 +299,7 @@ payload: { name: '分公司客户分配客户导入' } })
             updateList(payload).then(() => {
               const { clearData } = this.props;
               // clearAddedCustData
-              clearData(clearDataArray[2]).then(() =>
-                this.handleUpdateDataAndQueryList(payload, attachmentData));
+              clearData(clearDataArray[2]).then(() => this.handleUpdateDataAndQueryList(payload, attachmentData));
             });
           } else {
             this.handleUpdateDataAndQueryList(payload, attachmentData);
@@ -312,16 +322,20 @@ payload: { name: '分公司客户分配客户导入' } })
   }
 
   @autobind
-  @logable({ type: 'ButtonClick',
-payload: { name: '否' } })
+  @logable({
+    type: 'ButtonClick',
+    payload: { name: '否' }
+  })
   importHandleCancel() {
     this.setState({
       importVisible: false,
     });
   }
 
-  @logable({ type: 'Click',
-payload: { name: '下载模板' } })
+  @logable({
+    type: 'Click',
+    payload: { name: '下载模板' }
+  })
   handleDownloadClick() {}
 
   // 分配规则切换事件
@@ -348,19 +362,23 @@ payload: { name: '下载模板' } })
     },
   })
   deleteTableData(type, record) {
-    const { updateList, updateData, queryAddedCustList, queryAddedManageList } = this.props;
+    const {
+      updateList, updateData, queryAddedCustList, queryAddedManageList
+    } = this.props;
     const isCust = type === CUST;
     const payload = {
       customer: [],
       manage: [],
-      operateType: operateType[1],  // delete
+      operateType: operateType[1], // delete
       id: updateData.appId,
     };
     if (isCust) {
       payload.customer = [{ brokerNumber: record.custId }];
     } else {
-      payload.manage = [{ empId: record.empId,
-positionId: record.positionId }];
+      payload.manage = [{
+        empId: record.empId,
+        positionId: record.positionId
+      }];
     }
     updateList(payload).then(() => {
       const queryAddedCustListPayload = {
@@ -385,8 +403,10 @@ positionId: record.positionId }];
 
   // 客户分页事件
   @autobind
-  @logable({ type: 'ButtonClick',
-payload: { name: '客户列表分页' } })
+  @logable({
+    type: 'ButtonClick',
+    payload: { name: '客户列表分页' }
+  })
   handleCustPageChange(pageNum) {
     const { queryAddedCustList, updateData } = this.props;
     const payload = {
@@ -401,8 +421,10 @@ payload: { name: '客户列表分页' } })
 
   // 服务经理分页事件
   @autobind
-  @logable({ type: 'ButtonClick',
-payload: { name: '服务经理列表分页' } })
+  @logable({
+    type: 'ButtonClick',
+    payload: { name: '服务经理列表分页' }
+  })
   handleManagePageChange(pageNum) {
     const { queryAddedManageList, updateData } = this.props;
     const payload = {
@@ -504,10 +526,14 @@ payload: { name: '服务经理列表分页' } })
 
   // 发送添加客户、服务经理请求
   @autobind
-  @logable({ type: 'ButtonClick',
-payload: { name: '添加' } })
+  @logable({
+    type: 'ButtonClick',
+    payload: { name: '添加' }
+  })
   sendRequest(modalKey) {
-    const { clearData, sendRequest, custModalKey, manageModalKey, updateData } = this.props;
+    const {
+      clearData, sendRequest, custModalKey, manageModalKey, updateData
+    } = this.props;
     const { client, manager, alreadyCount } = this.state;
     let customer = [];
     let manage = [];
@@ -539,7 +565,7 @@ payload: { name: '添加' } })
     const payload = {
       customer: isCust ? customer : [],
       manage: isCust ? [] : manage,
-      operateType: operateType[0],  // add
+      operateType: operateType[0], // add
       attachment: '',
       id: updateData.appId || '',
     };
@@ -577,15 +603,17 @@ payload: { name: '添加' } })
   // 渲染点击删除按钮后的确认框
   @autobind
   renderPopconfirm(type, record) {
-    return (<Popconfirm
-      placement="top"
-      onConfirm={() => this.deleteTableData(type, record)}
-      okText="是"
-      cancelText="否"
-      title={'是否删除此条数据？'}
-    >
-      <Icon type="shanchu" />
-    </Popconfirm>);
+    return (
+      <Popconfirm
+        placement="top"
+        onConfirm={() => this.deleteTableData(type, record)}
+        okText="是"
+        cancelText="否"
+        title="是否删除此条数据？"
+      >
+        <Icon type="shanchu" />
+      </Popconfirm>
+    );
   }
 
   // 单个服务经理的 option 渲染
@@ -654,12 +682,13 @@ payload: { name: '添加' } })
     // 是否上传过
     const isUploaded = !_.isEmpty(attachment);
     // 上传过，或者未上传但有数据
-    const uploadElement = (isUploaded || (!isUploaded && custList.length > 0)) ?
-      (<span><a onClick={this.onImportHandle}>批量导入数据</a></span>)
-    :
-      (<Upload {...uploadProps}>
-        <a>批量导入数据</a>
-      </Upload>);
+    const uploadElement = (isUploaded || (!isUploaded && custList.length > 0))
+      ? (<span><a onClick={this.onImportHandle}>批量导入数据</a></span>)
+      : (
+        <Upload {...uploadProps}>
+          <a>批量导入数据</a>
+        </Upload>
+      );
     // 客户标题列表
     const custTitle = this.getColumnsCustTitle();
     // 服务经理标题列表
@@ -711,7 +740,8 @@ payload: { name: '添加' } })
                 </Button>
                 <a
                   onClick={this.handleDownloadClick}
-                  href={CustAllotXLS} className={styles.downloadLink}
+                  href={CustAllotXLS}
+                  className={styles.downloadLink}
                 >
                   下载导入模板
                 </a>
@@ -762,21 +792,21 @@ payload: { name: '添加' } })
           </div>
           {
             showRuleType
-            ?
-              null
-            :
-              <div className={styles.contentItem}>
-                <InfoTitle head="客户分配规则" />
-                <InfoForm label="规则" style={{ width: '96px' }} required>
-                  <RadioGroup onChange={this.handleRuleTypeChange} value={ruleType}>
-                    {
+              ? null
+              : (
+                <div className={styles.contentItem}>
+                  <InfoTitle head="客户分配规则" />
+                  <InfoForm label="规则" style={{ width: '96px' }} required>
+                    <RadioGroup onChange={this.handleRuleTypeChange} value={ruleType}>
+                      {
                       ruleTypeArray.map(item => (
                         <Radio key={item.value} value={item.value}>{item.label}</Radio>
                       ))
                     }
-                  </RadioGroup>
-                </InfoForm>
-              </div>
+                    </RadioGroup>
+                  </InfoForm>
+                </div>
+              )
           }
           <Modal
             visible={importVisible}

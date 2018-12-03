@@ -105,8 +105,8 @@ export default class AmountSelectMenu extends PureComponent {
     // 通过了input输入校验
     if (validData.isValid) {
       // 周期与金额都选或者都不选
-      if ((!dateType && !isInputHasValue) ||
-        (dateType && isInputHasValue)) {
+      if ((!dateType && !isInputHasValue)
+        || (dateType && isInputHasValue)) {
         this.props.onChange({
           dateType: this.state.dateType,
           min: this.getNumValue(this.state.min),
@@ -206,7 +206,7 @@ export default class AmountSelectMenu extends PureComponent {
       return '请输入数字';
     }
 
-   /*  if (num < 0) {
+    /*  if (num < 0) {
       return '请输入一个大于0的数字';
     } */
 
@@ -221,10 +221,9 @@ export default class AmountSelectMenu extends PureComponent {
     return '';
   }
 
-  renderErrorMessage = () =>
-    this.state.error.minError ||
-    this.state.error.maxError ||
-    this.state.error.commmonError
+  renderErrorMessage = () => this.state.error.minError
+    || this.state.error.maxError
+    || this.state.error.commmonError
 
   render() {
     const { data } = this.props;

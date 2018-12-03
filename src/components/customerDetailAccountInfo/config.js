@@ -21,7 +21,7 @@ export const CHART_RADAR_OPTIONS = {
     },
     rich: {
       name: {
-        color:'#108ee9',
+        color: '#108ee9',
         lineHeight: 14,
         fontSize: 12,
         align: 'center',
@@ -47,7 +47,7 @@ export const CHART_RADAR_OPTIONS = {
   nameGap: 0,
   splitNumber: 3,
   splitArea: {
-    areaStyle: {                            // 分隔区域的样式设置。
+    areaStyle: { // 分隔区域的样式设置。
       show: true,
       color: ['#f4f6f9', '#e9eaec'],
     }
@@ -60,7 +60,7 @@ export const CHART_SERIES_OPTIONS = {
   itemStyle: {
     normal: {
       lineStyle: {
-        color : '#ff8008',
+        color: '#ff8008',
       },
       areaStyle: {
         color: '#fec965',
@@ -113,10 +113,10 @@ export const TRADE_FLOW_TABS = {
 };
 
 export const STOCK_HISTORY_HOLDING_TABLE_SCROLL = { x: 2000 };
-export const PRODUCT_HISTORY_HOLDING_TABLE_SCROLL= { x: 2000 };
+export const PRODUCT_HISTORY_HOLDING_TABLE_SCROLL = { x: 2000 };
 export const OPTION_HISTORY_HOLDING_TABLE_SCROLL = { x: 2500 };
 export const STANDARD_TRADE_FLOW_TABLE_SCROLL = { x: 2100 };
-export const CREDIT_TRADE_FLOW_TABLE_SCROLL= { x: 1800 };
+export const CREDIT_TRADE_FLOW_TABLE_SCROLL = { x: 1800 };
 export const OPTION_TRADE_FLOW_TABLE_SCROLL = { x: 2500 };
 
 // 证券历史持仓表格显示的columns
@@ -417,7 +417,7 @@ export const STANDARD_TRADE_FLOW_COLUMNS = [
     title: '产品名称',
     dataIndex: 'productName',
     key: 'productName',
-    className:'productName',
+    className: 'productName',
     fixed: 'left',
     width: 150,
   },
@@ -425,7 +425,7 @@ export const STANDARD_TRADE_FLOW_COLUMNS = [
     title: '产品代码',
     dataIndex: 'productCode',
     key: 'productCode',
-    className:'productCode',
+    className: 'productCode',
     fixed: 'left',
     width: 150,
   },
@@ -433,14 +433,14 @@ export const STANDARD_TRADE_FLOW_COLUMNS = [
     title: '业务类别',
     dataIndex: 'bussinessType',
     key: 'bussinessType',
-    className:'bussinessType',
+    className: 'bussinessType',
     width: 150,
   },
   {
     title: '成交价格',
     dataIndex: 'dealPrice',
     key: 'dealPrice',
-    className:'dealPrice',
+    className: 'dealPrice',
     align: 'right',
     isNumber: true,
   },
@@ -448,7 +448,7 @@ export const STANDARD_TRADE_FLOW_COLUMNS = [
     title: '成交数量',
     dataIndex: 'dealNumber',
     key: 'dealNumber',
-    className:'dealNumber',
+    className: 'dealNumber',
     align: 'right',
     isAmount: true,
   },
@@ -519,7 +519,7 @@ export const CREDIT_TRADE_FLOW_COLUMNS = [
     title: '产品名称',
     dataIndex: 'productName',
     key: 'productName',
-    className:'productName',
+    className: 'productName',
     fixed: 'left',
     width: 150,
   },
@@ -527,7 +527,7 @@ export const CREDIT_TRADE_FLOW_COLUMNS = [
     title: '产品代码',
     dataIndex: 'productCode',
     key: 'productCode',
-    className:'productCode',
+    className: 'productCode',
     fixed: 'left',
     width: 150,
   },
@@ -535,14 +535,14 @@ export const CREDIT_TRADE_FLOW_COLUMNS = [
     title: '业务类别',
     dataIndex: 'bussinessType',
     key: 'bussinessType',
-    className:'bussinessType',
+    className: 'bussinessType',
     width: 150,
   },
   {
     title: '成交价格',
     dataIndex: 'dealPrice',
     key: 'dealPrice',
-    className:'dealPrice',
+    className: 'dealPrice',
     align: 'right',
     isNumber: true,
   },
@@ -550,7 +550,7 @@ export const CREDIT_TRADE_FLOW_COLUMNS = [
     title: '成交数量',
     dataIndex: 'dealNumber',
     key: 'dealNumber',
-    className:'dealNumber',
+    className: 'dealNumber',
     align: 'right',
     isAmount: true,
   },
@@ -607,7 +607,7 @@ export const OPTION_TRADE_FLOW_COLUMNS = [
     title: '期权合约简称',
     dataIndex: 'optionContractName',
     key: 'optionContractName',
-    className:'optionContractName',
+    className: 'optionContractName',
     fixed: 'left',
     width: 150,
   },
@@ -615,7 +615,7 @@ export const OPTION_TRADE_FLOW_COLUMNS = [
     title: '期权合约编码',
     dataIndex: 'optionContractCode',
     key: 'optionContractCode',
-    className:'optionContractCode',
+    className: 'optionContractCode',
     fixed: 'left',
     width: 150,
   },
@@ -623,21 +623,21 @@ export const OPTION_TRADE_FLOW_COLUMNS = [
     title: '业务类别',
     dataIndex: 'bussinessType',
     key: 'bussinessType',
-    className:'bussinessType',
+    className: 'bussinessType',
     width: 150,
   },
   {
     title: '成交价格',
     dataIndex: 'dealPrice',
     key: 'dealPrice',
-    className:'dealPrice',
+    className: 'dealPrice',
     isNumber: true,
   },
   {
     title: '成交数量',
     dataIndex: 'dealNumber',
     key: 'dealNumber',
-    className:'dealNumber',
+    className: 'dealNumber',
     align: 'right',
     isAmount: true,
   },
@@ -719,34 +719,34 @@ export const CAPITAL_CHANGE_COLUMNS = [
     dataIndex: 'tradeDate',
     key: 'tradeDate',
     className: 'tradeDate',
-    width: '14%' ,
+    width: '14%',
   },
   {
     title: '资金账号',
     dataIndex: 'accountNumber',
     key: 'accountNumber',
-    className:'accountNumber',
-    width: '14%' ,
+    className: 'accountNumber',
+    width: '14%',
   },
   {
     title: '币种',
     dataIndex: 'currency',
     key: 'currency',
-    className:'currency',
+    className: 'currency',
     width: '14%',
   },
   {
     title: '交易渠道',
     dataIndex: 'tradeChannel',
     key: 'tradeChannel',
-    className:'tradeChannel',
+    className: 'tradeChannel',
     width: '14%',
   },
   {
     title: '业务标志',
     dataIndex: 'serviceIndication',
     key: 'serviceIndication',
-    className:'serviceIndication',
+    className: 'serviceIndication',
     width: '15%',
   },
   {
@@ -754,7 +754,7 @@ export const CAPITAL_CHANGE_COLUMNS = [
     dataIndex: 'ammount',
     key: 'ammount',
     align: 'right',
-    className:'ammount',
+    className: 'ammount',
     isNumber: true,
     width: '14%',
   },
@@ -776,18 +776,14 @@ export const STOCK_REALTIME_COLUMNS = [
     dataIndex: 'productCode',
     key: 'productCode',
     className: 'productCode',
-    render: (text, record) => {
-      return text === 'null' ? '' : text;
-     },
+    render: (text, record) => (text === 'null' ? '' : text),
   },
   {
     title: '产品名称',
     dataIndex: 'productName',
     key: 'productName',
     className: 'productCode',
-    render: (text, record) => {
-      return text === 'null' ? '' : text;
-     },
+    render: (text, record) => (text === 'null' ? '' : text),
   },
   {
     title: '持仓数',
@@ -795,9 +791,7 @@ export const STOCK_REALTIME_COLUMNS = [
     key: 'holdingNumber',
     align: 'right',
     className: 'dataInterval',
-    render: (text, record) => {
-      return text === 'null' ? '' : text;
-     },
+    render: (text, record) => (text === 'null' ? '' : text),
   },
   {
     title: '可用数',
@@ -805,9 +799,7 @@ export const STOCK_REALTIME_COLUMNS = [
     key: 'availableNumber',
     align: 'right',
     className: 'dataInterval',
-    render: (text, record) => {
-      return text === 'null' ? '' : text;
-     },
+    render: (text, record) => (text === 'null' ? '' : text),
   },
   {
     title: '成本',
@@ -815,9 +807,7 @@ export const STOCK_REALTIME_COLUMNS = [
     key: 'cost',
     align: 'right',
     className: 'dataInterval',
-    render: (text, record) => {
-     return text === 'null' ? '' : text;
-    },
+    render: (text, record) => (text === 'null' ? '' : text),
   },
   {
     title: '现价',
@@ -825,9 +815,7 @@ export const STOCK_REALTIME_COLUMNS = [
     key: 'presentPrice',
     align: 'right',
     className: 'dataInterval',
-    render: (text, record) => {
-      return text === 'null' ? '' : text;
-     },
+    render: (text, record) => (text === 'null' ? '' : text),
   },
   {
     title: '市值',
@@ -835,9 +823,7 @@ export const STOCK_REALTIME_COLUMNS = [
     key: 'marketValue',
     align: 'right',
     className: 'dataInterval',
-    render: (text, record) => {
-      return text === 'null' ? '' : text;
-     },
+    render: (text, record) => (text === 'null' ? '' : text),
   },
   {
     title: '盈亏',
@@ -845,18 +831,14 @@ export const STOCK_REALTIME_COLUMNS = [
     key: 'profitAndLoss',
     align: 'right',
     className: 'dataInterval',
-    render: (text, record) => {
-      return text === 'null' ? '' : text;
-     },
+    render: (text, record) => (text === 'null' ? '' : text),
   },
   {
     title: '货币类型',
     dataIndex: 'currencyType',
     key: 'currencyType',
     className: 'currencyType',
-    render: (text, record) => {
-      return text === 'null' ? '' : text;
-     },
+    render: (text, record) => (text === 'null' ? '' : text),
   },
 ];
 // 产品实时持仓columns
@@ -866,67 +848,53 @@ export const PRODUCT_REALTIME_COLUMNS = [
     dataIndex: 'productCode',
     key: 'productCode',
     className: 'productCode',
-    render: (text, record) => {
-      return text === 'null' ? '' : text;
-     },
+    render: (text, record) => (text === 'null' ? '' : text),
   },
   {
     title: '产品名称',
     dataIndex: 'productName',
     key: 'productName',
-    className:'productName',
-    render: (text, record) => {
-      return text === 'null' ? '' : text;
-     },
+    className: 'productName',
+    render: (text, record) => (text === 'null' ? '' : text),
   },
   {
     title: '份额',
     dataIndex: 'share',
     key: 'share',
     align: 'right',
-    className:'share',
-    render: (text, record) => {
-      return text === 'null' ? '' : text;
-     },
+    className: 'share',
+    render: (text, record) => (text === 'null' ? '' : text),
   },
   {
     title: '收益率/净值',
     dataIndex: 'netWorth',
     key: 'netWorth',
     align: 'right',
-    className:'netWorth',
-    render: (text, record) => {
-      return text === 'null' ? '' : text;
-     },
+    className: 'netWorth',
+    render: (text, record) => (text === 'null' ? '' : text),
   },
   {
     title: '市值',
     dataIndex: 'marketValue',
     key: 'marketValue',
     align: 'right',
-    className:'marketValue',
-    render: (text, record) => {
-      return text === 'null' ? '' : text;
-     },
+    className: 'marketValue',
+    render: (text, record) => (text === 'null' ? '' : text),
   },
   {
     title: '盈亏',
     dataIndex: 'profitAndLoss',
     key: 'profitAndLoss',
     align: 'right',
-    className:'profitAndLoss',
-    render: (text, record) => {
-      return text === 'null' ? '' : text;
-     },
+    className: 'profitAndLoss',
+    render: (text, record) => (text === 'null' ? '' : text),
   },
   {
     title: '货币类型',
     dataIndex: 'currencyType',
     key: 'currencyType',
     className: 'currencyType',
-    render: (text, record) => {
-      return text === 'null' ? '' : text;
-     },
+    render: (text, record) => (text === 'null' ? '' : text),
   },
 ];
 

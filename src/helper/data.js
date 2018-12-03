@@ -108,7 +108,7 @@ const data = {
       return data;
     }
     let emptyRowNum = padNum - size;
-    let newData = [...data];
+    const newData = [...data];
     while (emptyRowNum > 0) {
       const uuid = this.uuid();
       newData.push({

@@ -18,7 +18,6 @@ import styles from './choiceInvestAdviceModal.less';
 const { TextArea } = Input;
 
 export default class ChoiceInvestAdviceFreeMode extends PureComponent {
-
   static propTypes = {
     isUpdate: PropTypes.bool.isRequired,
     serveContent: PropTypes.object.isRequired,
@@ -127,7 +126,7 @@ export default class ChoiceInvestAdviceFreeMode extends PureComponent {
       desc,
       descErrorInfo,
       titleErrorInfo,
-     } = this.state;
+    } = this.state;
     const ctCls = cx([styles.editLine, styles.editLineTextArea]);
 
     const titleErrorCls = cx({
@@ -154,7 +153,7 @@ export default class ChoiceInvestAdviceFreeMode extends PureComponent {
         </div>
         {
           !validateTitle ? null
-          : (<div className={styles.validateTips}>{titleErrorInfo}</div>)
+            : (<div className={styles.validateTips}>{titleErrorInfo}</div>)
         }
         <div className={ctCls}>
           <div className={styles.editCaption}>内容:</div>
@@ -168,9 +167,13 @@ export default class ChoiceInvestAdviceFreeMode extends PureComponent {
         </div>
         {
           !validateContent ? null
-          : (<div className={styles.validateTips}>{descErrorInfo}</div>)
+            : (<div className={styles.validateTips}>{descErrorInfo}</div>)
         }
-        <div className={styles.tips}><Icon type="exclamation-circle" /> 注：手动输入的服务内容需要经过审批才能发送到客户手机上</div>
+        <div className={styles.tips}>
+          <Icon type="exclamation-circle" />
+          {' '}
+注：手动输入的服务内容需要经过审批才能发送到客户手机上
+        </div>
       </div>
     );
   }

@@ -229,7 +229,7 @@ export default class RejectHome extends Component {
       const { detailUpdate: { flowId, itemId } } = this.props;
       const params = _.pick(this.state, ['assigneeId', 'assigneeOrgId', 'deputeReason', 'deputeTimeStart', 'deputeTimeEnd']);
       submitApply({ ...params, flowId, itemId }).then(this.doApproval);
-       // 记录校验日志
+      // 记录校验日志
       logCommon({
         type: 'Submit',
         payload: {
@@ -247,7 +247,9 @@ export default class RejectHome extends Component {
       doApproval,
       detailUpdate: { flowId, itemId },
     } = this.props;
-    const { operate, auditors, groupName, idea, flowClass, currentNodeName } = this.state;
+    const {
+      operate, auditors, groupName, idea, flowClass, currentNodeName
+    } = this.state;
     const query = {
       flowId,
       itemId,

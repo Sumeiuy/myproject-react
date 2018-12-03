@@ -333,20 +333,20 @@ export default class UnSubscribeCreateBoard extends PureComponent {
         </div>
         {
           // 资讯订阅选择审批人
-          canShowAppover ?
-          (
-            <div className={styles.approvalBlock}>
-              <InfoTitle head="审批人" />
-              <CommissionLine label="选择审批人" labelWidth="110px">
-                <div className={styles.checkApprover} onClick={this.openApproverBoard}>
-                  {approverName === '' ? '' : `${approverName}(${approverId})`}
-                  <div className={styles.searchIcon}>
-                    <Icon type="search" />
+          canShowAppover
+            ? (
+              <div className={styles.approvalBlock}>
+                <InfoTitle head="审批人" />
+                <CommissionLine label="选择审批人" labelWidth="110px">
+                  <div className={styles.checkApprover} onClick={this.openApproverBoard}>
+                    {approverName === '' ? '' : `${approverName}(${approverId})`}
+                    <div className={styles.searchIcon}>
+                      <Icon type="search" />
+                    </div>
                   </div>
-                </div>
-              </CommissionLine>
-            </div>
-          ) : null
+                </CommissionLine>
+              </div>
+            ) : null
         }
         <ChoiceApproverBoard
           visible={choiceApprover}

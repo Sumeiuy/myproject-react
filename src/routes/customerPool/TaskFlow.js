@@ -10,11 +10,15 @@ import PropTypes from 'prop-types';
 import { connect } from 'dva';
 import classnames from 'classnames';
 import { routerRedux } from 'dva/router';
-import { Steps, message, Button, Modal } from 'antd';
+import {
+  Steps, message, Button, Modal
+} from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { removeTab, closeRctTab } from '../../utils';
-import { emp, permission, number, regxp } from '../../helper';
+import {
+  emp, permission, number, regxp
+} from '../../helper';
 import { validateFormContent } from '../../decorators/validateFormContent';
 import ResultTrack from '../../components/common/resultTrack/ConnectedComponent';
 import MissionInvestigation from '../../components/common/missionInvestigation/ConnectedComponent';
@@ -72,8 +76,8 @@ function logCreateTask(instance) {
   const {
     taskFormData: {
       taskType: taskTypeCode,
-    timelyIntervalValue,
-    taskName,
+      timelyIntervalValue,
+      taskName,
     },
     custSegment: {
       custSource: segmentCustSource,
@@ -364,7 +368,9 @@ export default class TaskFlow extends PureComponent {
    * @param {*object} postBody post参数
    */
   @autobind
-  addOrgIdOrPtyMngId({ postBody, argsOfQueryCustomer = {}, labelId, isSightLabel }) {
+  addOrgIdOrPtyMngId({
+    postBody, argsOfQueryCustomer = {}, labelId, isSightLabel
+  }) {
     let newPostBody = postBody;
     if (this.hasTkMampPermission) {
       // 有权限传orgId
@@ -736,7 +742,9 @@ export default class TaskFlow extends PureComponent {
       }
 
       // logable日志---任务评估
-      const { subtype, enterType, taskName, needMissionInvestigation } = this.state;
+      const {
+        subtype, enterType, taskName, needMissionInvestigation
+      } = this.state;
       let values = {};
       if (needMissionInvestigation) {
         values = {
@@ -960,7 +968,9 @@ export default class TaskFlow extends PureComponent {
     }
     this.decoratorSubmitTaskFlow(postBody);
     // logable日志---确认提交
-    const { subtype, enterType, taskName: name, currentSelectRecord } = this.state;
+    const {
+      subtype, enterType, taskName: name, currentSelectRecord
+    } = this.state;
     const values = {
       ...postBody,
       ...currentSelectRecord,
@@ -1261,11 +1271,13 @@ export default class TaskFlow extends PureComponent {
           storedData={storedTaskFlowData}
         />
         {
-          needMissionInvestigation ?
-            <MissionInvestigation
-              wrappedComponentRef={ref => (this.missionInvestigationRef = ref)}
-              storedData={storedTaskFlowData}
-            /> : null
+          needMissionInvestigation
+            ? (
+              <MissionInvestigation
+                wrappedComponentRef={ref => (this.missionInvestigationRef = ref)}
+                storedData={storedTaskFlowData}
+              />
+            ) : null
         }
       </div>,
     }, {
@@ -1295,26 +1307,29 @@ export default class TaskFlow extends PureComponent {
     const stepsCount = _.size(steps);
 
     return (
-      isSuccess ?
-        <CreateTaskSuccess
-          clearSubmitTaskFlowResult={clearSubmitTaskFlowResult}
-          successType={isSuccess}
-          push={push}
-          location={location}
-          onCloseTab={this.handleCloseTab}
-        /> :
-        <div className={styles.taskFlowContainer}>
-          <Steps current={current} className={styles.stepsSection}>
-            {_.map(steps, item => <Step key={item.title} title={item.title} />)}
-          </Steps>
-          <div className={styles.stepsContent}>
-            {steps[current].content}
-            {this.renderBottomLabel()}
-          </div>
-          <div className={styles.stepsAction}>
-            {
+      isSuccess
+        ? (
+          <CreateTaskSuccess
+            clearSubmitTaskFlowResult={clearSubmitTaskFlowResult}
+            successType={isSuccess}
+            push={push}
+            location={location}
+            onCloseTab={this.handleCloseTab}
+          />
+        )
+        : (
+          <div className={styles.taskFlowContainer}>
+            <Steps current={current} className={styles.stepsSection}>
+              {_.map(steps, item => <Step key={item.title} title={item.title} />)}
+            </Steps>
+            <div className={styles.stepsContent}>
+              {steps[current].content}
+              {this.renderBottomLabel()}
+            </div>
+            <div className={styles.stepsAction}>
+              {
               current === 0
-              &&
+              && (
               <Button
                 className={styles.cancelBtn}
                 type="default"
@@ -1322,10 +1337,11 @@ export default class TaskFlow extends PureComponent {
               >
                 取消
               </Button>
+              )
             }
-            {
+              {
               current > 0
-              &&
+              && (
               <Button
                 className={styles.prevStepBtn}
                 type="default"
@@ -1333,10 +1349,11 @@ export default class TaskFlow extends PureComponent {
               >
                 上一步
               </Button>
+              )
             }
-            {
+              {
               current < stepsCount - 1
-              &&
+              && (
               <Button
                 className={styles.nextStepBtn}
                 type="primary"
@@ -1345,10 +1362,11 @@ export default class TaskFlow extends PureComponent {
               >
                 下一步
               </Button>
+              )
             }
-            {
+              {
               current === stepsCount - 1
-              &&
+              && (
               <Button
                 className={styles.confirmBtn}
                 type="primary"
@@ -1357,9 +1375,11 @@ export default class TaskFlow extends PureComponent {
               >
                 确认无误，提交
               </Button>
+              )
             }
+            </div>
           </div>
-        </div>
+        )
     );
   }
 }

@@ -50,7 +50,10 @@ export default class Detail extends PureComponent {
       <div className={styles.detailBox}>
         <div className={styles.inner}>
           <div className={styles.innerWrap}>
-            <h1 className={styles.title}>编号{id}</h1>
+            <h1 className={styles.title}>
+编号
+              {id}
+            </h1>
             <div id="detailModule" className={styles.module}>
               <InfoTitle head="基本信息" />
               <div className={styles.modContent}>
@@ -62,7 +65,7 @@ export default class Detail extends PureComponent {
                 <CommonTable
                   data={empPostns}
                   titleList={titleList}
-                  rowKey={'positionId'}
+                  rowKey="positionId"
                 />
               </div>
             </div>

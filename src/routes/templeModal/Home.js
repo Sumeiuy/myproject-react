@@ -34,7 +34,6 @@ import styles from './home.less';
 const visibleRange = VisibleRangeAll;
 
 export default class TemplModal extends PureComponent {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -130,17 +129,19 @@ export default class TemplModal extends PureComponent {
       [modal]: false,
     });
   }
+
  @autobind
   changeFunction(value) {
     console.log(value);
     console.log('111');
   }
+
   @autobind
-  openApprovalModal() {
-    this.setState({
-      approvalModal: true,
-    });
-  }
+ openApprovalModal() {
+   this.setState({
+     approvalModal: true,
+   });
+ }
 
   @autobind
   closeApprovalModal() {
@@ -155,10 +156,10 @@ export default class TemplModal extends PureComponent {
   }
 
   @autobind
-  handleOkOfDropDown(obj) {
-    console.log('#######obj########', obj);
-    this.closeModal(obj.modalKey);
-  }
+   handleOkOfDropDown(obj) {
+     console.log('#######obj########', obj);
+     this.closeModal(obj.modalKey);
+   }
 
   @autobind
   renderSelectedElem(selected, removeFunc) {

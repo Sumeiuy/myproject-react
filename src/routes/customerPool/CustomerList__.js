@@ -20,7 +20,9 @@ import Filter from '../../components/customerPool/list/Filter__';
 import CustomerLists from '../../components/customerPool/list/CustomerLists__';
 import MatchArea from '../../components/customerPool/list/individualInfo/MatchArea';
 import { dynamicInsertQuota } from '../../components/customerPool/list/sort/config';
-import { permission, emp, url, check, dva, env } from '../../helper';
+import {
+  permission, emp, url, check, dva, env
+} from '../../helper';
 import withRouter from '../../decorators/withRouter';
 import { seperator, sessionStore } from '../../config';
 import { custListSearchFilterTypes } from '../../components/customerPool/list/config/filterConfig';
@@ -46,13 +48,17 @@ const EMPTY_OBJECT = {};
 const CUR_PAGE = 1; // 默认当前页
 const CUR_PAGESIZE = 20; // 默认页大小
 
-let prevFilterValue ={riskLevels:'',
-investPeriod:'',
-investVariety:''}; // 用于暂存第一次点击风险三要素(风险等级、投资期限、投资偏好)
+const prevFilterValue = {
+  riskLevels: '',
+  investPeriod: '',
+  investVariety: ''
+}; // 用于暂存第一次点击风险三要素(风险等级、投资期限、投资偏好)
 
 const DEFAULT_SORT_DIRECTION = 'desc';
-const DEFAULT_SORT = { sortType: 'totAset',
-sortDirection: DEFAULT_SORT_DIRECTION }; // 默认排序方式
+const DEFAULT_SORT = {
+  sortType: 'totAset',
+  sortDirection: DEFAULT_SORT_DIRECTION
+}; // 默认排序方式
 
 // 存储在本地用来判断是否第一次进入新版客户列表页面
 const IS_FIRST_TIME_LOAD_CUSTOMER_LIST = 'IS_FIRST_TIME_LOAD_CUSTOMER_LIST';
@@ -66,8 +72,7 @@ function getFilterArray(labels, hashString) {
 
   if (!_.isEmpty(labelFilters)) {
     _.each(labelFilters,
-      filterList =>
-        _.each(filterList, item => filtersArray.push(item.optionKey)));
+      filterList => _.each(filterList, item => filtersArray.push(item.optionKey)));
   }
 
   return filtersArray;
@@ -188,8 +193,8 @@ function addRadioRangeParams(filterObj) {
 function addSingleParams(filterObj) {
   const param = {};
   const singleParams = [
-    'customType',  // 客户性质
-    'custClass',  // 客户类型
+    'customType', // 客户性质
+    'custClass', // 客户类型
     'investVariety', // 投资偏好
   ];
 
@@ -212,7 +217,7 @@ function addMultiParams(filterObj) {
     'completedRate', // 信息完备率
     'investPeriod', // 投资期限
     'riskLevels', // 风险等级
-    'customLabels', //自定义客户标签
+    'customLabels', // 自定义客户标签
   ];
 
   _.each(multiParams, (key) => {
@@ -232,7 +237,8 @@ function getFilterParam(filterObj, hashString) {
   param.primaryKeyLabels = _.compact(
     []
       .concat(filterObj.primaryKeyLabels)
-      .concat(filtersArray));
+      .concat(filtersArray)
+  );
 
   // 开通业务
   if (filterObj.businessOpened && filterObj.businessOpened[0]) {
@@ -305,9 +311,11 @@ function getSortParam(query, filterParams) {
   const sortFilter = filterParams[sortType] || {};
   const dateType = sortFilter.dateType || '';
   if (sortType && sortDirection) {
-    sortsReqList = [{ sortType,
-sortDirection,
-dateType }];
+    sortsReqList = [{
+      sortType,
+      sortDirection,
+      dateType
+    }];
   }
   return {
     sortsReqList,
@@ -324,14 +332,14 @@ const effects = {
   getCustomerScope: 'customerPool/getCustomerScope',
   getSearchPersonList: 'customerPool/getSearchPersonList',
   getSearchServerPersonList: 'customerPool/getSearchServerPersonList',
-  handleFilter: 'customerList/handleFilter',  // 手动上传日志
-  handleSelect: 'customerList/handleDropDownSelect',  // 手动上传日志
+  handleFilter: 'customerList/handleFilter', // 手动上传日志
+  handleSelect: 'customerList/handleDropDownSelect', // 手动上传日志
   handleOrder: 'customerList/handleOrder', // 手动上传日志
-  handleCheck: 'customerList/handleCheck',  // 手动上传日志
-  handleSearch: 'customerList/handleSearch',  // 手动上传日志
-  handleCloseClick: 'contactModal/handleCloseClick',  // 手动上传日志
-  handleAddServiceRecord: 'contactModal/handleAddServiceRecord',  // 手动上传日志
-  handleCollapseClick: 'contactModal/handleCollapseClick',  // 手动上传日志
+  handleCheck: 'customerList/handleCheck', // 手动上传日志
+  handleSearch: 'customerList/handleSearch', // 手动上传日志
+  handleCloseClick: 'contactModal/handleCloseClick', // 手动上传日志
+  handleAddServiceRecord: 'contactModal/handleAddServiceRecord', // 手动上传日志
+  handleCollapseClick: 'contactModal/handleCollapseClick', // 手动上传日志
   queryCustUuid: 'performerView/queryCustUuid',
   getCeFileList: 'customerPool/getCeFileList',
   getFiltersOfSightingTelescopeSequence: 'customerPool/getFiltersOfSightingTelescopeSequence',
@@ -673,8 +681,8 @@ export default class CustomerList extends PureComponent {
     const otherQuery = _.omit(query, ['selectedIds', 'selectAll']);
 
     // TODO：根据location请求相应的所有子标签条件
-    if (!_.isEqual(preOtherQuery, otherQuery) &&
-      !sessionStore.get(`CUSTOMERPOOL_FILTER_SELECT_FROM_MOREFILTER_${this.hashString}`)) {
+    if (!_.isEqual(preOtherQuery, otherQuery)
+      && !sessionStore.get(`CUSTOMERPOOL_FILTER_SELECT_FROM_MOREFILTER_${this.hashString}`)) {
       this.getCustomerList(nextProps);
       if (query.forceRefresh === 'Y') {
         this.getFiltersOfAllSightingTelescope(query);
@@ -734,13 +742,13 @@ export default class CustomerList extends PureComponent {
       param.orgId = emp.getOrgId();
     }
 
-    if (keyword) {   // 搜索框模糊下钻
+    if (keyword) { // 搜索框模糊下钻
       param.searchTypeReq = 'ALL';
       param.searchText = keyword;
     }
 
     if (query.source === 'association') { // 热词
-      if (query.type !== 'LABEL') {  // 热词里面竟然有普通标签，sb瞎写，这里把普通标签的处理去掉
+      if (query.type !== 'LABEL') { // 热词里面竟然有普通标签，sb瞎写，这里把普通标签的处理去掉
         param.searchTypeReq = query.type;
         param.searchText = labelName;
       }
@@ -838,13 +846,15 @@ export default class CustomerList extends PureComponent {
     };
     // url中存在ptyMng，取id
     if (_.has(finalQuery, 'ptyMngId')) {
-      return { ptyMngId,
-ptyMngName };
+      return {
+        ptyMngId,
+        ptyMngName
+      };
     }
     // 从首页的搜索、热词、联想词、瞄准镜和外部平台过来，判断是否有任务管理权限
     if (_.includes(ENTERLIST_PERMISSION_TASK_MANAGE, finalQuery.source)) {
-      return this.hasTkMampPermission ?
-        { ptyMngId: '' } : currentPtyMng;
+      return this.hasTkMampPermission
+        ? { ptyMngId: '' } : currentPtyMng;
     }
     // 从首页潜在业务客户过来
     if (finalQuery.source === 'business') {
@@ -862,8 +872,8 @@ ptyMngName };
     }
     // 从左侧菜单过来，判断是否有任务管理权限或者首页指标查询权限
     if (_.includes(ENTERLIST_LEFTMENU, finalQuery.source)) {
-      return this.hasTkMampPermission || this.hasIndexViewPermission ?
-        { ptyMngId: '' } : currentPtyMng;
+      return this.hasTkMampPermission || this.hasIndexViewPermission
+        ? { ptyMngId: '' } : currentPtyMng;
     }
     return { ptyMngId: '' };
   }
@@ -907,8 +917,10 @@ ptyMngName };
       location: { query },
     } = this.props;
     const { sortType = '', sortDirection = '' } = query;
-    let currentSort = { sortType,
-sortDirection };
+    let currentSort = {
+      sortType,
+      sortDirection
+    };
     const { clearAllMoreFilters, name, value } = filterItem;
     let valueList = _.split(value, seperator.filterValueSeperator);
     valueList = _.filter(valueList, valueItem => valueItem !== '');
@@ -917,8 +929,10 @@ sortDirection };
     }
     // 当删除当前排序指标对应的过滤器时，排序指标置空使用默认值
     if (isDeleteFilterFromLocation && name === sortType) {
-      currentSort = { sortType: '',
-sortDirection: '' };
+      currentSort = {
+        sortType: '',
+        sortDirection: ''
+      };
     }
     const needDynamicInsertQuota = _.find(dynamicInsertQuota, item => item.filterType === name);
     if (needDynamicInsertQuota) {
@@ -929,8 +943,10 @@ sortDirection: '' };
           sortDirection: DEFAULT_SORT_DIRECTION,
         };
       } else if (name === sortType) {
-        currentSort = { sortType: '',
-sortDirection: '' };
+        currentSort = {
+          sortType: '',
+          sortDirection: ''
+        };
       }
     }
     return currentSort;
@@ -972,23 +988,24 @@ sortDirection: '' };
   }
 
 
-  //记录是否第一次选择风险三要素（风险等级、投资期限、投资偏好）
+  // 记录是否第一次选择风险三要素（风险等级、投资期限、投资偏好）
   @autobind
   recordPrevFilterValue(obj, isDel) {
     if (obj.name === 'investPeriod'
       || obj.name === 'investVariety'
-      || obj.name === 'riskLevels' ) {
-        if (isDel || obj.fromMoreFilter) {
-          prevFilterValue[obj.name] = ''; // 关闭过滤组件时清空值。
-          return;
-        }
-        if (!prevFilterValue[obj.name]) {
-          const messageContent = '取自T-1日数据，仅供用于客户筛查，不能作为客户适当性判定的最终依据！';
-          message.warning(
-             `${obj.name === 'investPeriod' ? '投资期限' : (obj.name === 'investVariety' ? '投资偏好' : '风险等级')}${messageContent}`
-             ,4);
-        }
-        prevFilterValue[obj.name] = obj.value;
+      || obj.name === 'riskLevels') {
+      if (isDel || obj.fromMoreFilter) {
+        prevFilterValue[obj.name] = ''; // 关闭过滤组件时清空值。
+        return;
+      }
+      if (!prevFilterValue[obj.name]) {
+        const messageContent = '取自T-1日数据，仅供用于客户筛查，不能作为客户适当性判定的最终依据！';
+        message.warning(
+          `${obj.name === 'investPeriod' ? '投资期限' : (obj.name === 'investVariety' ? '投资偏好' : '风险等级')}${messageContent}`,
+          4
+        );
+      }
+      prevFilterValue[obj.name] = obj.value;
     }
   }
 
@@ -1004,13 +1021,9 @@ sortDirection: '' };
     }
     return _.filter(filtersArray,
       item => _.isEmpty(
-          _.filter(custListSearchFilterTypes,
-          itemType => {
-            return item.indexOf(itemType) > -1;
-          }
-        )
-      )
-    );
+        _.filter(custListSearchFilterTypes,
+          itemType => item.indexOf(itemType) > -1)
+      ));
   }
 
   // 筛选变化
@@ -1035,8 +1048,10 @@ sortDirection: '' };
 
 
     // 手动上传日志
-    handleFilter({ name: obj.name,
-value: obj.value });
+    handleFilter({
+      name: obj.name,
+      value: obj.value
+    });
 
     // 清除url上所有的已选moreFilter
     if (obj.clearAllMoreFilters) {
@@ -1093,8 +1108,10 @@ value: obj.value });
       handleOrder,
     } = this.props;
     // 手动上传日志
-    handleOrder({ sortType: obj.sortType,
-sortDirection: obj.sortDirection });
+    handleOrder({
+      sortType: obj.sortType,
+      sortDirection: obj.sortDirection
+    });
 
     replace({
       pathname,
@@ -1240,8 +1257,10 @@ sortDirection: obj.sortDirection });
     // 排序的默认值 ： 总资产降序
     let reorderValue = DEFAULT_SORT;
     if (sortType && sortDirection) {
-      reorderValue = { sortType,
-sortDirection };
+      reorderValue = {
+        sortType,
+        sortDirection
+      };
     }
     const { expandAll, queryParam } = this.state;
 

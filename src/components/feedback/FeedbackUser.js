@@ -13,9 +13,11 @@ export default class FeedbackUser extends PureComponent {
   static propTypes = {
     fbuser: PropTypes.object,
   }
+
   static defaultProps = {
     fbuser: EMPTY_OBJECT,
   }
+
   constructor(props) {
     super(props);
     const { fbuser = EMPTY_OBJECT } = this.props || EMPTY_OBJECT;
@@ -23,6 +25,7 @@ export default class FeedbackUser extends PureComponent {
       data: fbuser,
     };
   }
+
   componentWillReceiveProps(nextProps) {
     const { fbuser: preData } = this.props;
     const { fbuser = EMPTY_OBJECT } = nextProps;
@@ -32,9 +35,12 @@ export default class FeedbackUser extends PureComponent {
       });
     }
   }
+
   render() {
     const { data = EMPTY_OBJECT } = this.state;
-    const { empId, name, l1, l2, l3, cellPhone, eMailAddr } = data;
+    const {
+      empId, name, l1, l2, l3, cellPhone, eMailAddr
+    } = data;
     return (
       <div>
         <ul className="property_list clearfix">
@@ -53,7 +59,11 @@ export default class FeedbackUser extends PureComponent {
           <li className="item">
             <div className="wrap value_word">
               <strong className="name">部门：</strong>
-              <span className="value">{l1}{l2}{l3}</span>
+              <span className="value">
+                {l1}
+                {l2}
+                {l3}
+              </span>
             </div>
           </li>
           <li className="item item-right">

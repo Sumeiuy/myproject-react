@@ -95,6 +95,7 @@ export default class UserBasicInfo extends PureComponent {
       editorState: !preState.editorState,
     }));
   }
+
   // 切换面板
   @autobind
   handleChangeTab(activeKey) {

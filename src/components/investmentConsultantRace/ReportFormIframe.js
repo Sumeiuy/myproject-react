@@ -22,7 +22,6 @@ import md5 from 'md5';
 import { emp, url } from '../../helper';
 
 export default class ReportFormIframe extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = { height: props.height };

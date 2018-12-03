@@ -43,9 +43,9 @@ export default class Filter extends PureComponent {
     } = this.props;
     // ENTERLIST_PERMISSION_SIGHTINGLABEL
     // 是否需要展示客户列表瞄准镜筛选条件source集合
-    if (!_.includes(ENTERLIST_PERMISSION_SIGHTINGLABEL, source) ||
-      _.isEmpty(sightingTelescopeFilters) ||
-      _.isEmpty(sightingTelescopeFilters.filterList)) {
+    if (!_.includes(ENTERLIST_PERMISSION_SIGHTINGLABEL, source)
+      || _.isEmpty(sightingTelescopeFilters)
+      || _.isEmpty(sightingTelescopeFilters.filterList)) {
       return null;
     }
     const filtersArray = filters ? filters.split('|') : [];
@@ -55,14 +55,16 @@ export default class Filter extends PureComponent {
         return name === obj.filterCode;
       });
       const backfillValue = (target || '').split('.')[1] || '';
-      return (<SingleFilter
-        key={obj.filterCode}
-        value={backfillValue}
-        filterLabel={obj.filterDesc}
-        filter={obj.filterCode}
-        filterField={transformData(obj.items)}
-        onChange={onFilterChange}
-      />);
+      return (
+        <SingleFilter
+          key={obj.filterCode}
+          value={backfillValue}
+          filterLabel={obj.filterDesc}
+          filter={obj.filterCode}
+          filterField={transformData(obj.items)}
+          onChange={onFilterChange}
+        />
+      );
     });
   }
 
@@ -83,57 +85,67 @@ export default class Filter extends PureComponent {
       <div className="filter">
         {this.renderSightingTelescopeFilter()}
         {
-          (_.includes(FULL_ENTERLIST, source)) ?
-            <SingleFilter
-              value={currentValue.CustomType || ''}
-              filterLabel="客户性质"
-              filter="CustomType"
-              filterField={dict.custNature}
-              onChange={onFilterChange}
-            /> : null
+          (_.includes(FULL_ENTERLIST, source))
+            ? (
+              <SingleFilter
+                value={currentValue.CustomType || ''}
+                filterLabel="客户性质"
+                filter="CustomType"
+                filterField={dict.custNature}
+                onChange={onFilterChange}
+              />
+            ) : null
         }
         {
-          (_.includes(FULL_ENTERLIST, source)) ?
-            <SingleFilter
-              value={currentValue.CustClass || ''}
-              filterLabel="客户类型"
-              filter="CustClass"
-              filterField={dict.custType}
-              onChange={onFilterChange}
-            /> : null
+          (_.includes(FULL_ENTERLIST, source))
+            ? (
+              <SingleFilter
+                value={currentValue.CustClass || ''}
+                filterLabel="客户类型"
+                filter="CustClass"
+                filterField={dict.custType}
+                onChange={onFilterChange}
+              />
+            ) : null
         }
         {
-          (_.includes(FULL_ENTERLIST, source)) ?
-            <SingleFilter
-              value={currentValue.RiskLvl || ''}
-              filterLabel="风险等级"
-              filter="RiskLvl"
-              filterField={dict.custRiskBearing}
-              onChange={onFilterChange}
-            /> : null
+          (_.includes(FULL_ENTERLIST, source))
+            ? (
+              <SingleFilter
+                value={currentValue.RiskLvl || ''}
+                filterLabel="风险等级"
+                filter="RiskLvl"
+                filterField={dict.custRiskBearing}
+                onChange={onFilterChange}
+              />
+            ) : null
         }
         {
-          (_.includes(FULL_ENTERLIST, source)) ?
-            <MultiFilter
-              value={currentValue.Rights || ''}
-              filterLabel="已开通业务"
-              filter="Rights"
-              filterField={dict.custBusinessType}
-              onChange={onFilterChange}
-            /> : null
+          (_.includes(FULL_ENTERLIST, source))
+            ? (
+              <MultiFilter
+                value={currentValue.Rights || ''}
+                filterLabel="已开通业务"
+                filter="Rights"
+                filterField={dict.custBusinessType}
+                onChange={onFilterChange}
+              />
+            ) : null
         }
         {/**
          * ENTERLIST_PERMISSION_OPENED_BUSINESS-是否需要展示可开通业务source集合
          */}
         {
-          _.includes(ENTERLIST_PERMISSION_OPENED_BUSINESS, source) ?
-            <MultiFilter
-              value={currentValue.Unrights || ''}
-              filterLabel="可开通业务"
-              filter="Unrights"
-              filterField={dict.custUnrightBusinessType}
-              onChange={onFilterChange}
-            /> : null
+          _.includes(ENTERLIST_PERMISSION_OPENED_BUSINESS, source)
+            ? (
+              <MultiFilter
+                value={currentValue.Unrights || ''}
+                filterLabel="可开通业务"
+                filter="Unrights"
+                filterField={dict.custUnrightBusinessType}
+                onChange={onFilterChange}
+              />
+            ) : null
         }
       </div>
     );

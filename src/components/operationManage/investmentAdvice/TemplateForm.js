@@ -9,7 +9,9 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import Draft from 'draft-js';
 import { autobind } from 'core-decorators';
-import { Form, Input, Mention, Dropdown, Menu } from 'antd';
+import {
+  Form, Input, Mention, Dropdown, Menu
+} from 'antd';
 
 import { MENTION_PREFIX, MentionTextStyles } from '../../../routes/investmentAdvice/config';
 import styles from './templateForm_.less';
@@ -150,10 +152,10 @@ export default class TemplateForm extends PureComponent {
       });
     }
     contentState = Modifier.insertText(
-        contentState,
-        selection,
-        ` $${value} `,
-      );
+      contentState,
+      selection,
+      ` $${value} `,
+    );
     editor.setEditorState(
       EditorState.createWithContent(
         contentState,
@@ -217,7 +219,10 @@ export default class TemplateForm extends PureComponent {
           <ul className={styles.TemplateFormList}>
             <li>
               <div className={styles.TemplateFormItem}>
-                <label htmlFor="dd" className={styles.templateForm_label}><i className={styles.required_i}>*</i>标题:</label>
+                <label htmlFor="dd" className={styles.templateForm_label}>
+                  <i className={styles.required_i}>*</i>
+标题:
+                </label>
                 <FormItem {...titleStatusErrorProps}>
                   {getFieldDecorator('title', {
                     initialValue: title,
@@ -227,7 +232,10 @@ export default class TemplateForm extends PureComponent {
             </li>
             <li>
               <div className={styles.TemplateFormItem} id="templateFormMention">
-                <label htmlFor="dd" className={styles.templateForm_label}><i className={styles.required_i}>*</i>内容:</label>
+                <label htmlFor="dd" className={styles.templateForm_label}>
+                  <i className={styles.required_i}>*</i>
+内容:
+                </label>
                 <FormItem {...contentStatusErrorProps}>
                   <Mention
                     defaultValue={toContentState(mentionContent)}

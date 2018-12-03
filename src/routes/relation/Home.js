@@ -115,7 +115,9 @@ export default class Home extends Component {
   // 关闭弹框时，清空弹框显示相关的数据
   @autobind
   closeModal() {
-    this.setState({ editModal: false, currentItem: {}, searchList: [], flag: '' });
+    this.setState({
+      editModal: false, currentItem: {}, searchList: [], flag: ''
+    });
   }
 
   // 选中菜单
@@ -166,17 +168,25 @@ export default class Home extends Component {
   // 弹框确定事件
   @autobind
   handleOk(param) {
-    const { addTeam, addMember, updateManager, updateTeam, setManager } = this.props;
-    const { flag, selectMenu, companyMenu, centerMenu, teamMenu, currentItem } = this.state;
+    const {
+      addTeam, addMember, updateManager, updateTeam, setManager
+    } = this.props;
+    const {
+      flag, selectMenu, companyMenu, centerMenu, teamMenu, currentItem
+    } = this.state;
     const { postnTypeCD, postnId } = selectMenu || {};
     const { postnId: companyPostnId } = companyMenu || {};
     const { orgId: centerOrgId, postnId: centerPostnId } = centerMenu || {};
     const { orgId: teamOrgId, postnId: teamPostnId, postnTypeCD: teamCD } = teamMenu || {};
     const { postnId: curPostnId } = currentItem || {};
-    const { select, modalType, isUpdate, teamName } = param;
+    const {
+      select, modalType, isUpdate, teamName
+    } = param;
     const { ptyMngId, orgId } = select;
     this.setState(
-      { editModal: false, searchList: [], currentItem: {}, flag: '' },
+      {
+        editModal: false, searchList: [], currentItem: {}, flag: ''
+      },
       () => {
         // 去重
         if (!isUpdate) {
@@ -216,7 +226,9 @@ export default class Home extends Component {
         } else if (modalType === TEAM_MODAL) {
           if (flag === 'add') {
             // 新建，是上一级的 postnId
-            addTeam({ teamEmpId: ptyMngId, upPosId: postnId, orgId, teamName }).then(
+            addTeam({
+              teamEmpId: ptyMngId, upPosId: postnId, orgId, teamName
+            }).then(
               () => {
                 this.refresh({ postnId }, true);
               },
@@ -322,4 +334,3 @@ export default class Home extends Component {
     );
   }
 }
-

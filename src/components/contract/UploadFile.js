@@ -27,7 +27,9 @@ export default class UploadFile extends PureComponent {
   }
 
   render() {
-    const { fileList, attachment, edit, uploadAttachment } = this.props;
+    const {
+      fileList, attachment, edit, uploadAttachment
+    } = this.props;
     return (
       <div className={style.uploadFile}>
         <InfoTitle head="附件" />

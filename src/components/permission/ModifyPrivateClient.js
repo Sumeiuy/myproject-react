@@ -62,6 +62,7 @@ export default class modifyPrivateClient extends PureComponent {
     onEmitClearModal: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
   }
+
   static defaultProps = {
     id: '',
     flowId: '',
@@ -79,6 +80,7 @@ export default class modifyPrivateClient extends PureComponent {
     attachment: '',
     currentApproval: {},
   }
+
   constructor() {
     super();
     this.state = {
@@ -144,16 +146,19 @@ export default class modifyPrivateClient extends PureComponent {
       this.setState({ bottonList: nextProps.bottonList });
     }
   }
+
   @autobind
   selectNextApproverList() {
     // 点击下一步按钮 选择下一审批人列表
 
   }
+
   @autobind
   closeModal() {
     // 关闭模态框
     this.setState({ isShowModal: false });
   }
+
   @autobind
   afterClose() {
     // 模态框关闭之后执行的函数
@@ -164,10 +169,12 @@ export default class modifyPrivateClient extends PureComponent {
   updateValue(name, value) {
     // 更新state
     if (name === 'customer') {
-      this.setState({ customer: {
-        custName: value.custName,
-        custNumber: value.cusId,
-      } });
+      this.setState({
+        customer: {
+          custName: value.custName,
+          custNumber: value.cusId,
+        }
+      });
     }
     this.setState({ [name]: value });
   }
@@ -239,6 +246,7 @@ export default class modifyPrivateClient extends PureComponent {
     this.setState({ nextApproverModal: false });
     this.props.getModifyCustApplication(queryConfig);
   }
+
   get baseInfoModifyDom() {
     // 返回基本信息修改组件
     let subTypeTxt = subTypeList.filter(item => item.value === this.state.subType);
@@ -270,6 +278,7 @@ export default class modifyPrivateClient extends PureComponent {
       </div>
     );
   }
+
   get draftInfo() {
     // 返回拟稿信息组件
     const { empName, createTime, status } = this.props;
@@ -294,6 +303,7 @@ export default class modifyPrivateClient extends PureComponent {
       />
     );
   }
+
   render() {
     const searchProps = {
       visible: this.state.nextApproverModal,
@@ -307,10 +317,12 @@ export default class modifyPrivateClient extends PureComponent {
       rowKey: 'login',
       searchShow: false,
     };
-    const btnGroupElement = (<BottonGroup
-      list={this.state.bottonList}
-      onEmitEvent={this.submitModifyInfo}
-    />);
+    const btnGroupElement = (
+      <BottonGroup
+        list={this.state.bottonList}
+        onEmitEvent={this.submitModifyInfo}
+      />
+    );
     return (
       <CommonModal
         title="私密客户管理修改"
@@ -326,7 +338,10 @@ export default class modifyPrivateClient extends PureComponent {
       >
         <div className={style.modifyPrivateClient}>
           <div className={style.dcHeader}>
-            <span className={style.dcHaderNumb}>编号{this.props.id}</span>
+            <span className={style.dcHaderNumb}>
+编号
+              {this.props.id}
+            </span>
           </div>
           {this.baseInfoModifyDom}
           {this.draftInfo}

@@ -10,7 +10,9 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import 'moment/locale/zh-cn';
 import { autobind } from 'core-decorators';
-import { Row, Col, DatePicker, Radio, Button } from 'antd';
+import {
+  Row, Col, DatePicker, Radio, Button
+} from 'antd';
 import { constants, optionsMap } from '../../config';
 import { time } from '../../helper';
 import logable from '../../decorators/logable';
@@ -110,8 +112,14 @@ export default class SelfDatePicker extends PureComponent {
         </RadioGroup>
         <div className={styles.extraFooterBottom}>
           <div className={styles.bottomTime}>
-            <h4>本期：{nowDurationStr}</h4>
-            <h4>上期：{lastDurationStr}</h4>
+            <h4>
+本期：
+              {nowDurationStr}
+            </h4>
+            <h4>
+上期：
+              {lastDurationStr}
+            </h4>
           </div>
           <div className={styles.bottomBtn}>
             <Button onClick={this.cancelHanle}>取消</Button>
@@ -160,6 +168,7 @@ export default class SelfDatePicker extends PureComponent {
       });
     }
   }
+
   // 预定义时间范围切换事件
   @autobind
   changeDuration(e) {
@@ -205,28 +214,33 @@ export default class SelfDatePicker extends PureComponent {
       });
     }
   }
+
   // 确认事件
   @autobind
   @logable({ type: 'Click', payload: { name: '确认' } })
   okHandle() {
     this.saveMoment('ok');
   }
+
   // 取消事件
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '取消' } })
   cancelHanle() {
     this.saveMoment('cancel');
   }
+
   // 给 DatePicker 添加 wrapper
   @autobind
   findContainer() {
     return reactApp;
   }
+
   @autobind
   disabledDate(current) {
     // 不能选择大于今天的日期
     return current && current.valueOf() > moment(moment().format('YYYYMMDD')).subtract(1, 'days').valueOf();
   }
+
   // 用户自己选的时间段事件
   @autobind
   @logable({
@@ -268,6 +282,7 @@ export default class SelfDatePicker extends PureComponent {
       oldLastDurationStr: lastDurationStr,
     });
   }
+
   // 保存选择的时间
   @autobind
   saveMoment(type) {
@@ -305,12 +320,14 @@ export default class SelfDatePicker extends PureComponent {
       }, this.saveDurationToHome);
     }
   }
+
   @autobind
   openChange(status) {
     this.setState({
       open: status,
     });
   }
+
   @autobind
   saveDurationToHome() {
     const { updateQueryState } = this.props;
@@ -335,6 +352,7 @@ export default class SelfDatePicker extends PureComponent {
       contrastEnd: moment(lastEndMoment).format('YYYYMMDD'), // 上期结束时间
     });
   }
+
   render() {
     const { beginMoment, endMoment, open } = this.state;
     return (

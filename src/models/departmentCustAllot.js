@@ -16,13 +16,13 @@ export default {
     detailInfo: EMPTY_OBJECT, // 详情
     buttonData: EMPTY_OBJECT, // 获取按钮列表和下一步审批人
     custData: EMPTY_OBJECT, // 客户列表列表
-    manageData: EMPTY_OBJECT,  // 服务经理列表
-    updateData: EMPTY_OBJECT,  // 更新客户
-    detailAddedCustData: EMPTY_OBJECT,  // 详情页已添加客户
-    addedCustData: EMPTY_OBJECT,  // 已添加客户
-    addedManageData: EMPTY_OBJECT,  // 已添加服务经理
-    saveChangeData: EMPTY_OBJECT,  // 提交保存后的数据
-    notifiesData: EMPTY_OBJECT,  // 消息提醒页面数据
+    manageData: EMPTY_OBJECT, // 服务经理列表
+    updateData: EMPTY_OBJECT, // 更新客户
+    detailAddedCustData: EMPTY_OBJECT, // 详情页已添加客户
+    addedCustData: EMPTY_OBJECT, // 已添加客户
+    addedManageData: EMPTY_OBJECT, // 已添加服务经理
+    saveChangeData: EMPTY_OBJECT, // 提交保存后的数据
+    notifiesData: EMPTY_OBJECT, // 消息提醒页面数据
   },
   reducers: {
     // 详情
@@ -201,16 +201,16 @@ export default {
         case 'clearAllData':
           response = {
             custData: {}, // 客户列表列表
-            manageData: {},  // 服务经理列表
-            addedCustData: {},  // 已添加客户
-            addedManageData: {},  // 已添加服务经理
-            updateData: {},  // 批量添加、删除、清空客户
+            manageData: {}, // 服务经理列表
+            addedCustData: {}, // 已添加客户
+            addedManageData: {}, // 已添加服务经理
+            updateData: {}, // 批量添加、删除、清空客户
           };
           break;
         case 'clearSearchData':
           response = {
             custData: {}, // 客户列表列表
-            manageData: {},  // 服务经理列表
+            manageData: {}, // 服务经理列表
           };
           break;
         case 'clearAddedCustData':

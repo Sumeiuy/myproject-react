@@ -55,7 +55,12 @@ export default class ViewpointDetailModal extends PureComponent {
         wrapClassName={styles.detailModal}
         onOk={() => closeModal(modalKey)}
       >
-        <h3 className={styles.title}>{titleName}: {title || industry}</h3>
+        <h3 className={styles.title}>
+          {titleName}
+:
+          {' '}
+          {title || industry}
+        </h3>
         <dl className={styles.modalDl}>
           <dt>调整方向：</dt>
           <dd>{direction}</dd>

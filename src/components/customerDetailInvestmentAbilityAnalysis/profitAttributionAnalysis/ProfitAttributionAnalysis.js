@@ -53,11 +53,10 @@ export default class ProfitAttributionAnalysis extends PureComponent {
       }
     } = this.props;
     const attributionSummaryData = _.map(attributionSummary, item => (
-        <p key={data.uuid()}>
-          <span>{item}</span>
-        </p>
-      )
-    );
+      <p key={data.uuid()}>
+        <span>{item}</span>
+      </p>
+    ));
     return attributionSummaryData;
   }
 
@@ -72,7 +71,7 @@ export default class ProfitAttributionAnalysis extends PureComponent {
     return (
       <div className={styles.profitAttributionAnalysis}>
         <CountPeriod />
-        <InfoTitle title="Brinson归因分析"/>
+        <InfoTitle title="Brinson归因分析" />
         <div className={styles.attributionAnalysis}>
           <AttributionTable
             attributionResult={attributionResult}

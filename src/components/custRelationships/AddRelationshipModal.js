@@ -466,4 +466,3 @@ export default class AddRelationshipModal extends Component {
     );
   }
 }
-

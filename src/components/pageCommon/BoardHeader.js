@@ -32,7 +32,6 @@ const hbgxSummaryType = constants.hbgxSummaryType;
 const sortByType = optionsMap.sortByType;
 
 export default class BoardHeader extends PureComponent {
-
   static propTypes = {
     boardType: PropTypes.string.isRequired,
     location: PropTypes.object.isRequired,
@@ -228,7 +227,9 @@ export default class BoardHeader extends PureComponent {
 
   render() {
     // 取出相关变量
-    const { level, showScopeOrder, indexID, boardType, orgId, summaryType } = this.props;
+    const {
+      level, showScopeOrder, indexID, boardType, orgId, summaryType
+    } = this.props;
     const { showChart, orderType, scopeSelectValue } = this.state;
     let { title } = this.props;
     // 针对开通业务明细，名称进行修改
@@ -270,9 +271,9 @@ export default class BoardHeader extends PureComponent {
       hideOption: Number(level) !== 1,
     });
     const toggleScope3Option = classnames({
-      hideOption: Number(level) === 3 ||
-        Number(level) === 4 ||
-        (Number(level) === 2 && !report.isNewOrg(orgId)),
+      hideOption: Number(level) === 3
+        || Number(level) === 4
+        || (Number(level) === 2 && !report.isNewOrg(orgId)),
     });
     const toggleScope4Option = classnames({
       hideOption: Number(level) === 4,
@@ -317,7 +318,8 @@ export default class BoardHeader extends PureComponent {
                       key={sortByTypeIndex}
                       value={item.scope}
                     >
-                      按{item.name}
+                      按
+                      {item.name}
                     </Option>
                   );
                 })

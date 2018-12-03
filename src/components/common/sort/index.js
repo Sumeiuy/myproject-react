@@ -71,7 +71,7 @@ export default class Sort extends PureComponent {
     const { value: { sortDirection, sortType }, onChange } = this.props;
     const { sortDirections = defaultSortDirections } = this.getCurrentQuota();
     const nextSortDirection = _.find(sortDirections,
-        sortDireItem => sortDireItem !== sortDirection);
+      sortDireItem => sortDireItem !== sortDirection);
     onChange({
       sortType,
       sortDirection: nextSortDirection,
@@ -87,7 +87,9 @@ export default class Sort extends PureComponent {
   }
 
   render() {
-    const { name: displayName, value: { sortType }, data, wrapClassName, showIntroId } = this.props;
+    const {
+      name: displayName, value: { sortType }, data, wrapClassName, showIntroId
+    } = this.props;
     const { name } = this.getCurrentQuota();
     const selectProps = _.omit(this.props, _.keys(Sort.propTypes));
     // 用于上传神策

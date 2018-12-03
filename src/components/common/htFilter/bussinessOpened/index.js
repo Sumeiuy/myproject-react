@@ -82,8 +82,8 @@ export default class BusinessFilterMenu extends PureComponent {
 
   handleSubmitBtnClick = () => {
     const { dateType, businessType } = this.state;
-    if ((!dateType && businessType === 'all') ||
-      (dateType && businessType !== 'all')) {
+    if ((!dateType && businessType === 'all')
+      || (dateType && businessType !== 'all')) {
       this.setState({
         openKeys: [],
         visible: false,

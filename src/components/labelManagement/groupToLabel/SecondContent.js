@@ -223,7 +223,10 @@ export default class SecondContent extends PureComponent {
           <div className={styles.content}>{groupName}</div>
         </div>
         <div className={styles.row}>
-          <span className={styles.label}><b>*</b>新标签名称:</span>
+          <span className={styles.label}>
+            <b>*</b>
+新标签名称:
+          </span>
           <div className={styles.content}>
             <FormItem>
               {
@@ -256,7 +259,10 @@ export default class SecondContent extends PureComponent {
         </div>
         {labelNameTip}
         <div className={styles.row}>
-          <span className={styles.label}><b>*</b>标签描述:</span>
+          <span className={styles.label}>
+            <b>*</b>
+标签描述:
+          </span>
           <div className={styles.content}>
             <FormItem>
               {

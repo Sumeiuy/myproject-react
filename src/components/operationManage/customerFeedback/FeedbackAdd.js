@@ -12,7 +12,7 @@ import { Input } from 'antd';
 // import _ from 'lodash';
 
 import { SERVICE_MANAGER_ROLE } from './config';
-import CommonTable from '../../../components/common/biz/CommonTable';
+import CommonTable from '../../common/biz/CommonTable';
 import { seibelConfig } from '../../../config';
 import logable from '../../../decorators/logable';
 
@@ -148,23 +148,23 @@ export default class FeedbackChoice extends PureComponent {
               pagination={pagination}
               scroll={{ y: 240 }}
               onRow={record => ({
-                onClick: () => this.handleSelectRow(record),       // 点击行
+                onClick: () => this.handleSelectRow(record), // 点击行
               })}
               rowClassName={record => (record.id === currentFeedback.id ? 'current' : '')}
             />
           </div>
           {
             isCustomer
-            ?
-              <div className={styles.rightTable}>
-                <CommonTable
-                  titleList={childTitleList}
-                  data={childList}
-                  scroll={{ y: 240 }}
-                />
-              </div>
-            :
-              null
+              ? (
+                <div className={styles.rightTable}>
+                  <CommonTable
+                    titleList={childTitleList}
+                    data={childList}
+                    scroll={{ y: 240 }}
+                  />
+                </div>
+              )
+              : null
           }
         </div>
       </div>

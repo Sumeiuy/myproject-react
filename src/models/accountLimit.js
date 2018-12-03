@@ -20,10 +20,10 @@ export default {
     detailInfo: EMPTY_OBJECT, // 详情
     buttonData: EMPTY_OBJECT, // 获取按钮列表和下一步审批人
     searchCustData: EMPTY_ARRAY, // 客户列表列表
-    addedCustData: EMPTY_ARRAY,  // 已添加的客户列表
+    addedCustData: EMPTY_ARRAY, // 已添加的客户列表
     limitList: EMPTY_ARRAY,
-    notifiesData: EMPTY_OBJECT,  // 消息提醒页面数据
-    validateData: EMPTY_OBJECT,  // 校验数据接口返回值
+    notifiesData: EMPTY_OBJECT, // 消息提醒页面数据
+    validateData: EMPTY_OBJECT, // 校验数据接口返回值
   },
   reducers: {
     // 获取服务经理列表

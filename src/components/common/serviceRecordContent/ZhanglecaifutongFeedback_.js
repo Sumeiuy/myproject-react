@@ -14,7 +14,9 @@ import { flow } from '../../taskList/performerView/config';
 import styles from './zhanglecaifutongFeedback.less';
 
 export default function ZLFeedback(props) {
-  const { flowStatusCode, feedbackList, feedback, feedbackTime } = props;
+  const {
+    flowStatusCode, feedbackList, feedback, feedbackTime
+  } = props;
 
   const isCompleted = flow.isComplete(flowStatusCode);
 
@@ -30,12 +32,12 @@ export default function ZLFeedback(props) {
       </div>
       {
         !isCompleted ? null
-        : (
-          <div className={styles.feedbackTime}>
-            <div className={styles.title}>反馈时间:</div>
-            <div className={styles.content}>{feedbackTime}</div>
-          </div>
-        )
+          : (
+            <div className={styles.feedbackTime}>
+              <div className={styles.title}>反馈时间:</div>
+              <div className={styles.content}>{feedbackTime}</div>
+            </div>
+          )
       }
     </div>
   );

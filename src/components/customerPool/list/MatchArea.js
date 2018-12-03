@@ -7,7 +7,9 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
-import { isSightingScope, handleOpenFsp360TabAction, openProductDetailPage, getDetailBtnVisible } from '../helper';
+import {
+  isSightingScope, handleOpenFsp360TabAction, openProductDetailPage, getDetailBtnVisible
+} from '../helper';
 import { url as urlHelper } from '../../../helper';
 import { openRctTab } from '../../../utils';
 // ENTERLIST_PERMISSION_SIGHTINGLABEL-需要展示瞄准镜匹配区域的source集合
@@ -19,7 +21,9 @@ import styles from './matchArea.less';
 
 const haveTitle = title => (title ? `<i class="tip">${title}</i>` : null);
 
-const replaceWord = ({ value, q, title = '', type = '' }) => {
+const replaceWord = ({
+  value, q, title = '', type = ''
+}) => {
   const titleDom = haveTitle(title);
   const regxp = new RegExp(q, 'g');
   // 瞄准镜标签后面添加字符，用以分割
@@ -33,7 +37,6 @@ const replaceWord = ({ value, q, title = '', type = '' }) => {
 };
 
 export default class MatchArea extends PureComponent {
-
   static propTypes = {
     dict: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
@@ -101,8 +104,10 @@ export default class MatchArea extends PureComponent {
     if (_.includes(['search', 'association'], source)
       && listItem.name
       && listItem.name.indexOf(q) > -1) {
-      const markedEle = replaceWord({ value: listItem.name,
-q });
+      const markedEle = replaceWord({
+        value: listItem.name,
+        q
+      });
       return (
         <li>
           <span>
@@ -127,8 +132,10 @@ q });
     if (_.includes(['search', 'association'], source)
       && listItem.idNum
       && listItem.idNum.indexOf(q) > -1) {
-      const markedEle = replaceWord({ value: listItem.idNum,
-q });
+      const markedEle = replaceWord({
+        value: listItem.idNum,
+        q
+      });
       return (
         <li>
           <span>
@@ -153,8 +160,10 @@ q });
     if (_.includes(['search', 'association'], source)
       && listItem.telephone
       && listItem.telephone.indexOf(q) > -1) {
-      const markedEle = replaceWord({ value: listItem.telephone,
-q });
+      const markedEle = replaceWord({
+        value: listItem.telephone,
+        q
+      });
       return (
         <li>
           <span>
@@ -179,8 +188,10 @@ q });
     if (_.includes(['search', 'association'], source)
       && listItem.custId
       && listItem.custId.indexOf(q) > -1) {
-      const markedEle = replaceWord({ value: listItem.custId,
-q });
+      const markedEle = replaceWord({
+        value: listItem.custId,
+        q
+      });
       return (
         <li>
           <span>
@@ -215,11 +226,15 @@ q });
         const markedEle = relatedLabels.map((item) => {
           // 防止热点标签展示重复，这里从query上取source
           if (!isSightingScope(item.source)) {
-            return replaceWord({ value: item.name,
-q });
+            return replaceWord({
+              value: item.name,
+              q
+            });
           }
-          return `${replaceWord({ value: item.name,
-q })}-${q}`;
+          return `${replaceWord({
+            value: item.name,
+            q
+          })}-${q}`;
         });
         return (
           <li>
@@ -251,7 +266,10 @@ q })}-${q}`;
         return (
           <li title={data}>
             <span>
-              <i className="label">{`可开通业务(${tmpList.length})`}：</i>
+              <i className="label">
+                {`可开通业务(${tmpList.length})`}
+：
+              </i>
               {data}
             </span>
           </li>
@@ -276,7 +294,10 @@ q })}-${q}`;
         return (
           <li title={data}>
             <span>
-              <i className="label">{`已开通业务(${tmpList.length})`}：</i>
+              <i className="label">
+                {`已开通业务(${tmpList.length})`}
+：
+              </i>
               {data}
             </span>
           </li>
@@ -316,8 +337,10 @@ q })}-${q}`;
     if (_.includes(['search', 'association'], source)
       && listItem.serviceRecord
       && listItem.serviceRecord.indexOf(q) > -1) {
-      const markedEle = replaceWord({ value: listItem.serviceRecord,
-q });
+      const markedEle = replaceWord({
+        value: listItem.serviceRecord,
+        q
+      });
       // 接口返回的接口数据是截断过的，需要前端在后面手动加...
       return (
         <li>
@@ -332,7 +355,9 @@ q });
               keyword,
               routerAction: this.context.push,
             })}
-          >详情</span>
+          >
+详情
+          </span>
         </li>
       );
     }
@@ -358,10 +383,11 @@ q });
       // const markedEle = relatedLabels.map(v => (replaceWord(v, q, listItem.reasonDesc)));
       if (!_.isEmpty(relatedLabels)) {
         // 构造成这种格式,父标签-子标签：标签值；子标签：标签值；子标签：标签值；子标签：标签值；
-        let markedEle = relatedLabels.map(item =>
-          (replaceWord({ value: item.name,
-q,
-type: source })));
+        let markedEle = relatedLabels.map(item => (replaceWord({
+          value: item.name,
+          q,
+          type: source
+        })));
         // 去除空字符串
         markedEle = _.filter(markedEle, item => !_.isEmpty(item));
         // 只有一个标签，去除-符号
@@ -403,9 +429,9 @@ type: source })));
         const id = decodeURIComponent(labelMapping);
         const filteredProducts = this.getFilteredProductsById(holdingProducts, id);
         // 联想词进入列表并产品id匹配到的持仓产品等于1个，显示 产品的名称/产品代码(持仓详情)
-        return !_.isEmpty(filteredProducts) &&
-          this.getSingleHoldingProductNode(filteredProducts, keyword);
-      } else if (source === 'search') {
+        return !_.isEmpty(filteredProducts)
+          && this.getSingleHoldingProductNode(filteredProducts, keyword);
+      } if (source === 'search') {
         // 模糊匹配用搜索关键词取匹配产品的code和name
         // 匹配到的持仓产品大于1个时，显示 产品的名称/产品代码
         const filteredProducts = this.getFilteredProducts(holdingProducts, q);
@@ -444,9 +470,13 @@ type: source })));
     if (!_.isEmpty(list)) {
       const htmlStringList = _.map(
         list,
-        item => `${replaceWord({ value: item.name,
-q: keyword })}/${replaceWord({ value: item.code,
-q: keyword })}`,
+        item => `${replaceWord({
+          value: item.name,
+          q: keyword
+        })}/${replaceWord({
+          value: item.code,
+          q: keyword
+        })}`,
       );
       const htmlString = htmlStringList.join(',');
       return (
@@ -473,10 +503,14 @@ q: keyword })}`,
     if (!_.isEmpty(list)) {
       const data = list[0] || {};
       const { name, code, flag } = data;
-      const codeHtmlString = replaceWord({ value: code,
-q: keyword });
-      const htmlString = `${replaceWord({ value: name,
-q: keyword })}/${codeHtmlString}`;
+      const codeHtmlString = replaceWord({
+        value: code,
+        q: keyword
+      });
+      const htmlString = `${replaceWord({
+        value: name,
+        q: keyword
+      })}/${codeHtmlString}`;
       const props = {
         custId,
         data,
@@ -489,16 +523,23 @@ q: keyword })}/${codeHtmlString}`;
       // flag为true，持仓产品名称可点击
       if (flag) {
         const { push } = this.context;
-        contentNode = (<i>
-          <em
-            className={styles.clickable}
-            onClick={() => { openProductDetailPage({ data,
-routerAction: push }); }}
-          >
-            {name}
-          </em>
-          /<em className="marked" dangerouslySetInnerHTML={{ __html: codeHtmlString }} />
-        </i>);
+        contentNode = (
+          <i>
+            <em
+              className={styles.clickable}
+              onClick={() => {
+                openProductDetailPage({
+                  data,
+                  routerAction: push
+                });
+              }}
+            >
+              {name}
+            </em>
+          /
+            <em className="marked" dangerouslySetInnerHTML={{ __html: codeHtmlString }} />
+          </i>
+        );
       } else {
         contentNode = <i dangerouslySetInnerHTML={{ __html: htmlString }} />;
       }
@@ -548,7 +589,8 @@ routerAction: push }); }}
                 >
                   {name}
                 </em>
-                /{combinationId}
+                /
+                {combinationId}
               </i>
               {this.isShowDetailBtn && <HoldingCombinationDetail {...props} />}
             </span>
@@ -563,8 +605,10 @@ routerAction: push }); }}
   @autobind
   handleOrderCombinationClick({ name, code }) {
     const { push } = this.context;
-    const query = { id: code,
-name };
+    const query = {
+      id: code,
+      name
+    };
     const pathname = '/strategyCenter/choicenessCombination/combinationDetail';
     const url = `${pathname}?${urlHelper.stringify(query)}`;
     const param = {

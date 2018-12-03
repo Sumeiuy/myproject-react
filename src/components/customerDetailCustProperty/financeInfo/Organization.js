@@ -30,11 +30,11 @@ const INFO_ITEM_WITDH = '126px';
 // const EMPTY_OBJECT = {};
 
 // 总收入
-const TOTAL_ASSETS_NAME  = 'totalAssets';
+const TOTAL_ASSETS_NAME = 'totalAssets';
 // 利润总额
-const MASS_PROFIT_NAME  = 'massProfit';
+const MASS_PROFIT_NAME = 'massProfit';
 // 净利润
-const NET_MARGIN_NAME  = 'netMargin';
+const NET_MARGIN_NAME = 'netMargin';
 const MAX_NUM_LENGTH = 17;
 export default class Organization extends PureComponent {
   static propTypes = {
@@ -224,30 +224,30 @@ export default class Organization extends PureComponent {
         <div className={styles.infoItemBox}>
           {
             this.checkIsEditable()
-            ? (
-              <BasicEditorCell
-                label="净利润"
-                width={INFO_ITEM_WITDH}
-                className={styles.infoItem}
-                editorId="net_margin"
-                onEditOK={value => this.updateData(NET_MARGIN_NAME, value)}
-                value={data.netMargin || ''}
-                displayValue={this.getViewData(data.netMargin)}
-                checkable
-                onCheck={this.checkNormalValue}
-                onSuccess={this.refreshData}
-              />
-            )
-            : (
-              <InfoItem
-                width={INFO_ITEM_WITDH}
-                label="净利润"
-                value={this.getViewData(data.netMargin)}
-                className={styles.infoItem}
-                isNeedValueTitle={checkIsNeedTitle(this.getViewData(data.netMargin))}
-                isNeedOverFlowEllipsis
-              />
-            )
+              ? (
+                <BasicEditorCell
+                  label="净利润"
+                  width={INFO_ITEM_WITDH}
+                  className={styles.infoItem}
+                  editorId="net_margin"
+                  onEditOK={value => this.updateData(NET_MARGIN_NAME, value)}
+                  value={data.netMargin || ''}
+                  displayValue={this.getViewData(data.netMargin)}
+                  checkable
+                  onCheck={this.checkNormalValue}
+                  onSuccess={this.refreshData}
+                />
+              )
+              : (
+                <InfoItem
+                  width={INFO_ITEM_WITDH}
+                  label="净利润"
+                  value={this.getViewData(data.netMargin)}
+                  className={styles.infoItem}
+                  isNeedValueTitle={checkIsNeedTitle(this.getViewData(data.netMargin))}
+                  isNeedOverFlowEllipsis
+                />
+              )
           }
         </div>
         <div className={styles.infoItemBox}>
@@ -283,7 +283,8 @@ export default class Organization extends PureComponent {
           </div>
         </IfWrap>
         <div className={styles.latestTime}>
-          近期风险承受能力评估问卷日期：{this.getViewData(data.latestSurveyTime)}
+          近期风险承受能力评估问卷日期：
+          {this.getViewData(data.latestSurveyTime)}
         </div>
       </div>
     );

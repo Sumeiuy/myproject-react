@@ -56,6 +56,7 @@ export default class EditForm extends PureComponent {
     getModifyCustApplication: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
   }
+
   static defaultProps = {
     flowId: '',
     type: '',
@@ -72,6 +73,7 @@ export default class EditForm extends PureComponent {
     attachment: '',
     currentApproval: {},
   }
+
   constructor() {
     super();
     this.state = {
@@ -122,11 +124,13 @@ export default class EditForm extends PureComponent {
       this.setState({ bottonList: nextProps.bottonList });
     }
   }
+
   @autobind
   selectNextApproverList() {
     // 点击下一步按钮 选择下一审批人列表
 
   }
+
   @autobind
   closeModal() {
     // 关闭模态框
@@ -203,6 +207,7 @@ export default class EditForm extends PureComponent {
     this.setState({ nextApproverModal: false });
     this.props.getModifyCustApplication(queryConfig);
   }
+
   get baseInfoModifyDom() {
     // 返回基本信息修改组件
     let subTypeTxt = subTypeList.filter(item => item.value === this.props.subType);
@@ -234,6 +239,7 @@ export default class EditForm extends PureComponent {
       </div>
     );
   }
+
   get draftInfo() {
     // 返回拟稿信息组件
     const { empName, createTime, status } = this.props;
@@ -258,6 +264,7 @@ export default class EditForm extends PureComponent {
       />
     );
   }
+
   render() {
     const searchProps = {
       visible: this.state.nextApproverModal,
@@ -274,7 +281,10 @@ export default class EditForm extends PureComponent {
     return (
       <div className={style.modifyPrivateClient}>
         <div className={style.dcHeader}>
-          <span className={style.dcHaderNumb}>编号{this.props.id}</span>
+          <span className={style.dcHaderNumb}>
+编号
+            {this.props.id}
+          </span>
         </div>
         {this.baseInfoModifyDom}
         {this.draftInfo}

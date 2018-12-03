@@ -16,8 +16,10 @@ import { ASSET_DESC } from './config';
 import styles from './header.less';
 
 // 状态为不限
-const STATE_UNLIMITED = { key: '',
-value: '不限' };
+const STATE_UNLIMITED = {
+  key: '',
+  value: '不限'
+};
 
 // 筛选列表的浮层父节点id
 const popupContainer = '#performerViewDetail';
@@ -44,7 +46,9 @@ export default function Header(props) {
     queryCustomer,
     basicInfo: { missionId },
   } = props;
-  const { state, assetSort, rowId, preciseInputValue } = parameter;
+  const {
+    state, assetSort, rowId, preciseInputValue
+  } = parameter;
   const { page: { totalCount }, list } = targetCustList;
   // 客户筛选组件的自定义显示
   const getFilterLabelValue = (item) => {
@@ -52,15 +56,20 @@ export default function Header(props) {
     const displayValue = !_.isEmpty(value.custId) ? `${value.name}(${value.custId})` : value.name;
     return (
       <div className={styles.customerFilterContent}>
-        <span className={styles.customerFilterName}>{filterName}:</span>
+        <span className={styles.customerFilterName}>
+          {filterName}
+:
+        </span>
         <span className={styles.customerFilterValue} title={displayValue}>{displayValue}</span>
       </div>
     );
   };
   const handleSearchCustomer = (value) => {
     if (value) {
-      queryCustomer({ keyWord: value,
-missionId });
+      queryCustomer({
+        keyWord: value,
+        missionId
+      });
     }
   };
   const stateData = [STATE_UNLIMITED, ...dict.serveStatus];
@@ -100,12 +109,14 @@ missionId });
       />
       {
         !_.isEmpty(list)
-        && <PreciseQuery
+        && (
+        <PreciseQuery
           value={preciseInputValue}
           maxValue={totalCount}
           handlePreciseQueryChange={handlePreciseQueryChange}
           handlePreciseQueryEnterPress={handlePreciseQueryEnterPress}
         />
+        )
       }
     </div>
   );
@@ -134,4 +145,3 @@ Header.defaultProps = {
   handlePreciseQueryChange: _.noop,
   handlePreciseQueryEnterPress: _.noop,
 };
-

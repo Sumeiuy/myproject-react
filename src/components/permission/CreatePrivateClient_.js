@@ -90,9 +90,9 @@ export default class CreatePrivateClient extends PureComponent {
     }
 
     if (
-      this.props.addListenCreate === true &&
-      nextProps.addListenCreate === false &&
-      nextProps.createCustApplication.msg === 'success'
+      this.props.addListenCreate === true
+      && nextProps.addListenCreate === false
+      && nextProps.createCustApplication.msg === 'success'
     ) {
       this.setState({ isShowModal: false });
     }
@@ -223,10 +223,8 @@ export default class CreatePrivateClient extends PureComponent {
           <BaseInfoModify
             head="基本信息"
             customer={!_.isEmpty(this.state.customer)
-              ?
-                `${this.state.customer.custName}（${this.state.customer.custNumber}）`
-              :
-                ''
+              ? `${this.state.customer.custName}（${this.state.customer.custNumber}）`
+              : ''
             }
             remark={this.state.remark}
             canApplyCustList={this.props.canApplyCustList}

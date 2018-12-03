@@ -47,10 +47,9 @@ export default class ZiJinClockViewpoint extends PureComponent {
     return list.map(item => (
       <div key={item.id} className={classnames(styles.chartItem, { [styles.active]: item.active })}>
         {
-          item.active ?
-            <a className={styles.cycleText} onClick={this.openModal}>{item.name}</a>
-            :
-            <span className={styles.cycleText}>{item.name}</span>
+          item.active
+            ? <a className={styles.cycleText} onClick={this.openModal}>{item.name}</a>
+            : <span className={styles.cycleText}>{item.name}</span>
         }
       </div>
     ));
@@ -74,8 +73,10 @@ export default class ZiJinClockViewpoint extends PureComponent {
 
   // 打开弹窗
   @autobind
-  @logPV({ pathname: '/modal/ZiJinClockViewpointModal',
-title: '紫金时钟观点-当前周期弹窗' })
+  @logPV({
+    pathname: '/modal/ZiJinClockViewpointModal',
+    title: '紫金时钟观点-当前周期弹窗'
+  })
   openModal() {
     this.setState({
       [DETAIL_MODAL_VISIBLE]: true,
@@ -91,8 +92,10 @@ title: '紫金时钟观点-当前周期弹窗' })
   }
 
   @autobind
-  @logable({ type: 'Click',
-payload: { name: '紫金时钟观点-更多' } })
+  @logable({
+    type: 'Click',
+    payload: { name: '紫金时钟观点-更多' }
+  })
   toListPage() {
     const { push } = this.context;
     const param = {

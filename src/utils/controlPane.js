@@ -136,8 +136,10 @@ const fspGlobal = {
   },
 
   navtoOtherAndClose({ id, url, param }) {
-    fspGlobal.openRctTab({ url,
-param });
+    fspGlobal.openRctTab({
+      url,
+      param
+    });
     fspGlobal.closeRctTabById({ id });
   },
 };
@@ -193,7 +195,7 @@ function dispatchTabPane(options) {
       shoudlRemove = false,
       shouldStay = false,
       editPane = {},
-      addPanes = [],   // 可选参数, 要打开的tabpane的key标识与显示名称以及关联路径，支持同时打开多个
+      addPanes = [], // 可选参数, 要打开的tabpane的key标识与显示名称以及关联路径，支持同时打开多个
       removePanes = [], // 可选参数， 数组元素为key值，string类型，需要移除的tabpane，支持同时移除多个
       activeTabKey = '', // 可选参数，string类型，表示当前活动的tabPane，值需要与key值相对应
       state, // 可选参数，其他可附加的数据
@@ -205,15 +207,15 @@ function dispatchTabPane(options) {
     if (!routerAction) { _.noop(); }
 
     // 处理jsp页面调用的closeTab在新版框架下的兼容问题
-    if(routerAction === 'FSPRemove') {
-      if(id) {
+    if (routerAction === 'FSPRemove') {
+      if (id) {
         window.removeTabpane && window.removeTabpane(id);
       }
       return;
     }
 
     // 当仅需要移除当前tab时，调用
-    if(routerAction === 'remove') {
+    if (routerAction === 'remove') {
       // 如果不传入url相关的参数，则表示关闭当前tabpane，跳转到前面的tabpane
       // 这里之所以传递'remove'作为参数，是为了避免传递push方法，引起不必要的花销。
       const elem = document.querySelector('#activeTabPane');
@@ -317,7 +319,7 @@ function closeFspTab(options) {
 }
 
 function closeTabForEB(options) {
-   dispatchTabPane({
+  dispatchTabPane({
     ...options,
     routerAction: 'FSPRemove',
   });
@@ -410,4 +412,3 @@ export {
   saveTabUrl,
   openFspIframeTab,
 };
-

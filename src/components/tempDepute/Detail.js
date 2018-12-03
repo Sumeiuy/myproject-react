@@ -45,22 +45,22 @@ export default function Detail(props) {
   const disbaledRevertBtn = recallFlag === 'disabled';
   let revertBtn = null;
   if (hasRevertBtn) {
-    revertBtn = !disbaledRevertBtn ?
-    (
-      <Button
-        type="default"
-        disabled={disbaledRevertBtn}
-        onClick={handlePushBtnClick}
-      >
+    revertBtn = !disbaledRevertBtn
+      ? (
+        <Button
+          type="default"
+          disabled={disbaledRevertBtn}
+          onClick={handlePushBtnClick}
+        >
         撤消委托
-      </Button>
-    )
-    : (
-      <div className={styles.hasLaunchRevert}>
-        <Icon type="exclamation-circle" />
-        {`已发起委托撤销申请，${moment().add(1, 'days').format('MM月DD日')}生效。`}
-      </div>
-    );
+        </Button>
+      )
+      : (
+        <div className={styles.hasLaunchRevert}>
+          <Icon type="exclamation-circle" />
+          {`已发起委托撤销申请，${moment().add(1, 'days').format('MM月DD日')}生效。`}
+        </div>
+      );
   }
   // 组装数据
   // 委托原因
@@ -139,4 +139,3 @@ Detail.propTypes = {
   data: PropTypes.object.isRequired,
   onRevert: PropTypes.func.isRequired,
 };
-

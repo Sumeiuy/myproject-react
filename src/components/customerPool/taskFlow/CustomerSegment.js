@@ -53,7 +53,9 @@ export default class CustomerSegment extends PureComponent {
     super(props);
     const { storedData = EMPTY_OBJECT } = props;
     const { custSegment = EMPTY_OBJECT } = storedData;
-    const { currentFile = {}, uploadedFileKey = '', originFileName = '', custTotal = 0 } = custSegment;
+    const {
+      currentFile = {}, uploadedFileKey = '', originFileName = '', custTotal = 0
+    } = custSegment;
     this.state = {
       curPageNum: 1,
       curPageSize: 10,
@@ -78,7 +80,7 @@ export default class CustomerSegment extends PureComponent {
       setNextStepBtnDisabled,
       nextStepBtnIsDisabled,
       visible,
-     } = nextProps;
+    } = nextProps;
     const { custInfos: nextInfos = EMPTY_LIST, page: nextPage = EMPTY_OBJECT } = nextData;
     const { totalCount: nextTotalCount, pageNum, pageSize } = nextPage;
 
@@ -109,7 +111,9 @@ export default class CustomerSegment extends PureComponent {
 
   @autobind
   getData() {
-    const { currentFile, uploadedFileKey, originFileName, custTotal } = this.state;
+    const {
+      currentFile, uploadedFileKey, originFileName, custTotal
+    } = this.state;
     return {
       custSegment: {
         currentFile,
@@ -194,7 +198,9 @@ export default class CustomerSegment extends PureComponent {
   @autobind
   handleFileUpload(lastFile) {
     // 当前上传的file
-    const { currentFile = {}, uploadedFileKey = '', originFileName = '', custTotal = 0 } = lastFile;
+    const {
+      currentFile = {}, uploadedFileKey = '', originFileName = '', custTotal = 0
+    } = lastFile;
     const { setNextStepBtnDisabled } = this.props;
     this.setState({
       currentFile,
@@ -315,7 +321,7 @@ export default class CustomerSegment extends PureComponent {
             custTotal={custTotal}
             isNeedPreview
             isNeedDelete
-            uploadTitle={'上传客户列表'}
+            uploadTitle="上传客户列表"
             uploadTarget={`${request.prefix}/file/khxfFileUpload`}
             // 只支持EXCEL文件
             accept={acceptFile}
@@ -326,55 +332,60 @@ export default class CustomerSegment extends PureComponent {
           <a
             onClick={this.handleDownloadClick}
             href={selfBuiltTemplate}
-          >导入模板</a>。
+          >
+导入模板
+          </a>
+。
         </div>
         {
-          isShowTable ?
-            <GroupModal
-              wrapperClass={styles.modalTable}
-              visible={isShowTable}
-              closable
-              title={'客户预览'}
-              okText={'提交'}
-              okType={'primary'}
-              onOk={this.handleCloseModal}
-              onCancel={this.handleCloseModal}
-              footer={
-                <Button
-                  type="primary"
-                  size="default"
-                  onClick={this.handleCloseModal}
-                >
+          isShowTable
+            ? (
+              <GroupModal
+                wrapperClass={styles.modalTable}
+                visible={isShowTable}
+                closable
+                title="客户预览"
+                okText="提交"
+                okType="primary"
+                onOk={this.handleCloseModal}
+                onCancel={this.handleCloseModal}
+                footer={(
+                  <Button
+                    type="primary"
+                    size="default"
+                    onClick={this.handleCloseModal}
+                  >
                   确定
-                </Button>
-              }
-              modalStyle={{
-                maxWidth: 1165,
-                minWidth: 700,
-              }}
-              modalWidth={'auto'}
-              modalContent={
-                <Table
-                  pageData={{
-                    curPageNum,
-                    curPageSize,
-                    totalRecordNum,
-                  }}
-                  listData={newDataSource}
-                  onSizeChange={this.handleShowSizeChange}
-                  onPageChange={this.handlePageChange}
-                  tableClass={styles.custListTable}
-                  titleColumn={titleColumn}
+                  </Button>
+)}
+                modalStyle={{
+                  maxWidth: 1165,
+                  minWidth: 700,
+                }}
+                modalWidth="auto"
+                modalContent={(
+                  <Table
+                    pageData={{
+                      curPageNum,
+                      curPageSize,
+                      totalRecordNum,
+                    }}
+                    listData={newDataSource}
+                    onSizeChange={this.handleShowSizeChange}
+                    onPageChange={this.handlePageChange}
+                    tableClass={styles.custListTable}
+                    titleColumn={titleColumn}
                   // title fixed
-                  isFixedTitle
+                    isFixedTitle
                   // 纵向滚动
-                  scrollY={scrollY}
-                  {...scrollXProps}
-                  columnWidth={COLUMN_WIDTH}
-                  bordered
-                />
-              }
-            />
+                    scrollY={scrollY}
+                    {...scrollXProps}
+                    columnWidth={COLUMN_WIDTH}
+                    bordered
+                  />
+)}
+              />
+            )
             : null
         }
       </div>

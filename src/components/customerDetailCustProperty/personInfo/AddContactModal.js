@@ -115,7 +115,7 @@ export default class AddContactModal extends PureComponent {
     const {
       contactWayData: { tellphoneInfo },
     } = this.props;
-    if(hasMainMobile(tellphoneInfo)) {
+    if (hasMainMobile(tellphoneInfo)) {
       this.setState({ showMainMobile: false });
       // TODO 此处需要校验选择的数据
       const phoneForm = this.getPerPhoneForm();
@@ -136,17 +136,17 @@ export default class AddContactModal extends PureComponent {
     // 2. 如果添加的是个人客户的地址信息，则判断存在主地址不
     const {
       contactWayData: { addressInfo },
-     } = this.props;
+    } = this.props;
     if (hasMainContact(addressInfo)) {
       this.setState({ showMainAddress: false });
-       // TODO 此处需要校验选择的数据
-       const addressForm = this.getPerAddressForm();
-       // 校验完成后调用提交回调
-       addressForm.validateFields((err, values) => {
-         if (!err) {
-           this.handlePerContactSubmit('address', values);
-         }
-       });
+      // TODO 此处需要校验选择的数据
+      const addressForm = this.getPerAddressForm();
+      // 校验完成后调用提交回调
+      addressForm.validateFields((err, values) => {
+        if (!err) {
+          this.handlePerContactSubmit('address', values);
+        }
+      });
     } else {
       this.setState({ showMainAddress: true });
     }
@@ -165,17 +165,17 @@ export default class AddContactModal extends PureComponent {
       !hasMainEmail(otherInfo)
       && !_.isEmpty(contactWayCode)
       && isEmailContactWay(contactWayCode)
-      ) {
+    ) {
       // 不存在主电子邮件,但是选择的是电子邮件
       this.setState({ showMainEmail: true });
-    } else  {
+    } else {
       this.setState({ showMainEmail: false });
-       // 校验完成后调用提交回调
-       otherForm.validateFields((err, values) => {
-         if (!err) {
-           this.handlePerContactSubmit('other', values);
-         }
-       });
+      // 校验完成后调用提交回调
+      otherForm.validateFields((err, values) => {
+        if (!err) {
+          this.handlePerContactSubmit('other', values);
+        }
+      });
     }
   }
 
@@ -236,10 +236,10 @@ export default class AddContactModal extends PureComponent {
     return (
       <IFWrap isRender={show}>
         <div className={styles.waringTip}>
-          <Icon className={styles.waringIcon} type="jingshi"/>
+          <Icon className={styles.waringIcon} type="jingshi" />
           <span className={styles.waringText}>{WARNING_MESSAGE[`per_${activeTabKey}`]}</span>
         </div>
-     </IFWrap>
+      </IFWrap>
     );
   }
 

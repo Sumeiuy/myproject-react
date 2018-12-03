@@ -28,7 +28,10 @@ export default function ProgressBar({
   return (
     <div className={styles.progress}>
       <div className={`${styles.progressText} progressText`}>
-        进度:&nbsp;<span className={`${styles.mark} ${active ? 'activeMark' : ''}`}>{servicedCustomer}</span>/{totalCustomer}
+        进度:&nbsp;
+        <span className={`${styles.mark} ${active ? 'activeMark' : ''}`}>{servicedCustomer}</span>
+/
+        {totalCustomer}
       </div>
       <div
         className={classnames({

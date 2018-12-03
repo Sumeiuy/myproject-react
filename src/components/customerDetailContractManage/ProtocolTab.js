@@ -103,7 +103,7 @@ export default class ProtocolTab extends PureComponent {
       queryLoginInfo,
       location: { query: { custId } },
     } = this.props;
-    const { rowId = ''  } = empInfo;
+    const { rowId = '' } = empInfo;
     // 查询列表数据
     queryList({
       custId,
@@ -134,8 +134,8 @@ export default class ProtocolTab extends PureComponent {
     const handlerNameColumn = this.findColumn(newList, KEY_HANDLER_NAME);
     handlerNameColumn.render = (text, record) => {
       const showValue = !_.isEmpty(text)
-      ? `${text} (${record.handlerId})`
-      : null;
+        ? `${text} (${record.handlerId})`
+        : null;
       return this.renderTooltipColumn(showValue);
     };
     // 开始日期
@@ -167,8 +167,8 @@ export default class ProtocolTab extends PureComponent {
     } = record;
     // 投顾协议 非投顾协议 需要跳转不同的地址
     const linkHandle = subTypeCode === TOUGU_SUBTYPE
-    ? () => this.handleViewTouGuProtocol(record)
-    : () => this.handleViewOtherProtocol(record);
+      ? () => this.handleViewTouGuProtocol(record)
+      : () => this.handleViewOtherProtocol(record);
     const idClass = classnames({
       [styles.ellipsis]: true,
       [styles.idWrap]: true,
@@ -228,10 +228,10 @@ export default class ProtocolTab extends PureComponent {
     if (statusCode === 'New') {
       // 协议状态为新建时，操作类型为：编辑、删除
       return this.renderNewStatusOperation(record);
-    } else if (statusCode === 'Agree') {
+    } if (statusCode === 'Agree') {
       // 协议状态为同意时，操作类型为：变更、查看历史记录
       return this.renderAgreeStatusOperation(record);
-    } else if (chargingMode === CHARGING_MODE_CODE
+    } if (chargingMode === CHARGING_MODE_CODE
     && statusCode === 'Process'
     && node === '待扣款') {
       // 收费模式为【账户服务费模式】
@@ -239,10 +239,9 @@ export default class ProtocolTab extends PureComponent {
       // 节点【待扣款】
       // 渲染终止按钮
       return this.renderCloseOperation(record);
-    } else {
-      // 渲染历史记录按钮
-      return this.renderOtherOperation(record);
     }
+    // 渲染历史记录按钮
+    return this.renderOtherOperation(record);
   }
 
   // 渲染新建状态下的操作按钮
@@ -410,8 +409,8 @@ export default class ProtocolTab extends PureComponent {
     } = custInfo;
     const { id = '' } = record;
     const routeType = isAdd
-    ? `${custNature}:investcontract`
-    : `${custNature}:investcontract:${id}`;
+      ? `${custNature}:investcontract`
+      : `${custNature}:investcontract:${id}`;
     const query = {
       busiId: custRowId,
       routeType,

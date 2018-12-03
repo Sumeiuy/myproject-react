@@ -58,6 +58,7 @@ export default class CommonDateRangePicker extends PureComponent {
     isFixed: PropTypes.bool,
     className: PropTypes.string,
   }
+
   static defaultProps = {
     className: '',
     displayFormat: 'YYYY-MM-DD',
@@ -91,8 +92,13 @@ export default class CommonDateRangePicker extends PureComponent {
 
   // 组件内全局对象，不能写到组件外，组件外全局对象，会被多个组件共用，相互干扰
   focusedInput = null;
-  firstDateUserSelect = null; // 用户选择的第一个日期
-  isSetRangeOfEndDate = false; // 首次聚焦组件在 endDate 处的标志，用于圈定日历浮层范围用
+
+  firstDateUserSelect = null;
+
+  // 用户选择的第一个日期
+  isSetRangeOfEndDate = false;
+
+  // 首次聚焦组件在 endDate 处的标志，用于圈定日历浮层范围用
   lastDate = null; // 记录上次选中的 startDate 和 endDate，用于回滚数据用
 
   // 格式化日期
@@ -199,7 +205,9 @@ export default class CommonDateRangePicker extends PureComponent {
   @autobind
   calcCalendarPosition() {
     const { width: viewWidth } = dom.getRect(document.body);
-    const { left, top, width: drpWidth, height: drpHeight } = dom.getRect(this.drpWraper);
+    const {
+      left, top, width: drpWidth, height: drpHeight
+    } = dom.getRect(this.drpWraper);
     const picker = this.drpWraper.querySelector('.DateRangePicker_picker');
     if (picker) {
       const { width } = dom.getRect(picker);

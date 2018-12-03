@@ -242,7 +242,7 @@ export default class AssetDistribute extends PureComponent {
   @autobind
   @logable({
     type: 'Click',
-    payload: { name: '关闭'},
+    payload: { name: '关闭' },
   })
   handleCloseDebtDetailModal() {
     this.setState({ debtDetailModal: false });
@@ -428,7 +428,7 @@ export default class AssetDistribute extends PureComponent {
               </div>
             )
             : (
-               <div className={styles.body}>
+              <div className={styles.body}>
                 <div className={styles.radarArea}>
                   <div className={styles.radarChart}>
                     <IECharts
@@ -488,4 +488,3 @@ export default class AssetDistribute extends PureComponent {
     );
   }
 }
-

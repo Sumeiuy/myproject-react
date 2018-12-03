@@ -13,8 +13,8 @@ import { Button } from 'antd';
 import _ from 'lodash';
 
 import confirm from '../../common/confirm_';
-import Table from '../common/InfoTable';
-import IFNoData from '../common/IfNoData';
+import Table from './InfoTable';
+import IFNoData from './IfNoData';
 import logable from '../../../decorators/logable';
 import Modal from '../../common/biz/CommonModal';
 import IfWrap from '../../common/biz/IfWrap';
@@ -97,7 +97,7 @@ export default class ContactWayModal extends PureComponent {
   // 修改机构客户的电话信息的Columns
   @autobind
   getOrgPhoneColumns(columns) {
-    return _.map(columns, column => {
+    return _.map(columns, (column) => {
       // 机构客户的手机信息、固定电话、电子邮件传递过来的数据是一个对象，我们展示他的value
       const { dataIndex } = column;
       if (
@@ -131,13 +131,13 @@ export default class ContactWayModal extends PureComponent {
     },
   })
   handleAddContactClick() {
-    this.setState({ addContactModal: true  });
+    this.setState({ addContactModal: true });
   }
 
   @autobind
   @logable({
     type: 'Click',
-    payload: { name: '编辑机构客户电话信息'}
+    payload: { name: '编辑机构客户电话信息' }
   })
   handlePhoneEditClick(record) {
     this.setState({
@@ -150,7 +150,7 @@ export default class ContactWayModal extends PureComponent {
   @autobind
   @logable({
     type: 'Click',
-    payload: { name: '删除机构客户电话信息'}
+    payload: { name: '删除机构客户电话信息' }
   })
   handlePhoneDelClick(record) {
     this.confirmBeforeDel({
@@ -162,7 +162,7 @@ export default class ContactWayModal extends PureComponent {
   @autobind
   @logable({
     type: 'Click',
-    payload: { name: '编辑机构客户地址信息'}
+    payload: { name: '编辑机构客户地址信息' }
   })
   handleAddressEditClick(record) {
     this.setState({
@@ -175,7 +175,7 @@ export default class ContactWayModal extends PureComponent {
   @autobind
   @logable({
     type: 'Click',
-    payload: { name: '删除机构客户地址信息'}
+    payload: { name: '删除机构客户地址信息' }
   })
   handleAddressDelClick(record) {
     this.confirmBeforeDel({
@@ -303,4 +303,3 @@ export default class ContactWayModal extends PureComponent {
     );
   }
 }
-

@@ -41,7 +41,6 @@ const mapDispatchToProps = {
 @withRouter
 @fspPatch()
 export default class ReportDetail extends PureComponent {
-
   static propTypes = {
     location: PropTypes.object.isRequired,
     getReportDetail: PropTypes.func.isRequired,
@@ -62,24 +61,35 @@ export default class ReportDetail extends PureComponent {
 
 
   // 空方法，用于日志上报
-  @logable({ type: 'Click',
-payload: { name: '下载PDF 全文' } })
+  @logable({
+    type: 'Click',
+    payload: { name: '下载PDF 全文' }
+  })
   handleDownloadClick() {}
 
-  @logable({ type: 'Click',
-payload: { name: '下载WORD 全文' } })
+  @logable({
+    type: 'Click',
+    payload: { name: '下载WORD 全文' }
+  })
   handleDownload() {}
 
   @autobind
-  @logable({ type: 'Click',
-payload: { name: '历史报告详情',
-value: '返回上一页' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '历史报告详情',
+      value: '返回上一页'
+    }
+  })
   handleGoBck() {
     closeRctTab({ id: 'FSP_JX_GROUP_REPORT_DETAIL' });
   }
+
   render() {
     const { reportDetail = {} } = this.props;
-    const { title, author, time, detail = '', wordDownloadUrl, pdfDownloadUrl } = reportDetail;
+    const {
+      title, author, time, detail = '', wordDownloadUrl, pdfDownloadUrl
+    } = reportDetail;
 
     let newDetail = '';
     let splitArray = [];
@@ -94,57 +104,69 @@ value: '返回上一页' } })
       <Layout className={styles.detailWrapper}>
         <Header className={styles.header}>
           <h2>{title || EMPTY_PARAM}</h2>
-          <h3>作者：{author || EMPTY_PARAM}　　　发布日期：{time || EMPTY_PARAM}</h3>
+          <h3>
+作者：
+            {author || EMPTY_PARAM}
+　　　发布日期：
+            {time || EMPTY_PARAM}
+          </h3>
         </Header>
         <Content className={styles.content}>
           {
             detail
-            ?
-              splitArray.map((item, index) => {
+              ? splitArray.map((item, index) => {
                 const itemKey = `item${index}`;
-                return (<div
-                  key={itemKey}
-                  className={styles.contentDiv}
-                  dangerouslySetInnerHTML={{ __html: _.trim(item) }}
-                />);
+                return (
+                  <div
+                    key={itemKey}
+                    className={styles.contentDiv}
+                    dangerouslySetInnerHTML={{ __html: _.trim(item) }}
+                  />
+                );
               })
-            :
-              <div>{EMPTY_PARAM}</div>
+              : <div>{EMPTY_PARAM}</div>
           }
         </Content>
         <Footer className={styles.footer}>
           <div className={styles.left}>
             {
               pdfDownloadUrl
-              ?
-                <a
-                  onClick={this.handleDownloadClick}
-                  href={pdfDownloadUrl}
-                  download
-                >
-                  <Icon type="pdf1" />PDF 全文
-                </a>
-              :
-                null
+                ? (
+                  <a
+                    onClick={this.handleDownloadClick}
+                    href={pdfDownloadUrl}
+                    download
+                  >
+                    <Icon type="pdf1" />
+PDF 全文
+                  </a>
+                )
+                : null
             }
             {
               wordDownloadUrl
-              ?
-                <a
-                  onClick={this.handleDownload}
-                  href={wordDownloadUrl}
-                  download
-                >
-                  <Icon type="word1" />WORD 全文
-                </a>
-              :
-                null
+                ? (
+                  <a
+                    onClick={this.handleDownload}
+                    href={wordDownloadUrl}
+                    download
+                  >
+                    <Icon type="word1" />
+WORD 全文
+                  </a>
+                )
+                : null
             }
           </div>
           <div className={styles.right}>
             {
-              !env.isInReact() ?
-                <a onClick={this.handleGoBck}><Icon type="fanhui1" />返回上一页</a> : null
+              !env.isInReact()
+                ? (
+                  <a onClick={this.handleGoBck}>
+                    <Icon type="fanhui1" />
+返回上一页
+                  </a>
+                ) : null
             }
           </div>
         </Footer>

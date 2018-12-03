@@ -252,7 +252,9 @@ export default class ServiceImplementation extends PureComponent {
       || prevState.isFoldFspLeftMenu !== isFoldFspLeftMenu
     ) {
       const { parameter } = this.props;
-      const { rowId, assetSort, state, activeIndex } = parameter;
+      const {
+        rowId, assetSort, state, activeIndex
+      } = parameter;
       const pageNum = Math.ceil(parseInt(activeIndex, 10) / pageSize);
       this.queryTargetCustList({
         state,
@@ -309,7 +311,7 @@ export default class ServiceImplementation extends PureComponent {
       needCascadeCustList: false,
       needResetDefault: false,
     };
-    if ( !_.isEmpty(nextCustId) && (hasCustIdChange || hasSwitchApply) ) {
+    if (!_.isEmpty(nextCustId) && (hasCustIdChange || hasSwitchApply)) {
       // 如果location中的客户信息变化了，则告知客户列表组件此时需要变化了
       snapshot = {
         ...snapshot,
@@ -627,7 +629,7 @@ export default class ServiceImplementation extends PureComponent {
       currentId,
       queryTargetCustDetail,
       eventId,
-     } = this.props;
+    } = this.props;
     changeParameter({
       activeIndex: obj.activeIndex,
       currentCustomer: obj.currentCustomer,
@@ -847,7 +849,7 @@ export default class ServiceImplementation extends PureComponent {
     // 服务状态为完成，code=30
     const payload = (caller === PHONE && currentMissionFlowId === missionFlowId)
       ? {
-          ...postBody,
+        ...postBody,
         id,
         flowStatus,
         serveTime,
@@ -937,7 +939,9 @@ export default class ServiceImplementation extends PureComponent {
   }
 
   reloadTargetCustInfo(callback) {
-    const { currentId, getCustDetail, targetCustDetail, eventId } = this.props;
+    const {
+      currentId, getCustDetail, targetCustDetail, eventId
+    } = this.props;
     const { custId, missionFlowId } = targetCustDetail;
     getCustDetail({
       missionId: currentId,
@@ -959,7 +963,9 @@ export default class ServiceImplementation extends PureComponent {
 
   // 更新组件state的服务实施客户列表信息
   @autobind
-  updateList({ missionFlowId, flowStatus, zlApprovalCode, serveWay }, callback = _.noop) {
+  updateList({
+    missionFlowId, flowStatus, zlApprovalCode, serveWay
+  }, callback = _.noop) {
     const { targetCustList = {}, targetCustList: { list = [] } } = this.state;
     const newList = _.map(list, (item) => {
       if (item.missionFlowId === missionFlowId) {
@@ -1141,89 +1147,93 @@ export default class ServiceImplementation extends PureComponent {
           handlePreciseQueryEnterPress={this.handlePreciseQueryEnterPress}
         />
         {
-          _.isEmpty(currentTargetList) ?
-            <EmptyData /> :
-            <div>
-              {
+          _.isEmpty(currentTargetList)
+            ? <EmptyData />
+            : (
+              <div>
+                {
                 /** 当选中服务实施列表tab的时候，给头部加一个固定效果 */
-                performerViewCurrentTab === defaultPerformerViewCurrentTab ?
-                  <Affix
-                    key={leftFoldState}
-                    target={() => getStickyTarget(this.container)}
-                  >
-                    {affixNode}
-                  </Affix>
+                performerViewCurrentTab === defaultPerformerViewCurrentTab
+                  ? (
+                    <Affix
+                      key={leftFoldState}
+                      target={() => getStickyTarget(this.container)}
+                    >
+                      {affixNode}
+                    </Affix>
+                  )
                   : affixNode
               }
-              <div className={styles.taskDetail}>
-                <CustomerDetail
-                  currentId={currentId}
-                  targetCustDetail={targetCustDetail}
-                  monthlyProfits={monthlyProfits}
-                  isCustIncomeRequested={isCustIncomeRequested}
-                  getCustIncome={getCustIncome}
-                  leftFoldState={leftFoldState}
-                  foldButtonId={INTRO_FIRST_SEEP_IDNAME}
-                />
-                <CustOtherTaskList
-                  title={`客户名下其他任务（${(otherTaskList || EMPTY_ARRAY).length || EMPTY_LENGTH}）`}
-                  otherTaskList={otherTaskList}
-                  foldButtonId={INTRO_SECOND_SEEP_IDNAME}
-                />
-                <SimpleDisplayBlock
-                  title="服务策略"
-                  data={servicePolicy}
-                  currentId={currentId}
-                  missionFlowId={missionFlowId}
-                  leftFoldState={leftFoldState}
-                />
-                <SimpleDisplayBlock
-                  title="任务提示"
-                  data={targetCustDetail.serviceTips}
-                  currentId={currentId}
-                  missionFlowId={missionFlowId}
-                  leftFoldState={leftFoldState}
-                />
-                <ServiceRecordForm
-                  location={location}
-                  dict={dict}
-                  empInfo={empInfo}
-                  addServeRecord={this.addServiceRecord}
-                  isReadOnly={isReadOnly}
-                  isReject={isReject}
-                  statusCode={statusCode}
-                  isEntranceFromPerformerView
-                  isFold={isFold}
-                  custUuid={custUuid}
-                  formData={serviceReocrd}
-                  ceFileDelete={ceFileDelete}
-                  deleteFileResult={deleteFileResult}
-                  getCeFileList={getCeFileList}
-                  queryCustFeedbackList4ZLFins={queryCustFeedbackList4ZLFins}
-                  custFeedbackList={custFeedbackList}
-                  queryApprovalList={queryApprovalList}
-                  zhangleApprovalList={zhangleApprovalList}
-                  serviceRecordInfo={serviceRecordInfo}
-                  currentMotServiceRecord={currentMotServiceRecord}
-                  resetServiceRecordInfo={resetServiceRecordInfo}
-                  testWallCollision={testWallCollision}
-                  testWallCollisionStatus={testWallCollisionStatus}
-                  serviceCustId={custId}
-                  isCurrentMissionPhoneCall={isCurrentMissionPhoneCall}
-                  onFormDataChange={this.formDataChange}
-                  refreshTaskList={refreshTaskList}
-                  refreshCustList={this.refreshCustList}
+                <div className={styles.taskDetail}>
+                  <CustomerDetail
+                    currentId={currentId}
+                    targetCustDetail={targetCustDetail}
+                    monthlyProfits={monthlyProfits}
+                    isCustIncomeRequested={isCustIncomeRequested}
+                    getCustIncome={getCustIncome}
+                    leftFoldState={leftFoldState}
+                    foldButtonId={INTRO_FIRST_SEEP_IDNAME}
+                  />
+                  <CustOtherTaskList
+                    title={`客户名下其他任务（${(otherTaskList || EMPTY_ARRAY).length || EMPTY_LENGTH}）`}
+                    otherTaskList={otherTaskList}
+                    foldButtonId={INTRO_SECOND_SEEP_IDNAME}
+                  />
+                  <SimpleDisplayBlock
+                    title="服务策略"
+                    data={servicePolicy}
+                    currentId={currentId}
+                    missionFlowId={missionFlowId}
+                    leftFoldState={leftFoldState}
+                  />
+                  <SimpleDisplayBlock
+                    title="任务提示"
+                    data={targetCustDetail.serviceTips}
+                    currentId={currentId}
+                    missionFlowId={missionFlowId}
+                    leftFoldState={leftFoldState}
+                  />
+                  <ServiceRecordForm
+                    location={location}
+                    dict={dict}
+                    empInfo={empInfo}
+                    addServeRecord={this.addServiceRecord}
+                    isReadOnly={isReadOnly}
+                    isReject={isReject}
+                    statusCode={statusCode}
+                    isEntranceFromPerformerView
+                    isFold={isFold}
+                    custUuid={custUuid}
+                    formData={serviceReocrd}
+                    ceFileDelete={ceFileDelete}
+                    deleteFileResult={deleteFileResult}
+                    getCeFileList={getCeFileList}
+                    queryCustFeedbackList4ZLFins={queryCustFeedbackList4ZLFins}
+                    custFeedbackList={custFeedbackList}
+                    queryApprovalList={queryApprovalList}
+                    zhangleApprovalList={zhangleApprovalList}
+                    serviceRecordInfo={serviceRecordInfo}
+                    currentMotServiceRecord={currentMotServiceRecord}
+                    resetServiceRecordInfo={resetServiceRecordInfo}
+                    testWallCollision={testWallCollision}
+                    testWallCollisionStatus={testWallCollisionStatus}
+                    serviceCustId={custId}
+                    isCurrentMissionPhoneCall={isCurrentMissionPhoneCall}
+                    onFormDataChange={this.formDataChange}
+                    refreshTaskList={refreshTaskList}
+                    refreshCustList={this.refreshCustList}
+                  />
+                </div>
+                <BatchAddServiceRecordModal
+                  visible={isShowBatchAddServiceRecord}
+                  closeModal={this.closeBatchAddServiceModal}
+                  modalKey={BATCH_ADD_SERVER_RECORD_MODAL_KEY}
+                  data={otherTaskList}
+                  onFormChange={onBatchServiceRecordFormChange}
+                  saveBatchAddServiceRecord={this.handleBatchAddServiceRecord}
                 />
               </div>
-              <BatchAddServiceRecordModal
-                visible={isShowBatchAddServiceRecord}
-                closeModal={this.closeBatchAddServiceModal}
-                modalKey={BATCH_ADD_SERVER_RECORD_MODAL_KEY}
-                data={otherTaskList}
-                onFormChange={onBatchServiceRecordFormChange}
-                saveBatchAddServiceRecord={this.handleBatchAddServiceRecord}
-              />
-            </div>
+            )
         }
         <Prompt
           when={isFormHalfFilledOut}

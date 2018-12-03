@@ -22,7 +22,9 @@ import InfoItem from '../../components/common/infoItem';
 import CancelAccountOLForm from '../../components/cancelAccountOL/CancelAccountOLForm';
 import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
-import { env, dom, dva, emp } from '../../helper';
+import {
+  env, dom, dva, emp
+} from '../../helper';
 import logable, { logCommon, logPV } from '../../decorators/logable';
 
 import { APPROVAL_COLUMNS } from '../../components/cancelAccountOL/config';
@@ -245,7 +247,9 @@ export default class RejectHome extends Component {
   @autobind
   doApproval() {
     const { detailInfoForUpdate: { flowId, basicInfo } } = this.props;
-    const { operate, auditors, groupName, idea, itemId } = this.state;
+    const {
+      operate, auditors, groupName, idea, itemId
+    } = this.state;
     // 新建走流程，flowId 传空字符串
     this.props.doApproval({
       flowId,
@@ -281,8 +285,10 @@ export default class RejectHome extends Component {
   }
 
   @autobind
-  @logable({ type: 'Click',
-payload: { name: '提交' } })
+  @logable({
+    type: 'Click',
+    payload: { name: '提交' }
+  })
   handleBtnGroupClick(btn) {
     // 点击此处，需要先进行可以提交的规则校验
     const { valid, msg } = validateData(this.state);
@@ -301,8 +307,10 @@ payload: { name: '提交' } })
   }
 
   @autobind
-  @logable({ type: 'Click',
-payload: { name: '确认' } })
+  @logable({
+    type: 'Click',
+    payload: { name: '确认' }
+  })
   handleSelectApproval(approver) {
     this.setState({
       nextApprovalModal: false,
@@ -311,8 +319,10 @@ payload: { name: '确认' } })
   }
 
   @autobind
-  @logable({ type: 'Click',
-payload: { name: '取消' } })
+  @logable({
+    type: 'Click',
+    payload: { name: '取消' }
+  })
   handleCancelSelectApproval() {
     this.setState({ nextApprovalModal: false });
   }
@@ -342,7 +352,9 @@ payload: { name: '取消' } })
       return null;
     }
 
-    const { idea, nextApprovalModal, nextApproverList, disablePage } = this.state;
+    const {
+      idea, nextApprovalModal, nextApproverList, disablePage
+    } = this.state;
 
     const nextApprovalProps = {
       visible: nextApprovalModal,

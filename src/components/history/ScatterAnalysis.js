@@ -62,9 +62,9 @@ export default class ScatterAnalysis extends PureComponent {
               data={contributionAnalysisData}
               queryContrastAnalyze={queryContrastAnalyze}
               title={custScatter.title}
-              contrastType={'客户类型'}
+              contrastType="客户类型"
               optionsData={cust}
-              description={'客户贡献'}
+              description="客户贡献"
               type={custScatter.type}
               isLvIndicator={isLvIndicator}
               switchDefault={switchDefault}
@@ -83,35 +83,37 @@ export default class ScatterAnalysis extends PureComponent {
           {
             // 投顾历史看板下的营业部不展示投顾维度散点图
             level === '4'
-              ? <div
-                style={{
-                  height: '400px',
-                }}
-              /> :
-              <Col span={12} className={styles.rightScatterSection}>
-                <AbilityScatterAnalysis
-                  data={reviewAnalysisData}
-                  queryContrastAnalyze={queryContrastAnalyze}
-                  title={boardType === 'TYPE_LSDB_TGJX' ? '投顾贡献对比' : '服务经理贡献对比'}
-                  contrastType={'投顾类型'}
-                  optionsData={invest}
-                  description={boardType === 'TYPE_LSDB_TGJX' ? '入岗投顾贡献' : '服务经理贡献'}
-                  type={investScatter.type}
-                  switchDefault={switchDefault}
-                  isLvIndicator={isLvIndicator}
-                  boardType={boardType}
-                  level={level}
-                  scope={scope}
-                  currentSelectIndicatorKey={currentSelectIndicatorKey}
-                  isCommissionRate={isCommissionRate}
+              ? (
+                <div
                   style={{
-                    left: '-65px',
+                    height: '400px',
                   }}
-                  orgId={orgId}
-                  summaryType={summaryType}
                 />
-              </Col>
-          }
+              ) : (
+                <Col span={12} className={styles.rightScatterSection}>
+                  <AbilityScatterAnalysis
+                    data={reviewAnalysisData}
+                    queryContrastAnalyze={queryContrastAnalyze}
+                    title={boardType === 'TYPE_LSDB_TGJX' ? '投顾贡献对比' : '服务经理贡献对比'}
+                    contrastType="投顾类型"
+                    optionsData={invest}
+                    description={boardType === 'TYPE_LSDB_TGJX' ? '入岗投顾贡献' : '服务经理贡献'}
+                    type={investScatter.type}
+                    switchDefault={switchDefault}
+                    isLvIndicator={isLvIndicator}
+                    boardType={boardType}
+                    level={level}
+                    scope={scope}
+                    currentSelectIndicatorKey={currentSelectIndicatorKey}
+                    isCommissionRate={isCommissionRate}
+                    style={{
+                      left: '-65px',
+                    }}
+                    orgId={orgId}
+                    summaryType={summaryType}
+                  />
+                </Col>
+              )}
         </Row>
       </div>
     );

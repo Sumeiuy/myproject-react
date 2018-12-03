@@ -168,7 +168,7 @@ export default class CustomerFeedback extends PureComponent {
       location,
       location: { query: { childActiveKey } },
       hasOver4OptionsTask,
-     } = this.props;
+    } = this.props;
     const { replace } = this.context;
     const missionBindProps = {
       getMissionList,
@@ -197,7 +197,7 @@ export default class CustomerFeedback extends PureComponent {
       modifyFeedback,
       location,
       taskNum,
-     } = this.props;
+    } = this.props;
     const optionsMaintainProps = {
       queryFeedbackList: this.queryFeedbackList,
       feedbackData,
@@ -232,8 +232,12 @@ export default class CustomerFeedback extends PureComponent {
 
   // 查询客户反馈列表
   @autobind
-  queryFeedbackList({ keyword = '', pageNum = 1, pageSize = 20, roleType = 0 }) {
-    return this.props.getFeedbackList({ keyword, pageNum, pageSize, roleType });
+  queryFeedbackList({
+    keyword = '', pageNum = 1, pageSize = 20, roleType = 0
+  }) {
+    return this.props.getFeedbackList({
+      keyword, pageNum, pageSize, roleType
+    });
   }
 
   // 切换tab
@@ -280,7 +284,11 @@ export default class CustomerFeedback extends PureComponent {
             { TAB_LIST.map(v => (<TabPane tab={v.tabName} key={v.key} />)) }
           </Tabs>
         </div>
-        <div className={styles.componentBox}> {tabContentComponent} </div>
+        <div className={styles.componentBox}>
+          {' '}
+          {tabContentComponent}
+          {' '}
+        </div>
       </div>
     );
   }

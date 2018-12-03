@@ -11,9 +11,9 @@ import { Upload, message, Icon as antdIcon } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import classnames from 'classnames';
-import confirm from '../../common/confirm_';
+import confirm from '../confirm_';
 import Loading from '../../../layouts/Loading';
-import Icon from '../../common/Icon';
+import Icon from '../Icon';
 import { emp } from '../../../helper';
 import uploadRequest from '../../../utils/uploadRequest';
 import './index.less';
@@ -99,10 +99,14 @@ export default class Uploader extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { attachModel: nextFile = EMPTY_OBJECT, custUuid,
-      deleteFileResult: nextResult = EMPTY_LIST } = nextProps;
-    const { attachModel: prevFile = EMPTY_OBJECT, deleteFileResult = EMPTY_LIST,
-      onOperateFile } = this.props;
+    const {
+      attachModel: nextFile = EMPTY_OBJECT, custUuid,
+      deleteFileResult: nextResult = EMPTY_LIST
+    } = nextProps;
+    const {
+      attachModel: prevFile = EMPTY_OBJECT, deleteFileResult = EMPTY_LIST,
+      onOperateFile
+    } = this.props;
     if (nextFile !== prevFile) {
       this.setState({
         lastFile: nextFile,
@@ -169,7 +173,9 @@ export default class Uploader extends PureComponent {
     }
 
     if (status === 'done') {
-      const { fileName, totalCustNum, attachment = '', attaches = [] } = resultData;
+      const {
+        fileName, totalCustNum, attachment = '', attaches = []
+      } = resultData;
       message.success('文件上传成功', 2);
       this.setState({
         lastFile: currentFile,
@@ -255,11 +261,13 @@ export default class Uploader extends PureComponent {
         customRequest={this.fileCustomRequest}
         showUploadList={false}
         fileList={fileList}
-        listType={'text'}
+        listType="text"
         accept={accept}
       >
         <div className="upload_txt">
-          + {uploadTitle}
+          +
+          {' '}
+          {uploadTitle}
         </div>
       </Dragger>
     );
@@ -386,27 +394,28 @@ export default class Uploader extends PureComponent {
     return (
       <div className="ant-upload-list ant-upload-list-text">
         {
-          _.map(fileList, item => <div
-            className="ant-upload-list-item ant-upload-list-item-done"
-            key={`${item.uid}${item.name}`}
-          >
-            <div className="ant-upload-list-item-info">
-              <span>
-                <Icon
-                  className={classnames({
-                    uploadedFileIcon: true,
-                    [this.renderIcon(item.name)]: true,
-                  })}
-                  type={this.renderIcon(item.name)}
-                />
-                <span className="ant-upload-list-item-name" title={item.name}>
-                  {item.name}
+          _.map(fileList, item => (
+            <div
+              className="ant-upload-list-item ant-upload-list-item-done"
+              key={`${item.uid}${item.name}`}
+            >
+              <div className="ant-upload-list-item-info">
+                <span>
+                  <Icon
+                    className={classnames({
+                      uploadedFileIcon: true,
+                      [this.renderIcon(item.name)]: true,
+                    })}
+                    type={this.renderIcon(item.name)}
+                  />
+                  <span className="ant-upload-list-item-name" title={item.name}>
+                    {item.name}
+                  </span>
                 </span>
-              </span>
+              </div>
+              <antdIcon title="删除文件" className="anticon anticon-cross" onClick={() => this.handleFileRemove(item)} />
             </div>
-            <antdIcon title="删除文件" className="anticon anticon-cross" onClick={() => this.handleFileRemove(item)} />
-          </div>,
-          )
+          ), )
         }
       </div>
     );
@@ -414,7 +423,9 @@ export default class Uploader extends PureComponent {
 
   render() {
     const { isNeedDelete, isNeedPreview, isSupportUploadMultiple } = this.props;
-    const { isShowUpload, isShowError, originFileName, fileList, isLoading } = this.state;
+    const {
+      isShowUpload, isShowError, originFileName, fileList, isLoading
+    } = this.state;
     return (
       <div>
         <div className="uploadBox">
@@ -422,37 +433,47 @@ export default class Uploader extends PureComponent {
             isShowUpload ? this.createUpload() : null
           }
           {
-            !isShowUpload ? <div className="previewSection">
-              <div className="uploadedFile">
-                {
-                  originFileName.indexOf('csv') !== -1 ?
-                    <Icon className="csvIcon" type="CSV" /> :
-                    <Icon className="excelIcon" type="excel" />
+            !isShowUpload ? (
+              <div className="previewSection">
+                <div className="uploadedFile">
+                  {
+                  originFileName.indexOf('csv') !== -1
+                    ? <Icon className="csvIcon" type="CSV" />
+                    : <Icon className="excelIcon" type="excel" />
                 }
-                <span>{originFileName}</span>
-              </div>
-              {
-                isNeedPreview ? <div
-                  className="overview"
-                  onClick={this.handlePreview}
-                >预览</div>
+                  <span>{originFileName}</span>
+                </div>
+                {
+                isNeedPreview ? (
+                  <div
+                    className="overview"
+                    onClick={this.handlePreview}
+                  >
+预览
+                  </div>
+                )
                   : null
               }
-              {
-                isNeedDelete ? <div
-                  className="delete"
-                  onClick={this.handleDeleteFile}
-                >删除</div> : null
+                {
+                isNeedDelete ? (
+                  <div
+                    className="delete"
+                    onClick={this.handleDeleteFile}
+                  >
+删除
+                  </div>
+                ) : null
               }
-            </div> : null
+              </div>
+            ) : null
           }
         </div>
         {
           (!_.isEmpty(fileList) && isSupportUploadMultiple) ? this.renderUploadedList() : null
         }
         {
-          (isShowUpload && isShowError) ?
-            <div className="errorInfo">导入数据失败，上传格式不正确！</div> : null
+          (isShowUpload && isShowError)
+            ? <div className="errorInfo">导入数据失败，上传格式不正确！</div> : null
         }
         {/**
          * Loading组件本来是bool类型传值，现在被改成number，这边做个处理，不然报错

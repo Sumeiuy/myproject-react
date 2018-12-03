@@ -20,10 +20,8 @@ function transformCustRangeData(list, parent = '') {
     const obj = {
       label: item.name,
       value: parent
-              ?
-              `${item.level}#${item.id}#${parent}#${item.name}`
-              :
-              `${item.level}#${item.id}#${item.name}`,
+        ? `${item.level}#${item.id}#${parent}#${item.name}`
+        : `${item.level}#${item.id}#${item.name}`,
       key: item.id,
     };
     if (item.children && item.children.length) {
@@ -53,10 +51,9 @@ function findOrgNameByOrgId(orgId) {
     if (Array.isArray(orgArr)) {
       for (let i = 0; i < orgArr.length; i++) {
         if (orgArr[i].key === orgId) {
-          custRangeNameDedault = parent !== '' ?
-          `${parent}/${orgArr[i].label}`
-          :
-          `${orgArr[i].label}`;
+          custRangeNameDedault = parent !== ''
+            ? `${parent}/${orgArr[i].label}`
+            : `${orgArr[i].label}`;
         }
       }
     }
@@ -64,7 +61,6 @@ function findOrgNameByOrgId(orgId) {
 }
 
 export default class CustRange extends PureComponent {
-
   static propTypes = {
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
@@ -138,9 +134,8 @@ export default class CustRange extends PureComponent {
     const changedValue = {
       label: custRangeName,
       value: custRangeName
-                ?
-                `${custRangeLevel}#${orgId}#${custRangeName}`
-                : custRange[0].id,
+        ? `${custRangeLevel}#${orgId}#${custRangeName}`
+        : custRange[0].id,
     };
     this.setState({
       value: changedValue,
@@ -152,8 +147,8 @@ export default class CustRange extends PureComponent {
       orgId,
       custRangeLevel,
       level: custRangeLevel,
-      scope: (custRangeLevel && custRangeLevel === defaultFilialeLevel && !report.isNewOrg(orgId)) ?
-        (Number(custRangeLevel) + 2) : (Number(custRangeLevel) + 1),
+      scope: (custRangeLevel && custRangeLevel === defaultFilialeLevel && !report.isNewOrg(orgId))
+        ? (Number(custRangeLevel) + 2) : (Number(custRangeLevel) + 1),
     });
   }
 
@@ -199,7 +194,7 @@ export default class CustRange extends PureComponent {
         treeData={formatCustRange}
         onChange={this.onChange}
         dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-        treeNodeFilterProp={'title'}
+        treeNodeFilterProp="title"
         showSearch
         dropdownMatchSelectWidth
         labelInValue

@@ -10,7 +10,7 @@ import _ from 'lodash';
 
 // 在eventData字段下每条数据增加一个index
 function fixEventAnalysis(data) {
-  const { resultData, resultData: { eventData, eventReportList} } = data;
+  const { resultData, resultData: { eventData, eventReportList } } = data;
   return {
     ...data,
     resultData: {
@@ -23,16 +23,16 @@ function fixEventAnalysis(data) {
 export default function taskAnalysisReport(api) {
   return {
     // 获取任务-客户分析报表数据
-    queryTaskCustomerReport: (query) => api.post('/groovynoauth/fsp/campaign/smart/queryTaskCustomerReport', query),
+    queryTaskCustomerReport: query => api.post('/groovynoauth/fsp/campaign/smart/queryTaskCustomerReport', query),
     // 获取完成服务客户统计数据
-    queryCompleteServiceCustReport: (query) => api.post('/groovynoauth/fsp/campaign/smart/queryCompleteServiceCustReport', query),
+    queryCompleteServiceCustReport: query => api.post('/groovynoauth/fsp/campaign/smart/queryCompleteServiceCustReport', query),
     // 获取达标服务客户统计数据
-    queryComplianceServiceCustReport: (query) => api.post('/groovynoauth/fsp/campaign/smart/queryComplianceServiceCustReport', query),
+    queryComplianceServiceCustReport: query => api.post('/groovynoauth/fsp/campaign/smart/queryComplianceServiceCustReport', query),
     // 获取服务渠道统计数据
-    queryServiceChannelReport: (query) => api.post('/groovynoauth/fsp/campaign/smart/queryServiceChannelReport', query),
+    queryServiceChannelReport: query => api.post('/groovynoauth/fsp/campaign/smart/queryServiceChannelReport', query),
     // 获取事件分析表数据
-    queryEventAnalysisReport: (query) => api.post('/groovynoauth/fsp/campaign/smart/queryEventAnalysisReport',query).then(fixEventAnalysis),
+    queryEventAnalysisReport: query => api.post('/groovynoauth/fsp/campaign/smart/queryEventAnalysisReport', query).then(fixEventAnalysis),
     // 事件查询
-    queryEventSearch: (query) => api.post('/groovynoauth/fsp/campaign/smart/queryEventSearch',query),
+    queryEventSearch: query => api.post('/groovynoauth/fsp/campaign/smart/queryEventSearch', query),
   };
 }

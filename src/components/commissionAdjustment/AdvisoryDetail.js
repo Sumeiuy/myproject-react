@@ -22,7 +22,6 @@ import {
 import styles from './detail.less';
 
 export default class AdvisoryDetail extends PureComponent {
-
   static propTypes = {
     name: PropTypes.string.isRequired,
     data: PropTypes.object.isRequired,
@@ -30,7 +29,11 @@ export default class AdvisoryDetail extends PureComponent {
   }
 
   render() {
-    const { name, data: { base, attachmentList, approvalHistory, currentStep } } = this.props;
+    const {
+      name, data: {
+        base, attachmentList, approvalHistory, currentStep
+      }
+    } = this.props;
     const { location: { query: { currentId = '' } } } = this.props;
     if (_.isEmpty(base)) return null;
     const {
@@ -137,4 +140,3 @@ export default class AdvisoryDetail extends PureComponent {
     );
   }
 }
-

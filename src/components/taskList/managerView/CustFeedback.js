@@ -29,7 +29,6 @@ const getLevelColor = (index = 0, childIndex = 0) => {
 };
 
 export default class CustFeedback extends PureComponent {
-
   static propTypes = {
     // 客户反馈
     custFeedback: PropTypes.array,
@@ -200,13 +199,11 @@ export default class CustFeedback extends PureComponent {
   @autobind
   renderChildren(children) {
     let childrenElem = '';
-    _.each(children, item =>
-      childrenElem += `<div class="item">
+    _.each(children, item => childrenElem += `<div class="item">
           <i class="icon" style='background: ${item.color}'></i>
           <span class="type">${item.name}：</span>
           <span class="percent">${dataHelper.toPercent(Number(item.realValue))}</span>
-        </div>`,
-    );
+        </div>`, );
     return childrenElem;
   }
 
@@ -287,8 +284,8 @@ export default class CustFeedback extends PureComponent {
   render() {
     const { level1Data, level2Data } = this.state;
 
-    const options = _.isEmpty(level1Data) && _.isEmpty(level2Data) ? constructEmptyPie() :
-      constructPieOptions({
+    const options = _.isEmpty(level1Data) && _.isEmpty(level2Data) ? constructEmptyPie()
+      : constructPieOptions({
         renderTooltip: this.renderTooltip,
         level1Data,
         level2Data,
@@ -313,9 +310,9 @@ export default class CustFeedback extends PureComponent {
             }}
           />
           <div className={styles.chartExp}>
-            {_.isEmpty(level1Data) && _.isEmpty(level2Data) ?
-              <div className={styles.emptyContent}>暂无客户反馈</div> :
-              _.map(level1Data, (item) => {
+            {_.isEmpty(level1Data) && _.isEmpty(level2Data)
+              ? <div className={styles.emptyContent}>暂无客户反馈</div>
+              : _.map(level1Data, (item) => {
                 // 过滤掉没有比例的数据
                 if (item.value === 0) {
                   return null;
@@ -327,7 +324,9 @@ export default class CustFeedback extends PureComponent {
                     key={item.key}
                   >
                     <i className={styles.parentIcon} style={{ background: item.color }} />
-                    <span>{item.name}</span>：<span>{dataHelper.toPercent(Number(item.value))}</span>
+                    <span>{item.name}</span>
+：
+                    <span>{dataHelper.toPercent(Number(item.value))}</span>
                   </div>
                 );
               })}

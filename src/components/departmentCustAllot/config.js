@@ -5,7 +5,9 @@
  * @Last Modified by: zhangjun
  * @Last Modified time: 2018-08-03 16:23:19
  */
-import { status, drafter, department, approver, applyTime } from '../../config/busApplyFilters';
+import {
+  status, drafter, department, approver, applyTime
+} from '../../config/busApplyFilters';
 
 const config = {
   limit: {
@@ -18,7 +20,7 @@ const config = {
     count: '添加失败，一次勾选的客户数超过500条，请分多次添加。',
     allCount: '添加失败，申请单客户列表客户数超过最大数量2000条。',
   },
-    // 分公司客户分配
+  // 分公司客户分配
   custAllot: {
     pageName: '分公司客户分配',
     pageType: '07', // 查询列表接口中的type值

@@ -61,4 +61,3 @@ MarginTradingDetail.propTypes = {
 MarginTradingDetail.defaultProps = {
   data: {},
 };
-

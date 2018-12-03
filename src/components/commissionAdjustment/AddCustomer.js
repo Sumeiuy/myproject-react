@@ -40,6 +40,7 @@ export default class AddCustomer extends PureComponent {
       processModal: false,
     };
   }
+
   componentWillReceiveProps(nextProps) {
     const { validataLoading: prevL } = this.props;
     const { validataLoading: nextL, validateResult } = nextProps;

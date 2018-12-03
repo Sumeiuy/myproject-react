@@ -62,6 +62,7 @@ export default class PageHeader extends PureComponent {
     reportName: '',
     orgId: '',
   }
+
   constructor(props) {
     super(props);
     let contentWidth;
@@ -84,6 +85,7 @@ export default class PageHeader extends PureComponent {
   componentDidMount() {
     this.didMountAddEventListener();
   }
+
   componentWillUnmount() {
     if (fsp) {
       window.removeEventListener('scroll', this.onScroll);
@@ -92,6 +94,7 @@ export default class PageHeader extends PureComponent {
       hideBtn.removeEventListener('click', this.toggleLeft);
     }
   }
+
   // resize 事件
   @autobind
   onWindowResize() {
@@ -100,6 +103,7 @@ export default class PageHeader extends PureComponent {
       width: fsp ? `${parseInt(contentWidth, 10) - marginWidth}px` : '100%',
     });
   }
+
   // 监听页面滚动事件，设置头部的 left 值
   @autobind
   onScroll() {
@@ -109,6 +113,7 @@ export default class PageHeader extends PureComponent {
       left: leftWidth - scrollX,
     });
   }
+
   // didmount 时添加监听事件
   @autobind
   didMountAddEventListener() {
@@ -124,12 +129,14 @@ export default class PageHeader extends PureComponent {
       });
     }
   }
+
   // 监听 FSP 侧边栏显示隐藏按钮点击事件
   @autobind
   addEventListenerClick() {
     showBtn.addEventListener('click', this.toggleLeft, false);
     hideBtn.addEventListener('click', this.toggleLeft, false);
   }
+
   // 检测到 FSP 侧边栏显示隐藏按钮点击事件后，根据项目的容器改变 left 值
   @autobind
   toggleLeft() {
@@ -184,7 +191,9 @@ export default class PageHeader extends PureComponent {
       initialData,
       location: { pathname },
     } = this.props;
-    const { top, left, width, summaryTypeValue } = this.state;
+    const {
+      top, left, width, summaryTypeValue
+    } = this.state;
     const maxDataDt = initialData.maxDataDt;
     const maxDataDtTip = moment(maxDataDt).format('YYYY/MM/DD');
     // 汇总方式的切换是否显示
@@ -212,14 +221,12 @@ export default class PageHeader extends PureComponent {
                 {/* 需要针对预览页面做调整 */}
                 {
                   preView
-                    ?
-                    (
+                    ? (
                       <div className="preView">
                         {reportName}
                       </div>
                     )
-                    :
-                    (
+                    : (
                       <BoardSelect
                         location={location}
                         push={push}
@@ -252,15 +259,16 @@ export default class PageHeader extends PureComponent {
                 />
                 {/* 汇总方式切换 */}
                 {
-                  summaryTypeIsShow ?
-                    <div className={styles.SummaryTypeSelect}>
-                      <div className={styles.vSplit} />
-                      <Select
-                        style={{ width: 150 }}
-                        value={summaryTypeValue}
-                        onChange={this.handleSummaryTypeChange}
-                      >
-                        {
+                  summaryTypeIsShow
+                    ? (
+                      <div className={styles.SummaryTypeSelect}>
+                        <div className={styles.vSplit} />
+                        <Select
+                          style={{ width: 150 }}
+                          value={summaryTypeValue}
+                          onChange={this.handleSummaryTypeChange}
+                        >
+                          {
                           summaryTypeSelect.map((item, index) => {
                             const summaryTypeIndex = `summaryType-${index}`;
                             return (
@@ -268,28 +276,31 @@ export default class PageHeader extends PureComponent {
                                 key={summaryTypeIndex}
                                 value={item.value}
                               >
-                                按{item.name}
+                                按
+                                {item.name}
                               </Option>
                             );
                           })
                         }
-                      </Select>
-                    </div>
-                    :
-                    null
+                        </Select>
+                      </div>
+                    )
+                    : null
                 }
               </div>
             </Row>
             {
-              moment(maxDataDt).isBefore(momentDataDt) && !isHistory ?
-                <Alert
-                  message="提示"
-                  description={`因当前数据后台未核算完成，目前展现的是截止到${maxDataDtTip}的数据`}
-                  type="warning"
-                  closable
-                  showIcon
-                /> :
-                null
+              moment(maxDataDt).isBefore(momentDataDt) && !isHistory
+                ? (
+                  <Alert
+                    message="提示"
+                    description={`因当前数据后台未核算完成，目前展现的是截止到${maxDataDtTip}的数据`}
+                    type="warning"
+                    closable
+                    showIcon
+                  />
+                )
+                : null
             }
           </div>
         </div>
