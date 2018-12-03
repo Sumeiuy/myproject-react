@@ -18,8 +18,8 @@ import { message } from 'antd';
 
 import CommonModal from '../common/biz/CommonModal';
 // import Button from '../../components/common/Button';
-import Pagination from '../../components/common/Pagination';
-import CommonTable from '../../components/common/biz/CommonTable';
+import Pagination from '../common/Pagination';
+import CommonTable from '../common/biz/CommonTable';
 import commonConfirm from '../common/confirm_';
 import Icon from '../common/Icon';
 import logable, { logCommon } from '../../decorators/logable';
@@ -141,11 +141,13 @@ export default class AddCustModal extends PureComponent {
     const isTouguColumn = _.find(newTitleList, o => o.key === KEY_ISTOUGU);
     isTouguColumn.render = (text, record) => {
       const isTouGu = text ? '是' : '否';
-      return (<div>
-        {
+      return (
+        <div>
+          {
           record.oldEmpName ? isTouGu : null
         }
-      </div>);
+        </div>
+      );
     };
     return newTitleList;
   }
@@ -443,8 +445,7 @@ export default class AddCustModal extends PureComponent {
     ];
 
     const statusList = _.get(this.context, 'dict.accountStatusList') || [];
-    const decoratedStatusList = statusList.map(item =>
-      ({ key: item.key || '', value: item.value }));
+    const decoratedStatusList = statusList.map(item => ({ key: item.key || '', value: item.value }));
 
     const {
       isExpand,
@@ -554,57 +555,59 @@ export default class AddCustModal extends PureComponent {
               <div className={styles.expandDiv}>
                 {
                   isExpand
-                  ?
-                    <a onClick={this.handleToggleExpand}>
-                      <span>收起</span>
-                      <Icon type="xiangshang" />
-                    </a>
-                  :
-                    <a onClick={this.handleToggleExpand}>
-                      <span>更多</span>
-                      <Icon type="xiangxia" />
-                    </a>
+                    ? (
+                      <a onClick={this.handleToggleExpand}>
+                        <span>收起</span>
+                        <Icon type="xiangshang" />
+                      </a>
+                    )
+                    : (
+                      <a onClick={this.handleToggleExpand}>
+                        <span>更多</span>
+                        <Icon type="xiangxia" />
+                      </a>
+                    )
                 }
               </div>
               {
                 isExpand
-                ?
-                  <div className={styles.rangeDiv}>
-                    <RangeFilter
-                      filterId="totalAsset"
-                      filterName="总资产"
-                      defaultLabel={NO_VALUE}
-                      value={totalAsset}
-                      unit="元"
-                      onChange={this.handleRangeFilterChange}
-                    />
-                    <RangeFilter
-                      filterId="annualDailyAsset"
-                      filterName="年日均总资产"
-                      defaultLabel={NO_VALUE}
-                      value={annualDailyAsset}
-                      unit="元"
-                      onChange={this.handleRangeFilterChange}
-                    />
-                    <RangeFilter
-                      filterId="lastYearAsset"
-                      filterName="上年股基净佣金"
-                      defaultLabel={NO_VALUE}
-                      value={lastYearAsset}
-                      unit="元"
-                      onChange={this.handleRangeFilterChange}
-                    />
-                    <RangeFilter
-                      filterId="annualAsset"
-                      filterName="本年股基净佣金"
-                      defaultLabel={NO_VALUE}
-                      value={annualAsset}
-                      unit="元"
-                      onChange={this.handleRangeFilterChange}
-                    />
-                  </div>
-                :
-                  null
+                  ? (
+                    <div className={styles.rangeDiv}>
+                      <RangeFilter
+                        filterId="totalAsset"
+                        filterName="总资产"
+                        defaultLabel={NO_VALUE}
+                        value={totalAsset}
+                        unit="元"
+                        onChange={this.handleRangeFilterChange}
+                      />
+                      <RangeFilter
+                        filterId="annualDailyAsset"
+                        filterName="年日均总资产"
+                        defaultLabel={NO_VALUE}
+                        value={annualDailyAsset}
+                        unit="元"
+                        onChange={this.handleRangeFilterChange}
+                      />
+                      <RangeFilter
+                        filterId="lastYearAsset"
+                        filterName="上年股基净佣金"
+                        defaultLabel={NO_VALUE}
+                        value={lastYearAsset}
+                        unit="元"
+                        onChange={this.handleRangeFilterChange}
+                      />
+                      <RangeFilter
+                        filterId="annualAsset"
+                        filterName="本年股基净佣金"
+                        defaultLabel={NO_VALUE}
+                        value={annualAsset}
+                        unit="元"
+                        onChange={this.handleRangeFilterChange}
+                      />
+                    </div>
+                  )
+                  : null
               }
             </div>
             <div className={styles.tableDiv}>

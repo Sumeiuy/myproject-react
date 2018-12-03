@@ -48,7 +48,9 @@ export default class TextEditor extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { originalValue, editorState, editorValue, labelName } = props;
+    const {
+      originalValue, editorState, editorValue, labelName
+    } = props;
     this.state = {
       originalValue,
       editorValue,
@@ -110,7 +112,9 @@ export default class TextEditor extends PureComponent {
   @autobind
   editorConfirm(e) {
     // TODO 判断是否进行了修改
-    const { controller, confirm, editorName, form, editorValue } = this.props;
+    const {
+      controller, confirm, editorName, form, editorValue
+    } = this.props;
     const newValue = form.getFieldValue(editorName);
     let canUpdate = true;
     if (editorName === 'boardNameEditor') {
@@ -200,7 +204,9 @@ export default class TextEditor extends PureComponent {
   }
 
   render() {
-    const { editable, style, editorName, labelName } = this.props;
+    const {
+      editable, style, editorName, labelName
+    } = this.props;
     const { getFieldDecorator } = this.props.form;
     const { originalValue, editing, editorValue } = this.state;
     const editWrapperClass = classnames({
@@ -219,7 +225,10 @@ export default class TextEditor extends PureComponent {
     return (
       <div>
         <div className={editLabelClass}>
-          <strong >{labelName }：</strong>
+          <strong>
+            {labelName }
+：
+          </strong>
         </div>
         <div className={editWrapperClass} style={style} onClick={this.handleEditWrapperClick}>
           <div className={editContentClass}>{originalValue}</div>
@@ -238,4 +247,3 @@ export default class TextEditor extends PureComponent {
     );
   }
 }
-

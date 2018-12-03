@@ -13,8 +13,10 @@ function fixDictoryKeys(dict) {
     ...dict,
     resultData: {
       ...resultData,
-      deputeStatusDictList: _.map(deputeList, item => ({ value: item.key,
-label: item.value })),
+      deputeStatusDictList: _.map(deputeList, item => ({
+        value: item.key,
+        label: item.value
+      })),
     },
   };
 }

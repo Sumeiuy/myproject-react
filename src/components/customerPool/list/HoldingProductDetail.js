@@ -20,7 +20,6 @@ const TYPE_STOCK = 'stock';
 const TYPE_FUND = 'fund';
 
 export default class HoldingProductDetail extends PureComponent {
-
   static propTypes = {
     custId: PropTypes.string.isRequired,
     data: PropTypes.object.isRequired,
@@ -61,7 +60,9 @@ export default class HoldingProductDetail extends PureComponent {
    */
   @autobind
   getDetail() {
-    const { data, queryHoldingProduct, holdingProducts, custId } = this.props;
+    const {
+      data, queryHoldingProduct, holdingProducts, custId
+    } = this.props;
     const { id = '' } = data;
     if (_.isEmpty(holdingProducts[`${custId}${id}`])) {
       queryHoldingProduct({ custId, prdtHold: id }).then(() => {
@@ -116,7 +117,9 @@ export default class HoldingProductDetail extends PureComponent {
    * @param {*} isFormatAsset 表示value传入的数字需要格式成资产类别来显示，eg: 12.23万，默认为true
    */
   @autobind
-  generateDetailItemNode({ name, value, currency, isFormatAsset = true }) {
+  generateDetailItemNode({
+    name, value, currency, isFormatAsset = true
+  }) {
     if (value !== null) {
       let newValue = value;
       if (isFormatAsset) {
@@ -129,7 +132,10 @@ export default class HoldingProductDetail extends PureComponent {
       }
       return (
         <li>
-          <span className={styles.label}>{name}:</span>
+          <span className={styles.label}>
+            {name}
+:
+          </span>
           <span className={styles.value}>{newValue}</span>
         </li>
       );

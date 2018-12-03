@@ -33,7 +33,9 @@ const getPopupContainerFunction = () => document.querySelector(`.${styles.editWr
 const { TextArea } = Input;
 const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
-const { subscribeArray, protocolSubTypes, protocolStepOperate, arbitrageSoftwareArray } = config;
+const {
+  subscribeArray, protocolSubTypes, protocolStepOperate, arbitrageSoftwareArray
+} = config;
 
 export default class EditBaseInfo extends PureComponent {
   static propTypes = {
@@ -468,7 +470,9 @@ export default class EditBaseInfo extends PureComponent {
       resetProduct,
     } = this.props;
     // 清除详情
-    const { isSubscribe, operationType, isEditPage, subType } = this.state;
+    const {
+      isSubscribe, operationType, isEditPage, subType
+    } = this.state;
     const { cusId, custType, brokerNumber } = value;
     const validatePayload = {
       id: cusId,
@@ -797,9 +801,9 @@ export default class EditBaseInfo extends PureComponent {
       ];
     }
     selectSoftPermission = selectSoftPermission.map(v => ({ value: v.code }));
-    const accountNumber = permission.protocolIsShowSwitch(protocolTemplate.rowId || '', subType, needMutliAndTen) ?
-      (<div>
-        <InfoForm label="是否多账户使用" >
+    const accountNumber = permission.protocolIsShowSwitch(protocolTemplate.rowId || '', subType, needMutliAndTen)
+      ? (<div>
+        <InfoForm label="是否多账户使用">
           <CustomSwitch
             name="multiUsedFlag"
             value={multiUsedFlag}
@@ -813,88 +817,94 @@ export default class EditBaseInfo extends PureComponent {
             onChange={this.handleOrderSwitch}
           />
         </InfoForm>
-      </div>
+         </div>
       )
-      :
-      null;
+      : null;
     return (
       <div className={styles.editWrapper}>
         <InfoTitle head="基本信息" />
         {
-          isEditPage ?
-            <div>
-              <InfoItem label="子类型" value={subType} />
-              <InfoItem label="操作类型" value={protocolDetail.operationTypeText} />
-              <InfoItem label="客户" value={`${(protocolDetail.contactName || protocolDetail.accountName)} ${protocolDetail.econNum}`} />
-            </div>
-            :
-            <div className={styles.editWrapperThree}>
-              <InfoForm label="子类型" required>
-                <Select
-                  name="subType"
-                  data={subTypeList}
-                  value={subType}
-                  onChange={this.handleSubTypeSelect}
-                  getPopupContainer={getPopupContainerFunction}
-                />
-              </InfoForm>
-              <InfoForm label="操作类型" required>
-                <Select
-                  name="operationType"
-                  data={operationTypeList}
-                  value={operationType}
-                  onChange={this.handleOperateTypeSelect}
-                  getPopupContainer={getPopupContainerFunction}
-                />
-              </InfoForm>
-              <InfoForm label="客户" required>
-                <AutoComplete
-                  placeholder="经纪客户号/客户名称"
-                  showNameKey="custName"
-                  showIdKey="brokerNumber"
-                  defaultValue={`${custName} ${brokerNumber}`}
-                  optionList={custList}
-                  onSelect={this.handleSelectClient}
-                  onSearch={this.handleSearchClient}
-                  ref={ref => this.selectCustComponent = ref}
-                  getPopupContainer={getPopupContainerFunction}
-                />
-              </InfoForm>
-            </div>
+          isEditPage
+            ? (
+              <div>
+                <InfoItem label="子类型" value={subType} />
+                <InfoItem label="操作类型" value={protocolDetail.operationTypeText} />
+                <InfoItem label="客户" value={`${(protocolDetail.contactName || protocolDetail.accountName)} ${protocolDetail.econNum}`} />
+              </div>
+            )
+            : (
+              <div className={styles.editWrapperThree}>
+                <InfoForm label="子类型" required>
+                  <Select
+                    name="subType"
+                    data={subTypeList}
+                    value={subType}
+                    onChange={this.handleSubTypeSelect}
+                    getPopupContainer={getPopupContainerFunction}
+                  />
+                </InfoForm>
+                <InfoForm label="操作类型" required>
+                  <Select
+                    name="operationType"
+                    data={operationTypeList}
+                    value={operationType}
+                    onChange={this.handleOperateTypeSelect}
+                    getPopupContainer={getPopupContainerFunction}
+                  />
+                </InfoForm>
+                <InfoForm label="客户" required>
+                  <AutoComplete
+                    placeholder="经纪客户号/客户名称"
+                    showNameKey="custName"
+                    showIdKey="brokerNumber"
+                    defaultValue={`${custName} ${brokerNumber}`}
+                    optionList={custList}
+                    onSelect={this.handleSelectClient}
+                    onSearch={this.handleSearchClient}
+                    ref={ref => this.selectCustComponent = ref}
+                    getPopupContainer={getPopupContainerFunction}
+                  />
+                </InfoForm>
+              </div>
+            )
         }
         {
-          isSubscribe ?
-            <InfoForm label="协议模板" required>
-              <AutoComplete
-                placeholder="协议模板"
-                showNameKey="prodName"
-                showIdKey="rowId"
-                defaultValue={isEditPage ? `${protocolTemplate.prodName || ''}` : ''}
-                optionList={templateList}
-                onSelect={this.handleSelectTemplate}
-                onSearch={this.handleSearchTemplate}
-                ref={ref => this.selectTemplateComponent = ref}
-                getPopupContainer={getPopupContainerFunction}
-              />
-            </InfoForm>
-            :
-            <div>
-              {
-                isEditPage ?
-                  <InfoItem label="协议编号" value={protocolNumber || ''} />
-                  :
-                  <InfoForm label="协议编号" required>
-                    <Select
-                      name="protocolNumber"
-                      data={newProtocolList}
-                      value={protocolNumber}
-                      onChange={this.handleSelectProtocol}
-                      getPopupContainer={getPopupContainerFunction}
-                    />
-                  </InfoForm>
+          isSubscribe
+            ? (
+              <InfoForm label="协议模板" required>
+                <AutoComplete
+                  placeholder="协议模板"
+                  showNameKey="prodName"
+                  showIdKey="rowId"
+                  defaultValue={isEditPage ? `${protocolTemplate.prodName || ''}` : ''}
+                  optionList={templateList}
+                  onSelect={this.handleSelectTemplate}
+                  onSearch={this.handleSearchTemplate}
+                  ref={ref => this.selectTemplateComponent = ref}
+                  getPopupContainer={getPopupContainerFunction}
+                />
+              </InfoForm>
+            )
+            : (
+              <div>
+                {
+                isEditPage
+                  ? <InfoItem label="协议编号" value={protocolNumber || ''} />
+                  : (
+                    <InfoForm label="协议编号" required>
+                      <Select
+                        name="protocolNumber"
+                        data={newProtocolList}
+                        value={protocolNumber}
+                        onChange={this.handleSelectProtocol}
+                        getPopupContainer={getPopupContainerFunction}
+                      />
+                    </InfoForm>
+                  )
               }
-              <InfoItem label="协议模版" value={protocolTemplate.prodName || ''} />
-            </div>
+                <InfoItem label="协议模版" value={protocolTemplate.prodName || ''} />
+              </div>
+            )
         }
         {
           !isHightSpeed ? accountNumber : null
@@ -904,36 +914,35 @@ export default class EditBaseInfo extends PureComponent {
         {
           /* 判断是否套利软件 */
           (!this.isArbirageSoftware() || _.isEmpty(businessTypeList)) ? null
-          :
-          (
-            <InfoForm label="业务类型" required>
-              <Select
-                name="businessType"
-                data={businessTypeList}
-                value={businessType}
-                onChange={this.handleBusinessTypeSelect}
-                getPopupContainer={getPopupContainerFunction}
-              />
-            </InfoForm>
-          )
+            : (
+              <InfoForm label="业务类型" required>
+                <Select
+                  name="businessType"
+                  data={businessTypeList}
+                  value={businessType}
+                  onChange={this.handleBusinessTypeSelect}
+                  getPopupContainer={getPopupContainerFunction}
+                />
+              </InfoForm>
+            )
         }
         {
           /* 开通权限(只有在权限或者软件+权限时候才显示) */
-          (!this.needShowOpenPermission() || _.isEmpty(openPermissionList)) ? null :
-          (
-            <InfoForm label="开通权限" required>
-              <HtscTreeSelect
-                name="openPermission"
-                placeholder="请选择开通权限"
-                defaultValue={selectSoftPermission}
-                treeData={openPermissionList}
-                boxStyle={{ width: 260, height: 'auto' }}
-                onSelect={this.handleOpenPermissionChange}
-                getPopupContainer={getParentContainer}
-                ref={this.refHtscTreeSelect}
-              />
-            </InfoForm>
-          )
+          (!this.needShowOpenPermission() || _.isEmpty(openPermissionList)) ? null
+            : (
+              <InfoForm label="开通权限" required>
+                <HtscTreeSelect
+                  name="openPermission"
+                  placeholder="请选择开通权限"
+                  defaultValue={selectSoftPermission}
+                  treeData={openPermissionList}
+                  boxStyle={{ width: 260, height: 'auto' }}
+                  onSelect={this.handleOpenPermissionChange}
+                  getPopupContainer={getParentContainer}
+                  ref={this.refHtscTreeSelect}
+                />
+              </InfoForm>
+            )
         }
         {
           /* 软件信息 只有在 软件或者软件+权限或者软件续用才显示 */

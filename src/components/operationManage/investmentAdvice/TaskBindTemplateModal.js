@@ -244,7 +244,9 @@ export default class componentName extends Component {
               />
             </div>
             <div className={styles.searchResult}>
-              共有{_.size(optionalList)}条可选模板
+              共有
+              {_.size(optionalList)}
+条可选模板
             </div>
           </div>
           <div className={styles.templateListWrapper} ref={this.setTempLateListWraperRef}>

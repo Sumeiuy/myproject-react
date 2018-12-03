@@ -11,11 +11,11 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { Collapse, Icon, message } from 'antd';
 
-import Button from '../../../components/common/Button';
+import Button from '../../common/Button';
 import EditInput from './EditInput';
 import Pagination from '../../common/Pagination';
 // 此处为funcition,而非组件，所以使用小写打头
-import confirm from '../../../components/common/confirm_';
+import confirm from '../../common/confirm_';
 import logable from '../../../decorators/logable';
 
 import styles from './optionsMaintain.less';
@@ -72,8 +72,10 @@ export default class OptionsMaintain extends PureComponent {
   // 查询客户反馈列表
   @autobind
   queryFeedbackList(pageNum = 1, pageSize = 20) {
-    this.props.queryFeedbackList({ pageNum,
-pageSize }).then(this.syncPageDataToUrl);
+    this.props.queryFeedbackList({
+      pageNum,
+      pageSize
+    }).then(this.syncPageDataToUrl);
   }
 
   // 修改反馈选项的文字后的弹出层的OK建处理程序,
@@ -83,9 +85,11 @@ pageSize }).then(this.syncPageDataToUrl);
   handleModifySMFeedbackText(name, item) {
     const { id, custFeedbackName = '' } = item;
     const { location: { query: { pageNum } } } = this.props;
-    this.props.modifyFeedback({ id,
-name,
-custFeedbackName }).then(() => {
+    this.props.modifyFeedback({
+      id,
+      name,
+      custFeedbackName
+    }).then(() => {
       this.queryFeedbackList(pageNum);
     });
   }
@@ -95,9 +99,11 @@ custFeedbackName }).then(() => {
   handleEditZLFeedbackTextConfirmOK(custFeedbackName, item) {
     const { id, name } = item;
     const { location: { query: { pageNum } } } = this.props;
-    this.props.modifyFeedback({ id,
-name,
-custFeedbackName }).then(() => {
+    this.props.modifyFeedback({
+      id,
+      name,
+      custFeedbackName
+    }).then(() => {
       const { taskNum } = this.props;
       // 修改一级客户反馈后，返回的相关涨乐客户选项超过4个的任务数量
       // 如果大于0条，则弹出让用户去任务绑定Tab下修改
@@ -137,8 +143,10 @@ custFeedbackName }).then(() => {
 
   // 删除服务经理反馈可选项的二级反馈选项
   @autobind
-  @logable({ type: 'Click',
-payload: { name: '删除二级反馈选项' } })
+  @logable({
+    type: 'Click',
+    payload: { name: '删除二级反馈选项' }
+  })
   deleteSecondFeedbackOfServiceManager(item, e) {
     const { id, parentId } = item;
     const { feedbackData: { feedbackList = [] } } = this.props;
@@ -154,8 +162,10 @@ payload: { name: '删除二级反馈选项' } })
 
   // 删除一级客户反馈选项
   @autobind
-  @logable({ type: 'Click',
-payload: { name: '删除一级反馈选项' } })
+  @logable({
+    type: 'Click',
+    payload: { name: '删除一级反馈选项' }
+  })
   deleteFirstFeedbackOfServiceManager(item, e) {
     const { id } = item;
     this.deleteConfirm(id, e);
@@ -164,9 +174,13 @@ payload: { name: '删除一级反馈选项' } })
   // 删除服务经理的二级反馈客户反馈
   // 删除整条反馈维护记录
   @autobind
-  @logable({ type: 'Click',
-payload: { name: '删除',
-value: '$args[0]' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '删除',
+      value: '$args[0]'
+    }
+  })
   deleteConfirm(id, e) {
     const { location: { query: { pageNum } } } = this.props;
     const { delFeedback } = this.props;
@@ -183,8 +197,10 @@ value: '$args[0]' } })
 
   // 显示添加二级反馈选项的输入框
   @autobind
-  @logable({ type: 'ButtonClick',
-payload: { name: '+新增二级' } })
+  @logable({
+    type: 'ButtonClick',
+    payload: { name: '+新增二级' }
+  })
   showAddSecondFeedbackInput() {
     // 因为折叠面板的key就是反馈列表一级反馈选项的id值
     const { collapseActiveKey } = this.state;
@@ -216,9 +232,11 @@ payload: { name: '+新增二级' } })
     const { parentId } = item;
     // 因为新需求的接口中要求，custFeedbackName为必传值，
     // 而由于涨乐客户反馈不能修改二级选项，所以传空字符串即可
-    this.addFeedbackOption({ name,
-parentId,
-custFeedbackName: '' });
+    this.addFeedbackOption({
+      name,
+      parentId,
+      custFeedbackName: ''
+    });
   }
 
   // 新增服务经可选项或者客户涨乐可选项的一级反馈选项
@@ -227,9 +245,11 @@ custFeedbackName: '' });
     // 因为一级反馈选项没有父节点
     // 新建一级反馈选项的时候，涨乐客户反馈选项，默认值为空，
     // 所以新增的时候，custFeedbackName 传空字符串
-    this.addFeedbackOption({ name,
-parentId: '',
-custFeedbackName: '' });
+    this.addFeedbackOption({
+      name,
+      parentId: '',
+      custFeedbackName: ''
+    });
   }
 
   // 新增服务经理可选项|客户涨乐可选项一级选项
@@ -240,8 +260,10 @@ custFeedbackName: '' });
 
   // 点击添加一级反馈选项
   @autobind
-  @logable({ type: 'ButtonClick',
-payload: { name: '+反馈类型' } })
+  @logable({
+    type: 'ButtonClick',
+    payload: { name: '+反馈类型' }
+  })
   parentAddHandle() {
     this.setState({
       addParentClass: true,
@@ -258,8 +280,10 @@ payload: { name: '+反馈类型' } })
 
   // 切换折叠面板
   @autobind
-  @logable({ type: 'ButtonClick',
-payload: { name: '切换折叠面板' } })
+  @logable({
+    type: 'ButtonClick',
+    payload: { name: '切换折叠面板' }
+  })
   handleChangeCollapse(collapseActiveKey) {
     // 此处出来的key值已经从数值转换成了字符串
     this.setState({ collapseActiveKey });
@@ -294,7 +318,12 @@ payload: { name: '切换折叠面板' } })
           editable={item.edit}
           onEditConfirm={this.handleUpdateFirstFeedbackOfZhangLeCust}
         />
-        <div className={styles.lengthDiv}>{item.length || 0}项<Icon type="up" /><Icon type="down" /></div>
+        <div className={styles.lengthDiv}>
+          {item.length || 0}
+项
+          <Icon type="up" />
+          <Icon type="down" />
+        </div>
         <div className={styles.actionDiv}>
           <Icon type="delete" title="删除" onClick={e => this.deleteFirstFeedbackOfServiceManager(item, e)} />
         </div>
@@ -311,8 +340,10 @@ payload: { name: '切换折叠面板' } })
         <Icon
           type="delete"
           title="删除"
-          onClick={e => this.deleteSecondFeedbackOfServiceManager({ ...child,
-parentId }, e)}
+          onClick={e => this.deleteSecondFeedbackOfServiceManager({
+            ...child,
+            parentId
+          }, e)}
         />
       );
       // 因为由于二级反馈选项的原始数据中并没有对应的一级反馈选项的id值，
@@ -322,8 +353,10 @@ parentId }, e)}
           <EditInput
             editName="服务经理二级可选项"
             value={child.name}
-            item={{ ...child,
-parentId }}
+            item={{
+              ...child,
+              parentId
+            }}
             btnGroup={btnGroup}
             editable={child.edit}
             onEditConfirm={this.handleUpdateFeedbackOfServiceManager}
@@ -398,7 +431,7 @@ parentId }}
     return (
       <div className={styles.optionsMaintain}>
         <div className={styles.parentAddBtn}>
-          <Button type="primary" onClick={this.parentAddHandle} icon="plus" ghost >反馈类型</Button>
+          <Button type="primary" onClick={this.parentAddHandle} icon="plus" ghost>反馈类型</Button>
         </div>
         <h2 className={styles.title}>
           请在此维护客户反馈字典，客户反馈由两级内容组成，即反馈大类和反馈子类；可选项分服务经理可选项和客户涨乐可选项，设置了客户涨乐可选项则会显示在涨乐财富通中供客户选择。
@@ -407,12 +440,14 @@ parentId }}
         <div className={styles.addParentClassBox}>
           {
             !addParentClass ? null
-              : (<EditInput
-                editName="服务经理可选项"
-                editable
-                onEditConfirm={this.handleAddFirstClassOfFeedbackOption}
-                onCancel={this.handleCancelAddParent}
-              />)
+              : (
+                <EditInput
+                  editName="服务经理可选项"
+                  editable
+                  onEditConfirm={this.handleAddFirstClassOfFeedbackOption}
+                  onCancel={this.handleCancelAddParent}
+                />
+              )
           }
         </div>
         {/** 头部服务经理可选项 | 客户涨乐反馈可选项 | 操作 头部 */}

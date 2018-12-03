@@ -24,7 +24,6 @@ const getLastestData = (arr) => {
 };
 
 export default class SixMonthEarnings extends PureComponent {
-
   static propTypes = {
     listItem: PropTypes.object.isRequired,
     monthlyProfits: PropTypes.object.isRequired,
@@ -53,7 +52,9 @@ export default class SixMonthEarnings extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: '$props.displayText' } })
   getCustIncome() {
-    const { getCustIncome, listItem, monthlyProfits, custIncomeReqState } = this.props;
+    const {
+      getCustIncome, listItem, monthlyProfits, custIncomeReqState
+    } = this.props;
     const thisProfits = monthlyProfits[listItem.custId];
     if (!thisProfits || _.isEmpty(thisProfits)) {
       // test data empId = 01041128、05038222、035000002899、02004642
@@ -182,4 +183,3 @@ export default class SixMonthEarnings extends PureComponent {
     );
   }
 }
-

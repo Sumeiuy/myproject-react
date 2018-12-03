@@ -11,7 +11,9 @@
  */
 
 import React from 'react';
-import { serviceManager, status, drafter, department, approver } from '../../config/busApplyFilters';
+import {
+  serviceManager, status, drafter, department, approver
+} from '../../config/busApplyFilters';
 
 const config = {
   // 服务经理主职位设置

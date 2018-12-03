@@ -11,9 +11,9 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import moment from 'moment';
+import { SingleFilter } from 'lego-react-filter/src';
 import logable from '../../decorators/logable';
 import Tooltip from '../common/Tooltip';
-import { SingleFilter } from 'lego-react-filter/src';
 import Table from '../common/table';
 import DateFilter from '../common/htFilter/dateFilter';
 import IfTableWrap from '../common/IfTableWrap';
@@ -79,7 +79,7 @@ export default class ProductOrderFlow extends PureComponent {
 
   @autobind
   handleSearchChanged(value) {
-    if ( _.trim(value) !== '') {
+    if (_.trim(value) !== '') {
       this.props.queryServiceProductBySearch({
         keyword: value,
       });
@@ -178,9 +178,9 @@ export default class ProductOrderFlow extends PureComponent {
 
   @autobind
   transformColumnsData(columns) {
-    return _.map(columns, column => {
+    return _.map(columns, (column) => {
       let newColumn;
-      switch(column.dataIndex) {
+      switch (column.dataIndex) {
         case 'orderNumber':
           const renderNum = id => (
             <a onClick={() => this.handleOrderNumberClicked(id)}>{id}</a>
@@ -191,7 +191,7 @@ export default class ProductOrderFlow extends PureComponent {
           };
           break;
         case 'createTime':
-          const renderFunc = date => {
+          const renderFunc = (date) => {
             const timeStr = moment(date).format(DATE_FORMATE_STR);
             const timeStrDetail = moment(date).format(DATE_FORMATE_STR_DETAIL);
             return (
@@ -212,8 +212,8 @@ export default class ProductOrderFlow extends PureComponent {
               <span>
                 {
                   _.isEmpty(content)
-                  ? '--'
-                  : <Tooltip title={content}>{content}</Tooltip>
+                    ? '--'
+                    : <Tooltip title={content}>{content}</Tooltip>
                 }
               </span>
             ),
@@ -270,7 +270,7 @@ export default class ProductOrderFlow extends PureComponent {
       createTimeFrom,
       createTimeTo,
     } = this.state;
-    let {
+    const {
       dict: {
         serviceOrderType,
       }

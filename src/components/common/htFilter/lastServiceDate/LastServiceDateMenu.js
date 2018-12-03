@@ -116,8 +116,8 @@ export default class LastServiceDateMenu extends PureComponent {
             onChange={this.handleRadioChange}
             value={this.state.radioValue}
           >
-            <Radio className={styles.radio} value={'serviced'}>服务过</Radio>
-            <Radio className={styles.radio}value={'unServiced'}>未服务</Radio>
+            <Radio className={styles.radio} value="serviced">服务过</Radio>
+            <Radio className={styles.radio} value="unServiced">未服务</Radio>
           </RadioGroup>
           <div className={cls}>请选择一个选项</div>
         </div>

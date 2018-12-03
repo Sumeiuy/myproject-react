@@ -91,13 +91,13 @@ export default class DebtDetailModal extends PureComponent {
           </div>
           {
             isAllDataEmpty
-            ? (
-              <div className={styles.noRadarData}>
-                <div className={styles.noDataHead}><Icon type="zanwushuju" className={styles.noDataIcon} /></div>
-                <div className={styles.noDataTip}>暂无数据</div>
-              </div>
-            )
-            : null
+              ? (
+                <div className={styles.noRadarData}>
+                  <div className={styles.noDataHead}><Icon type="zanwushuju" className={styles.noDataIcon} /></div>
+                  <div className={styles.noDataTip}>暂无数据</div>
+                </div>
+              )
+              : null
           }
           { _.map(marginTrading, item => <MarginTradindDetail data={item} />)}
           { _.map(smallLoan, item => <OtherDebtDetail title="小额贷" data={item} />)}

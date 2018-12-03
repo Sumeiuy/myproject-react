@@ -92,9 +92,9 @@ export default class ComplianceServiceCustReport extends PureComponent {
     } = this.state;
     return (
       <div className={styles.complianceServiceCustReport}>
-        <ReportTitle title='达标服务客户统计' />
+        <ReportTitle title="达标服务客户统计" />
         <ReportFilter
-          dateFilterName='跟踪截止时间'
+          dateFilterName="跟踪截止时间"
           startTime={startTime}
           endTime={endTime}
           executeType={executeType}

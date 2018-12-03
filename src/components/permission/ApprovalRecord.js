@@ -25,7 +25,13 @@ export default function ApprovalRecord(props) {
           key={key}
         >
           <p className={style.arlistContentOne}>
-            审批人： {item.handler}于{item.handleTime}，步骤名称：{item.stepName}
+            审批人：
+            {' '}
+            {item.handler}
+于
+            {item.handleTime}
+，步骤名称：
+            {item.stepName}
           </p>
           <p className={style.arlistContentTwo}>
             {item.comment}
@@ -43,19 +49,22 @@ export default function ApprovalRecord(props) {
         {
           _.isEmpty(currentStepObj) ? (
             <p className={style.notFoundApprovalList}>暂无当前审批人记录</p>
-            ) : (
-              <div>
-                <span>当前步骤：</span>
-                <span className={style.occupation}>
-                  {
+          ) : (
+            <div>
+              <span>当前步骤：</span>
+              <span className={style.occupation}>
+                {
                     _.isEmpty(currentStepNode) ? currentStepObj.occupation : currentStepNode
                   }
-                </span>
-                <span className={style.curStepObjTitle}>当前审批人：</span>
-                <span className={style.curStepObjperson}>
-                  {currentStepObj.empName}({currentStepObj.empNum})
-                </span>
-              </div>
+              </span>
+              <span className={style.curStepObjTitle}>当前审批人：</span>
+              <span className={style.curStepObjperson}>
+                {currentStepObj.empName}
+(
+                {currentStepObj.empNum}
+)
+              </span>
+            </div>
           )
         }
       </div>

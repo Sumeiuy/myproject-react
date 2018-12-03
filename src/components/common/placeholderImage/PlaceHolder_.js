@@ -26,5 +26,3 @@ PlaceHolder.defaultProps = {
 };
 
 export default PlaceHolder;
-
-

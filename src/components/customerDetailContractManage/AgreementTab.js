@@ -147,7 +147,7 @@ export default class AgreementTab extends PureComponent {
     const {
       empInfo: { empInfo = EMPTY_OBJECT },
     } = this.props;
-    const { login = ''  } = empInfo;
+    const { login = '' } = empInfo;
     const {
       name = '',
       ptyId = '',

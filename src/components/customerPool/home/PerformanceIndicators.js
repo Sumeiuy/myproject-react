@@ -118,7 +118,7 @@ export default class PerformanceIndicators extends PureComponent {
       bname: name || value,
     };
     const currentSingleBusinessType = _.find(singleBusinessTypeList,
-        item => _.includes(item.value, name)) || {};
+      item => _.includes(item.value, name)) || {};
     param.value = currentSingleBusinessType.key;
     linkTo(param);
     // log日志 --- 业务开通
@@ -186,24 +186,24 @@ export default class PerformanceIndicators extends PureComponent {
   formatIndicators(indicator, category) {
     // 资产和交易量指标数据
     const assetAndTradeData = [
-      indicator.purFinAset,  // 净新增客户资产
-      indicator.tradTranAmt,  // 累计基础交易量
-      indicator.zhTranAmt,  // 累计综合交易量
-      indicator.gjPurRake,  // 股基累计净佣金
+      indicator.purFinAset, // 净新增客户资产
+      indicator.tradTranAmt, // 累计基础交易量
+      indicator.zhTranAmt, // 累计综合交易量
+      indicator.gjPurRake, // 股基累计净佣金
     ];
     // 服务指标数据
     const managerSeviceData = [
-      indicator.gjzMotCompletePercent,   // 必做MOT任务完成率
-      indicator.gjzServiceCompPercent,   // 高净值客户服务覆盖率
+      indicator.gjzMotCompletePercent, // 必做MOT任务完成率
+      indicator.gjzServiceCompPercent, // 高净值客户服务覆盖率
     ];
     // 客户及资产数据
     const custAndPropertyData = [
-      indicator.custNum,  // 服务客户数
-      indicator.totAset,  // 服务客户资产
-      indicator.currSignCustNum,  // 签约客户数
-      indicator.currSignCustAset,  // 签约客户资产
-      indicator.newCustNum,  // 新开客户数
-      indicator.newCustInAset,  // 新开客户资产
+      indicator.custNum, // 服务客户数
+      indicator.totAset, // 服务客户资产
+      indicator.currSignCustNum, // 签约客户数
+      indicator.currSignCustAset, // 签约客户资产
+      indicator.newCustNum, // 新开客户数
+      indicator.newCustInAset, // 新开客户资产
     ];
     // 业务开通
     const establishBusinessData = [
@@ -234,10 +234,10 @@ export default class PerformanceIndicators extends PureComponent {
     ];
     // 服务指标数据
     const serviceIndicatorData = [
-      indicator.motCompletePercent,  // 必做MOT任务完成率
-      indicator.serviceCompPercent,  // 服务覆盖率
-      indicator.feeConfigPercent,  // 多元产品覆盖率
-      indicator.infoCompPercent,  // 客户信息完善率
+      indicator.motCompletePercent, // 必做MOT任务完成率
+      indicator.serviceCompPercent, // 服务覆盖率
+      indicator.feeConfigPercent, // 多元产品覆盖率
+      indicator.infoCompPercent, // 客户信息完善率
     ];
 
     // 是否是经营指标的展示
@@ -245,21 +245,21 @@ export default class PerformanceIndicators extends PureComponent {
     if (isManager) {
       // 展示经营指标区域
       return [
-        { key: 'yewukaitong', headLine: '业务开通', data: this.filterFalsityArray(establishBusinessData) },  // 业务开通指标块
+        { key: 'yewukaitong', headLine: '业务开通', data: this.filterFalsityArray(establishBusinessData) }, // 业务开通指标块
         { key: 'hushenguijilv', headLine: '沪深归集率', data: this.filterFalsityArray(hsRateData) }, // 沪深归集率指标块
         { key: 'zichanhejiaoyiliang', headLine: '资产和交易量', data: this.filterFalsityArray(assetAndTradeData) }, // 资产与交易量指标块
-        { key: 'chanpinxiaoshou', headLine: '产品销售', data: this.filterFalsityArray(productSaleData) },  // 产品销售指标块
-        { key: 'fuwuzhibiao', headLine: '服务指标', data: this.filterFalsityArray(managerSeviceData) },  // 服务指标块
+        { key: 'chanpinxiaoshou', headLine: '产品销售', data: this.filterFalsityArray(productSaleData) }, // 产品销售指标块
+        { key: 'fuwuzhibiao', headLine: '服务指标', data: this.filterFalsityArray(managerSeviceData) }, // 服务指标块
       ];
     }
     // 展示投顾绩效
     return [
-      { key: 'kehujizichan', headLine: '客户及资产', data: this.filterFalsityArray(custAndPropertyData) },  // 客户及资产指标块
-      { key: 'yewukaitong', headLine: '业务开通', data: this.filterFalsityArray(establishBusinessData) },  // 业务开通指标块
+      { key: 'kehujizichan', headLine: '客户及资产', data: this.filterFalsityArray(custAndPropertyData) }, // 客户及资产指标块
+      { key: 'yewukaitong', headLine: '业务开通', data: this.filterFalsityArray(establishBusinessData) }, // 业务开通指标块
       { key: 'hushenguijilv', headLine: '沪深归集率', data: this.filterFalsityArray(hsRateData) }, // 沪深归集率指标块
-      { key: 'chanpinxiaoshou', headLine: '产品销售', data: this.filterFalsityArray(productSaleData) },  // 产品销售指标块
-      { key: 'jingchuangshou', headLine: '净创收', data: this.filterFalsityArray(pureIcomeData) },  // 净创收指标块
-      { key: 'fuwuzhibiao', headLine: '服务指标', data: this.filterFalsityArray(serviceIndicatorData) },  // 服务指标
+      { key: 'chanpinxiaoshou', headLine: '产品销售', data: this.filterFalsityArray(productSaleData) }, // 产品销售指标块
+      { key: 'jingchuangshou', headLine: '净创收', data: this.filterFalsityArray(pureIcomeData) }, // 净创收指标块
+      { key: 'fuwuzhibiao', headLine: '服务指标', data: this.filterFalsityArray(serviceIndicatorData) }, // 服务指标
     ];
   }
 
@@ -267,19 +267,19 @@ export default class PerformanceIndicators extends PureComponent {
   renderIndictors(item, category) {
     if (item.key === 'kehujizichan') {
       return this.renderCustAndPropertyIndicator(item);
-    } else if (item.key === 'yewukaitong') {
+    } if (item.key === 'yewukaitong') {
       return this.renderBusinessIndicator(item);
-    } else if (item.key === 'hushenguijilv') {
+    } if (item.key === 'hushenguijilv') {
       return this.renderHSRateIndicators(item);
-    } else if (item.key === SOURCE_PRODUCT_SALE || item.key === 'jingchuangshou') {
+    } if (item.key === SOURCE_PRODUCT_SALE || item.key === 'jingchuangshou') {
       return this.renderProductSaleAndPureIcomeIndicators(item);
-    } else if (item.key === 'fuwuzhibiao' && category === 'performance') {
+    } if (item.key === 'fuwuzhibiao' && category === 'performance') {
       return this.renderServiceIndicators(item);
-    } else if (item.key === 'fuwuzhibiao' && category === 'manager') {
+    } if (item.key === 'fuwuzhibiao' && category === 'manager') {
       return this.renderManagerServiceIndicators(item);
-    } else if (item.key === 'xinzengkehu') {
+    } if (item.key === 'xinzengkehu') {
       return this.renderPureAddCustIndicators(item);
-    } else if (item.key === 'zichanhejiaoyiliang') {
+    } if (item.key === 'zichanhejiaoyiliang') {
       return this.renderAssetAndTradeIndicators(item);
     }
     return null;
@@ -410,17 +410,17 @@ export default class PerformanceIndicators extends PureComponent {
                 cursor: 'auto',
               }}
             />
-              <Tooltip
-                title={param.headLine}
-                content={description}
-                placement="bottom"
-                mouseEnterDelay={0.2}
-              >
-                <div
-                  className={styles.clickContent}
-                  onClick={() => { this.aggregationToList(param.data, param.data[0].value || 0 ); }}
-                />
-              </Tooltip>
+            <Tooltip
+              title={param.headLine}
+              content={description}
+              placement="bottom"
+              mouseEnterDelay={0.2}
+            >
+              <div
+                className={styles.clickContent}
+                onClick={() => { this.aggregationToList(param.data, param.data[0].value || 0); }}
+              />
+            </Tooltip>
           </IfEmpty>
         </RectFrame>
       </Col>
@@ -576,7 +576,7 @@ export default class PerformanceIndicators extends PureComponent {
         <RectFrame dataSource={headLine} isNewHome={this.props.isNewHome}>
           <IfEmpty isEmpty={isEmpty}>
             <ProgressList
-              key={'pureAdd'}
+              key="pureAdd"
               dataSource={pureAddItems}
               cycle={cycle}
               push={push}
@@ -618,7 +618,9 @@ export default class PerformanceIndicators extends PureComponent {
 
   render() {
     const { indicators, category, isNewHome } = this.props;
-    const { posX, posY, isToolTipVisible, desc, title } = this.state;
+    const {
+      posX, posY, isToolTipVisible, desc, title
+    } = this.state;
     let formatIndicator = this.formatIndicators((indicators || {}), category);
     if (category === 'manager') {
       formatIndicator = [{ key: 'xinzengkehu' }, ...formatIndicator];
@@ -628,7 +630,7 @@ export default class PerformanceIndicators extends PureComponent {
 
     const trueStyles = isNewHome ? classes : styles;
 
-    const gutter = isNewHome ? 18: 28;
+    const gutter = isNewHome ? 18 : 28;
 
     return (
       <div className={trueStyles.indexBox}>

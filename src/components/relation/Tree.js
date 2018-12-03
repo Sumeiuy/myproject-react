@@ -65,7 +65,9 @@ export default class Tree extends Component {
       );
       if (_.isEmpty(selectKey) && _.isEmpty(defultKey)) {
         this.setState(
-          { menuKeys, selectKey: orgId, defultKey: orgId, isCenterTree },
+          {
+            menuKeys, selectKey: orgId, defultKey: orgId, isCenterTree
+          },
           () => { onSelect(this.getItem(orgId)); },
         );
       } else {
@@ -241,7 +243,9 @@ export default class Tree extends Component {
                       styles.submenu,
                       { [styles.selectSubmenu]: (`${center.orgId}/${team.postnId}` === selectKey) },
                     )}
-                  >{team.postnDesc}</Menu.Item>
+                  >
+                    {team.postnDesc}
+                  </Menu.Item>
                 ),
               )}
             </SubMenu>

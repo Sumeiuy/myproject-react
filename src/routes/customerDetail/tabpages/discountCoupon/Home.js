@@ -214,7 +214,7 @@ export default class DiscountCoupon extends PureComponent {
 
   @autobind
   getTitleList() {
-    return couponTitleList.map(item => {
+    return couponTitleList.map((item) => {
       if (item.dataIndex === 'ticketId') {
         return {
           ...item,

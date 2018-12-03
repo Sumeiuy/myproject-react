@@ -127,7 +127,11 @@ export default {
     },
 
     querySingleDetailSuccess(state, action) {
-      const { payload: { detailRes, attachmentRes, approvalRes, stepRes } } = action;
+      const {
+        payload: {
+          detailRes, attachmentRes, approvalRes, stepRes
+        }
+      } = action;
       // const { payload: { detailRes, attachmentRes, approvalRes } } = action;
       const detailResult = detailRes.resultData;
       const attachmentResult = attachmentRes.resultData;
@@ -145,7 +149,11 @@ export default {
     },
 
     getSubscribeDetailSuccess(state, action) {
-      const { payload: { detailRes, attachmentRes, approvalRes, stepRes } } = action;
+      const {
+        payload: {
+          detailRes, attachmentRes, approvalRes, stepRes
+        }
+      } = action;
       const detailResult = detailRes.resultData;
       const attachmentResult = attachmentRes.resultData;
       let approvalResult = [];
@@ -166,7 +174,11 @@ export default {
     },
 
     getUnSubscribeDetailSuccess(state, action) {
-      const { payload: { detailRes, attachmentRes, approvalRes, stepRes } } = action;
+      const {
+        payload: {
+          detailRes, attachmentRes, approvalRes, stepRes
+        }
+      } = action;
       const detailResult = detailRes.resultData;
       const attachmentResult = attachmentRes.resultData;
       let approvalResult = [];
@@ -557,7 +569,9 @@ export default {
       });
       yield put({
         type: 'querySingleDetailSuccess',
-        payload: { detailRes, attachmentRes, approvalRes, stepRes },
+        payload: {
+          detailRes, attachmentRes, approvalRes, stepRes
+        },
       });
     },
 
@@ -583,7 +597,9 @@ export default {
       }
       yield put({
         type: 'getSubscribeDetailSuccess',
-        payload: { detailRes, attachmentRes, approvalRes, stepRes },
+        payload: {
+          detailRes, attachmentRes, approvalRes, stepRes
+        },
       });
     },
 
@@ -609,7 +625,9 @@ export default {
       }
       yield put({
         type: 'getUnSubscribeDetailSuccess',
-        payload: { detailRes, attachmentRes, approvalRes, stepRes },
+        payload: {
+          detailRes, attachmentRes, approvalRes, stepRes
+        },
       });
     },
 
@@ -644,7 +662,7 @@ export default {
       });
     },
 
-     // 新增资讯退订申请
+    // 新增资讯退订申请
     * submitConsultUnSubscribe({ payload }, { call, put }) {
       const response = yield call(api.newConsultApply, {
         action: 'new',
@@ -729,9 +747,9 @@ export default {
     // SingleCreatBoard组件的customer属性是客户信息和客户两融信息的合集
     * queryCustomerInSingle({ payload }, { call, put }) {
       const response = yield call(api.querySingleCustomer, payload);
-      if (response.resultData &&
-            response.resultData.custInfos &&
-            response.resultData.custInfos.length) {
+      if (response.resultData
+            && response.resultData.custInfos
+            && response.resultData.custInfos.length) {
         const { id, custType } = response.resultData.custInfos[0];
         const {
           resultData: { openRzrq },
@@ -748,8 +766,7 @@ export default {
       const response = yield call(api.checkCustomer, {
         operationType: 'subscribe',
         ...payload,
-      },
-      );
+      }, );
       yield put({
         type: 'checkCustomerInSciSuccess',
         payload: response,

@@ -75,15 +75,15 @@ export default class ViewMenu extends PureComponent {
     } = this.props;
 
     // 默认取url中的missionViewType，否则从helper的getViewInfo方法中取
-    const missionViewTypeValue = !_.isEmpty(missionViewType) ?
-      missionViewType : getViewInfo().currentViewType;
+    const missionViewTypeValue = !_.isEmpty(missionViewType)
+      ? missionViewType : getViewInfo().currentViewType;
 
     return (
       <div className={styles.content}>
         <div className={styles.menuSection}>
           {
-            _.map(chooseMissionViewOptions, item =>
-              (<div
+            _.map(chooseMissionViewOptions, item => (
+              <div
                 className={
                   classnames({
                     [styles.item]: true,
@@ -95,8 +95,8 @@ export default class ViewMenu extends PureComponent {
                 onClick={() => this.handleClick(item.value)}
               >
                 {item.label}
-              </div>),
-            )
+              </div>
+            ), )
           }
         </div>
         <div className={styles.btnSection}>

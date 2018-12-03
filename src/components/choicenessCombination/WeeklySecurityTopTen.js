@@ -60,15 +60,20 @@ export default class WeeklySecurityTopTen extends PureComponent {
         securityType,
         reason,
       } = record;
-      return (<div className={styles.securityName}>
-        <a
-          title={`${name} ${code}`}
-          onClick={() => this.handleSecurityClick(securityType, code, `${name}(${code})`)}
-        >
-          {name}（{code}）
-        </a>
-        <div className={styles.reason}>{this.renderPopover(reason)}</div>
-      </div>);
+      return (
+        <div className={styles.securityName}>
+          <a
+            title={`${name} ${code}`}
+            onClick={() => this.handleSecurityClick(securityType, code, `${name}(${code})`)}
+          >
+            {name}
+（
+            {code}
+）
+          </a>
+          <div className={styles.reason}>{this.renderPopover(reason)}</div>
+        </div>
+      );
     };
     // 证券调入时间
     newTitleList[1].render = text => (<div>{time.format(text, formatDateStr)}</div>);
@@ -80,7 +85,12 @@ export default class WeeklySecurityTopTen extends PureComponent {
         [styles.up]: bigThanZero,
         [styles.down]: !bigThanZero,
       });
-      return (<span className={changeClassName}>{change}%</span>);
+      return (
+        <span className={changeClassName}>
+          {change}
+%
+        </span>
+      );
     };
     // 组合名称
     newTitleList[3].render = (text, record) => {
@@ -88,16 +98,18 @@ export default class WeeklySecurityTopTen extends PureComponent {
         id: record.combinationCode,
         name: record.combinationName,
       };
-      return (<div
-        className={styles.name}
-      >
-        <a
-          title={text}
-          onClick={() => this.handleNameClick(openDetailPayload)}
+      return (
+        <div
+          className={styles.name}
         >
-          {text}
-        </a>
-      </div>);
+          <a
+            title={text}
+            onClick={() => this.handleNameClick(openDetailPayload)}
+          >
+            {text}
+          </a>
+        </div>
+      );
     };
     // 查看持仓客户链接，点击打开持仓客户
     newTitleList[4].render = (text, record) => {
@@ -172,16 +184,18 @@ export default class WeeklySecurityTopTen extends PureComponent {
   renderPopover(value) {
     let reactElement = null;
     if (value) {
-      reactElement = (<Popover
-        placement="bottomLeft"
-        content={value}
-        trigger="hover"
-        overlayStyle={overlayStyle}
-      >
-        <div className={styles.ellipsis}>
-          {value}
-        </div>
-      </Popover>);
+      reactElement = (
+        <Popover
+          placement="bottomLeft"
+          content={value}
+          trigger="hover"
+          overlayStyle={overlayStyle}
+        >
+          <div className={styles.ellipsis}>
+            {value}
+          </div>
+        </Popover>
+      );
     } else {
       reactElement = '调入理由：暂无';
     }
@@ -209,7 +223,7 @@ export default class WeeklySecurityTopTen extends PureComponent {
               rowKey="code"
             />
           </div>
-          {/*<Tabs defaultActiveKey="1">
+          {/* <Tabs defaultActiveKey="1">
             <TabPane tab="证券" key="1">
               <div className={styles.bodyBox}>
                 <Table
@@ -232,7 +246,7 @@ export default class WeeklySecurityTopTen extends PureComponent {
                 />
               </div>
             </TabPane>
-          </Tabs>*/}
+          </Tabs> */}
         </div>
       </div>
     );

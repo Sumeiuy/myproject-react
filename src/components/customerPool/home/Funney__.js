@@ -32,9 +32,11 @@ function getDataConfig(data) {
   }));
 }
 
-function Funney({ dataSource, push, cycle, location, isNewHome }, { empInfo }) {
+function Funney({
+  dataSource, push, cycle, location, isNewHome
+}, { empInfo }) {
   const { data, color } = dataSource;
-  const containerPadding = isNewHome  ? '25px 6px 37px 9px' : '12px 6px 37px 9px';
+  const containerPadding = isNewHome ? '25px 6px 37px 9px' : '12px 6px 37px 9px';
   const funnelOption = {
     series: [
       {
@@ -177,7 +179,7 @@ function Funney({ dataSource, push, cycle, location, isNewHome }, { empInfo }) {
     <div className={styles.container} style={{ padding: containerPadding }}>
       <div className={styles.uintRow}>
         <div />
-        <div>{'户数/资产'}</div>
+        <div>户数/资产</div>
       </div>
       <div className={styles.content}>
         <div className={styles.left}>

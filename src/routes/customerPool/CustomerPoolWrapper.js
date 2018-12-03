@@ -11,7 +11,7 @@ import CustomerPool from './Home';
 import NewCustomerPool from '../newHome/Home';
 
 export default function CustomerListWrapper(props) {
-  return  /newIndex/.test(window.location.pathname) ?
-    <NewCustomerPool {...props} /> :
-    <CustomerPool {...props} />;
+  return /newIndex/.test(window.location.pathname)
+    ? <NewCustomerPool {...props} />
+    : <CustomerPool {...props} />;
 }

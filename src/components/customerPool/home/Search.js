@@ -8,7 +8,9 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Icon as AntdIcon, Button, Input, AutoComplete } from 'antd';
+import {
+  Icon as AntdIcon, Button, Input, AutoComplete
+} from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import store from 'store';
@@ -21,6 +23,7 @@ import Icon from '../../common/Icon';
 import { isSightingScope, getFilter, getSortParam } from '../helper';
 import styles from './search.less';
 import classes from './headerSearch.less';
+
 const Option = AutoComplete.Option;
 const EMPTY_LIST = [];
 const NONE_INFO = '按回车键发起搜索';
@@ -31,7 +34,6 @@ let guid = 0;
 const DEFINED_LABEL = ['manageFsp', 'personalFsp'];
 
 export default class Search extends PureComponent {
-
   static propTypes = {
     hotWdsList: PropTypes.array,
     queryHotPossibleWds: PropTypes.func,
@@ -207,8 +209,10 @@ export default class Search extends PureComponent {
 
     // 查到的时持仓产品，传持仓产品的名称
     if (item.type === 'PRODUCT' && item.name) {
-      query = { ...query,
-productName: item.name };
+      query = {
+        ...query,
+        productName: item.name
+      };
     }
 
     // log日志 --- 首页搜索选中
@@ -376,15 +380,15 @@ productName: item.name };
       isOnlySearchable,
     } = this.props;
     const { value } = this.state;
-    const autoCompleteOption = isPreview ? {} :
-    {
-      dataSource: this.renderDatasource(),
-      onSelect: this.handleSelect,
-      onSearch: this.handleSearch,
-      onChange: this.handleChange,
-      defaultValue: searchHistoryVal,
-      value,
-    };
+    const autoCompleteOption = isPreview ? {}
+      : {
+        dataSource: this.renderDatasource(),
+        onSelect: this.handleSelect,
+        onSearch: this.handleSearch,
+        onChange: this.handleChange,
+        defaultValue: searchHistoryVal,
+        value,
+      };
 
     const trueStyles = isOnlySearchable ? classes : styles;
 
@@ -399,7 +403,7 @@ productName: item.name };
                 dropdownClassName={`certain-category-search-dropdown ${this.dropdownClassName}`}
                 size="large"
                 style={{ width: '100%' }}
-                placeholder={'客户基本信息、精准营销产品、客户行为特征、持仓产品、服务记录关键字等'}
+                placeholder="客户基本信息、精准营销产品、客户行为特征、持仓产品、服务记录关键字等"
                 optionLabelProp="text"
                 defaultActiveFirstOption={false}
                 {...autoCompleteOption}
@@ -424,22 +428,25 @@ productName: item.name };
             </div>
           </div>
           {
-            isOnlySearchable ?
-              null :
-              <div className={trueStyles.historyList}>
-                <span className={trueStyles.s_title}>
-                  <Icon type="dengpao" />猜你感兴趣：
-                </span>
-                <div className={'clearfix'}>
-                  <a
-                    className={trueStyles.moreLabelBtn}
-                    onClick={() => showMoreLabelModal(true)}
-                  >
+            isOnlySearchable
+              ? null
+              : (
+                <div className={trueStyles.historyList}>
+                  <span className={trueStyles.s_title}>
+                    <Icon type="dengpao" />
+猜你感兴趣：
+                  </span>
+                  <div className="clearfix">
+                    <a
+                      className={trueStyles.moreLabelBtn}
+                      onClick={() => showMoreLabelModal(true)}
+                    >
                     更多 &gt;
-                  </a>
-                  {this.renderRecommend(hotWdsList)}
+                    </a>
+                    {this.renderRecommend(hotWdsList)}
+                  </div>
                 </div>
-              </div>
+              )
           }
         </div>
       </div>

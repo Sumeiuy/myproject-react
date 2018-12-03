@@ -19,7 +19,7 @@ function Loading({ loading, forceFull }) {
   // 此处针对如果单独调用loading组件的时候，传递 bool 值来控制显示/隐藏
   if (_.isNumber(loading) && loading <= 0) {
     return null;
-  } else if (_.isBoolean(loading) && !loading) {
+  } if (_.isBoolean(loading) && !loading) {
     return null;
   }
   let top = contentWrapper ? '55px' : '0';

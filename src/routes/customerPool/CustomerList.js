@@ -51,14 +51,14 @@ const effects = {
   getServiceRecord: 'customerPool/getServiceRecord',
   getCustomerScope: 'customerPool/getCustomerScope',
   getSearchServerPersonList: 'customerPool/getSearchServerPersonList',
-  handleFilter: 'customerList/handleFilter',  // 手动上传日志
-  handleSelect: 'customerList/handleDropDownSelect',  // 手动上传日志
+  handleFilter: 'customerList/handleFilter', // 手动上传日志
+  handleSelect: 'customerList/handleDropDownSelect', // 手动上传日志
   handleOrder: 'customerList/handleOrder', // 手动上传日志
-  handleCheck: 'customerList/handleCheck',  // 手动上传日志
-  handleSearch: 'customerList/handleSearch',  // 手动上传日志
-  handleCloseClick: 'contactModal/handleCloseClick',  // 手动上传日志
-  handleAddServiceRecord: 'contactModal/handleAddServiceRecord',  // 手动上传日志
-  handleCollapseClick: 'contactModal/handleCollapseClick',  // 手动上传日志
+  handleCheck: 'customerList/handleCheck', // 手动上传日志
+  handleSearch: 'customerList/handleSearch', // 手动上传日志
+  handleCloseClick: 'contactModal/handleCloseClick', // 手动上传日志
+  handleAddServiceRecord: 'contactModal/handleAddServiceRecord', // 手动上传日志
+  handleCollapseClick: 'contactModal/handleCollapseClick', // 手动上传日志
   queryCustUuid: 'performerView/queryCustUuid',
   getCeFileList: 'customerPool/getCeFileList',
   getFiltersOfSightingTelescope: 'customerPool/getFiltersOfSightingTelescope',

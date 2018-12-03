@@ -6,7 +6,9 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Row, Col, Button, message, Input, TreeSelect } from 'antd';
+import {
+  Row, Col, Button, message, Input, TreeSelect
+} from 'antd';
 import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
 import classnames from 'classnames';
@@ -38,7 +40,7 @@ const EMPTY_LIST = [];
 const effects = {
   getServiceLog: 'customerPool/getServiceLog',
   getServiceLogMore: 'customerPool/getServiceLogMore',
-  handleCollapseClick: 'contactModal/handleCollapseClick',  // 手动上传日志
+  handleCollapseClick: 'contactModal/handleCollapseClick', // 手动上传日志
   getCeFileList: 'customerPool/getCeFileList',
 };
 const fetchDataFunction = (globalLoading, type) => query => ({
@@ -117,8 +119,10 @@ export default class ServiceLog extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const { serviceLogMoreData, serviceLogData } = nextProps;
-    const { serviceLogMoreData: prevServiceLogMoreData,
-      serviceLogData: prevServiceLogData } = this.props;
+    const {
+      serviceLogMoreData: prevServiceLogMoreData,
+      serviceLogData: prevServiceLogData
+    } = this.props;
     const { logData } = this.state;
     if (serviceLogData !== prevServiceLogData) {
       this.setState({
@@ -166,7 +170,7 @@ export default class ServiceLog extends PureComponent {
         const extraHeight = 35;
         // 计算服务记录iFrame的高度
         const iframeHeight = viewHeight - tabMainBottom - extraHeight;
-       dom.setStyle(iframeElement, 'height', `${iframeHeight}px`);
+        dom.setStyle(iframeElement, 'height', `${iframeHeight}px`);
       }
     }
   }
@@ -203,7 +207,9 @@ export default class ServiceLog extends PureComponent {
   // 判断当用户选择了第一次日期之后，可选的时间范围
   // 刻意自由选择一个日期，保证间隔不大于6个月
   @autobind
-  isInsideOffSet({ day, firstDay, focusedInput, flag }) {
+  isInsideOffSet({
+    day, firstDay, focusedInput, flag
+  }) {
     // focusedInput 的值 只有两种情况：1.为 endDate 2.为 null
     if (focusedInput === 'endDate') {
       // 首次聚焦日历组件为 END_DATE时，开始时间往前推6个月
@@ -240,10 +246,13 @@ export default class ServiceLog extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'ButtonClick',
-payload: { name: '加载更多服务记录' } })
+  @logable({
+    type: 'ButtonClick',
+    payload: { name: '加载更多服务记录' }
+  })
   handleMore() {
-    const { location: { query },
+    const {
+      location: { query },
       getServiceLogMore,
     } = this.props;
     const { logData, pageNum } = this.state;
@@ -376,17 +385,23 @@ payload: { name: '加载更多服务记录' } })
   }
 
   render() {
-    const { dict, handleCollapseClick, filesList, getCeFileList, location } = this.props;
+    const {
+      dict, handleCollapseClick, filesList, getCeFileList, location
+    } = this.props;
     const { query = {} } = location;
     // 默认搜索内容
     const { keyword, serveDateFrom, serveDateTo } = query;
-    const { serveAllSource, serveAllType, executeTypes, serveWay } = dict;
-    const { logData, showBtn, serveSource, serveType } = this.state;
+    const {
+      serveAllSource, serveAllType, executeTypes, serveWay
+    } = dict;
+    const {
+      logData, showBtn, serveSource, serveType
+    } = this.state;
 
-    const endDate = serveDateTo ?
-    moment(serveDateTo, dateFormat) : moment(today, dateFormat);
-    const startDate = serveDateFrom ?
-    moment(serveDateFrom, dateFormat) : moment(beforeSixDate, dateFormat);
+    const endDate = serveDateTo
+      ? moment(serveDateTo, dateFormat) : moment(today, dateFormat);
+    const startDate = serveDateFrom
+      ? moment(serveDateFrom, dateFormat) : moment(beforeSixDate, dateFormat);
     return (
       <div className={styles.serviceInner}>
         <div
@@ -405,26 +420,29 @@ payload: { name: '加载更多服务记录' } })
               />
             </div>
             <div className={styles.serviceSource}>
-              {!_.isEmpty(serveAllSource) ?
-                <TreeSelect
-                  value={serveSource}
-                  onChange={this.serveAllSourceChange}
-                  treeData={this.constructCreatTreeOptions(serveAllSource)}
-                  treeDefaultExpandAll
-                />
-                :
-                this.constructNullCreatOptions()
+              {!_.isEmpty(serveAllSource)
+                ? (
+                  <TreeSelect
+                    value={serveSource}
+                    onChange={this.serveAllSourceChange}
+                    treeData={this.constructCreatTreeOptions(serveAllSource)}
+                    treeDefaultExpandAll
+                  />
+                )
+                : this.constructNullCreatOptions()
               }
             </div>
             <div className={styles.serviceType}>
-              {!_.isEmpty(serveAllType) ?
-                <Select
-                  value={serveType}
-                  onChange={this.serveAllTypeChange}
-                  name="类型"
-                  data={this.constructCreatOptions(serveAllType, 'serveType')}
-                /> :
-                this.constructNullCreatOptions()
+              {!_.isEmpty(serveAllType)
+                ? (
+                  <Select
+                    value={serveType}
+                    onChange={this.serveAllTypeChange}
+                    name="类型"
+                    data={this.constructCreatOptions(serveAllType, 'serveType')}
+                  />
+                )
+                : this.constructNullCreatOptions()
               }
             </div>
             <div className={styles.serviceTime}>

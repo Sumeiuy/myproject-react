@@ -13,8 +13,8 @@ import CreateTaskForm from './CreateTaskForm';
 import TaskPreview from '../taskFlow/TaskPreview';
 import { permission, emp, regxp } from '../../../helper';
 import { validateFormContent } from '../../../decorators/validateFormContent';
-import ResultTrack from '../../../components/common/resultTrack/ConnectedComponent';
-import MissionInvestigation from '../../../components/common/missionInvestigation/ConnectedComponent';
+import ResultTrack from '../../common/resultTrack/ConnectedComponent';
+import MissionInvestigation from '../../common/missionInvestigation/ConnectedComponent';
 import {
   PIE_ENTRY,
   PROGRESS_ENTRY,
@@ -50,7 +50,7 @@ import logable, { logCommon } from '../../../decorators/logable';
 
 const noop = _.noop;
 const Step = Steps.Step;
-const systemCode = '102330';  // 系统代码（理财服务平台为102330）
+const systemCode = '102330'; // 系统代码（理财服务平台为102330）
 
 export default class TaskFormFlowStep extends PureComponent {
   static propTypes = {
@@ -195,7 +195,11 @@ export default class TaskFormFlowStep extends PureComponent {
   constructParam() {
     const {
       parseQuery,
-      location: { query: { groupId, enterType, source, signedLabelId } },
+      location: {
+        query: {
+          groupId, enterType, source, signedLabelId
+        }
+      },
     } = this.props;
 
     const {
@@ -245,9 +249,11 @@ export default class TaskFormFlowStep extends PureComponent {
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '上一步' } })
   handlePreviousStep() {
-    const { storedCreateTaskData,
+    const {
+      storedCreateTaskData,
       storedCreateTaskData: { taskFormData, resultTrackData, missionInvestigationData },
-      saveCreateTaskData } = this.props;
+      saveCreateTaskData
+    } = this.props;
     const { current } = this.state;
     saveCreateTaskData({
       ...storedCreateTaskData,
@@ -873,12 +879,14 @@ export default class TaskFormFlowStep extends PureComponent {
           storedData={storedCreateTaskData}
         />
         {
-          needMissionInvestigation ?
-            <MissionInvestigation
-              wrappedComponentRef={ref => (this.missionInvestigationRef = ref)}
-              storedData={storedCreateTaskData}
-            /> :
-            null
+          needMissionInvestigation
+            ? (
+              <MissionInvestigation
+                wrappedComponentRef={ref => (this.missionInvestigationRef = ref)}
+                storedData={storedCreateTaskData}
+              />
+            )
+            : null
         }
       </div>,
     }, {
@@ -904,8 +912,8 @@ export default class TaskFormFlowStep extends PureComponent {
       />,
     }];
 
-    const cancleBtn = _.includes(returnTaskEntrySource, source) ?
-      (
+    const cancleBtn = _.includes(returnTaskEntrySource, source)
+      ? (
         <Button
           className={styles.cancelBtn}
           type="default"
@@ -914,8 +922,8 @@ export default class TaskFormFlowStep extends PureComponent {
         >
           终止
         </Button>
-      ) :
-      (
+      )
+      : (
         <Button
           className={styles.cancelBtn}
           type="default"
@@ -926,8 +934,8 @@ export default class TaskFormFlowStep extends PureComponent {
       );
 
     // 根据来源判断按钮类型
-    const stopBtn = _.includes(returnTaskEntrySource, source) ?
-      (
+    const stopBtn = _.includes(returnTaskEntrySource, source)
+      ? (
         <Button
           className={styles.stopBtn}
           type="default"
@@ -951,14 +959,15 @@ export default class TaskFormFlowStep extends PureComponent {
         <div className={styles.stepsAction}>
           {
             current === 0
-            &&
+            && (
             <div>
               {cancleBtn}
             </div>
+            )
           }
           {
             current > 0
-            &&
+            && (
             <div>
               {stopBtn}
               <Button
@@ -970,10 +979,11 @@ export default class TaskFormFlowStep extends PureComponent {
                 上一步
               </Button>
             </div>
+            )
           }
           {
             current < stepsCount - 1
-            &&
+            && (
             <Button
               className={styles.handlePreviousStep}
               type="primary"
@@ -982,10 +992,11 @@ export default class TaskFormFlowStep extends PureComponent {
             >
               下一步
             </Button>
+            )
           }
           {
             current === stepsCount - 1
-            &&
+            && (
             <Button
               className={styles.confirmBtn}
               type="primary"
@@ -994,6 +1005,7 @@ export default class TaskFormFlowStep extends PureComponent {
             >
               确认无误，提交
             </Button>
+            )
           }
         </div>
       </div>

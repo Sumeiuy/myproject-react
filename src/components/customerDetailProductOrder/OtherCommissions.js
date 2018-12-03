@@ -109,7 +109,10 @@ export default function OtherCommissions(props) {
       {
         _.map(commissions, commission => (
           <div className={styles.commission}>
-            <span className={styles.hint}>{commission.name}：</span>
+            <span className={styles.hint}>
+              {commission.name}
+：
+            </span>
             <span title={commission.value}>{transformCommission(commission.value)}</span>
           </div>
         ))

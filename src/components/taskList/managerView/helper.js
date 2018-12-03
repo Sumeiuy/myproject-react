@@ -61,7 +61,7 @@ export function getCurrentScopeByOrgLevel(level) {
   if (level === ORG_LEVEL1) {
     // 经总层级，默认维度是分公司
     return EMP_COMPANY_SCOPE;
-  } else if (level === ORG_LEVEL2) {
+  } if (level === ORG_LEVEL2) {
     // 分公司层级，默认维度是营业部
     return EMP_DEPARTMENT_SCOPE;
   }

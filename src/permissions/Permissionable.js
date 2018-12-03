@@ -12,9 +12,9 @@ import { connect } from 'dva';
 const getCheckList = (options) => {
   if (_.isArray(options)) {
     return [...options];
-  } else if (_.isObject(options)) {
+  } if (_.isObject(options)) {
     return options.checkList;
-  } else if (_.isString(options)) {
+  } if (_.isString(options)) {
     return [options];
   }
   return [];

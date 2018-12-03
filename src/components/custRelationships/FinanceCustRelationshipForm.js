@@ -61,13 +61,13 @@ export default class FinanceCustRelationshipForm extends Component {
     const { action, custDetail } = props;
     const isCreate = action === 'CREATE';
     const custRelationshipList = isCreate ? []
-    : _.map(_.get(custDetail, 'custRelationshipList'), (item) => {
-      const uuid = data.uuid();
-      return {
-        ...item,
-        key: uuid,
-      };
-    });
+      : _.map(_.get(custDetail, 'custRelationshipList'), (item) => {
+        const uuid = data.uuid();
+        return {
+          ...item,
+          key: uuid,
+        };
+      });
     this.state = {
       // 选择的用户
       cust: isCreate ? {} : _.get(custDetail, 'custDetail'),
@@ -282,7 +282,7 @@ export default class FinanceCustRelationshipForm extends Component {
     const { brokerNumber, custName } = cust;
     const text = `${custName}（${brokerNumber}）`;
     return (
-      <Option key={brokerNumber} value={text} >
+      <Option key={brokerNumber} value={text}>
         <span className={styles.custAutoCompleteOptionValue} title={text}>{text}</span>
       </Option>
     );
@@ -313,50 +313,49 @@ export default class FinanceCustRelationshipForm extends Component {
       <div className={wrapCls}>
         <InfoTitle head="基本信息" />
         {
-          isCreate ?
-          (
-            <FormItem label="客户" labelWidth={90}>
-              <SimilarAutoComplete
-                placeholder="经纪客户号/客户名称"
-                optionList={custList}
-                optionKey="brokerNumber"
-                needConfirmWhenClear
-                clearConfirmTips="切换或者删除客户，将导致所有的数据清空或者重置"
-                onSelect={this.handleSelectCust}
-                onSearch={this.handleSearchCustList}
-                renderOptionNode={this.renderCustAutoCompleteOption}
-              />
-            </FormItem>
-          )
-          :
-          (
-            <div className={styles.rejectCust}>
-              <span className={styles.rejectCustLabel}>客户：</span>
-              <span className={styles.rejectCustName}>{`${cust.custName}(${cust.custId})`}</span>
-            </div>
-          )
+          isCreate
+            ? (
+              <FormItem label="客户" labelWidth={90}>
+                <SimilarAutoComplete
+                  placeholder="经纪客户号/客户名称"
+                  optionList={custList}
+                  optionKey="brokerNumber"
+                  needConfirmWhenClear
+                  clearConfirmTips="切换或者删除客户，将导致所有的数据清空或者重置"
+                  onSelect={this.handleSelectCust}
+                  onSearch={this.handleSearchCustList}
+                  renderOptionNode={this.renderCustAutoCompleteOption}
+                />
+              </FormItem>
+            )
+            : (
+              <div className={styles.rejectCust}>
+                <span className={styles.rejectCustLabel}>客户：</span>
+                <span className={styles.rejectCustName}>{`${cust.custName}(${cust.custId})`}</span>
+              </div>
+            )
         }
         <CustInfo cust={cust} isCreate={isCreate} />
         {
           isCreate
-          ? (
-            <FormItem label="是否办理股票质押回购业务" labelWidth={204}>
-              <Select
-                name="stockRepurchase"
-                width="105px"
-                needShowKey={false}
-                value={stockRepurchase}
-                data={STOCK_REPURCHASE_OPTIONS}
-                onChange={this.handleStockRepurchaseSelectChange}
-              />
-            </FormItem>
-          )
-          : (
-            <div className={styles.rejectStockRepurchase}>
-              <span className={styles.rejectStockRepurchaseLabel}>是否办理股票质押回购业务：</span>
-              <span className={styles.rejectStockRepurchaseName}>{stockRepurchaseValue}</span>
-            </div>
-          )
+            ? (
+              <FormItem label="是否办理股票质押回购业务" labelWidth={204}>
+                <Select
+                  name="stockRepurchase"
+                  width="105px"
+                  needShowKey={false}
+                  value={stockRepurchase}
+                  data={STOCK_REPURCHASE_OPTIONS}
+                  onChange={this.handleStockRepurchaseSelectChange}
+                />
+              </FormItem>
+            )
+            : (
+              <div className={styles.rejectStockRepurchase}>
+                <span className={styles.rejectStockRepurchaseLabel}>是否办理股票质押回购业务：</span>
+                <span className={styles.rejectStockRepurchaseName}>{stockRepurchaseValue}</span>
+              </div>
+            )
         }
         <div className={styles.divider} />
         <InfoTitle head="关联信息" />
@@ -386,18 +385,18 @@ export default class FinanceCustRelationshipForm extends Component {
           uploadAttachment={this.handleUploadCallBack}
         />
         {
-          !addAssociateModal ? null :
-          (
-            <AddRelationshipModal
-              cust={cust}
-              action={relationModalAction}
-              ralationTree={relationshipTree}
-              data={relationForUpdate}
-              visible={addAssociateModal}
-              onClose={this.handleRelationshipModalClose}
-              onOK={this.handleAddRelationModalConfirm}
-            />
-          )
+          !addAssociateModal ? null
+            : (
+              <AddRelationshipModal
+                cust={cust}
+                action={relationModalAction}
+                ralationTree={relationshipTree}
+                data={relationForUpdate}
+                visible={addAssociateModal}
+                onClose={this.handleRelationshipModalClose}
+                onOK={this.handleAddRelationModalConfirm}
+              />
+            )
         }
       </div>
     );

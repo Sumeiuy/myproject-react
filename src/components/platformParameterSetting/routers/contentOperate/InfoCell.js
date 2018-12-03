@@ -11,7 +11,9 @@ import classnames from 'classnames';
 import styles from './infoCell.less';
 
 export default function InfoCell(props) {
-  const { children, label, labelWidth, required, className } = props;
+  const {
+    children, label, labelWidth, required, className
+  } = props;
   const infoCellStyles = classnames([styles.infoCell, className]);
   return (
     <div className={infoCellStyles}>

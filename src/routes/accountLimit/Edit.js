@@ -463,10 +463,12 @@ export default class AccountLimitEdit extends PureComponent {
     } = this.state;
 
     // 提交相关按钮
-    const selfBtnGroup = (<BottonGroup
-      list={buttonData}
-      onEmitEvent={this.handleSubmit}
-    />);
+    const selfBtnGroup = (
+      <BottonGroup
+        list={buttonData}
+        onEmitEvent={this.handleSubmit}
+      />
+    );
 
 
     // 审批人弹窗

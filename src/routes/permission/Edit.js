@@ -106,10 +106,12 @@ export default class PermissionEdit extends PureComponent {
   updateValue(name, value) {
     // 更新state
     if (name === 'customer') {
-      this.setState({ customer: {
-        custName: value.custName,
-        custNumber: value.cusId,
-      } });
+      this.setState({
+        customer: {
+          custName: value.custName,
+          custNumber: value.cusId,
+        }
+      });
     }
     this.setState({ [name]: value });
   }

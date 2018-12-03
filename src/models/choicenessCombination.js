@@ -57,7 +57,7 @@ function combinationRankListSortAndFilter(list, condition) {
     if (yieldRankValue === yieldRankList[0].value && _.isNull(item.weekEarnings)) {
       show = false;
     } else if (riskLevel === riskDefaultItem.value || _.isEmpty(riskLevel)) {
-        // 如果筛选项中有“全部”的字段
+      // 如果筛选项中有“全部”的字段
       show = true;
     }
     return {
@@ -71,7 +71,7 @@ export default {
   namespace: 'choicenessCombination',
   state: {
     adjustWarehouseHistoryData: EMPTY_OBJECT, // 调仓历史数据
-    tableHistoryList: EMPTY_OBJECT,  // 弹窗调仓历史表格数据
+    tableHistoryList: EMPTY_OBJECT, // 弹窗调仓历史表格数据
     combinationAdjustHistoryData: EMPTY_OBJECT, // 组合调仓数据
     weeklySecurityTopTenData: EMPTY_LIST, // 近一周表现前十的证券
     combinationTreeList: EMPTY_LIST, // 组合树
@@ -80,10 +80,10 @@ export default {
     rankTabActiveKey: '', // 组合排名tab
     yieldRankValue: yieldRankList[0].value, // 收益率排序value  默认显示近7天的
     riskLevel: riskDefaultItem.value, // 所筛选的风险等级
-    reportHistoryList: EMPTY_OBJECT,  // 历史报告
-    reportDetail: EMPTY_OBJECT,  // 历史报告详情
-    creatorList: EMPTY_LIST,  // 投资顾问数据
-    adviser: {},  // 切换的投资顾问
+    reportHistoryList: EMPTY_OBJECT, // 历史报告
+    reportDetail: EMPTY_OBJECT, // 历史报告详情
+    creatorList: EMPTY_LIST, // 投资顾问数据
+    adviser: {}, // 切换的投资顾问
   },
   reducers: {
     // 风险等级筛选
@@ -262,7 +262,9 @@ export default {
       });
     },
     // 获取组合排名列表
-    * getCombinationRankList({ payload }, { call, put, take, select }) {
+    * getCombinationRankList({ payload }, {
+      call, put, take, select
+    }) {
       const { combinationType } = payload;
       const response = yield call(api.getCombinationRankList, payload);
       // 防止多次请求情况下前面的请求数据覆盖后面的请求数据，添加一个key,用来判断当前返回数据是否和当前tab的key匹配

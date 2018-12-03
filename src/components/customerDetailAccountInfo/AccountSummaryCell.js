@@ -41,9 +41,9 @@ AccountSummaryCell.propTypes = {
   // 展示标签
   label: PropTypes.string.isRequired,
   // 展示的内容
-  content: PropTypes.oneOfType([PropTypes.string,PropTypes.number]),
+  content: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   // 展示内容的类型
-  type: PropTypes.oneOf(['DATE','MONEY', 'RATE', 'STRING']),
+  type: PropTypes.oneOf(['DATE', 'MONEY', 'RATE', 'STRING']),
 };
 
 AccountSummaryCell.defaultProps = {

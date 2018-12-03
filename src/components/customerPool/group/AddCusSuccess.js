@@ -116,14 +116,20 @@ export default class AddCusSuccess extends PureComponent {
       <div className={styles.addCusSuccess}>
         <div className={styles.text}>添加分组</div>
         <hr />
-        <div className={styles.successContent} >
+        <div className={styles.successContent}>
           <div className={styles.img} />
           <div className={styles.text1}>保存成功，已完成分组添加!</div>
-          <div className={styles.text2}>你可以在
+          <div className={styles.text2}>
+你可以在
             <span className={styles.linkTo} onClick={this.LinkToGroupManage}>客户分组</span>
             查看该分组
           </div>
-          <p>页面会在 <b>{changeTime}</b> 秒内自动关闭</p>
+          <p>
+页面会在
+            <b>{changeTime}</b>
+            {' '}
+秒内自动关闭
+          </p>
           <div className={styles.successBtn}>
             <Button type="primary" onClick={this.goToHome}>返回首页</Button>
           </div>

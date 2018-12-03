@@ -123,7 +123,8 @@ export default class BaseInfoModify extends PureComponent {
         <InfoTitle head={this.props.head} />
         <div className={style.inputComponent}>
           <span className={style.inputComponentTitle}>
-            <i className={style.isRequired}>*</i>客户：
+            <i className={style.isRequired}>*</i>
+客户：
           </span>
           <div className={style.inputComponentContent}>
             <AutoComplete
@@ -139,7 +140,8 @@ export default class BaseInfoModify extends PureComponent {
         </div>
         <div className={style.inputComponent}>
           <span className={style.inputComponentTitle}>
-            <i className={style.isRequired}>*</i>子类型：
+            <i className={style.isRequired}>*</i>
+子类型：
           </span>
           <div className={style.inputComponentContent}>
             <div className={style.boxBorder}>

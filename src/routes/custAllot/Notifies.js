@@ -87,7 +87,12 @@ export default class CustAllotNotifies extends PureComponent {
     const newTitleList = [...notifiCust];
     const custNameIndex = _.findIndex(newTitleList, o => o.key === KEY_CUSTNAME);
     newTitleList[custNameIndex].render = (text, record) => (
-      <div>{text}({record.custId})</div>
+      <div>
+        {text}
+(
+        {record.custId}
+)
+      </div>
     );
     return newTitleList;
   }

@@ -8,8 +8,8 @@
 import _ from 'lodash';
 import { number } from '../../helper';
 
- // 格式化金额，返回金额数字以及单位，并且金额数字整数部分千分位分割
-function convertMoney(money = 0, { unit = '', formater = false, toFixed = 2}) {
+// 格式化金额，返回金额数字以及单位，并且金额数字整数部分千分位分割
+function convertMoney(money = 0, { unit = '', formater = false, toFixed = 2 }) {
   let formatedMoney = money;
   let newMoneyValue = money;
   let newUnit = unit;

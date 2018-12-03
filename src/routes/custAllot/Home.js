@@ -28,7 +28,9 @@ import ApplyItem from '../../components/common/appList/ApplyItem';
 import Detail from '../../components/custAllot/Detail';
 import commonConfirm from '../../components/common/confirm_';
 import config from '../../components/custAllot/config';
-import { dva, emp, permission, convert, time } from '../../helper';
+import {
+  dva, emp, permission, convert, time
+} from '../../helper';
 import seibelHelper from '../../helper/page/seibel';
 import logable, { logPV, logCommon } from '../../decorators/logable';
 
@@ -266,7 +268,9 @@ export default class CustAllot extends PureComponent {
       this.setState({
         activeRowIndex: itemIndex,
       });
-      queryDetailInfo({ flowId: item.flowId, orgId: empOrgId, pageNum: 1, pageSize: 7 });
+      queryDetailInfo({
+        flowId: item.flowId, orgId: empOrgId, pageNum: 1, pageSize: 7
+      });
     }
   }
 
@@ -402,7 +406,9 @@ export default class CustAllot extends PureComponent {
       },
     });
     this.setState({ activeRowIndex: index });
-    queryDetailInfo({ flowId, orgId: empOrgId, pageSize: 7, pageNum: 1 });
+    queryDetailInfo({
+      flowId, orgId: empOrgId, pageSize: 7, pageNum: 1
+    });
   }
 
 
@@ -722,10 +728,12 @@ export default class CustAllot extends PureComponent {
       }
     }
     // 新建弹窗按钮
-    const selfBtnGroup = (<BottonGroup
-      list={newButtonData}
-      onEmitEvent={this.handleSubmit}
-    />);
+    const selfBtnGroup = (
+      <BottonGroup
+        list={newButtonData}
+        onEmitEvent={this.handleSubmit}
+      />
+    );
 
 
     // 审批人弹窗
@@ -753,67 +761,73 @@ export default class CustAllot extends PureComponent {
         />
         {
           createModal
-          ? <CreateModal
-            dict={dict}
-            modalKey={createModalKey}
-            custModalKey={custModalKey}
-            manageModalKey={manageModalKey}
-            visible={createModal}
-            location={location}
-            empInfo={empInfo}
-            custRangeList={custRangeList}
-            ruleType={ruleType}
-            handleRuleTypePropsChange={this.handleRuleTypePropsChange}
-            custData={custData}
-            queryCustList={queryCustList}
-            addedCustData={addedCustData}
-            queryAddedCustList={queryAddedCustList}
-            manageData={manageData}
-            queryManageList={queryManageList}
-            addedManageData={addedManageData}
-            queryAddedManageList={queryAddedManageList}
-            selfBtnGroup={selfBtnGroup}
-            queryButtonList={queryButtonList}
-            queryAppList={this.queryAppList}
-            showModal={this.showModal}
-            closeModal={this.closeModal}
-            saveChange={saveChange}
-            updateList={updateList}
-            updateData={updateData}
-            clearData={clearData}
-            sendRequest={this.updateCustOrEmp}
-          />
-          : null
+            ? (
+              <CreateModal
+                dict={dict}
+                modalKey={createModalKey}
+                custModalKey={custModalKey}
+                manageModalKey={manageModalKey}
+                visible={createModal}
+                location={location}
+                empInfo={empInfo}
+                custRangeList={custRangeList}
+                ruleType={ruleType}
+                handleRuleTypePropsChange={this.handleRuleTypePropsChange}
+                custData={custData}
+                queryCustList={queryCustList}
+                addedCustData={addedCustData}
+                queryAddedCustList={queryAddedCustList}
+                manageData={manageData}
+                queryManageList={queryManageList}
+                addedManageData={addedManageData}
+                queryAddedManageList={queryAddedManageList}
+                selfBtnGroup={selfBtnGroup}
+                queryButtonList={queryButtonList}
+                queryAppList={this.queryAppList}
+                showModal={this.showModal}
+                closeModal={this.closeModal}
+                saveChange={saveChange}
+                updateList={updateList}
+                updateData={updateData}
+                clearData={clearData}
+                sendRequest={this.updateCustOrEmp}
+              />
+            )
+            : null
         }
         {
           custModal
-          ? <AddCustModal
-            modalKey={custModalKey}
-            visible={custModal}
-            custRangeList={custRangeList}
-            data={custData}
-            addedCustData={addedCustData}
-            queryList={queryCustList}
-            closeModal={this.closeModal}
-            sendRequest={this.updateCustOrEmp}
-            updateData={updateData}
-          />
-          : null
+            ? (
+              <AddCustModal
+                modalKey={custModalKey}
+                visible={custModal}
+                custRangeList={custRangeList}
+                data={custData}
+                addedCustData={addedCustData}
+                queryList={queryCustList}
+                closeModal={this.closeModal}
+                sendRequest={this.updateCustOrEmp}
+                updateData={updateData}
+              />
+            )
+            : null
         }
         {
           manageModal
-          ? <AddManageModal
-            modalKey={manageModalKey}
-            visible={manageModal}
-            custRangeList={custRangeList}
-            data={manageData}
-            queryList={queryManageList}
-            closeModal={this.closeModal}
-            sendRequest={this.updateCustOrEmp}
-            handleRuleTypePropsChange={this.handleRuleTypePropsChange}
-            updateData={updateData}
-          />
-          : null
+            ? (
+              <AddManageModal
+                modalKey={manageModalKey}
+                visible={manageModal}
+                custRangeList={custRangeList}
+                data={manageData}
+                queryList={queryManageList}
+                closeModal={this.closeModal}
+                sendRequest={this.updateCustOrEmp}
+                handleRuleTypePropsChange={this.handleRuleTypePropsChange}
+                updateData={updateData}
+              />
+            )
+            : null
         }
         {
           approverModal ? <TableDialog {...approvalProps} /> : null

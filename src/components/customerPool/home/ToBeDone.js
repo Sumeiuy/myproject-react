@@ -69,10 +69,16 @@ export default class PerformanceIndicators extends PureComponent {
       return '--';
     }
     if (nowNum > 99) {
-      return <span>99<sup>+</sup></span>;
+      return (
+        <span>
+99
+          <sup>+</sup>
+        </span>
+      );
     }
     return <span>{num}</span>;
   }
+
   // 数据处理
   farmtNum(num) {
     if (_.isNaN(parseInt(num, 10))) {
@@ -188,10 +194,14 @@ export default class PerformanceIndicators extends PureComponent {
   }
 
   render() {
-    const { data: { businessNumbers,
-      notificationNumbers,
-      todayToDoNumbers,
-      workFlowNumbers } } = this.props;
+    const {
+      data: {
+        businessNumbers,
+        notificationNumbers,
+        todayToDoNumbers,
+        workFlowNumbers
+      }
+    } = this.props;
     return (
       <div className={styles.toBeDoneBox}>
         <div className={styles.title}>

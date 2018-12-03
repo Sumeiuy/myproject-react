@@ -22,7 +22,6 @@ const sliceLength = BoardBasic.regular.length;
 const visibleBoardType = optionsMap.visibleBoardType;
 
 export default class BoardSelect extends PureComponent {
-
   static propTypes = {
     location: PropTypes.object.isRequired,
     push: PropTypes.func.isRequired,
@@ -78,14 +77,17 @@ export default class BoardSelect extends PureComponent {
   setFixedBottomRef(node) {
     this.fixedBottom = node;
   }
+
   @autobind
   setMenuUlRef(node) {
     this.menuUl = node;
   }
+
   @autobind
   setSubMenuUl(node) {
     this.subMenuUl = node;
   }
+
   @autobind
   setMenuTitleRef(node) {
     this.menuTitle = node;
@@ -307,7 +309,9 @@ export default class BoardSelect extends PureComponent {
   render() {
     // 新的可见看板数组
     const { newVisibleBoards } = this.props;
-    const { boardName, showMenu, showSubMenu, addScrollBar } = this.state;
+    const {
+      boardName, showMenu, showSubMenu, addScrollBar
+    } = this.state;
     // 根据 showMenu 来判断是否显示
     const showOrNot = showMenu ? 'block' : 'none';
     // 静态的看板数组
@@ -391,7 +395,8 @@ export default class BoardSelect extends PureComponent {
           className={styles.menuH3}
           ref={this.setMenuTitleRef}
         >
-          {boardName}<Icon type={showMenu ? 'up' : 'down'} />
+          {boardName}
+          <Icon type={showMenu ? 'up' : 'down'} />
         </h3>
         {/* 看板整体列表 */}
         <ul
@@ -414,19 +419,21 @@ export default class BoardSelect extends PureComponent {
               onMouseEnter={this.handleMouseEnter}
               onMouseLeave={this.subMouseLeave}
             >
-              自定义看板<Icon type="right" />
+              自定义看板
+              <Icon type="right" />
             </li>
             {
-              canCustomBoard() ?
-                <li
-                  onClick={this.handleCustomerBorderMenuClick}
-                  data-key="0"
-                  data-type={visibleBoardType.manage.key}
-                >
-                  {visibleBoardType.manage.name}
-                </li>
-              :
-                null
+              canCustomBoard()
+                ? (
+                  <li
+                    onClick={this.handleCustomerBorderMenuClick}
+                    data-key="0"
+                    data-type={visibleBoardType.manage.key}
+                  >
+                    {visibleBoardType.manage.name}
+                  </li>
+                )
+                : null
             }
           </ul>
         </div>

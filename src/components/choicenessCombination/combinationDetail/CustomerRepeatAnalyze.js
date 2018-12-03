@@ -11,7 +11,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { Table } from 'antd';
 import moment from 'moment';
-import { number, time } from '../../../helper/';
+import { number, time } from '../../../helper';
 import { sourceType, titleList as titleListConfig } from '../config';
 import styles from './customerRepeatAnalyze.less';
 import logable from '../../../decorators/logable';
@@ -100,14 +100,17 @@ export default class CustomerRepeatAnalyze extends PureComponent {
           <a onClick={() => this.handleOpenCustomerListPage(openPayload)}>进入客户列表</a>
         </div>
         <div className={styles.tipsBox}>
-          截止{time.format(data.time || DEFAULT_TIME, timeFormater)}，当前组合订购客户共计
-          <span className={styles.total}>{number.thousandFormat(data.total || 0)}</span>人
+          截止
+          {time.format(data.time || DEFAULT_TIME, timeFormater)}
+，当前组合订购客户共计
+          <span className={styles.total}>{number.thousandFormat(data.total || 0)}</span>
+人
         </div>
         <Table
           columns={newTitleList}
           dataSource={this.getTransformList(list)}
           pagination={false}
-          rowKey={'rowKey'}
+          rowKey="rowKey"
         />
       </div>
     );

@@ -7,8 +7,7 @@ export default function permission(api) {
     // 获取详情信息
     getMessage: query => api.post('/groovynoauth/fsp/biz/privateCustApplication/queryApplicationDetail2', query),
     // 获取服务人员列表
-    getServerPersonelList: query =>
-    api.post('/groovynoauth/fsp/biz/privateCustApplication/queryApplicationEmpList', query),
+    getServerPersonelList: query => api.post('/groovynoauth/fsp/biz/privateCustApplication/queryApplicationEmpList', query),
     // 获取子类型
     getSubTypeList: query => api.post('/groovynoauth/fsp/biz/privateCustApplication/querySubType', query),
     // 新建状态下 获取已经有得服务人员列表

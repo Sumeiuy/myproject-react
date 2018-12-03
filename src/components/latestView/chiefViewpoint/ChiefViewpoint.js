@@ -34,7 +34,7 @@ export default class ChiefViewpoint extends PureComponent {
   @logable({
     type: 'Click',
     payload: {
-      name: instance => instance.props.title + '-更多'
+      name: instance => `${instance.props.title}-更多`
     },
   })
   toListPage() {
@@ -62,7 +62,7 @@ export default class ChiefViewpoint extends PureComponent {
     logCommon({
       type: 'Click',
       payload: {
-        name: title + '-更多',
+        name: `${title}-更多`,
       },
     });
   }
@@ -72,11 +72,13 @@ export default class ChiefViewpoint extends PureComponent {
   @logable({
     type: 'Click',
     payload: {
-      name: instance => instance.props.title + '-详情'
+      name: instance => `${instance.props.title}-详情`
     },
   })
   toDetailPage() {
-    const { type, title, data: { id }, location: { query } } = this.props;
+    const {
+      type, title, data: { id }, location: { query }
+    } = this.props;
     const { push } = this.context;
     const param = {
       id: 'RTC_TAB_VIEWPOINT',
@@ -101,7 +103,7 @@ export default class ChiefViewpoint extends PureComponent {
     logCommon({
       type: 'Click',
       payload: {
-        name: title + '-详情',
+        name: `${title}-详情`,
       },
     });
   }
@@ -111,8 +113,8 @@ export default class ChiefViewpoint extends PureComponent {
     const { content = '' } = data;
     // 去除内容所有html标签
     const newContent = (content || '暂无内容').replace(/<[^>]*>/g, '');
-    const slicedContent = newContent.length > MAX_LENGTH ?
-      `${newContent.slice(0, MAX_LENGTH)}...` : newContent;
+    const slicedContent = newContent.length > MAX_LENGTH
+      ? `${newContent.slice(0, MAX_LENGTH)}...` : newContent;
     return (
       <div className={styles.chiefViewpointBox}>
         <div className={`${styles.headerBox} clearfix`}>

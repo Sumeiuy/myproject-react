@@ -12,7 +12,9 @@ import cx from 'classnames';
 import styles from './index.less';
 
 function PlaceHolderImage(props) {
-  const { title, isRender, size, style } = props;
+  const {
+    title, isRender, size, style
+  } = props;
   if (!isRender) {
     return null;
   }
@@ -24,7 +26,7 @@ function PlaceHolderImage(props) {
 
   return (
     <div className={styles.placeholderContainer} style={style}>
-      <div className={imageCls}/>
+      <div className={imageCls} />
       <div className={styles.placeholderTitle}>{title}</div>
     </div>
   );
@@ -48,5 +50,3 @@ PlaceHolderImage.defaultProps = {
 };
 
 export default PlaceHolderImage;
-
-

@@ -4,12 +4,12 @@
  * @author zhufeiyang
  */
 
- // 新版首页客户分析图表所需要的数据
+// 新版首页客户分析图表所需要的数据
 import _ from 'lodash';
 import { transformItemUnit } from '../chartRealTime/FixNumber';
 import { number } from '../../helper';
 
- // 客户类型
+// 客户类型
 function getCustClassChartData(data) {
   const dataSource = [
     {
@@ -52,16 +52,14 @@ function getCustClassChartData(data) {
     dataSource[0].custNumRate = 50;
     dataSource[1].custNumRate = 50;
   } else {
-    dataSource[0].custNumRate =
-      Math.floor((dataSource[0].custNum / (dataSource[0].custNum + dataSource[1].custNum))*100);
+    dataSource[0].custNumRate = Math.floor((dataSource[0].custNum / (dataSource[0].custNum + dataSource[1].custNum)) * 100);
     dataSource[1].custNumRate = 100 - dataSource[0].custNumRate;
   }
   if (dataSource[0].asset + dataSource[1].asset === 0) {
     dataSource[0].assetRate = 50;
     dataSource[1].assetRate = 50;
   } else {
-    dataSource[0].assetRate =
-      Math.floor((dataSource[0].asset / (dataSource[0].asset + dataSource[1].asset)) * 100);
+    dataSource[0].assetRate = Math.floor((dataSource[0].asset / (dataSource[0].asset + dataSource[1].asset)) * 100);
     dataSource[1].assetRate = 100 - dataSource[0].assetRate;
   }
   const option = {
@@ -230,10 +228,8 @@ function getCustomTypeChartData(data) {
     dataSource[1].custNumRate = 33.33;
     dataSource[2].custNumRate = 33.34;
   } else {
-    dataSource[0].custNumRate =
-      Math.floor((dataSource[0].custNum / custNumSum) * 100);
-    dataSource[1].custNumRate =
-      Math.floor((dataSource[1].custNum / custNumSum) * 100);
+    dataSource[0].custNumRate = Math.floor((dataSource[0].custNum / custNumSum) * 100);
+    dataSource[1].custNumRate = Math.floor((dataSource[1].custNum / custNumSum) * 100);
     if (dataSource[1].custNumRate === 0 && dataSource[0].custNumRate !== 100) {
       if (dataSource[1].custNum > dataSource[2].custNum) {
         dataSource[1].custNumRate = 1;
@@ -246,10 +242,8 @@ function getCustomTypeChartData(data) {
     dataSource[1].assetRate = 33.33;
     dataSource[2].assetRate = 33.34;
   } else {
-    dataSource[0].assetRate =
-      Math.floor((dataSource[0].asset / assetSum) * 100);
-    dataSource[1].assetRate =
-      Math.floor((dataSource[1].asset / assetSum) * 100);
+    dataSource[0].assetRate = Math.floor((dataSource[0].asset / assetSum) * 100);
+    dataSource[1].assetRate = Math.floor((dataSource[1].asset / assetSum) * 100);
 
     if (dataSource[1].assetRate === 0 && dataSource[0].assetRate !== 100) {
       if (dataSource[1].asset > dataSource[2].asset) {
@@ -522,7 +516,7 @@ function getMaxCostRateChartData(data) {
             color: '#eee'
           }
         },
-       splitNumber: 5,
+        splitNumber: 5,
       }
     ],
     series: [
@@ -671,7 +665,7 @@ function getPftAmtChartData(data) {
   if (data.profitAndLossMargin) {
     dataSource = _.map(dataSource, (item, index) => ({
       ...item,
-     value:
+      value:
         (data.profitAndLossMargin[index] && data.profitAndLossMargin[index].custNum) || 0,
     }));
   }
@@ -727,7 +721,7 @@ function getPftAmtChartData(data) {
             color: '#eee',
           }
         },
-       splitNumber: 5,
+        splitNumber: 5,
       }
     ],
     series: [
@@ -751,19 +745,19 @@ function getHoldingChart(data) {
     return false;
   }
   // 1. 获取所有的数据
-  let values = _.map(data, item => item.asset || 0);
+  const values = _.map(data, item => item.asset || 0);
   // 2. 将数据与指标轴名称合并到一起
-  const indicators = _.map(data, item => {
+  const indicators = _.map(data, (item) => {
     const { type, asset } = item;
     let max = Math.max(...values);
-    let min = Math.min(...values);
+    const min = Math.min(...values);
     if (max === min && min === 0) {
       max = 10;
     }
     return {
       name: `${type}|${asset}`,
       max: max * 1.1,
-      min: - (max * 0.5),
+      min: -(max * 0.5),
       color: '#666666',
     };
   });
@@ -773,13 +767,13 @@ function getHoldingChart(data) {
       trigger: 'axis',
     },
     radar: {
-      indicator:  indicators,
-      center: ['50%','50%'],
+      indicator: indicators,
+      center: ['50%', '50%'],
       radius: 60,
       // shape: 'circle',
       splitNumber: 3,
       splitArea: {
-        areaStyle: {                            // 分隔区域的样式设置。
+        areaStyle: { // 分隔区域的样式设置。
           show: true,
           color: ['#f4f6f9', '#e9eaec'],
         }
@@ -790,14 +784,14 @@ function getHoldingChart(data) {
           const labels = name.split('|');
           const text = labels[0];
           const value = Number(labels[1]);
-          const formatedV = number.formatToUnit({ num: value, floatLength:2 });
+          const formatedV = number.formatToUnit({ num: value, floatLength: 2 });
           return `{normal|${text}}\n{normal|${formatedV}}`;
         },
         axisLine: {
           lineStyle: {
-              color: '#fec965',
-              },
-      },
+            color: '#fec965',
+          },
+        },
         rich: {
           name: {
             fontSize: 12,
@@ -814,14 +808,14 @@ function getHoldingChart(data) {
         itemStyle: {
           normal: {
             lineStyle: {
-               color : '#ff8008',
+              color: '#ff8008',
             },
             areaStyle: {
               color: '#fec965',
               opacity: 1
             },
-         }
-       },
+          }
+        },
         symbol: 'circle',
         data: [
           {
@@ -841,4 +835,3 @@ export {
   getPftAmtChartData,
   getHoldingChart,
 };
-

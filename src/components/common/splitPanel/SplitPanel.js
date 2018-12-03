@@ -20,7 +20,6 @@ import nodatapng from './nodata.png';
 import logable from '../../../decorators/logable';
 
 export default class SplitPanel extends PureComponent {
-
   static propTypes = {
     topPanel: PropTypes.element.isRequired,
     leftPanel: PropTypes.element.isRequired,
@@ -245,6 +244,7 @@ export default class SplitPanel extends PureComponent {
   leftPanelRef(input) {
     this.leftSection = input;
   }
+
   // 右侧详情区域
   @autobind
   rightPanelRef(input) {
@@ -316,8 +316,10 @@ export default class SplitPanel extends PureComponent {
 
   // splitPan onChange回调函数
   @autobind
-  @logable({ type: 'Click',
-payload: { name: '容器拖拽' } })
+  @logable({
+    type: 'Click',
+    payload: { name: '容器拖拽' }
+  })
   panchange(size) {
     this.panMov(size);
     this.initPane();
@@ -331,7 +333,9 @@ payload: { name: '容器拖拽' } })
 
   render() {
     const { paneMinSize, paneMaxSize } = this.state;
-    const { topPanel, leftPanel, rightPanel, isEmpty } = this.props;
+    const {
+      topPanel, leftPanel, rightPanel, isEmpty
+    } = this.props;
     const noDataClass = classnames({
       [styles.hide]: !isEmpty,
       [styles.noData]: true,

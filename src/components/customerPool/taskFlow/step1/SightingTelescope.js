@@ -13,7 +13,6 @@ import { fsp } from '../../../../helper';
 import styles from './sightingTelescope.less';
 
 export default class SightingTelescope extends PureComponent {
-
   static propTypes = {
     dict: PropTypes.object.isRequired,
     visible: PropTypes.bool,

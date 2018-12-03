@@ -12,7 +12,6 @@ import classNames from 'classnames';
 import Pagination from '../Pagination';
 
 export default class ExtendedTable extends Table {
-
   renderPagination(paginationPosition) {
     // 强制不需要分页
     if (!this.hasPagination()) {

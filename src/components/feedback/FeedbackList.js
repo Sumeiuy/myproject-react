@@ -43,7 +43,8 @@ export default class FeedbackList extends PureComponent {
     const {
       location: { query, pathname, query: { currentId } },
       replace,
-      list: { resultData = EMPTY_LIST, page = EMPTY_OBJECT } } = nextProps;
+      list: { resultData = EMPTY_LIST, page = EMPTY_OBJECT }
+    } = nextProps;
     const { curPageNum, pageSize } = page;
 
     // 只有当有数据，
@@ -53,8 +54,8 @@ export default class FeedbackList extends PureComponent {
     if (prevResultData !== resultData) {
       if (!_.isEmpty(resultData)) {
         if ((!currentId || (
-          currentId &&
-          _.isEmpty(_.find(resultData, item => item.id.toString() === currentId))
+          currentId
+          && _.isEmpty(_.find(resultData, item => item.id.toString() === currentId))
         ))) {
           replace({
             pathname,
@@ -163,7 +164,9 @@ export default class FeedbackList extends PureComponent {
       render: (text, record) => {
         // 当前行记录
         const { feedEmpInfo = EMPTY_OBJECT, issueType } = record;
-        const { name = '无', l1 = '', l2 = '', l3 = '' } = feedEmpInfo;
+        const {
+          name = '无', l1 = '', l2 = '', l3 = ''
+        } = feedEmpInfo;
         const typeIcon = {
           type: issueType === 'DEFECT' ? 'wenti' : 'jianyi',
           className: issueType === 'DEFECT' ? 'wenti' : 'jianyi',
@@ -175,7 +178,12 @@ export default class FeedbackList extends PureComponent {
               <span className="feedbackId">{record.feedId || '无'}</span>
             </div>
             <div className="description">{record.description || '无'}</div>
-            <div className="address">来自：{name}，{`${l1 || ''}${l2 || ''}${l3 || ''}` || '无'}</div>
+            <div className="address">
+来自：
+              {name}
+，
+              {`${l1 || ''}${l2 || ''}${l3 || ''}` || '无'}
+            </div>
           </div>
         );
       },
@@ -197,16 +205,17 @@ export default class FeedbackList extends PureComponent {
         if (!_.isEmpty(record.processer)
           && record.processer !== '无'
           && record.processer !== 'null') {
-          processerLabel = feedbackOptions.allOperatorOptions.filter(item =>
-            item.value === record.processer);
+          processerLabel = feedbackOptions.allOperatorOptions.filter(item => item.value === record.processer);
         }
         return (
           <div className="rightSection">
             <div className={statusClass}>{(!_.isEmpty(statusLabel) && statusLabel[0].label) || '无'}</div>
             <div className="name">{(!_.isEmpty(processerLabel) && processerLabel[0].label) || '无'}</div>
-            <div className="date">{(record.createTime &&
-              record.createTime.length >= 10 &&
-              record.createTime.slice(0, 10)) || '无'}</div>
+            <div className="date">
+              {(record.createTime
+              && record.createTime.length >= 10
+              && record.createTime.slice(0, 10)) || '无'}
+            </div>
           </div>
         );
       },
@@ -221,9 +230,7 @@ export default class FeedbackList extends PureComponent {
   constructTableDatas(dataSource) {
     const newDataSource = [];
     if (dataSource.length > 0) {
-      dataSource.forEach((currentValue, index) =>
-        newDataSource.push(_.merge(currentValue, { key: index })),
-      );
+      dataSource.forEach((currentValue, index) => newDataSource.push(_.merge(currentValue, { key: index })), );
     }
 
     return newDataSource;
@@ -266,8 +273,10 @@ export default class FeedbackList extends PureComponent {
   }
 
   render() {
-    const { list: { resultData = EMPTY_LIST, page = EMPTY_OBJECT },
-      location: { query: { curPageNum, curPageSize } } } = this.props;
+    const {
+      list: { resultData = EMPTY_LIST, page = EMPTY_OBJECT },
+      location: { query: { curPageNum, curPageSize } }
+    } = this.props;
     const { totalRecordNum } = page;
     const { curSelectedRow } = this.state;
 
@@ -298,7 +307,7 @@ export default class FeedbackList extends PureComponent {
           columns={columns}
           dataSource={this.constructTableDatas(resultData)}
           onRow={(record, index) => ({
-            onClick: () => this.handleRowClick(record, index),       // 点击行
+            onClick: () => this.handleRowClick(record, index), // 点击行
           })}
           showHeader={false}
           pagination={paginationOptions}
@@ -310,7 +319,7 @@ export default class FeedbackList extends PureComponent {
             return '';
           }}
         />
-      </div >
+      </div>
     );
   }
 }

@@ -148,7 +148,9 @@ export default class EditContactWayModal extends PureComponent {
     phoneForm.validateFields((err, values) => {
       if (!err) {
         // 此处需要针对手机信息，固定电话、邮箱做特殊处理
-        const { emailValue, landlineValue, mobileValue, ...restValue } = values;
+        const {
+          emailValue, landlineValue, mobileValue, ...restValue
+        } = values;
         // 新增的时候需要将这三个值转换成对象,因为后端的接口需要这样弄,
         // 因为机构客户的联系人信息有多个手机信息、固定电话、邮箱
         this.handleContactSubmit('phone', {
@@ -298,16 +300,16 @@ export default class EditContactWayModal extends PureComponent {
     if (formType === 'per_phone') {
       // 编辑修改个人客户的电话信息
       return this.renderPerPhoneForm();
-    } else if (formType === 'per_address') {
+    } if (formType === 'per_address') {
       // 编辑修改个人客户的地址信息
       return this.renderPerAddressForm();
-    } else if (formType === 'per_other') {
+    } if (formType === 'per_other') {
       // 编辑个人客户的其他信息
       return this.renderPerOtherForm();
-    } else if (formType === 'org_phone') {
+    } if (formType === 'org_phone') {
       // 编辑机构客户的电话信息
       return this.renderOrgPhoneForm();
-    } else if (formType === 'org_address') {
+    } if (formType === 'org_address') {
       return this.renderOrgAddressForm();
     }
     return null;
@@ -345,4 +347,3 @@ export default class EditContactWayModal extends PureComponent {
     );
   }
 }
-

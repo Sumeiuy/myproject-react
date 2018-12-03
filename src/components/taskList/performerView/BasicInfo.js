@@ -14,7 +14,11 @@ import styles from './basicInfo.less';
 
 const BasicInfo = ({ missionName, missionStatusName, basicInfoData }) => (
   <div className={styles.basicInfo}>
-    <p className={styles.title}>{missionName}:&nbsp;{missionStatusName}</p>
+    <p className={styles.title}>
+      {missionName}
+:&nbsp;
+      {missionStatusName}
+    </p>
     <div className={styles.basicInfoContent}>
       {
         basicInfoData.map(item => (

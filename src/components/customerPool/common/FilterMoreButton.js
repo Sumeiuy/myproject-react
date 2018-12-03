@@ -3,7 +3,9 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
-import { Menu, Dropdown, Checkbox, Button } from 'antd';
+import {
+  Menu, Dropdown, Checkbox, Button
+} from 'antd';
 
 import styles from './filterMoreButton.less';
 

@@ -7,10 +7,10 @@
  */
 import _ from 'lodash';
 
-import { time, emp } from '../../helper';
+import { time, emp } from '..';
 
 const feedback = {
-    /**
+  /**
    * 构造入参
    * @param {*} query 查询
    * @param {*} newPageNum 当前页
@@ -33,8 +33,8 @@ const feedback = {
       feedbackCreateTimeTo: feedbackCreateTimeTo && time.format(feedbackCreateTimeTo, 'YYYY/MM/DD'),
     };
 
-    if (formatedTime.feedbackCreateTimeFrom &&
-      formatedTime.feedbackCreateTimeTo
+    if (formatedTime.feedbackCreateTimeFrom
+      && formatedTime.feedbackCreateTimeTo
       && (formatedTime.feedbackCreateTimeFrom === formatedTime.feedbackCreateTimeTo)) {
       delete formatedTime.feedbackCreateTimeTo;
     }

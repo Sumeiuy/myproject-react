@@ -14,7 +14,9 @@ function convertNY2ZN(v) {
 }
 
 function changeProductJson(product) {
-  const { riskMatch, termMatch, prodMatch, prodCode, aliasName, agrType, prodCommission } = product;
+  const {
+    riskMatch, termMatch, prodMatch, prodCode, aliasName, agrType, prodCommission
+  } = product;
   const prodCom = _.isEmpty(prodCommission) ? {} : { prodCommission };
   return {
     key: prodCode,
@@ -35,7 +37,9 @@ function changeProductJson(product) {
 }
 
 function changeSubProductJson(product) {
-  const { riskMatch, termMatch, prodMatch, prodCode, aliasName, agrType, prodCommission } = product;
+  const {
+    riskMatch, termMatch, prodMatch, prodCode, aliasName, agrType, prodCommission
+  } = product;
   const prodCom = _.isEmpty(prodCommission) ? {} : { prodCommission };
   const proList = _.isEmpty(riskMatch) ? {
     key: prodCode,

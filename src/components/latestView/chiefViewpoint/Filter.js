@@ -106,7 +106,7 @@ export default class Filter extends PureComponent {
       selectedTypeList: obj.value,
     }, () => {
       const { onFilter } = this.props;
-      onFilter({type: this.state.selectedTypeList.join(',')});
+      onFilter({ type: this.state.selectedTypeList.join(',') });
     });
   }
 
@@ -143,8 +143,7 @@ export default class Filter extends PureComponent {
     ];
     const isViewpointFilterType = filterType === config.viewpointFilterType;
     const filterTypeList = _.filter(config.chiefViewpointType, o => o.value !== '');
-    const decoratedTypeList = filterTypeList.map(item =>
-      ({ key: item.value || '', value: item.label }));
+    const decoratedTypeList = filterTypeList.map(item => ({ key: item.value || '', value: item.label }));
     return (
       <div className={styles.filterBox}>
         <div className={styles.inputBox}>
@@ -159,31 +158,38 @@ export default class Filter extends PureComponent {
         <div className={styles.selectBox}>
           {
             isViewpointFilterType
-            ? null
-            : <span className={styles.title}>调整方向：</span>
+              ? null
+              : <span className={styles.title}>调整方向：</span>
           }
           {
             isViewpointFilterType
-            ? <MultiFilter
-              filterName="类型"
-              data={decoratedTypeList}
-              value={selectedTypeList}
-              onChange={_.debounce(this.handleMultiFilterChange, 500)}
-            />
-            : <Select
-              style={selectStyle}
-              defaultValue={type}
-              onChange={this.handleSelect}
-            >
-              {
+              ? (
+                <MultiFilter
+                  filterName="类型"
+                  data={decoratedTypeList}
+                  value={selectedTypeList}
+                  onChange={_.debounce(this.handleMultiFilterChange, 500)}
+                />
+              )
+              : (
+                <Select
+                  style={selectStyle}
+                  defaultValue={type}
+                  onChange={this.handleSelect}
+                >
+                  {
                 this.getOptionList()
               }
-            </Select>
+                </Select>
+              )
           }
 
         </div>
         <div className={styles.dateBox}>
-          <span className={styles.title}>{isViewpointFilterType ? '报告日期' : '调整时间'}：</span>
+          <span className={styles.title}>
+            {isViewpointFilterType ? '报告日期' : '调整时间'}
+：
+          </span>
           <DateRangePick
             filterName=""
             filterValue={defaultDate}

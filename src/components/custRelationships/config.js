@@ -5,7 +5,9 @@
  * @Last Modified by: zhangjun
  * @Last Modified time: 2018-07-31 17:37:28
  */
-import { customer, status, drafter, department, approver, applyTime } from '../../config/busApplyFilters';
+import {
+  customer, status, drafter, department, approver, applyTime
+} from '../../config/busApplyFilters';
 
 const config = {
   custRelationships: {

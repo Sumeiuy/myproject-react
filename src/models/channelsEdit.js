@@ -20,15 +20,15 @@ export default {
   state: {
     protocolDetail: EMPTY_OBJECT, // 协议详情
     attachmentList: EMPTY_LIST, // 附件信息
-    flowHistory: EMPTY_LIST,  // 审批记录
-    flowStepInfo: EMPTY_OBJECT,  // 审批人及按钮
+    flowHistory: EMPTY_LIST, // 审批记录
+    flowStepInfo: EMPTY_OBJECT, // 审批人及按钮
     operationList: EMPTY_LIST, // 操作类型列表
     templateList: EMPTY_LIST, // 模板列表
     businessTypeList: EMPTY_LIST, // 模板列表
     openPermissionList: EMPTY_LIST, // 开通权限列表
     protocolClauseList: EMPTY_LIST, // 所选模板对应协议条款列表
     protocolProductList: EMPTY_LIST, // 协议产品列表
-    underCustList: EMPTY_LIST,  // 客户列表
+    underCustList: EMPTY_LIST, // 客户列表
     saveProtocol: EMPTY_OBJECT,
   },
   reducers: {
@@ -190,8 +190,8 @@ export default {
       const { resultData: { flowButtons = [] } } = flowResponse;
       // 对按钮内的审批人进行处理
       const transferButtons = flowButtons.map((item) => {
-        const newItem = item.flowAuditors.length &&
-          item.flowAuditors.map(child => ({
+        const newItem = item.flowAuditors.length
+          && item.flowAuditors.map(child => ({
             belowDept: child.occupation,
             empNo: child.login,
             empName: child.empName,

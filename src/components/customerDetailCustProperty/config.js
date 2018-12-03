@@ -48,9 +48,7 @@ export const getViewTextByBool = (bool) => {
 };
 
 // 获取数值显示数据
-export const getViewTextByNum = (value) => {
-  return _.isNumber(value) ? number.thousandFormat(value) : DEFAULT_VALUE;
-};
+export const getViewTextByNum = value => (_.isNumber(value) ? number.thousandFormat(value) : DEFAULT_VALUE);
 const config = {
   MemberGradeColumns: [
     {
@@ -163,8 +161,7 @@ const config = {
 };
 
 // 根据传入的参数判断是否需要显示title，如果值等于默认值则不显示
-export const checkIsNeedTitle = value =>
-  (value !== DEFAULT_VALUE && value !== DEFAULT_PRIVATE_VALUE && !_.isEmpty(value));
+export const checkIsNeedTitle = value => (value !== DEFAULT_VALUE && value !== DEFAULT_PRIVATE_VALUE && !_.isEmpty(value));
 
 export default config;
 export const {
@@ -174,17 +171,17 @@ export const {
 
 export const newMemberGradeColumns = _.map(MemberGradeColumns, (items) => {
   const { dataIndex } = items;
-  let newItems = {...items};
-  if( dataIndex === 'time'){
+  let newItems = { ...items };
+  if (dataIndex === 'time') {
     newItems = {
       ...items,
-      render: (text,record) => {
-        if(!_.isEmpty(record.afterChangeLevel)) {
+      render: (text, record) => {
+        if (!_.isEmpty(record.afterChangeLevel)) {
           return moment(text).format('YYYY-MM-DD hh:mm:ss');
         }
       }
     };
-  };
+  }
   return newItems;
 });
 

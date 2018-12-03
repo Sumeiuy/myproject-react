@@ -15,33 +15,35 @@ import EmptyData from '../emptyData';
 import styles from './index.less';
 
 export default function DetailWrapper(props) {
-  const { isEmpty, children, currentId, extra, extraIsFllowTitle } = props;
+  const {
+    isEmpty, children, currentId, extra, extraIsFllowTitle
+  } = props;
   const bugTitle = `编号:${currentId}`;
   return (
     <div className={styles.detialBox}>
       <div className={styles.inner}>
         {
           isEmpty ? (<EmptyData />)
-          : (
-            <div className={styles.innerWrap}>
-              <div className={styles.titleArea}>
-                <div className={styles.title}>
-                  {
+            : (
+              <div className={styles.innerWrap}>
+                <div className={styles.titleArea}>
+                  <div className={styles.title}>
+                    {
                     extraIsFllowTitle
                       ? (<div className={styles.fllowExtra}>{extra}</div>)
                       : null
                   }
-                  {bugTitle}
-                </div>
-                {
+                    {bugTitle}
+                  </div>
+                  {
                   (!extraIsFllowTitle && !_.isEmpty(extra))
-                  ? (<div className={styles.extra}>{extra}</div>)
-                  : null
+                    ? (<div className={styles.extra}>{extra}</div>)
+                    : null
                 }
+                </div>
+                {children}
               </div>
-              {children}
-            </div>
-          )
+            )
         }
       </div>
     </div>

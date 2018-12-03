@@ -56,7 +56,7 @@ const newOpenTabConfig = [
     path: '/fsp/motTaskHandle',
     pid: 'FSP_CUST_M_360',
   },
-/*   {
+  /*   {
     name: '客户360',
     id: 'FSP_CUST_M_360',
     path: '/fsp/customerCenter/customer360',
@@ -464,7 +464,7 @@ const tabNotUseGlobalBreadcrumb = [
 
 // 不在菜单中需要使用面包屑的路由
 const locationNeedBreadcrumb = [
- {
+  {
     name: '资讯列表',
     path: '/strategyCenter/latestView/viewpointList',
     parent: {
@@ -544,20 +544,19 @@ const locationNeedBreadcrumb = [
 ];
 
 function findParentBreadcrumb(breadcrumbs, path) {
-  if(_.isArray(breadcrumbs)) {
-    return _.some(breadcrumbs, item => {
-      if(item.parent) {
+  if (_.isArray(breadcrumbs)) {
+    return _.some(breadcrumbs, (item) => {
+      if (item.parent) {
         return findParentBreadcrumb(item.parent, path);
       }
       return false;
     });
   }
-  if(_.isObject(breadcrumbs)) {
-    if(breadcrumbs.path === path) {
+  if (_.isObject(breadcrumbs)) {
+    if (breadcrumbs.path === path) {
       return true;
-    } else {
-      return findParentBreadcrumb(breadcrumbs.parent, path);
     }
+    return findParentBreadcrumb(breadcrumbs.parent, path);
   }
   return false;
 }
@@ -567,7 +566,7 @@ function getAllBreadcrumbItem(breadcrumbItem, breadcrumbRoutes = []) {
   if (breadcrumbItem) {
     newBreadcrumbRoutes = [
       breadcrumbItem,
-       ...breadcrumbRoutes,
+      ...breadcrumbRoutes,
     ];
     if (breadcrumbItem.parent) {
       return getAllBreadcrumbItem(breadcrumbItem.parent, newBreadcrumbRoutes);

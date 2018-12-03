@@ -13,7 +13,6 @@ import styles from './operationOfCustermorList.less';
 import logable from '../../decorators/logable';
 
 export default class ProductsDropdownBox extends PureComponent {
-
   static propTypes = {
     labelName: PropTypes.string.isRequired,
     dataSource: PropTypes.array.isRequired,
@@ -55,9 +54,10 @@ export default class ProductsDropdownBox extends PureComponent {
         <Button
           className={styles.delectCustomerButton}
           onClick={() => { this.handleDelete(); }}
-        >移除</Button>
+        >
+移除
+        </Button>
       </div>
     );
   }
 }
-

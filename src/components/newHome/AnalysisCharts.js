@@ -105,11 +105,11 @@ let totAsetData = [
   },
 ];
 
-//持仓分布的数据源
+// 持仓分布的数据源
 const positionDistribution = [
   {
-   type: '公募',
-   asset: 0,
+    type: '公募',
+    asset: 0,
   },
   {
     type: '私募',
@@ -137,6 +137,7 @@ export default class PerformanceIndicators extends PureComponent {
   static contextTypes = {
     push: PropTypes.func.isRequired,
   }
+
   static propTypes = {
     indicators: PropTypes.object.isRequired,
     cycle: PropTypes.array.isRequired,
@@ -149,8 +150,16 @@ export default class PerformanceIndicators extends PureComponent {
     const assetData = transformItemUnit(item.asset);
     return (
       <div>
-        <div>客户数：{number.thousandFormat(item.custNum)}人</div>
-        <div>托管资产：{assetData.newItem}{assetData.newUnit}</div>
+        <div>
+客户数：
+          {number.thousandFormat(item.custNum)}
+人
+        </div>
+        <div>
+托管资产：
+          {assetData.newItem}
+          {assetData.newUnit}
+        </div>
       </div>
     );
   }
@@ -164,11 +173,11 @@ export default class PerformanceIndicators extends PureComponent {
     },
   })
   navToCustomerList(item) {
-    if(item) {
+    if (item) {
       const { query: { orgId } } = this.props.location;
       const filterInsideSeperator = seperator.filterInsideSeperator;
       let filterValue = item.filterValue;
-      if(_.isArray(item.filterValue)) {
+      if (_.isArray(item.filterValue)) {
         filterValue = _.join(item.filterValue, seperator.filterValueSeperator);
       }
       const filterItem = `${item.filterId}${filterInsideSeperator}${filterValue}`;
@@ -197,16 +206,17 @@ export default class PerformanceIndicators extends PureComponent {
   @autobind
   handleCustomTypeChartClick(instance) {
     instance.on('click', (item) => {
-      if(item) {
+      if (item) {
         this.navToCustomerList(item.data);
       }
     });
   }
+
   // 总资产下钻
   @autobind
   handleTotAsetChartClick(instance) {
     instance.on('click', (item) => {
-      if(item) {
+      if (item) {
         let data = item.data;
         if (item.componentType === 'yAxis') {
           data = _.find(totAsetData, obj => obj.name === item.value);
@@ -236,13 +246,14 @@ export default class PerformanceIndicators extends PureComponent {
       }
     });
   }
+
   // 盈亏幅度下钻
   @autobind
   handlePftAmtChartClick(instance) {
     instance.on('click', (item) => {
       if (item) {
-      const { cycle, location: { query: { cycleSelect } } } = this.props;
-       const data = item.data;
+        const { cycle, location: { query: { cycleSelect } } } = this.props;
+        const data = item.data;
         const dateType = cycleSelect || (!_.isEmpty(cycle) ? cycle[0].key : '');
         const filterValue = [dateType, data.filterValue.minVal, data.filterValue.maxVal];
         this.navToCustomerList({
@@ -273,7 +284,7 @@ export default class PerformanceIndicators extends PureComponent {
                 className={styles.legendItem}
                 key={item.name}
                 onClick={() => this.navToCustomerList(item)}
-                >
+              >
                 <span
                   className={styles.legendColor}
                   style={item.style}
@@ -292,6 +303,7 @@ export default class PerformanceIndicators extends PureComponent {
       </ChartContiner>
     );
   }
+
   // 客户性质图表
   renderCustomTypeChart() {
     const { dataSource, option } = getCustomTypeChartData(this.props.indicators);
@@ -331,6 +343,7 @@ export default class PerformanceIndicators extends PureComponent {
       </ChartContiner>
     );
   }
+
   // 资产分布图表
   renderTotAsetChart() {
     const { indicators } = this.props;
@@ -412,26 +425,27 @@ export default class PerformanceIndicators extends PureComponent {
     return (
       <div className={styles.chartContainer}>
         <ChartContiner dataSource={chartTitles[2]} margin>
-        <IECharts
-          option={option}
-          onReady={this.handleTotAsetChartClick}
-          style={{
-            height: '160px',
-          }}
-          resizable
-        />
-      </ChartContiner>
-      <div className={styles.unitContent}>（万元）</div>
-      <div className={styles.axisLabel}>
-        <span>0</span>
-        <span>30</span>
-        <span>100</span>
-        <span>500</span>
-        <span>1000</span>
-      </div>
+          <IECharts
+            option={option}
+            onReady={this.handleTotAsetChartClick}
+            style={{
+              height: '160px',
+            }}
+            resizable
+          />
+        </ChartContiner>
+        <div className={styles.unitContent}>（万元）</div>
+        <div className={styles.axisLabel}>
+          <span>0</span>
+          <span>30</span>
+          <span>100</span>
+          <span>500</span>
+          <span>1000</span>
+        </div>
       </div>
     );
   }
+
   // 盈亏比图表
   renderMaxCostRateChart() {
     const { xAxisLabel, option } = getMaxCostRateChartData(this.props.indicators);
@@ -445,7 +459,7 @@ export default class PerformanceIndicators extends PureComponent {
           }}
           resizable
         />
-        <div className={styles.axisLine}/>
+        <div className={styles.axisLine} />
         <div className={styles.axisLabel}>
           {
             _.map(xAxisLabel, label => (
@@ -459,6 +473,7 @@ export default class PerformanceIndicators extends PureComponent {
       </ChartContiner>
     );
   }
+
   // 盈亏幅度图表
   renderPftAmtChart() {
     const { xAxisLabel, option } = getPftAmtChartData(this.props.indicators);
@@ -493,12 +508,12 @@ export default class PerformanceIndicators extends PureComponent {
     let newHoldingDistribution = [...holdingDistribution];
     if (_.isEmpty(newHoldingDistribution)) {
       newHoldingDistribution = positionDistribution;
-    };
-    let option = getHoldingChart(newHoldingDistribution);
+    }
+    const option = getHoldingChart(newHoldingDistribution);
     return (
       <ChartContiner dataSource={chartTitles[5]}>
         <IECharts
-         className={styles.positionContain}
+          className={styles.positionContain}
           option={option}
           style={{
             height: '144px',
@@ -508,6 +523,7 @@ export default class PerformanceIndicators extends PureComponent {
       </ChartContiner>
     );
   }
+
   render() {
     const gutter = 18;
     return (

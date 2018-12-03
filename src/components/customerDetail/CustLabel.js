@@ -25,7 +25,7 @@ export default function CustLabel(props) {
   const nameLength = name && name.length;
   let fixedName = name;
   if (nameLength > 8) {
-    fixedName = `${name.substr(0,7)}...`;
+    fixedName = `${name.substr(0, 7)}...`;
   }
   const style = {
     minWidth: '220px'
@@ -43,4 +43,3 @@ CustLabel.propTypes = {
   // 标签信息数据
   labelData: PropTypes.object.isRequired,
 };
-

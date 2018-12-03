@@ -33,8 +33,10 @@ function getLabel(filterObj, labelInfos) {
       item => _.includes(labelList, item.id) && !isSightingScope(item.source),
     );
   }
-  return { aimLabelList,
-normalLabelList };
+  return {
+    aimLabelList,
+    normalLabelList
+  };
 }
 
 // 生成一个格式为 瞄准镜标签#id# 的集合
@@ -44,8 +46,10 @@ function getNameAndIdList(list) {
 
 // 按照现有代码需要的格式生成suggestion数据
 function getFormattedData(data) {
-  return _.map([].concat(data), item => ({ name: item,
-type: item }));
+  return _.map([].concat(data), item => ({
+    name: item,
+    type: item
+  }));
 }
 
 /**
@@ -136,8 +140,7 @@ function getBusinessOpenedInfo(filterObj, kPIDateScopeType, singleBusinessTypeLi
   const businessOpened = filterObj.businessOpened;
   if (!_.isEmpty(businessOpened)) {
     const { value: time } = _.find(kPIDateScopeType, item => item.key === businessOpened[0]);
-    const { value: business } =
-      _.find(singleBusinessTypeList, item => item.key === businessOpened[1]);
+    const { value: business } = _.find(singleBusinessTypeList, item => item.key === businessOpened[1]);
     htmlStr += `${time}开通业务： ${business}`;
   }
   return htmlStr;
@@ -309,7 +312,9 @@ function getCustomLabel(customLabels, definedLabelsInfo) {
 }
 
 // 新版客户表发起任务，在新建任务的任务提示的显示的信息
-function getFilterInfo({ filterObj, dict, industryList, definedLabelsInfo }) {
+function getFilterInfo({
+  filterObj, dict, industryList, definedLabelsInfo
+}) {
   const {
     labelInfos, kPIDateScopeType,
     singleBusinessTypeList,
@@ -326,8 +331,7 @@ function getFilterInfo({ filterObj, dict, industryList, definedLabelsInfo }) {
       holdingProductHtmlStr,
       holdingProductSuggestionList,
     } = getHoldingProductInfo(filterObj);
-    const businessOpenedHtmlStr =
-      getBusinessOpenedInfo(filterObj, kPIDateScopeType, singleBusinessTypeList);
+    const businessOpenedHtmlStr = getBusinessOpenedInfo(filterObj, kPIDateScopeType, singleBusinessTypeList);
     const ageHtmlStr = getAgeFilterInfo(filterObj.age);
     const lastServiceHtmlStr = getLatestServiceInfo(filterObj.lastServDt, serviceCustomerState);
     const minFeeHtmlStr = getMinfeeInfo(filterObj.minFee);
@@ -340,8 +344,10 @@ function getFilterInfo({ filterObj, dict, industryList, definedLabelsInfo }) {
     ];
     list = [...list, ...labelHtmlStrList];
     _.each(commonFilterList, (item) => {
-      list.push(getCommonFilterInfo(item, filterObj, { ...dict,
-industryList }));
+      list.push(getCommonFilterInfo(item, filterObj, {
+        ...dict,
+        industryList
+      }));
     });
     _.each(basicInfoList, (item) => {
       list.push(getKeywordInfo(item, filterObj));

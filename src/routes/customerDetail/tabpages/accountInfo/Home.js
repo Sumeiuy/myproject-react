@@ -110,11 +110,11 @@ const mapDispatchToProps = {
   querySpecificIndexData: effect('detailAccountInfo/querySpecificIndexData'),
   // 查询资产分布的负债详情的数据
   queryDebtDetail: effect('detailAccountInfo/queryDebtDetail'),
-  //查询实时持仓中的实时资产
+  // 查询实时持仓中的实时资产
   getRealTimeAsset: effect('detailAccountInfo/getRealTimeAsset'),
-  //查询实时持仓中的证券实时持仓
-  getSecuritiesHolding: effect('detailAccountInfo/getSecuritiesHolding', { forceFull: true } ),
-  //查询实时持仓中的产品实时持仓
+  // 查询实时持仓中的证券实时持仓
+  getSecuritiesHolding: effect('detailAccountInfo/getSecuritiesHolding', { forceFull: true }),
+  // 查询实时持仓中的产品实时持仓
   getProductHoldingData: effect('detailAccountInfo/getProductHoldingData'),
   // 查询收益走势数据
   queryProfitRateInfo: effect('detailAccountInfo/getProfitRateInfo'),
@@ -236,7 +236,7 @@ export default class Home extends PureComponent {
     optionTradeFlowRes: PropTypes.object.isRequired,
     // 资金变动交易流水
     capitalChangeFlowRes: PropTypes.object.isRequired,
-    //账户变动
+    // 账户变动
     accountChangeRes: PropTypes.object.isRequired,
   }
 
@@ -246,7 +246,7 @@ export default class Home extends PureComponent {
     const { location: { query: prevQuery } } = prevState;
     // url是否发生变化
     const isQueryChange = !_.isEqual(nextQuery, prevQuery);
-    if(isQueryChange) {
+    if (isQueryChange) {
       const { custId } = nextQuery;
       const { custId: prevCustId } = prevQuery;
 
@@ -290,7 +290,7 @@ export default class Home extends PureComponent {
     const { location: { query: { custId: prevCustId } } } = prevProps;
     const { location: { query: { custId } } } = this.props;
 
-    if(custId && custId !== prevCustId) {
+    if (custId && custId !== prevCustId) {
       this.getProfitRateInfo({ initial: true });
     }
   }
@@ -346,7 +346,7 @@ export default class Home extends PureComponent {
   getProfitRateInfo(options) {
     const { location: { query }, queryProfitRateInfo } = this.props;
     // 初始化时传递下面的参数发送请求
-    if(options.initial) {
+    if (options.initial) {
       queryProfitRateInfo({
         custId: query && query.custId,
         indexCode: '000300',
@@ -368,8 +368,10 @@ export default class Home extends PureComponent {
   @autobind
   @logable({
     type: 'DropdownSelect',
-    payload: { name: '对比指标',
-    value: '$args[0]' },
+    payload: {
+      name: '对比指标',
+      value: '$args[0]'
+    },
   })
   handleCodeSelectChange({ value }) {
     const { time } = this.state;
@@ -386,8 +388,10 @@ export default class Home extends PureComponent {
   @autobind
   @logable({
     type: 'Click',
-    payload: { name: '时间周期',
-    value: '$args[0]' },
+    payload: {
+      name: '时间周期',
+      value: '$args[0]'
+    },
   })
   handleTimeSelectChange(key) {
     const { compareCode } = this.state;
@@ -442,7 +446,7 @@ export default class Home extends PureComponent {
 
     return (
       <div className={styles.detailAccountInfo}>
-        {/* 头部实时持仓、历史持仓、交易流水、资产配置、账户分析 5 个按钮的所占区域*/}
+        {/* 头部实时持仓、历史持仓、交易流水、资产配置、账户分析 5 个按钮的所占区域 */}
         <div className={styles.headerBtnsArea}>
           <AccountInfoHeader
             getSecuritiesHolding={getSecuritiesHolding}

@@ -42,7 +42,9 @@ export default (ComposedComponent) => {
         <div className={styles.choosePage}>
           <Dropdown overlay={menu} trigger={['click']}>
             <span className={`ant-dropdown-link ${styles.clickable}`}>
-              {ITOM_ROUTE[pathname.slice(1)]} <Icon type="down" />
+              {ITOM_ROUTE[pathname.slice(1)]}
+              {' '}
+              <Icon type="down" />
             </span>
           </Dropdown>
         </div>

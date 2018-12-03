@@ -9,7 +9,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import Pagination from '../../common/Pagination';
+import Pagination from '../Pagination';
 
 import styles from './index.less';
 
@@ -57,26 +57,32 @@ export default class ApproveList extends PureComponent {
     return (
       <div className={styles.approveWrapper}>
         {
-          !_.isEmpty(nowStep) ?
-            <div className={styles.approveNow}>
-              <span>当前步骤：</span>
-              <span>{nowStep.stepName}</span>
-              <span>当前审批人：</span>
-              <span>{nowStep.handleName}</span>
-            </div>
-            :
-            null
+          !_.isEmpty(nowStep)
+            ? (
+              <div className={styles.approveNow}>
+                <span>当前步骤：</span>
+                <span>{nowStep.stepName}</span>
+                <span>当前审批人：</span>
+                <span>{nowStep.handleName}</span>
+              </div>
+            )
+            : null
         }
         {
-          displayData.length ?
-            <div className={styles.approveList}>
-              {
+          displayData.length
+            ? (
+              <div className={styles.approveList}>
+                {
                 displayData.map(item => (
                   <div key={item.entryTime} className={styles.approveItem}>
                     <p>
-                      审批人：{item.handleName}
-                      于{item.handleTime}，
-                      步骤名称：{item.stepName}
+                      审批人：
+                      {item.handleName}
+                      于
+                      {item.handleTime}
+，
+                      步骤名称：
+                      {item.stepName}
                     </p>
                     <p>
                       {item.comment}
@@ -84,17 +90,18 @@ export default class ApproveList extends PureComponent {
                   </div>
                 ))
               }
-              {
-                needPagination ?
-                  <Pagination
-                    {...paginationOption}
-                  />
-                  :
-                  null
+                {
+                needPagination
+                  ? (
+                    <Pagination
+                      {...paginationOption}
+                    />
+                  )
+                  : null
               }
-            </div>
-            :
-            null
+              </div>
+            )
+            : null
         }
       </div>
     );

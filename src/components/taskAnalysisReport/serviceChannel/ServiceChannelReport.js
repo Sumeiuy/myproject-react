@@ -96,9 +96,9 @@ export default class ServiceChannelReport extends PureComponent {
     } = this.state;
     return (
       <div className={styles.serviceChannelReport}>
-        <ReportTitle title='服务渠道统计' />
+        <ReportTitle title="服务渠道统计" />
         <ReportFilter
-          dateFilterName='任务截止时间'
+          dateFilterName="任务截止时间"
           startTime={startTime}
           endTime={endTime}
           executeType={executeType}

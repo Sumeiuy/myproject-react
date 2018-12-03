@@ -33,7 +33,9 @@ function parseJSON(response, options) {
       }
       // messageType代表错误类型，默认是0，如果后端不传，默认也是0，前端用message提示
       // 如果是1，则用自定义的dialog弹出错误信息
-      const { code, msg, succeed, messageType = 0 } = res;
+      const {
+        code, msg, succeed, messageType = 0
+      } = res;
       const existExclude = _.findIndex(excludeCode, o => o.code === code) > -1;
       const isThrowError = !existExclude && !succeed && !ignoreCatch;
       if (isThrowError) {
@@ -92,7 +94,7 @@ const request = (url, options) => {
   return Promise.race([
     fetch(url, { credentials: 'include', ...options })
       .then(checkStatus)
-      .then(response => parseJSON(response, { ...options, currentUrl: url})),
+      .then(response => parseJSON(response, { ...options, currentUrl: url })),
     new Promise(
       (rosolve, reject) => {// eslint-disable-line
         setTimeout(
@@ -112,8 +114,8 @@ const fspRequest = (url, options) => (
   Promise.race([
     fetch(url, { credentials: 'include', ...options, myHeaders })
       .then((res) => {
-        if(res.status === 302) {
-          if(/\/fsp\/login/.test(res.headers.location)) {
+        if (res.status === 302) {
+          if (/\/fsp\/login/.test(res.headers.location)) {
             window.href = res.headers.location;
           }
         }

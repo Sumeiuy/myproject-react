@@ -184,9 +184,9 @@ export default class Permission extends PureComponent {
     const {
       location: {
         query,
-      query: {
+        query: {
           pageNum,
-        pageSize,
+          pageSize,
         },
       },
     } = this.props;
@@ -543,40 +543,43 @@ export default class Permission extends PureComponent {
           leftListClassName="premissionList"
         />
         {
-          isShowCreateModal ?
-            <CreatePrivateClient
-              location={location}
-              canApplyCustList={canApplyCustList}
-              searchServerPersonList={searchServerPersonList}
-              hasServerPersonList={hasServerPersonList}
-              onEmitClearModal={this.clearModal}
-              getHasServerPersonList={getHasServerPersonList}
-              nextApproverList={nextApproverList}
-              getNextApproverList={getNextApproverList}
-              getCreateCustApplication={this.handleCreatePrivateApp}
-              createCustApplication={createCustApplication}
-              addListenCreate={addListenCreate}
-              subTypeList={subTypeList}
-              empInfo={empInfo}
-            />
-            :
-            null
+          isShowCreateModal
+            ? (
+              <CreatePrivateClient
+                location={location}
+                canApplyCustList={canApplyCustList}
+                searchServerPersonList={searchServerPersonList}
+                hasServerPersonList={hasServerPersonList}
+                onEmitClearModal={this.clearModal}
+                getHasServerPersonList={getHasServerPersonList}
+                nextApproverList={nextApproverList}
+                getNextApproverList={getNextApproverList}
+                getCreateCustApplication={this.handleCreatePrivateApp}
+                createCustApplication={createCustApplication}
+                addListenCreate={addListenCreate}
+                subTypeList={subTypeList}
+                empInfo={empInfo}
+              />
+            )
+            : null
         }
         {
-          isShowModifyModal ?
-            <ModifyPrivateClient
-              {...this.props.detailMessage}
-              location={location}
-              onEmitClearModal={this.clearModal}
-              canApplyCustList={canApplyCustList}
-              searchServerPersonList={searchServerPersonList}
-              getBottonList={getBottonList}
-              bottonList={bottonList}
-              getModifyCustApplication={this.handleModifyPrivateApp}
-              modifyCustApplication={modifyCustApplication}
-              addListenModify={addListenModify}
-              subTypeList={subTypeList}
-            />
+          isShowModifyModal
+            ? (
+              <ModifyPrivateClient
+                {...this.props.detailMessage}
+                location={location}
+                onEmitClearModal={this.clearModal}
+                canApplyCustList={canApplyCustList}
+                searchServerPersonList={searchServerPersonList}
+                getBottonList={getBottonList}
+                bottonList={bottonList}
+                getModifyCustApplication={this.handleModifyPrivateApp}
+                modifyCustApplication={modifyCustApplication}
+                addListenModify={addListenModify}
+                subTypeList={subTypeList}
+              />
+            )
             : null
         }
       </div>

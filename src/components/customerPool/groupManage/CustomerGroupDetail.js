@@ -7,7 +7,9 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Input, Form, message, Modal, Upload, Alert, Spin } from 'antd';
+import {
+  Input, Form, message, Modal, Upload, Alert, Spin
+} from 'antd';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
@@ -105,13 +107,16 @@ export default class CustomerGroupDetail extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { customerList = EMPTY_OBJECT,
+    const {
+      customerList = EMPTY_OBJECT,
       deleteCustomerFromGroupResult: deleteResult = EMPTY_OBJECT,
       getGroupCustomerList,
-       } = this.props;
+    } = this.props;
     const { resultData: prevData = EMPTY_LIST } = customerList;
-    const { customerList: nextList = EMPTY_OBJECT,
-      deleteCustomerFromGroupResult: nextDeleteResult = EMPTY_OBJECT } = nextProps;
+    const {
+      customerList: nextList = EMPTY_OBJECT,
+      deleteCustomerFromGroupResult: nextDeleteResult = EMPTY_OBJECT
+    } = nextProps;
     const { resultData: nextData = EMPTY_LIST, page = EMPTY_OBJECT } = nextList;
     const { totalRecordNum } = page;
     const {
@@ -135,8 +140,7 @@ export default class CustomerGroupDetail extends PureComponent {
     // 判断删除是否成功
     if (prevResult !== nextResult) {
       const newDataSource = _.filter(dataSource,
-        item => item.brokerNumber !== needDeleteBrokerNumber,
-      );
+        item => item.brokerNumber !== needDeleteBrokerNumber, );
       // 数据从表格删除
       this.setState({
         dataSource: newDataSource,
@@ -159,8 +163,10 @@ export default class CustomerGroupDetail extends PureComponent {
 
   // 导入数据
   @autobind
-  @logable({ type: 'Click',
-payload: { name: '导入客户' } })
+  @logable({
+    type: 'Click',
+    payload: { name: '导入客户' }
+  })
   onImportHandle() {
     this.setState({
       importVisible: true,
@@ -168,8 +174,10 @@ payload: { name: '导入客户' } })
   }
 
   @autobind
-  @logable({ type: 'ButtonClick',
-payload: { name: '否' } })
+  @logable({
+    type: 'ButtonClick',
+    payload: { name: '否' }
+  })
   importHandleCancel() {
     this.setState({
       importVisible: false,
@@ -391,7 +399,9 @@ payload: { name: '否' } })
       return;
     }
     console.log('receive value, add customer to table', selectedItem);
-    const { custName, cusId, custLevelName, riskLevel, brokerNumber, custType } = selectedItem;
+    const {
+      custName, cusId, custLevelName, riskLevel, brokerNumber, custType
+    } = selectedItem;
     console.log(custName, cusId, custLevelName, riskLevel);
     const {
       includeCustIdList,
@@ -413,8 +423,10 @@ payload: { name: '否' } })
       return;
     }
     // 入参改变，后端要求传包含custId，custType的对象数组
-    const newCustIdList = _.concat(includeCustIdList, [{ id: cusId,
-custType }]);
+    const newCustIdList = _.concat(includeCustIdList, [{
+      id: cusId,
+      custType
+    }]);
 
     // 如果groupId不为空，则添加直接调用接口，添加
     if (_.isEmpty(groupId)) {
@@ -572,9 +584,10 @@ custType }]);
                 const multiBatchCustList = _.isEmpty(batchCustList) ? [] : custList;
                 // 取出数组对象中所有brokerNumber组成一个新的数组
                 const custIdList = _.map(multiBatchCustList,
-                  item => ({ id: item.custId,
-custType: item.custType }),
-                );
+                  item => ({
+                    id: item.custId,
+                    custType: item.custType
+                  }), );
                 const custIdListSize = _.size(custIdList);
                 const newCustIdList = _.concat(includeCustIdList, custIdList);
 
@@ -745,12 +758,13 @@ custType: item.custType }),
       showUploadList: false,
     };
 
-    const uploadElement = _.isEmpty(attachmentId) ?
-      (<Upload {...uploadProps} {...this.props}>
-        <a>客户导入</a>
-      </Upload>)
-      :
-      (<span><a onClick={this.onImportHandle}>客户导入</a></span>);
+    const uploadElement = _.isEmpty(attachmentId)
+      ? (
+        <Upload {...uploadProps} {...this.props}>
+          <a>客户导入</a>
+        </Upload>
+      )
+      : (<span><a onClick={this.onImportHandle}>客户导入</a></span>);
 
     return (
       <Form className={styles.groupDetail}>
@@ -764,18 +778,18 @@ custType: item.custType }),
                 rules: [
                   {
                     max: 50,
-message: '最大输入50个字符',
+                    message: '最大输入50个字符',
                   }, {
                     required: canEditDetail,
-message: '分组名称必填',
+                    message: '分组名称必填',
                   },
                 ],
                 initialValue: name || '',
               })(
                 <Input
-                  id={'nameInput'}
+                  id="nameInput"
                   placeholder={canEditDetail ? '请输入分组名称' : ''}
-                  size={'default'}
+                  size="default"
                   ref={ref => (this.nameInput = ref)}
                   disabled={!canEditDetail}
                 />,
@@ -793,15 +807,15 @@ message: '分组名称必填',
                 rules: [
                   {
                     max: 500,
-message: '最大输入500个字符',
+                    message: '最大输入500个字符',
                   },
                 ],
                 initialValue: description || '',
               })(
                 <Input.TextArea
-                  id={'descriptionInput'}
+                  id="descriptionInput"
                   placeholder={canEditDetail ? '请输入分组描述' : ''}
-                  size={'default'}
+                  size="default"
                   autosize={false}
                   disabled={!canEditDetail}
                   ref={ref => (this.descriptionInput = ref)}
@@ -827,56 +841,60 @@ message: '最大输入500个字符',
           </div>
           <div className={styles.addCustRight}>
             {
-              isDefaultType ?
-                <div className={styles.singleCust}>
-                  <div className={styles.searchTitle}>
+              isDefaultType
+                ? (
+                  <div className={styles.singleCust}>
+                    <div className={styles.searchTitle}>
                     客户
-                  </div>
-                  <Search
+                    </div>
+                    <Search
                     // 请求联想关键词
-                    queryPossibleWords={getHotPossibleWds}
+                      queryPossibleWords={getHotPossibleWds}
                     // 联想出来的数据
-                    possibleWordsData={customerHotPossibleWordsList}
+                      possibleWordsData={customerHotPossibleWordsList}
                     // 搜索className
-                    searchWrapperClass={styles.groupCustomerSearch}
+                      searchWrapperClass={styles.groupCustomerSearch}
                     // 搜索按钮功能
-                    onSearchClick={this.handleSearchClick}
+                      onSearchClick={this.handleSearchClick}
                     // placeholder
-                    placeholder={'客户号/姓名'}
+                      placeholder="客户号/姓名"
                     // 搜索框style
-                    searchStyle={{
-                      height: '30px',
-                      width: '190px',
-                    }}
+                      searchStyle={{
+                        height: '30px',
+                        width: '190px',
+                      }}
                     // 是否需要搜索图标
-                    isNeedSearchIcon={false}
+                      isNeedSearchIcon={false}
                     // 是否需要添加按钮
-                    isNeedAddBtn
+                      isNeedAddBtn
                     // 添加按钮事件
-                    addBtnCallback={this.handleAddCustomerFromSearch}
-                  />
-                </div>
-                :
-                <div className={styles.multiCust}>
-                  <Spin className={styles.uploadLoading} spinning={uploadLoading} />
-                  {uploadElement}
-                  <a href={customerTemplet} className={styles.downloadLink}>下载模板</a>
-                </div>
+                      addBtnCallback={this.handleAddCustomerFromSearch}
+                    />
+                  </div>
+                )
+                : (
+                  <div className={styles.multiCust}>
+                    <Spin className={styles.uploadLoading} spinning={uploadLoading} />
+                    {uploadElement}
+                    <a href={customerTemplet} className={styles.downloadLink}>下载模板</a>
+                  </div>
+                )
             }
           </div>
         </div>
         {
-          _.isEmpty(multiErrmsg) ?
-            null
-            :
-            <div className={styles.multiErrmsg}>
-              <Alert
-                message={newMultiErrmsg}
-                type="error"
-                onClose={this.handleCloseAlert}
-                closable
-              />
-            </div>
+          _.isEmpty(multiErrmsg)
+            ? null
+            : (
+              <div className={styles.multiErrmsg}>
+                <Alert
+                  message={newMultiErrmsg}
+                  type="error"
+                  onClose={this.handleCloseAlert}
+                  closable
+                />
+              </div>
+            )
         }
         <div className={styles.customerListTable}>
           <Table

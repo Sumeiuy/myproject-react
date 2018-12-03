@@ -11,8 +11,8 @@ import _ from 'lodash';
 import moment from 'moment';
 import { number } from '../../../helper';
 import styles from './zjMemberInfo.less';
-import Modal from '../../../components/common/biz/CommonModal';
-import Table from '../../../components/common/table';
+import Modal from '../../common/biz/CommonModal';
+import Table from '../../common/table';
 import { integralFlowColumns } from '../config';
 import Tooltip from '../../common/Tooltip';
 import logable from '../../../decorators/logable';
@@ -64,10 +64,10 @@ export default class ZJMemeberInfoModal extends PureComponent {
   }
 
   @autobind
-  renderColumns(){
+  renderColumns() {
     const integralFlowList = [...integralFlowColumns];
     const integralFlowColumn = _.find(integralFlowList, o => o.key === TRANDE_DATE);
-    integralFlowColumn.render = text => {
+    integralFlowColumn.render = (text) => {
       const date = text && moment(text).format(DATE_FORMAT);
       return (
         <Tooltip title={text}>
@@ -76,7 +76,7 @@ export default class ZJMemeberInfoModal extends PureComponent {
       );
     };
     const processDateColumns = _.find(integralFlowList, o => o.key === PROCESS_DATE);
-    processDateColumns.render = text => {
+    processDateColumns.render = (text) => {
       const date = text && moment(text).format(DATE_FORMAT);
       return (
         <Tooltip title={text}>
@@ -85,9 +85,7 @@ export default class ZJMemeberInfoModal extends PureComponent {
       );
     };
     const productQuantityList = _.find(integralFlowList, o => o.key === PRODUCT);
-    productQuantityList.render = text => {
-      return number.thousandFormat(number.toFixed(text));
-    };
+    productQuantityList.render = text => number.thousandFormat(number.toFixed(text));
     return integralFlowList;
   }
 
@@ -122,13 +120,13 @@ export default class ZJMemeberInfoModal extends PureComponent {
       onChange: this.handlePaginationChange,
     };
     // 数据长达大于10显示分页
-    const showIntegralFlowPagination =  page.totalPageNum !== 1 ? PaginationOption : false;
-    return(
+    const showIntegralFlowPagination = page.totalPageNum !== 1 ? PaginationOption : false;
+    return (
       <div>
         <Modal
           className={styles.integralFlowModal}
           title="积分兑换流水"
-          size='large'
+          size="large"
           visible={visible}
           closeModal={onClose}
           showOkBtn={false}
@@ -153,4 +151,3 @@ export default class ZJMemeberInfoModal extends PureComponent {
     );
   }
 }
-

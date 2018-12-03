@@ -67,7 +67,9 @@ export default class OtherCommissionSelect extends PureComponent {
 
   render() {
     const { value } = this.state;
-    const { name, label, options, getPopupContainer, disabled } = this.props;
+    const {
+      name, label, options, getPopupContainer, disabled
+    } = this.props;
     const newOptions = _.cloneDeep(options);
     newOptions.unshift({
       label: '请选择',
@@ -77,7 +79,8 @@ export default class OtherCommissionSelect extends PureComponent {
     return (
       <div className={styles.lineInputWrap}>
         <div className={styles.label}>
-          {label}<span className={styles.colon}>:</span>
+          {label}
+          <span className={styles.colon}>:</span>
         </div>
         <div className={`${styles.componentBox} ${styles.selectBox}`}>
           <Select

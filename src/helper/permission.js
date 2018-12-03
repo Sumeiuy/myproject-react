@@ -178,8 +178,8 @@ const permission = {
   protocolIsShowSwitch(templateId, subType, flag) {
     if (templateId && subType && flag) {
       return (
-        !channelType.isTenLevelTplId(templateId) &&
-        channelType.isZJKCDChannel(subType)
+        !channelType.isTenLevelTplId(templateId)
+        && channelType.isZJKCDChannel(subType)
       );
     }
     return false;
@@ -300,11 +300,11 @@ const permission = {
   // - HTSC 客户资料(无隐私）-总部管理岗
   // - HTSC 客户资料管理岗（无隐私）
   hasViewCust360PermissionForManagerView() {
-    return permission.hasCIHMPPermission() ||
-      permission.hasCIBMPPermission() ||
-      permission.hasNPCIHMPPermission() ||
-      permission.hasNPCIBMPPermission() ||
-      permission.hasCDMPermission();
+    return permission.hasCIHMPPermission()
+      || permission.hasCIBMPPermission()
+      || permission.hasNPCIHMPPermission()
+      || permission.hasNPCIBMPPermission()
+      || permission.hasCDMPermission();
   },
 
   // ！！！目前和管理者视图查看360职责一样，但是为了防止以后经常改职责，还是保留两个方法
@@ -315,11 +315,11 @@ const permission = {
   // - HTSC 客户资料(无隐私）-总部管理岗
   // - HTSC 客户资料管理岗（无隐私）
   hasViewCust360PermissionForCustList() {
-    return permission.hasCIHMPPermission() ||
-      permission.hasCIBMPPermission() ||
-      permission.hasNPCIHMPPermission() ||
-      permission.hasNPCIBMPPermission() ||
-      permission.hasCDMPermission();
+    return permission.hasCIHMPPermission()
+      || permission.hasCIBMPPermission()
+      || permission.hasNPCIHMPPermission()
+      || permission.hasNPCIBMPPermission()
+      || permission.hasCDMPermission();
   },
 
   // 若登录人是该客户的主服务经理或登录人具有如下任意一个职责
@@ -350,8 +350,7 @@ const permission = {
    */
   isGrayFlag() {
     const nativeQuery = qs.parse(window.location.search);
-    const grayFlag =
-      window.grayFlag === true
+    const grayFlag = window.grayFlag === true
       || nativeQuery.grayFlag === 'true'
       || this.hasNewFeatureInvestPermission();
     return grayFlag;

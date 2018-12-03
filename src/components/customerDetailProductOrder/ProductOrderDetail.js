@@ -51,7 +51,7 @@ export default class ProductOrderDetail extends PureComponent {
       } = this.props;
       queryServiceOrderDetail({
         orderNumber,
-      }).then(res => {
+      }).then((res) => {
         if (!_.isEmpty(res)) {
           const {
             rowId = '',

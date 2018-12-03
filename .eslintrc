@@ -1,6 +1,6 @@
 {
   "parser": "babel-eslint",
-  "extends": "react-app",
+  "extends": "airbnb",
   "plugins": [
     "react",
     "jsx-a11y",
@@ -23,6 +23,7 @@
       "object": "Math",
       "property": "pow"
     }],
+    "prefer-destructuring": [0],
     "object-property-newline": [0],
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
     "react/forbid-prop-types": [1, { "forbid": ["any"] }],
@@ -30,7 +31,10 @@
     "react/sort-comp": [1],
     "react/prefer-stateless-function": [0],
     "react/no-danger": [0],
+    "react/destructuring-assignment": [0],
     "jsx-a11y/no-static-element-interactions": [0],
+    "jsx-a11y/anchor-is-valid": [0],
+    "jsx-a11y/click-events-have-key-events": [0],
     "sensors/actions-add-sensors-log": [0],
     "import/no-anonymous-default-export": ["error", {
       "allowArrowFunction": true,

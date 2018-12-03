@@ -9,7 +9,9 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
-import { Row, Col, Button, message, Modal, Tabs } from 'antd';
+import {
+  Row, Col, Button, message, Modal, Tabs
+} from 'antd';
 import classnames from 'classnames';
 import { connect } from 'dva';
 import { autobind } from 'core-decorators';
@@ -64,7 +66,7 @@ export default class Detail extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { fbDetail, recordList} = this.props;
+    const { fbDetail, recordList } = this.props;
     const { resultData = EMPTY_OBJECT } = fbDetail || EMPTY_OBJECT;
     const { resultData: voResultData } = recordList || EMPTY_OBJECT;
     this.state = {
@@ -104,12 +106,16 @@ export default class Detail extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { fbDetail: nextDetail = EMPTY_OBJECT,
+    const {
+      fbDetail: nextDetail = EMPTY_OBJECT,
       location: { query: { currentId } },
-      recordList: nextVOList = EMPTY_OBJECT } = nextProps;
-    const { fbDetail: preDetail = EMPTY_OBJECT,
+      recordList: nextVOList = EMPTY_OBJECT
+    } = nextProps;
+    const {
+      fbDetail: preDetail = EMPTY_OBJECT,
       location: { query: { currentId: prevCurrentId } },
-      recordList: preVOList = EMPTY_OBJECT } = this.props;
+      recordList: preVOList = EMPTY_OBJECT
+    } = this.props;
     const { resultData: nextResultData = EMPTY_OBJECT } = nextDetail;
     const { resultData: preResultData = EMPTY_OBJECT } = preDetail;
 

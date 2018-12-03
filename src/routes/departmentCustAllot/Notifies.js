@@ -87,7 +87,12 @@ export default class DepartmentCustAllotNotifies extends PureComponent {
     const newTitleList = [...notifiCust];
     const custNameColumn = _.find(newTitleList, o => o.key === KEY_CUSTNAME);
     custNameColumn.render = (text, record) => (
-      <div>{text}({record.custId})</div>
+      <div>
+        {text}
+(
+        {record.custId}
+)
+      </div>
     );
     return newTitleList;
   }

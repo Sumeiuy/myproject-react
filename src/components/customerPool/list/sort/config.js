@@ -111,4 +111,3 @@ export const dynamicInsertQuota = [
     name: '天天发市值',
   },
 ];
-

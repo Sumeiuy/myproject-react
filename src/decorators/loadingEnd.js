@@ -48,11 +48,13 @@ const loadingEnd = (Component) => {
       }
 
       return (
-        shouldRenderComponent ?
-        <Component
-          {...remainingProps}
-          ref={wrappedComponentRef}
-        /> : null
+        shouldRenderComponent
+          ? (
+            <Component
+              {...remainingProps}
+              ref={wrappedComponentRef}
+            />
+          ) : null
       );
     }
   }

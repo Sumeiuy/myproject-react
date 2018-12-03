@@ -25,16 +25,19 @@ export default class Remark extends PureComponent {
     onCancel: PropTypes.func.isRequired,
     onCreate: PropTypes.func.isRequired,
   }
+
   static defaultProps = {
     id: '0',
     visible: false,
   }
+
   constructor(props) {
     super(props);
     this.state = {
       isShow: false,
     };
   }
+
   componentWillReceiveProps(nextProps) {
     const { visible: preVisible } = this.props;
     const { visible } = nextProps;
@@ -85,4 +88,3 @@ export default class Remark extends PureComponent {
     );
   }
 }
-

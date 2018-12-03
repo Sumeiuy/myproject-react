@@ -24,7 +24,6 @@ const noop = _.noop;
 // 绩效目标客户 - 业务开通：performanceBusinessOpenCustPool
 
 export default class CreateTaskFormFlow extends PureComponent {
-
   static propTypes = {
     location: PropTypes.object.isRequired,
     dict: PropTypes.object,
@@ -218,7 +217,7 @@ export default class CreateTaskFormFlow extends PureComponent {
       saveCreateTaskData,
       location: { query: { source } },
       storedCreateTaskData,
-     } = this.props;
+    } = this.props;
     if (_.includes(returnTaskEntrySource, source) || this.judgeSource(source)) {
       saveCreateTaskData({
         ...storedCreateTaskData,

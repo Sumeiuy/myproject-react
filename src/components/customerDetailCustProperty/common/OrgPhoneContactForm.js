@@ -9,7 +9,9 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { Row, Col, Select, Input, Form } from 'antd';
+import {
+  Row, Col, Select, Input, Form
+} from 'antd';
 
 import logable from '../../../decorators/logable';
 import { isCreateContact } from './utils';
@@ -224,35 +226,38 @@ export default class OrgPhoneContactForm extends PureComponent {
             <div className={styles.formItem}>
               <div className={styles.itemLable}>主要：</div>
               <div className={styles.valueArea}>
-                {/**因为只能新增修改非主要信息，因此此处使用固定的值 */}
+                {/** 因为只能新增修改非主要信息，因此此处使用固定的值 */}
                 <FormItem>
-                 {getFieldDecorator('mainFlag', {
-                   initialValue: 'N',
-                 })(
-                   <Select
-                     disabled
-                     style={FORM_STYLE}
-                   >
-                     <Option value="N">N</Option>
-                   </Select>
-                   )
+                  {getFieldDecorator('mainFlag', {
+                    initialValue: 'N',
+                  })(
+                    <Select
+                      disabled
+                      style={FORM_STYLE}
+                    >
+                      <Option value="N">N</Option>
+                    </Select>
+                  )
                  }
-               </FormItem>
+                </FormItem>
               </div>
             </div>
           </Col>
           <Col span={12}>
             <div className={styles.formItem}>
-              <div className={styles.itemLable}><span className={styles.requried}>*</span>姓名：</div>
+              <div className={styles.itemLable}>
+                <span className={styles.requried}>*</span>
+姓名：
+              </div>
               <div className={styles.valueArea}>
                 <FormItem>
-                 {
+                  {
                    getFieldDecorator(
-                      'name',
-                      {
-                        rules: [{ required: true, message: '请输入姓名' }],
-                        initialValue: name,
-                      }
+                     'name',
+                     {
+                       rules: [{ required: true, message: '请输入姓名' }],
+                       initialValue: name,
+                     }
                    )(
                      <Input style={FORM_STYLE} />
                    )
@@ -265,10 +270,13 @@ export default class OrgPhoneContactForm extends PureComponent {
         <Row type="flex" gutter={16} align="middle">
           <Col span={12}>
             <div className={styles.formItem}>
-              <div className={styles.itemLable}><span className={styles.requried}>*</span>证件类型：</div>
+              <div className={styles.itemLable}>
+                <span className={styles.requried}>*</span>
+证件类型：
+              </div>
               <div className={styles.valueArea}>
                 <FormItem>
-                {
+                  {
                   getFieldDecorator(
                     'cretificateType',
                     {
@@ -290,10 +298,13 @@ export default class OrgPhoneContactForm extends PureComponent {
           </Col>
           <Col span={12}>
             <div className={styles.formItem}>
-              <div className={styles.itemLable}><span className={styles.requried}>*</span>证件号码：</div>
+              <div className={styles.itemLable}>
+                <span className={styles.requried}>*</span>
+证件号码：
+              </div>
               <div className={styles.valueArea}>
                 <FormItem>
-                {
+                  {
                   getFieldDecorator(
                     'cretificateNumber',
                     {
@@ -337,10 +348,13 @@ export default class OrgPhoneContactForm extends PureComponent {
           </Col>
           <Col span={12}>
             <div className={styles.formItem}>
-              <div className={styles.itemLable}><span className={styles.requried}>*</span>联系人类型：</div>
+              <div className={styles.itemLable}>
+                <span className={styles.requried}>*</span>
+联系人类型：
+              </div>
               <div className={styles.valueArea}>
                 <FormItem>
-                {
+                  {
                   getFieldDecorator(
                     'contacterTypeCode',
                     {
@@ -356,7 +370,7 @@ export default class OrgPhoneContactForm extends PureComponent {
                     </Select>
                   )
                 }
-              </FormItem>
+                </FormItem>
               </div>
             </div>
           </Col>
@@ -366,8 +380,8 @@ export default class OrgPhoneContactForm extends PureComponent {
             <div className={styles.formItem}>
               <div className={styles.itemLable}>手机号码：</div>
               <div className={styles.valueArea}>
-              <FormItem>
-                {
+                <FormItem>
+                  {
                   getFieldDecorator(
                     'mobileValue',
                     {
@@ -387,7 +401,7 @@ export default class OrgPhoneContactForm extends PureComponent {
               <div className={styles.itemLable}>固定电话：</div>
               <div className={styles.valueArea}>
                 <FormItem>
-                {
+                  {
                   getFieldDecorator(
                     'landlineValue',
                     {
@@ -409,7 +423,7 @@ export default class OrgPhoneContactForm extends PureComponent {
               <div className={styles.itemLable}>电子邮件：</div>
               <div className={styles.valueArea}>
                 <FormItem>
-                {
+                  {
                   getFieldDecorator(
                     'emailValue',
                     {
@@ -438,7 +452,7 @@ export default class OrgPhoneContactForm extends PureComponent {
                     >
                       {this.renderSourceOption()}
                     </Select>
-                    )
+                  )
                   }
                 </FormItem>
               </div>
@@ -449,4 +463,3 @@ export default class OrgPhoneContactForm extends PureComponent {
     );
   }
 }
-

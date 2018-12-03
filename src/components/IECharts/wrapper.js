@@ -14,7 +14,6 @@ import Resize from 'element-resize-detector';
 
 function wrapECharts(ECharts) {
   class IECharts extends Component {
-
     static propTypes = {
       className: PropTypes.string,
       style: PropTypes.object,
@@ -76,6 +75,7 @@ function wrapECharts(ECharts) {
         }
       }
     }
+
     shouldComponentUpdate(nextProps) {
       return (!this.state.instance
         || !_.isEqual(nextProps.option, this.props.option)
@@ -93,6 +93,7 @@ function wrapECharts(ECharts) {
         this.myresize();
       }
     }
+
     componentWillUnmount() {
       if (this.state.resize && this.state.resize.uninstall) {
         // const dom = ReactDOM.findDOMNode(this);
@@ -110,6 +111,7 @@ function wrapECharts(ECharts) {
       //   instance.dispose();
       // }
     }
+
     @autobind
     myInit() {
       const that = this;
@@ -149,6 +151,7 @@ function wrapECharts(ECharts) {
         });
       }
     }
+
     @autobind
     myupdate() {
       const that = this;
@@ -158,6 +161,7 @@ function wrapECharts(ECharts) {
       //   instance.setOption(that.props.option, that.props.notMerge, that.props.lazyUpdate);
       // }
     }
+
     @autobind
     myresize() {
       const that = this;
@@ -169,6 +173,7 @@ function wrapECharts(ECharts) {
       //   instance.resize();
       // }
     }
+
     /**
      * 提供当前echarts实例给外部
      */
@@ -176,11 +181,13 @@ function wrapECharts(ECharts) {
     getChartsInstance() {
       return this.state.instance;
     }
+
     @autobind
     mygetInstance() {
       return ECharts.getInstanceByDom(this.chartBox);
       // return ECharts.getInstanceByDom(ReactDOM.findDOMNode(that));
     }
+
     @autobind
     mybind(instance) {
       const that = this;
@@ -204,6 +211,7 @@ function wrapECharts(ECharts) {
       const payload = that.props.onDispatch;
       dispatchAction(payload);
     }
+
     render() {
       const that = this;
       const { className, style } = that.props;

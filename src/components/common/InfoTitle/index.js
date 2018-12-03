@@ -14,9 +14,9 @@ export default function InfoTitle(props) {
       <span className={style.mlcHeadIcon} />
       <span className={style.mlcHeadTitle} style={titleStyle}>{ props.head }</span>
       {
-        isRequired ?
-          <i className={style.required}>*</i> :
-        null
+        isRequired
+          ? <i className={style.required}>*</i>
+          : null
       }
     </div>
   );

@@ -6,6 +6,7 @@
  */
 
 import { detailBusinessHand as api } from '../../api';
+
 export default {
   namespace: 'detailBusinessHand',
   state: {
@@ -70,4 +71,3 @@ export default {
   },
   subscriptions: {},
 };
-

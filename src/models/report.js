@@ -130,7 +130,9 @@ export default {
   },
   effects: {
     // 探测有数据的最大时间点接口(接口中包含是否显示汇总方式切换的字段)
-    * getInitialData({ payload }, { call, put, select, take }) {
+    * getInitialData({ payload }, {
+      call, put, select, take
+    }) {
       const response = yield call(api.getInitialData, payload);
       yield put({
         type: 'getInitialDataSuccess',

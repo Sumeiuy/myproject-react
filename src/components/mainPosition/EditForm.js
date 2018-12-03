@@ -15,7 +15,7 @@ import InfoItem from '../common/infoItem';
 import InfoTitle from '../common/InfoTitle';
 import BottonGroup from '../permission/BottonGroup';
 import TableDialog from '../common/biz/TableDialog';
-import CommonTable from '../../components/common/biz/CommonTable';
+import CommonTable from '../common/biz/CommonTable';
 import ApprovalRecord from '../permission/ApprovalRecord';
 import config from './config';
 import styles from './editForm.less';
@@ -223,7 +223,10 @@ export default class CreateFilialeCustTransfer extends PureComponent {
       <div className={styles.editFormBox}>
         <div className={styles.inner}>
           <div className={styles.innerWrap}>
-            <h1 className={styles.title}>编号{id}</h1>
+            <h1 className={styles.title}>
+编号
+              {id}
+            </h1>
             <div id="detailModule" className={styles.module}>
               <InfoTitle head="基本信息" />
               <div className={styles.modContent}>

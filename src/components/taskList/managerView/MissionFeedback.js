@@ -50,7 +50,6 @@ const isEmptyData = (data, type, value) => {
 };
 
 export default class MissionFeedback extends PureComponent {
-
   static propTypes = {
     // 父容器宽度变化,默认宽度窄
     isFold: PropTypes.bool,
@@ -140,8 +139,7 @@ export default class MissionFeedback extends PureComponent {
         let infoData = [];
 
         // 拿到当前题目所有count之和,下面需要计算每一个答案占的比率
-        answerTotalCount = _.reduce(_.map(item, childItem =>
-          childItem.cnt), (sum, n) => sum + n, 0);
+        answerTotalCount = _.reduce(_.map(item, childItem => childItem.cnt), (sum, n) => sum + n, 0);
 
         _.each(item, (childItem) => {
           const { quesTypeCode } = childItem;
@@ -276,8 +274,12 @@ export default class MissionFeedback extends PureComponent {
   @autobind
   handleOptionBar(value, names) {
     const { isFold } = this.props;
-    const grids = isFold ? { left: '20%', right: '20%', top: 20, bottom: 10, containLabel: true } :
-      { left: '20%', right: '20%', top: 30, bottom: 10, containLabel: true };
+    const grids = isFold ? {
+      left: '20%', right: '20%', top: 20, bottom: 10, containLabel: true
+    }
+      : {
+        left: '20%', right: '20%', top: 30, bottom: 10, containLabel: true
+      };
     const option = {
       tooltip: {
         formatter: (params) => {
@@ -453,14 +455,19 @@ export default class MissionFeedback extends PureComponent {
     const options = isShowEmptyCheckboxPie ? constructEmptyPie() : {};
 
     const oDiv = _.map(data, (item, index) => {
-      const checkBox = _.map(item.checkboxData, itemChild =>
-        (<div key={itemChild.name} className={styles.radioItem}>
+      const checkBox = _.map(item.checkboxData, itemChild => (
+        <div key={itemChild.name} className={styles.radioItem}>
           <span className={styles.icon} />
           <span className={styles.name} title={itemChild.name}>{itemChild.name}</span>
           <span className={styles.value} title={itemChild.value}>
-            ：{itemChild.value}({itemChild.optionPer})
+            ：
+            {itemChild.value}
+(
+            {itemChild.optionPer}
+)
           </span>
-        </div>));
+        </div>
+      ));
       return this.handleShowData(isFold, item.checkboxFeedbackDes,
         item.checkboxData, checkBox, false, options, `checkbox-${index}`);
     });
@@ -483,7 +490,11 @@ export default class MissionFeedback extends PureComponent {
           <span className={styles.icon} />
           <span className={styles.name} title={itemChild.name}>{itemChild.name}</span>
           <span className={styles.value} title={itemChild.value}>
-            ：{itemChild.value}({itemChild.optionPer})
+            ：
+            {itemChild.value}
+(
+            {itemChild.optionPer}
+)
           </span>
         </div>
       ));
@@ -533,9 +544,25 @@ export default class MissionFeedback extends PureComponent {
     return (
       <div className={styles.content}>
 
-        {_.isEmpty(per) ?
-          <div className={styles.currentType}>{type}&nbsp;:&nbsp;{currentCount || 0}位</div> :
-          <div className={styles.currentType}>{type}&nbsp;:&nbsp;{currentCount || 0}({per}%)</div>
+        {_.isEmpty(per)
+          ? (
+            <div className={styles.currentType}>
+              {type}
+&nbsp;:&nbsp;
+              {currentCount || 0}
+位
+            </div>
+          )
+          : (
+            <div className={styles.currentType}>
+              {type}
+&nbsp;:&nbsp;
+              {currentCount || 0}
+(
+              {per}
+%)
+            </div>
+          )
         }
       </div>
     );
@@ -550,13 +577,17 @@ export default class MissionFeedback extends PureComponent {
       if (pageNum > 1) {
         return (
           <div title={itemChild.data} key={itemChild.data}>
-            {index + ((pageNum - 1) * curPageSize) + 1 }.{itemChild.data || ''}
+            {index + ((pageNum - 1) * curPageSize) + 1 }
+.
+            {itemChild.data || ''}
           </div>
         );
       }
       return (
         <div title={itemChild.data} key={itemChild.data}>
-          {index + 1}.{itemChild.data || ''}
+          {index + 1}
+.
+          {itemChild.data || ''}
         </div>
       );
     });
@@ -583,8 +614,10 @@ export default class MissionFeedback extends PureComponent {
       // 当主观题答案条数大于5时，进行分页处理
       if (_.size(item.infoData) > curPageSize) {
         const firstPageData = this.renderProblemsData(singleInfo[item.quesId], item.infoData);
-        info = this.renderOneInfo({ data: firstPageData.curDataInfo,
-          pageNum: firstPageData.pageNum });
+        info = this.renderOneInfo({
+          data: firstPageData.curDataInfo,
+          pageNum: firstPageData.pageNum
+        });
       } else {
         info = this.renderOneInfo({ data: item.infoData });
       }
@@ -612,15 +645,16 @@ export default class MissionFeedback extends PureComponent {
                 </div>
                 {/* 判断当前主观题是否超过5条，超过显示分页组件 */}
                 {
-                  _.size(item.infoData) > curPageSize ?
-                    <Pagination
-                      {...paginationOption}
-                      total={_.size(item.infoData)}
-                      onChange={current =>
-                        this.handlePageChange(current, item.quesId)}
-                      current={singleInfo[item.quesId]}
-                      className={styles.rowTop}
-                    /> : null
+                  _.size(item.infoData) > curPageSize
+                    ? (
+                      <Pagination
+                        {...paginationOption}
+                        total={_.size(item.infoData)}
+                        onChange={current => this.handlePageChange(current, item.quesId)}
+                        current={singleInfo[item.quesId]}
+                        className={styles.rowTop}
+                      />
+                    ) : null
                 }
               </div>
             </div>
@@ -634,14 +668,16 @@ export default class MissionFeedback extends PureComponent {
   render() {
     const { isFold, templateId } = this.props;
     const { finalData } = this.state;
-    const { allFeedback, radioFeedback, checkboxFeedback, dataInfo } = finalData;
+    const {
+      allFeedback, radioFeedback, checkboxFeedback, dataInfo
+    } = finalData;
     const residue = (1 - (Number(allFeedback.aFeedbackPer) / 100)) * 100;
 
-    if ((_.isEmpty(dataInfo) &&
-      _.isEmpty(allFeedback) &&
-      _.isEmpty(radioFeedback) &&
-      _.isEmpty(checkboxFeedback)) ||
-      _.isEmpty(templateId)) {
+    if ((_.isEmpty(dataInfo)
+      && _.isEmpty(allFeedback)
+      && _.isEmpty(radioFeedback)
+      && _.isEmpty(checkboxFeedback))
+      || _.isEmpty(templateId)) {
       return null;
     }
 
@@ -687,9 +723,15 @@ export default class MissionFeedback extends PureComponent {
                     </div>
                     <div className={styles.allService}>
                       <div className={styles.content}>
-                        <span>服务经理总数：<b>{allFeedback.serviceAllNum}</b></span>
-                        <span>已反馈：<b>{allFeedback.aFeedback}</b>
-                          <b>{allFeedback.aFeedbackPer ? `(${allFeedback.aFeedbackPer}%)` : ''}</b></span>
+                        <span>
+服务经理总数：
+                          <b>{allFeedback.serviceAllNum}</b>
+                        </span>
+                        <span>
+已反馈：
+                          <b>{allFeedback.aFeedback}</b>
+                          <b>{allFeedback.aFeedbackPer ? `(${allFeedback.aFeedbackPer}%)` : ''}</b>
+                        </span>
                       </div>
                     </div>
                   </div>

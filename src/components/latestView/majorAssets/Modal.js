@@ -60,26 +60,38 @@ export default class MajorAssetsDetailModal extends PureComponent {
           <Header className={styles.header}>
             <h2>{title}</h2>
             <h3>
-              <span>资产大类：{categoryName}</span>
-              <span>报告类型：{typeName}</span>
-              <span>评级：{gradeName}</span>
-              <span>发布日期：{timeHelper.format(time, dateFormatStr)}</span>
+              <span>
+资产大类：
+                {categoryName}
+              </span>
+              <span>
+报告类型：
+                {typeName}
+              </span>
+              <span>
+评级：
+                {gradeName}
+              </span>
+              <span>
+发布日期：
+                {timeHelper.format(time, dateFormatStr)}
+              </span>
             </h3>
           </Header>
           <Content className={styles.content}>
             {
               content
-              ?
-                splitArray.map((item, index) => {
+                ? splitArray.map((item, index) => {
                   const itemKey = `item${index}`;
-                  return (<div
-                    key={itemKey}
-                    className={styles.contentDiv}
-                    dangerouslySetInnerHTML={{ __html: _.trim(item) }}
-                  />);
+                  return (
+                    <div
+                      key={itemKey}
+                      className={styles.contentDiv}
+                      dangerouslySetInnerHTML={{ __html: _.trim(item) }}
+                    />
+                  );
                 })
-              :
-                <div>暂无</div>
+                : <div>暂无</div>
             }
           </Content>
         </Layout>

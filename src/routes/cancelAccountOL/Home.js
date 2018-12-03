@@ -25,7 +25,9 @@ import { dva, convert } from '../../helper';
 import seibelHelper from '../../helper/page/seibel';
 import logable, { logPV } from '../../decorators/logable';
 
-import { PAGE_TYPE, STATUS_OPTIONS, basicFilters, moreFilters, moreFilterData } from './config';
+import {
+  PAGE_TYPE, STATUS_OPTIONS, basicFilters, moreFilters, moreFilterData
+} from './config';
 
 const effect = dva.generateEffect;
 
@@ -394,21 +396,20 @@ export default class CancelAccountOLHome extends PureComponent {
         />
         {
           !isShowCreateModal ? null
-          :
-          (
-            <CreateApply
-              onClose={this.handleCloseCreateModal}
-              queryCustList={this.props.queryCustList}
-              getApprovalInfo={this.props.getApprovalInfo}
-              onSubmit={this.props.submitApply}
-              doApproval={this.props.doApproval}
-              optionsDict={optionsDict}
-              custList={custList}
-              approval={approval}
-              submitResult={submitResult}
-              flowResult={flowResult}
-            />
-          )
+            : (
+              <CreateApply
+                onClose={this.handleCloseCreateModal}
+                queryCustList={this.props.queryCustList}
+                getApprovalInfo={this.props.getApprovalInfo}
+                onSubmit={this.props.submitApply}
+                doApproval={this.props.doApproval}
+                optionsDict={optionsDict}
+                custList={custList}
+                approval={approval}
+                submitResult={submitResult}
+                flowResult={flowResult}
+              />
+            )
         }
       </div>
     );

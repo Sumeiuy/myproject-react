@@ -197,7 +197,7 @@ export default class DeputeForm extends PureComponent {
   handlePtyMngIdSelect({ value }) {
     let assigneeId = '';
     let assigneeName = '';
-     // 如果传递空对象过来代表删除选中的
+    // 如果传递空对象过来代表删除选中的
     if (!_.isEmpty(value)) {
       // 代表删除选中的
       assigneeId = value.ptyMngId;

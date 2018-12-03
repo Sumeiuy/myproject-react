@@ -116,12 +116,18 @@ export default class BoardSelectTree extends PureComponent {
     saveIndcator: PropTypes.func.isRequired,
     lengthLimit: PropTypes.bool,
   }
+
   static defaultProps = {
     lengthLimit: false,
   }
+
   constructor(props) {
     super(props);
-    const { data: { type, boardType, checkTreeArr, checkedKeys } } = props;
+    const {
+      data: {
+        type, boardType, checkTreeArr, checkedKeys
+      }
+    } = props;
     let showThirdColumn = false;
     let showTitle = false;
     // 如果看板是 经营业绩 类型 并且 指标是 总量指标 类型
@@ -161,8 +167,7 @@ export default class BoardSelectTree extends PureComponent {
           return newItem;
         });
       } else {
-        selfCheckedNodes = checkedKeys.map(item =>
-        findSelectNode(checkTreeArr, item).node);
+        selfCheckedNodes = checkedKeys.map(item => findSelectNode(checkTreeArr, item).node);
       }
     }
     this.state = {
@@ -363,6 +368,7 @@ export default class BoardSelectTree extends PureComponent {
       saveIndcator('detail', detailArr);
     }
   }
+
   // 点击或者选择的相同操作
   @autobind
   checkOrSelect(obj) {
@@ -461,6 +467,7 @@ export default class BoardSelectTree extends PureComponent {
       }, this.transferTreeState);
     }
   }
+
   // 右边子元素的滚动监听事件
   @autobind
   rcRegisterScrollEvent() {
@@ -493,6 +500,7 @@ export default class BoardSelectTree extends PureComponent {
     leftChild.addEventListener('mousewheel', this.stopSpread, false);
     leftChild.addEventListener('DOMMouseScroll', this.stopSpread, false);
   }
+
   render() {
     const {
       checkTreeArr,
@@ -525,22 +533,23 @@ export default class BoardSelectTree extends PureComponent {
       <div className={styles.treeBody}>
         {/* 树结构总标题 */}
         {
-          lengthLimit ?
-            null
-          :
-            <div className={styles.treeTitle}>
-              <h2 className={styles[`treeTitle${type}`]}>
-                {boardKeyName[type].name}
-                <Tooltip
-                  placement="topLeft"
-                  title={boardKeyName[type].title}
-                  overlayClassName="visibleRangeToolTip"
-                  getPopupContainer={this.getTooltipContainer}
-                >
-                  <span className={styles.treeTitleSpan} />
-                </Tooltip>
-              </h2>
-            </div>
+          lengthLimit
+            ? null
+            : (
+              <div className={styles.treeTitle}>
+                <h2 className={styles[`treeTitle${type}`]}>
+                  {boardKeyName[type].name}
+                  <Tooltip
+                    placement="topLeft"
+                    title={boardKeyName[type].title}
+                    overlayClassName="visibleRangeToolTip"
+                    getPopupContainer={this.getTooltipContainer}
+                  >
+                    <span className={styles.treeTitleSpan} />
+                  </Tooltip>
+                </h2>
+              </div>
+            )
         }
         {/* 树结构主干布局 */}
         <div className={styles.treeMain}>
@@ -568,12 +577,13 @@ export default class BoardSelectTree extends PureComponent {
                 </Tree>
               </div>
               {
-                (isSummury && showThirdColumn) ?
-                  <div className={styles.treeMainLeftChild}>
-                    <div />
-                  </div>
-                :
-                  null
+                (isSummury && showThirdColumn)
+                  ? (
+                    <div className={styles.treeMainLeftChild}>
+                      <div />
+                    </div>
+                  )
+                  : null
               }
             </div>
           </div>
@@ -588,38 +598,39 @@ export default class BoardSelectTree extends PureComponent {
               ref={(treeMainRightChild) => { this.treeMainRightChild = treeMainRightChild; }}
             >
               {
-                isSummury ?
-                  <MoveContainer
-                    data={selfCheckedNodes}
-                    isSum={isSummury}
-                    onRemove={this.onRemove}
-                    onDnd={this.onDnd}
-                  />
-                :
-                  allParentNodes.map(item => (
-                    item.children.length ?
-                      <div
-                        key={`${item.key}Key`}
-                        className={`${item.key}Ref ${styles.treeMainRigthChildTitle}`}
-                      >
-                        {
-                          showTitle ?
-                            <h3>{item.name}</h3>
-                          :
-                            null
+                isSummury
+                  ? (
+                    <MoveContainer
+                      data={selfCheckedNodes}
+                      isSum={isSummury}
+                      onRemove={this.onRemove}
+                      onDnd={this.onDnd}
+                    />
+                  )
+                  : allParentNodes.map(item => (
+                    item.children.length
+                      ? (
+                        <div
+                          key={`${item.key}Key`}
+                          className={`${item.key}Ref ${styles.treeMainRigthChildTitle}`}
+                        >
+                          {
+                          showTitle
+                            ? <h3>{item.name}</h3>
+                            : null
                         }
-                        {
-                          <MoveContainer
-                            key={`${item.key}Move`}
-                            data={item.children}
-                            isSum={isSummury}
-                            onRemove={this.onRemove}
-                            onDnd={this.onDnd}
-                          />
+                          {
+                            <MoveContainer
+                              key={`${item.key}Move`}
+                              data={item.children}
+                              isSum={isSummury}
+                              onRemove={this.onRemove}
+                              onDnd={this.onDnd}
+                            />
                         }
-                      </div>
-                    :
-                      null
+                        </div>
+                      )
+                      : null
                   ))
               }
             </div>
@@ -627,28 +638,33 @@ export default class BoardSelectTree extends PureComponent {
         </div>
         <div className={styles.treeNodeInfo}>
           {
-            (nowSelectNode && nowSelectNode.key && checkedOrSelected) ?
-              <div>
-                <h4>
-                  <span>{nowSelectNode.name}：</span>
-                  {nowSelectNode.description}
-                </h4>
-                {
-                  (!isSummury && nowSelectNode.children) ?
-                    <h4>
-                      <span>说明：</span>
-                      当前所选为汇总指标，包含以下子项目：{description}
-                    </h4>
-                  :
-                    null
+            (nowSelectNode && nowSelectNode.key && checkedOrSelected)
+              ? (
+                <div>
+                  <h4>
+                    <span>
+                      {nowSelectNode.name}
+：
+                    </span>
+                    {nowSelectNode.description}
+                  </h4>
+                  {
+                  (!isSummury && nowSelectNode.children)
+                    ? (
+                      <h4>
+                        <span>说明：</span>
+                      当前所选为汇总指标，包含以下子项目：
+                        {description}
+                      </h4>
+                    )
+                    : null
                 }
-              </div>
-            :
-              null
+                </div>
+              )
+              : null
           }
         </div>
       </div>
     );
   }
 }
-

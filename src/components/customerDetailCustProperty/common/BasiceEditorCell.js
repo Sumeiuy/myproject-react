@@ -13,7 +13,9 @@ import OmniComplexEditor from '../../common/omniComplexEditor';
 import styles from './basicEditorCell.less';
 
 export default function BasiceEditorCell(props) {
-  const { className, label, width, children, ...restProps  } = props;
+  const {
+    className, label, width, children, ...restProps
+  } = props;
   return (
     <div className={`${styles.wrap} ${className}`}>
       <div
@@ -22,8 +24,9 @@ export default function BasiceEditorCell(props) {
           width,
           marginRight: `-${width}`
         }}
-        >
-        {label}<span className={styles.colon}>:</span>
+      >
+        {label}
+        <span className={styles.colon}>:</span>
       </div>
       <div
         style={{

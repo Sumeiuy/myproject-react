@@ -347,9 +347,9 @@ export default class CommissionAdjustmentHome extends PureComponent {
           </CommissionLine>
           <CommissionLine label="客户" labelWidth="90px" needInputBox={false}>
             {
-              customer && customer.custName ?
-                (<DisabledSelect text={`${customer.custName}(${customer.custEcom})-${customer.riskLevelLabel}`} />) :
-                (<DisabledSelect />)
+              customer && customer.custName
+                ? (<DisabledSelect text={`${customer.custName}(${customer.custEcom})-${customer.riskLevelLabel}`} />)
+                : (<DisabledSelect />)
             }
           </CommissionLine>
           <CommissionLine label="备注" labelWidth="90px">

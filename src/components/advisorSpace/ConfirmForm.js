@@ -40,42 +40,42 @@ export default function ConfirmForm(props) {
       // 备注
       remark,
     }
-    } = props;
+  } = props;
     // 预约时间
-    const orderTime = `${moment(orderDate).format(dateFormat)} ${startTime}-${endTime}`;
-    // 智慧前厅
-    const room = `${siteName}${roomName}`;
-    // 参与人
-    const participantDate = outerPersonFlag ? participantName : `${participantName}（${participantCode}）`;
-    return (
-      <div className={styles.confirmForm}>
-        <InfoCell label="预约时间">
-          <div className={styles.value}>
-            {orderTime || EMPTY_INFO}
-          </div>
-        </InfoCell>
-        <InfoCell label="智慧前厅">
-          <div className={styles.value}>
-            {room || EMPTY_INFO}
-          </div>
-        </InfoCell>
-        <InfoCell label="主题">
-          <div className={styles.value}>
-            {theme || EMPTY_INFO}
-          </div>
-        </InfoCell>
-        <InfoCell label="参与人">
-          <div className={styles.value}>
-            {participantDate || EMPTY_INFO}
-          </div>
-        </InfoCell>
-        <InfoCell label="备注">
-          <div className={styles.value}>
-            {remark || EMPTY_INFO}
-          </div>
-        </InfoCell>
-      </div>
-    );
+  const orderTime = `${moment(orderDate).format(dateFormat)} ${startTime}-${endTime}`;
+  // 智慧前厅
+  const room = `${siteName}${roomName}`;
+  // 参与人
+  const participantDate = outerPersonFlag ? participantName : `${participantName}（${participantCode}）`;
+  return (
+    <div className={styles.confirmForm}>
+      <InfoCell label="预约时间">
+        <div className={styles.value}>
+          {orderTime || EMPTY_INFO}
+        </div>
+      </InfoCell>
+      <InfoCell label="智慧前厅">
+        <div className={styles.value}>
+          {room || EMPTY_INFO}
+        </div>
+      </InfoCell>
+      <InfoCell label="主题">
+        <div className={styles.value}>
+          {theme || EMPTY_INFO}
+        </div>
+      </InfoCell>
+      <InfoCell label="参与人">
+        <div className={styles.value}>
+          {participantDate || EMPTY_INFO}
+        </div>
+      </InfoCell>
+      <InfoCell label="备注">
+        <div className={styles.value}>
+          {remark || EMPTY_INFO}
+        </div>
+      </InfoCell>
+    </div>
+  );
 }
 ConfirmForm.defaultProps = {
   formData: PropTypes.object.isRequired,

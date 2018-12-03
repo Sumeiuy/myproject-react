@@ -18,7 +18,6 @@ import styles from './progressList.less';
 import { homeModelTypeName, homeModelType } from '../config';
 
 
-
 /* 新增客户传给列表页的参数
  * 净开增有效户： 817001
  * 净新增非零售客户： 817002
@@ -105,7 +104,7 @@ export default class ProgressList extends PureComponent {
         param = {
           ...param,
           modalType: 'customerType',
-          value: newCustomerLinkIdx[index],  // 提供给列表页传给后端的customerType的值
+          value: newCustomerLinkIdx[index], // 提供给列表页传给后端的customerType的值
         };
       }
       linkTo(param);
@@ -139,7 +138,9 @@ export default class ProgressList extends PureComponent {
 
   @autobind
   renderList() {
-    const { dataSource, location, type, isNewHome } = this.props;
+    const {
+      dataSource, location, type, isNewHome
+    } = this.props;
     // 新增客户模块指标说明文案
     const description = {
       新增有效户: '统计周期内新增且成为有效户的客户数',
@@ -157,7 +158,8 @@ export default class ProgressList extends PureComponent {
         return (
           <div
             onClick={() => { this.handleClick(index, item); }}
-            className={styles.row} style={style}
+            className={styles.row}
+            style={style}
             key={item.id}
             ref={ref => (this[rowId] = ref)}
           >
@@ -187,12 +189,14 @@ export default class ProgressList extends PureComponent {
                   */
                 }
                 {
-                  (type === 'productSale') || (type === 'income') ?
-                    <div>
-                      <span title={item.value}>{item.value}</span>
-                      <span title={item.unit}>{item.unit}</span>
-                    </div> :
-                    <span title={item.thousandsCount}>{item.thousandsCount}</span>
+                  (type === 'productSale') || (type === 'income')
+                    ? (
+                      <div>
+                        <span title={item.value}>{item.value}</span>
+                        <span title={item.unit}>{item.unit}</span>
+                      </div>
+                    )
+                    : <span title={item.thousandsCount}>{item.thousandsCount}</span>
                 }
               </div>
             </div>

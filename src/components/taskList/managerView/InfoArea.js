@@ -39,17 +39,19 @@ function InfoArea(props) {
                       styles.infoKey,
                       { [styles.keyNone]: _.isEmpty(item.key) },
                     )}
-                  >{item.key}</div>
+                  >
+                    {item.key}
+                  </div>
                   <div className={styles.infoValue}>
                     {
-                      isPoliceOrTip ?
-                        (<div
+                      isPoliceOrTip
+                        ? (<div
                           className={styles.row}
                         >
                           <ForgeryRichText text={item.value} />
-                        </div>
-                        ) :
-                        item.value
+                           </div>
+                        )
+                        : item.value
                     }
                   </div>
                 </div>

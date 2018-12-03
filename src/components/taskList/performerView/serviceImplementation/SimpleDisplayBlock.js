@@ -15,7 +15,7 @@ import styles from './simpleDisplayBlock.less';
 export default function SimpleDisplayBlock({
   title, data, missionFlowId, currentId,
   leftFoldState,
- }) {
+}) {
   const key = `${title}-${currentId}-${missionFlowId}-${leftFoldState}`;
   return (
     <div className={styles.container}>

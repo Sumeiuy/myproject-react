@@ -33,6 +33,7 @@ export default class ZLMemberInfo extends PureComponent {
     // 获取涨乐财富通U会员等级变更记录
     queryZLUmemberLevelChangeRecords: PropTypes.func.isRequired,
   }
+
   constructor(props) {
     super(props);
     this.state = {
@@ -43,7 +44,7 @@ export default class ZLMemberInfo extends PureComponent {
 
   // 打开会员变更弹出框
   @autobind
-  @logPV ({
+  @logPV({
     pathname: '/modal/memberGradeModal',
     title: '涨乐会员变更弹框',
   })
@@ -70,7 +71,7 @@ export default class ZLMemberInfo extends PureComponent {
   @logable({
     type: 'ButtonClick',
     payload: { name: '涨乐会员等级变更' }
- })
+  })
   handleMemberGradeModalClose() {
     this.setState({ memberGradeModalVisible: false });
   }
@@ -87,14 +88,14 @@ export default class ZLMemberInfo extends PureComponent {
       location,
       dataSource,
       queryZLUmemberLevelChangeRecords,
-     } = this.props;
+    } = this.props;
     return (
       <div className={styles.zlMemberInfoBox}>
         <div className={`${styles.title} clearfix`}>
           <span className={styles.colorBlock} />
           <span className={styles.titleText}>涨乐U会员</span>
           <span className={styles.iconButton}>
-            <Icon type='dengjibiangenglishi' />
+            <Icon type="dengjibiangenglishi" />
             <span onClick={this.handleMemberGradeModalOpen}>等级变更历史</span>
             <ZLMemeberInfoModal
               location={location}

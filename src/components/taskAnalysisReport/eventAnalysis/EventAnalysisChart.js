@@ -38,8 +38,8 @@ export default class EventAnalysisChart extends PureComponent {
   }
 
   static defaultProps = {
-    thirdData:[],
-    fourData:[],
+    thirdData: [],
+    fourData: [],
   }
 
   // 获取xAxis轴刻度标签的显示间隔
@@ -49,7 +49,7 @@ export default class EventAnalysisChart extends PureComponent {
     if (length > 10 && length <= 60) {
       return 6;
     // 超过60条按月显示
-    } else if (length > 60) {
+    } if (length > 60) {
       return 30;
     }
     return 0;
@@ -58,7 +58,7 @@ export default class EventAnalysisChart extends PureComponent {
   // 确定seriesData
   @autobind
   getSeriesData(reportType) {
-    //firstData指三个图表的第一个数据，secondData指第二个数据
+    // firstData指三个图表的第一个数据，secondData指第二个数据
     const {
       config,
       firstData,
@@ -66,16 +66,16 @@ export default class EventAnalysisChart extends PureComponent {
       thirdData,
       fourData,
     } = this.props;
-    //series图表数据，eventDataName图表数据名称
+    // series图表数据，eventDataName图表数据名称
     const { series, eventDataName } = config;
 
-    //firstName图表的提示框第一条数据名字，secondName是第二条名字
+    // firstName图表的提示框第一条数据名字，secondName是第二条名字
     let firstName = '';
     let secondName = '';
     let thirdName = '';
     let fourName = '';
     let seriesData = [];
-    switch(reportType) {
+    switch (reportType) {
       case 'task':
         const { triggerTaskName, completedTaskName } = eventDataName;
         firstName = triggerTaskName;
@@ -111,7 +111,9 @@ export default class EventAnalysisChart extends PureComponent {
         ];
         break;
       case 'serviceChannels':
-        const { zhangle, phone, interview, other } = eventDataName;
+        const {
+          zhangle, phone, interview, other
+        } = eventDataName;
         firstName = zhangle;
         secondName = phone;
         thirdName = interview;
@@ -146,7 +148,7 @@ export default class EventAnalysisChart extends PureComponent {
   }
 
   render() {
-    //firstData指三个图表的第一个数据，secondData指第二个数据
+    // firstData指三个图表的第一个数据，secondData指第二个数据
     const {
       eventReportList,
       eventName,
@@ -154,7 +156,7 @@ export default class EventAnalysisChart extends PureComponent {
       deadlineTimeData,
       reportType
     } = this.props;
-    //legendList图例数据，color颜色，eventReportName图表名称
+    // legendList图例数据，color颜色，eventReportName图表名称
     const { legendList, color, eventReportName } = config;
     // xAxis轴刻度标签的显示间隔, 超过30天，则横坐标改为按周展示
     const xAxisLabelInterval = this.getXAxisLabelInterval(deadlineTimeData.length);
@@ -172,7 +174,7 @@ export default class EventAnalysisChart extends PureComponent {
         const secondSeriesName = params[1].seriesName;
         const secondDataNumber = thousandFormat(params[1].value);
         // 任务分析和客户分析报表有两条数据，服务渠道分析有四条数据判断是否是服务渠道分析
-        if(params[2]) {
+        if (params[2]) {
           const thirdSeriesName = params[2].seriesName;
           const thirdDataNumber = thousandFormat(params[2].value);
           const fourSeriesName = params[3].seriesName;
@@ -187,16 +189,15 @@ export default class EventAnalysisChart extends PureComponent {
             </div>
           `;
           return tips;
-        }else{
-          const tips = `
+        }
+        const tips = `
             <div>
               ${deadlineTime}
               <div>${firstSeriesName}: ${firstDataNumber}</div>
               <div>${secondSeriesName}: ${secondDataNumber}</div>
             </div>
           `;
-          return tips;
-        }
+        return tips;
       },
       backgroundColor: 'rgba(2, 22, 55, .8)',
       padding: [12, 10, 12, 10],
@@ -248,35 +249,33 @@ export default class EventAnalysisChart extends PureComponent {
       <div>
         {
           !_.isEmpty(eventReportList)
-          ?
-          (
-            <div className={styles.eventAnalysisChart}>
-              <div className={styles.chartTitle}>
-                { eventName }{ eventReportName }
+            ? (
+              <div className={styles.eventAnalysisChart}>
+                <div className={styles.chartTitle}>
+                  { eventName }
+                  { eventReportName }
+                </div>
+                <ChartLegend
+                  legendList={legendList}
+                  className="eventAnalysisChartLegend"
+                />
+                <IECharts
+                  option={options}
+                  resizable
+                  notMerge
+                  style={{
+                    height: '300px',
+                  }}
+                />
               </div>
-              <ChartLegend
-                legendList={legendList}
-                className='eventAnalysisChartLegend'
-              />
-              <IECharts
-                option={options}
-                resizable
-                notMerge
-                style={{
-                  height: '300px',
-                }}
-              />
-            </div>
-          )
-          :
-          (
-            <div className={styles.noChart}>
-              <img src={imgSrc} alt="图表不可见" />
-            </div>
-          )
+            )
+            : (
+              <div className={styles.noChart}>
+                <img src={imgSrc} alt="图表不可见" />
+              </div>
+            )
         }
       </div>
     );
   }
-
 }

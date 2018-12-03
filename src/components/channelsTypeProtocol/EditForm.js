@@ -16,7 +16,7 @@ import InfoTitle from '../common/InfoTitle';
 import SearchSelect from '../common/Select/SearchSelect';
 import CommonTable from '../common/biz/CommonTable';
 import MultiUploader from '../common/biz/MultiUploader';
-import Transfer from '../../components/common/biz/TableTransfer';
+import Transfer from '../common/biz/TableTransfer';
 import { seibelConfig } from '../../config';
 import config from '../../routes/channelsTypeProtocol/config';
 import styles from './editForm.less';
@@ -26,10 +26,10 @@ import logable from '../../decorators/logable';
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
 const {
-  underCustTitleList,  // 下挂客户表头集合
-  protocolClauseTitleList,  // 协议条款表头集合
-  protocolProductTitleList,  // 协议产品表头集合
-  attachmentMap,  // 附件类型数组
+  underCustTitleList, // 下挂客户表头集合
+  protocolClauseTitleList, // 协议条款表头集合
+  protocolProductTitleList, // 协议产品表头集合
+  attachmentMap, // 附件类型数组
 } = seibelConfig.channelsTypeProtocol;
 const attachmentRequired = {
   // 不需要校验附件必传
@@ -57,7 +57,9 @@ const attachmentRequired = {
 };
 const ArbirageSoftWareType = config.protocolSubTypes.arbitrageSoft; // 套利软件的子类型值
 const custAttachment = ['noNeed', 'noCust', 'hasCust', 'highSpeedProtocol', 'arbirageSoftware'];
-const { subscribeArray, unSubscribeArray, addDelArray, custStatusObj, custOperateArray } = config;
+const {
+  subscribeArray, unSubscribeArray, addDelArray, custStatusObj, custOperateArray
+} = config;
 
 export default class EditForm extends PureComponent {
   static propTypes = {
@@ -308,7 +310,9 @@ export default class EditForm extends PureComponent {
   getData() {
     const baseInfoData = this.editBaseInfoComponent.getData();
     const { protocolClauseList, protocolDetail, location: { pathname } } = this.props;
-    const { productList, attachmentTypeList, cust, isEdit, isArbirageSoftWare } = this.state;
+    const {
+      productList, attachmentTypeList, cust, isEdit, isArbirageSoftWare
+    } = this.state;
     let formData = {};
     // 生成订购时的数据，如果是订购
     if (_.includes(subscribeArray, baseInfoData.operationType)) {
@@ -402,6 +406,7 @@ export default class EditForm extends PureComponent {
       attachmentTypeList: lastattachmentMapRequired,
     });
   }
+
   // 打开弹窗
   @autobind
   showModal(modalKey) {
@@ -805,67 +810,71 @@ export default class EditForm extends PureComponent {
         </div>
         {
           /* 此处新增判断如果是套利软件,则不显示协议产品，下挂客户等 */
-          isArbirageSoftWare ? null :
-          (
-            <div className={`${styles.editWrapper} ${styles.transferWrapper}`}>
-              <InfoTitle
-                head="协议产品"
-              />
-              {
-                _.includes(subscribeArray, operationType) ?
-                  <Transfer
-                    {...transferProps}
-                  />
-                  :
-                  <CommonTable
-                    data={(isEdit && _.isEmpty(protocolProductList)) ? productList : []}
-                    titleList={protocolProductTitleList}
-                  />
+          isArbirageSoftWare ? null
+            : (
+              <div className={`${styles.editWrapper} ${styles.transferWrapper}`}>
+                <InfoTitle
+                  head="协议产品"
+                />
+                {
+                _.includes(subscribeArray, operationType)
+                  ? (
+                    <Transfer
+                      {...transferProps}
+                    />
+                  )
+                  : (
+                    <CommonTable
+                      data={(isEdit && _.isEmpty(protocolProductList)) ? productList : []}
+                      titleList={protocolProductTitleList}
+                    />
+                  )
               }
-            </div>
-          )
+              </div>
+            )
         }
         {
-          isArbirageSoftWare ? null :
-          (
-            <div className={styles.editWrapper}>
-              <InfoTitle head="协议条款" />
-              <CommonTable
-                data={(isEdit && _.isEmpty(protocolClauseList)) ?
-                  protocolClause
-                  :
-                  protocolClauseList}
-                titleList={protocolClauseTitleList}
-              />
-            </div>
-          )
-        }
-        {
-          !isArbirageSoftWare && multiUsedFlag ?
-            <div className={styles.editWrapper}>
-              <InfoTitle head="下挂客户" />
-              {
-                custOperate ?
-                  <SearchSelect
-                    onAddCustomer={this.changeFunction}
-                    onChangeValue={this.changeValue}
-                    width="184px"
-                    labelName="客户"
-                    dataSource={customerSelectList}
-                  />
-                  :
-                  null
-              }
-              <div className={styles.customerTable}>
+          isArbirageSoftWare ? null
+            : (
+              <div className={styles.editWrapper}>
+                <InfoTitle head="协议条款" />
                 <CommonTable
-                  data={cust}
-                  titleList={underCustTitleList}
-                  operation={custOperate ? customerOperation : {}}
+                  data={(isEdit && _.isEmpty(protocolClauseList))
+                    ? protocolClause
+                    : protocolClauseList}
+                  titleList={protocolClauseTitleList}
                 />
               </div>
-            </div>
-            :
-            null
+            )
+        }
+        {
+          !isArbirageSoftWare && multiUsedFlag
+            ? (
+              <div className={styles.editWrapper}>
+                <InfoTitle head="下挂客户" />
+                {
+                custOperate
+                  ? (
+                    <SearchSelect
+                      onAddCustomer={this.changeFunction}
+                      onChangeValue={this.changeValue}
+                      width="184px"
+                      labelName="客户"
+                      dataSource={customerSelectList}
+                    />
+                  )
+                  : null
+              }
+                <div className={styles.customerTable}>
+                  <CommonTable
+                    data={cust}
+                    titleList={underCustTitleList}
+                    operation={custOperate ? customerOperation : {}}
+                  />
+                </div>
+              </div>
+            )
+            : null
         }
         <div className={styles.editWrapper}>
           <InfoTitle head="附件" />

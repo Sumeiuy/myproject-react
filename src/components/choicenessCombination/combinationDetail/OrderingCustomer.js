@@ -82,16 +82,18 @@ export default class OrderingCustomer extends PureComponent {
   renderPopover(value) {
     let reactElement = null;
     if (value) {
-      reactElement = (<Popover
-        placement="bottomLeft"
-        content={value}
-        trigger="hover"
-        overlayStyle={overlayStyle}
-      >
-        <div className={styles.ellipsis}>
-          {value}
-        </div>
-      </Popover>);
+      reactElement = (
+        <Popover
+          placement="bottomLeft"
+          content={value}
+          trigger="hover"
+          overlayStyle={overlayStyle}
+        >
+          <div className={styles.ellipsis}>
+            {value}
+          </div>
+        </Popover>
+      );
     } else {
       reactElement = '暂无';
     }
@@ -131,7 +133,7 @@ export default class OrderingCustomer extends PureComponent {
           dataSource={this.getTransformList(list)}
           pagination={PaginationOption}
           onChange={this.handlePaginationChange}
-          rowKey={'rowKey'}
+          rowKey="rowKey"
         />
       </div>
     );

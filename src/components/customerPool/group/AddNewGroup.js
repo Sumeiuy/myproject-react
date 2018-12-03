@@ -102,7 +102,14 @@ export default class AddNewGroup extends PureComponent {
         </FormItem>
         <FormItem className={styles.btnContent}>
           <div className={styles.leftSection}>
-            <span className={styles.description}>已选目标客户<b>&nbsp;{count}&nbsp;</b>户</span>
+            <span className={styles.description}>
+已选目标客户
+              <b>
+                {count}
+&nbsp;
+              </b>
+户
+            </span>
           </div>
           <div className={styles.rightSection}>
             <Button onClick={this.handleGoBack}>取消</Button>
@@ -112,5 +119,4 @@ export default class AddNewGroup extends PureComponent {
       </Form>
     );
   }
-
 }

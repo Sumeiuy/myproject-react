@@ -10,7 +10,9 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
-import { Button, Collapse, Icon, Mention } from 'antd';
+import {
+  Button, Collapse, Icon, Mention
+} from 'antd';
 
 import Pagination from '../../components/common/Pagination';
 import CommonModal from '../../components/common/biz/CommonModal';
@@ -88,8 +90,10 @@ export default class InvestmentAdvice extends PureComponent {
 
   // 新增投资建议模板
   @autobind
-  @logPV({ pathname: '/modal/addInvestAdviceTpl',
-title: '新增投资建议模板' })
+  @logPV({
+    pathname: '/modal/addInvestAdviceTpl',
+    title: '新增投资建议模板'
+  })
   addInvestAdviceTemplate() {
     this.setState({
       showModal: true,
@@ -102,8 +106,10 @@ title: '新增投资建议模板' })
 
   // 编辑投资建议模板
   @autobind
-  @logPV({ pathname: '/modal/editInvestAdviceTpl',
-title: '编辑投资建议模板' })
+  @logPV({
+    pathname: '/modal/editInvestAdviceTpl',
+    title: '编辑投资建议模板'
+  })
   editInvestAdviceTemplate(item) {
     this.setState({
       showModal: true,
@@ -124,8 +130,10 @@ title: '编辑投资建议模板' })
 
   // 删除投资建议模板确认弹窗
   @autobind
-  @logPV({ pathname: '/modal/deleteConfirmFrame',
-title: '删除投资建议模板确认弹窗' })
+  @logPV({
+    pathname: '/modal/deleteConfirmFrame',
+    title: '删除投资建议模板确认弹窗'
+  })
   deleteConfirm(id, e) {
     if (e) {
       e.stopPropagation();
@@ -276,29 +284,36 @@ title: '删除投资建议模板确认弹窗' })
     const { list = [], page = {} } = this.props.investmentAdvices;
     const { curPageNum, pageSize, totalRecordNum } = page;
     const investmentAdviceList = list.map((item) => {
-      const header = (<div className={styles.collapseHead}>
-        <span className={styles.title}>{item.title}</span>
-        <div className={styles.contentwapper}>
-          <span className={styles.content}>{item.content}</span>
-          <i className={styles.icon}><Icon type="up" /><Icon type="down" /></i>
+      const header = (
+        <div className={styles.collapseHead}>
+          <span className={styles.title}>{item.title}</span>
+          <div className={styles.contentwapper}>
+            <span className={styles.content}>{item.content}</span>
+            <i className={styles.icon}>
+              <Icon type="up" />
+              <Icon type="down" />
+            </i>
+          </div>
+          <span className={styles.operate}>
+            <Icon type="delete" onClick={e => this.deleteConfirm(item.id, e)} />
+          </span>
         </div>
-        <span className={styles.operate} >
-          <Icon type="delete" onClick={e => this.deleteConfirm(item.id, e)} />
-        </span>
-      </div>);
+      );
       return (
         <Panel header={header} key={item.id}>
           <div className={styles.collapsePanel}>
             <Mention
               mentionStyle={MentionTextStyles}
-              style={{ width: '100%',
-height: 50 }}
+              style={{
+                width: '100%',
+                height: 50
+              }}
               readOnly
               multiLines
               prefix={MENTION_PREFIX}
               value={toContentState(item.content)}
             />
-            <Button onClick={e => this.editInvestAdviceTemplate(item, e)} >编辑</Button>
+            <Button onClick={e => this.editInvestAdviceTemplate(item, e)}>编辑</Button>
           </div>
         </Panel>
       );
@@ -333,35 +348,37 @@ height: 50 }}
                 pageSize={pageSize}
                 onChange={this.handlePageChange}
               />
-              )
+            )
           }
 
         </div>
         <div className={styles.clear} />
         {
           !showModal ? null
-          : (<CommonModal
-            title={action === 'CREATE' ? '新建模板' : '编辑模板'}
-            visible={showModal}
-            onOk={this.handleOk}
-            onCancel={this.handleCancel}
-            closeModal={this.handleCancel}
-            modalKey={modalKey}
-            maskClosable={false}
-            wrapClassName={styles.investAdviceModal}
-          >
-            <TemplateForm
-              defaultMissionDesc={defaultMissionDesc}
-              initialTemplateParams={initialTemplateParams}
-              isShowContentStatusError={isShowContentStatusError}
-              contentStatusErrorMessage={contentStatusErrorMessage}
-              isShowTitleStatusError={isShowTitleStatusError}
-              titleStatusErrorMessage={titleStatusErrorMessage}
-              checkMention={this.checkMention}
-              checkTitle={this.checkTitle}
-              onChange={this.handleTemplateFormChange}
-            />
-          </CommonModal>)
+            : (
+              <CommonModal
+                title={action === 'CREATE' ? '新建模板' : '编辑模板'}
+                visible={showModal}
+                onOk={this.handleOk}
+                onCancel={this.handleCancel}
+                closeModal={this.handleCancel}
+                modalKey={modalKey}
+                maskClosable={false}
+                wrapClassName={styles.investAdviceModal}
+              >
+                <TemplateForm
+                  defaultMissionDesc={defaultMissionDesc}
+                  initialTemplateParams={initialTemplateParams}
+                  isShowContentStatusError={isShowContentStatusError}
+                  contentStatusErrorMessage={contentStatusErrorMessage}
+                  isShowTitleStatusError={isShowTitleStatusError}
+                  titleStatusErrorMessage={titleStatusErrorMessage}
+                  checkMention={this.checkMention}
+                  checkTitle={this.checkTitle}
+                  onChange={this.handleTemplateFormChange}
+                />
+              </CommonModal>
+            )
         }
       </div>
     );

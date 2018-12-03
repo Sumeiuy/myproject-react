@@ -29,11 +29,13 @@ export default class ForgeryRichText extends PureComponent {
     if (text) {
       const textContent = this.replaceUrl(text);
       const textList = textContent.split(regxp.returnLine);
-      return _.map(textList, (item, index) => <div
-        key={item + index}
+      return _.map(textList, (item, index) => (
+        <div
+          key={item + index}
         // 处理空行问题
-        dangerouslySetInnerHTML={{ __html: _.isEmpty(item) ? '<br/>' : item }}
-      />);
+          dangerouslySetInnerHTML={{ __html: _.isEmpty(item) ? '<br/>' : item }}
+        />
+      ));
     }
     return '--';
   }

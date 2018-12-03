@@ -12,7 +12,7 @@ import { MultiFilterWithSearch } from 'lego-react-filter/src';
 
 import CreateLabel from './CreateLabel';
 import styles from './addCustomerLabel.less';
-import logable, { logPV} from '../../../../decorators/logable';
+import logable, { logPV } from '../../../../decorators/logable';
 
 const EMPTY_LIST = [];
 
@@ -164,19 +164,20 @@ export default class SignCustomerLabel extends PureComponent {
     const { value } = this.state;
     const currentLabel = _.find(
       custLikeLabel,
-      labelItem =>
-        labelItem.labelName === value,
+      labelItem => labelItem.labelName === value,
     );
     if (currentLabel) {
       return null;
     }
     const labelText = value ? `"${value}"` : '';
-    return (<div
-      className={styles.newLabel}
-      onClick={this.handleCloseAddLabelModal}
-    >
-      {`+ 新建${labelText}标签`}
-    </div>);
+    return (
+      <div
+        className={styles.newLabel}
+        onClick={this.handleCloseAddLabelModal}
+      >
+        {`+ 新建${labelText}标签`}
+      </div>
+    );
   }
 
   @autobind
@@ -258,37 +259,39 @@ export default class SignCustomerLabel extends PureComponent {
                 : null
             }
           </div>
-            {
-              mainPosition ?
-                <div className={styles.addLabelContainer}>
-                  <span className={styles.addLabel}>
-                    <span className={styles.addLabelBtn}>
-                      <span className={styles.addLabelIcon} />
-                      <span className={styles.addLabelText}>添加标签</span>
+          {
+              mainPosition
+                ? (
+                  <div className={styles.addLabelContainer}>
+                    <span className={styles.addLabel}>
+                      <span className={styles.addLabelBtn}>
+                        <span className={styles.addLabelIcon} />
+                        <span className={styles.addLabelText}>添加标签</span>
+                      </span>
+                      <MultiFilterWithSearch
+                        data={custLikeLabel}
+                        value={_.isEmpty(selectedLabels) ? '' : selectedLabels}
+                        className={styles.signSelect}
+                        dataMap={['id', 'labelName']}
+                        filterName="客户标签"
+                        useCustomerFilter
+                        useDefaultLabel
+                        isAlwaysVisible
+                        getOptionItemValue={this.getOptionItemValue}
+                        onChange={this.handleSelect}
+                        onInputChange={this.handleSearch}
+                        searchHeader={this.getSearchHeader()}
+                        listStyle={{ maxHeight: 220 }}
+                        dropdownStyle={{ maxHeight: 324 }}
+                      />
                     </span>
-                    <MultiFilterWithSearch
-                      data={custLikeLabel}
-                      value={_.isEmpty(selectedLabels) ? '' : selectedLabels}
-                      className={styles.signSelect}
-                      dataMap={['id', 'labelName']}
-                      filterName="客户标签"
-                      useCustomerFilter
-                      useDefaultLabel
-                      isAlwaysVisible
-                      getOptionItemValue={this.getOptionItemValue}
-                      onChange={this.handleSelect}
-                      onInputChange={this.handleSearch}
-                      searchHeader={this.getSearchHeader()}
-                      listStyle={{ maxHeight: 220 }}
-                      dropdownStyle={{ maxHeight: 324 }}
-                    />
-                  </span>
-                 </div> : null
+                  </div>
+                ) : null
             }
           <div className={styles.singleLabel}>
-            {mainPosition ?
-              selectedLabels
-                .map(labelItem =>
+            {mainPosition
+              ? selectedLabels
+                .map(labelItem => (
                   <Tag
                     closable
                     afterClose={() => {
@@ -298,14 +301,14 @@ export default class SignCustomerLabel extends PureComponent {
                     key={labelItem.id}
                   >
                     {labelItem.labelName}
-                  </Tag>,
-                ) :
-              selectedLabels
-                .map(labelItem =>
+                  </Tag>
+                ), )
+              : selectedLabels
+                .map(labelItem => (
                   <Tag color="gold" key={labelItem.id}>
                     {labelItem.labelName}
-                  </Tag>,
-                )
+                  </Tag>
+                ), )
             }
           </div>
         </Modal>

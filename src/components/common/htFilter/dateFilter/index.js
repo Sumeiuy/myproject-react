@@ -22,6 +22,7 @@ export default class DateFilter extends React.Component {
     disabledCurrentEnd: PropTypes.bool,
     allowClear: PropTypes.bool,
   };
+
   static defaultProps = {
     // example props for the demo
     defaultVisible: false,
@@ -76,11 +77,11 @@ export default class DateFilter extends React.Component {
         filterName={this.props.filterName}
         filterValue={[initialStartDate, initialEndDate]}
         onChange={date => this.handleDateChange(date.value[0], date.value[1])}
-        disabledStart={disabledCurrentEnd ?
-          startDate => !isInclusivelyBeforeDay(startDate, moment())
+        disabledStart={disabledCurrentEnd
+          ? startDate => !isInclusivelyBeforeDay(startDate, moment())
           : _.noop}
-        disabledEnd={disabledCurrentEnd ?
-          (startDate, endDate) => !isInclusivelyBeforeDay(endDate, moment())
+        disabledEnd={disabledCurrentEnd
+          ? (startDate, endDate) => !isInclusivelyBeforeDay(endDate, moment())
           : _.noop}
         defaultVisible={this.props.defaultVisible}
         isCloseable={this.props.isCloseable}

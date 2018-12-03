@@ -99,14 +99,16 @@ export default class AddContactModal extends Component {
     const {
       contactWayData: { tellphoneInfo },
     } = this.props;
-    if(hasMainContact(tellphoneInfo)) {
+    if (hasMainContact(tellphoneInfo)) {
       this.setState({ showMainLinkMan: false });
       const phoneForm = this.getOrgPhoneForm();
       // 校验完成后调用提交回调
       phoneForm.validateFields((err, values) => {
         if (!err) {
           // TOOD 此处需要针对手机信息，固定电话、邮箱做特殊处理
-          const { emailValue, landlineValue, mobileValue, ...restValue } = values;
+          const {
+            emailValue, landlineValue, mobileValue, ...restValue
+          } = values;
           // 新增的时候需要将这三个值转换成对象,因为后端的接口需要这样弄,
           // 因为机构客户的联系人信息有多个手机信息、固定电话、邮箱
           this.handleOrgContactSubmit('phone', {
@@ -140,16 +142,16 @@ export default class AddContactModal extends Component {
     // 2. 如果添加的是机构客户的地址信息，则判断存在主地址不
     const {
       contactWayData: { addressInfo },
-     } = this.props;
+    } = this.props;
     if (hasMainContact(addressInfo)) {
       this.setState({ showMainAddress: false });
-       const addressForm = this.getOrgAddressForm();
-       // 校验完成后调用提交回调
-       addressForm.validateFields((err, values) => {
-         if (!err) {
-           this.handleOrgContactSubmit('address', values);
-         }
-       });
+      const addressForm = this.getOrgAddressForm();
+      // 校验完成后调用提交回调
+      addressForm.validateFields((err, values) => {
+        if (!err) {
+          this.handleOrgContactSubmit('address', values);
+        }
+      });
     } else {
       this.setState({ showMainAddress: true });
     }
@@ -191,7 +193,7 @@ export default class AddContactModal extends Component {
     return (
       <IFWrap isRender={show}>
         <div className={styles.waringTip}>
-          <Icon className={styles.waringIcon} type="jingshi"/>
+          <Icon className={styles.waringIcon} type="jingshi" />
           <span className={styles.waringText}>{WARNING_MESSAGE[`org_${activeTabKey}`]}</span>
         </div>
       </IFWrap>

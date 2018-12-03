@@ -157,12 +157,10 @@ export const getMaxAndMinPercentOrPermillage = (series) => {
 };
 
 // 针对百分比数据进行处理
-export const toFixedPercent = (series, isCommissionRate) =>
-  series.map(o => toFixedDecimal(o * 100, isCommissionRate));
+export const toFixedPercent = (series, isCommissionRate) => series.map(o => toFixedDecimal(o * 100, isCommissionRate));
 
 // 针对千分比数据进行处理
-export const toFixedPermillage = (series, isCommissionRate) =>
-  series.map(o => toFixedDecimal(o * 1000, isCommissionRate));
+export const toFixedPermillage = (series, isCommissionRate) => series.map(o => toFixedDecimal(o * 1000, isCommissionRate));
 
 // 对人数进行特殊处理
 export const toFixedRen = (series) => {

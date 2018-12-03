@@ -65,7 +65,7 @@ const fetchDataFunction = (globalLoading, type) => query => ({
 
 const mapStateToProps = state => ({
   custRange: state.customerPool.custRange, // 客户池用户范围
-  cycle: state.app.dict.kPIDateScopeType,  // 统计周期
+  cycle: state.app.dict.kPIDateScopeType, // 统计周期
   process: state.customerPool.process, // 代办流程(首页总数)
   motTaskCount: state.customerPool.motTaskCount, // 今日可做任务总数
   empInfo: state.app.empInfo, // 职位信息
@@ -102,7 +102,6 @@ const mapDispatchToProps = {
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 export default class Home extends PureComponent {
-
   static propTypes = {
     location: PropTypes.object.isRequired,
     push: PropTypes.func.isRequired,
@@ -251,7 +250,9 @@ export default class Home extends PureComponent {
   }
 
   @autobind
-  getIndicators({ begin, end, orgId, cycleSelect, custType }) {
+  getIndicators({
+    begin, end, orgId, cycleSelect, custType
+  }) {
     const {
       getPerformanceIndicators,
       getManagerIndicators,
@@ -454,10 +455,12 @@ export default class Home extends PureComponent {
       // cycleSelect,
       createCustRange,
     } = this.state;
-    const { query: {
-      orgId,
-      cycleSelect,
-    } } = location;
+    const {
+      query: {
+        orgId,
+        cycleSelect,
+      }
+    } = location;
     // curOrgId   客户范围回填
     // 当url中由 orgId 则使用orgId
     // 有权限时默认取所在岗位的orgId
@@ -557,7 +560,7 @@ export default class Home extends PureComponent {
                   indicators={managerIndicators}
                   location={location}
                   cycle={cycle}
-                  category={'manager'}
+                  category="manager"
                   authority={this.hasIndexViewPermission}
                 />
               </TabPane>
@@ -571,7 +574,7 @@ export default class Home extends PureComponent {
                       location={location}
                       cycle={cycle}
                       custCount={custCount}
-                      category={'performance'}
+                      category="performance"
                       authority={this.hasIndexViewPermission}
                     />
                   </TabPane>

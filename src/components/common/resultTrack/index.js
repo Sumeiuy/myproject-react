@@ -8,7 +8,9 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Select, Checkbox, InputNumber, DatePicker, Form, Modal } from 'antd';
+import {
+  Select, Checkbox, InputNumber, DatePicker, Form, Modal
+} from 'antd';
 import _ from 'lodash';
 import classnames from 'classnames';
 import moment from 'moment';
@@ -32,7 +34,6 @@ const dateFormat = 'YYYY年MM月DD日';
 
 @RestoreScrollTop
 export default class ResultTrack extends PureComponent {
-
   static propTypes = {
     // 跟踪窗口期
     trackDate: PropTypes.array,
@@ -129,8 +130,7 @@ export default class ResultTrack extends PureComponent {
       isProdBound,
     } = this.state;
 
-    const indicatorLevel1 = _.find(level1Indicator, item =>
-      item.value === currentSelectedLevel1Indicator) || {};
+    const indicatorLevel1 = _.find(level1Indicator, item => item.value === currentSelectedLevel1Indicator) || {};
 
     // 当前所选中的指标目标
     const indicatorLevel1Key = indicatorLevel1.key;
@@ -177,7 +177,7 @@ export default class ResultTrack extends PureComponent {
     inputIndicator,
     isResultTrackChecked,
     currentSelectedProduct,
-    }) {
+  }) {
     const initialData = {
       inputValue: inputIndicator || '',
       checked: _.isBoolean(isResultTrackChecked) ? isResultTrackChecked : true,
@@ -219,8 +219,7 @@ export default class ResultTrack extends PureComponent {
     let firstIndicator = [];
     let children = [EMPTY_OBJECT];
     if (!_.isEmpty(indicatorTargetData)) {
-      firstIndicator = _.find(indicatorTargetData, item =>
-        item.indexId === indicatorLevel1Key) || indicatorTargetData[0];
+      firstIndicator = _.find(indicatorTargetData, item => item.indexId === indicatorLevel1Key) || indicatorTargetData[0];
       children = firstIndicator.children;
     }
     return _.map(children, item => ({
@@ -319,10 +318,8 @@ export default class ResultTrack extends PureComponent {
       currentMax,
     } = this.state;
 
-    const indicatorLevel1 = _.find(level1Indicator, item =>
-      item.value === currentSelectedLevel1Indicator) || {};
-    const indicatorLevel2 = _.find(level2Indicator, item =>
-      item.value === currentSelectedLevel2Indicator) || {};
+    const indicatorLevel1 = _.find(level1Indicator, item => item.value === currentSelectedLevel1Indicator) || {};
+    const indicatorLevel2 = _.find(level2Indicator, item => item.value === currentSelectedLevel2Indicator) || {};
 
     return {
       // 跟踪窗口期
@@ -420,11 +417,11 @@ export default class ResultTrack extends PureComponent {
     const { taskFormData = {} } = storedData || {};
     const { timelyIntervalValue } = taskFormData;
     if (reverse) {
-      days = needApproval ? value - timelyIntervalValue - 5 :
-        value - timelyIntervalValue;
+      days = needApproval ? value - timelyIntervalValue - 5
+        : value - timelyIntervalValue;
     } else {
-      days = needApproval ? value + timelyIntervalValue + 5 :
-        value + timelyIntervalValue;
+      days = needApproval ? value + timelyIntervalValue + 5
+        : value + timelyIntervalValue;
     }
 
     return days;
@@ -486,12 +483,10 @@ export default class ResultTrack extends PureComponent {
     } = resultTrackData;
 
     let currentSelectedOperationNew = operationValue;
-    let currentSelectedLevel1Indicator = _.find(level1Indicator, item =>
-      item.key === indicatorLevel1Key) || {};
+    let currentSelectedLevel1Indicator = _.find(level1Indicator, item => item.key === indicatorLevel1Key) || {};
     currentSelectedLevel1Indicator = currentSelectedLevel1Indicator.value || defaultIndicatorValue;
 
-    const currentSelectedLevel2 = _.find(level2Indicator, item =>
-      item.key === indicatorLevel2Key) || {};
+    const currentSelectedLevel2 = _.find(level2Indicator, item => item.key === indicatorLevel2Key) || {};
     const currentSelectedLevel2Indicator = currentSelectedLevel2.value
       || level2Indicator[0].value;
 
@@ -510,10 +505,9 @@ export default class ResultTrack extends PureComponent {
     }
     const currentUnit = unit || level2Indicator[0].unit || '';
     // 跟踪截止天数
-    const trackDays = trackWindowDate != null ? trackWindowDate :
-      this.fixDays(defaultTrackWindowDate);
-    const currentSelectedTrackDate =
-      this.transformDayToDate(trackDays);
+    const trackDays = trackWindowDate != null ? trackWindowDate
+      : this.fixDays(defaultTrackWindowDate);
+    const currentSelectedTrackDate = this.transformDayToDate(trackDays);
     return {
       level1Indicator,
       level2Indicator,
@@ -700,8 +694,7 @@ export default class ResultTrack extends PureComponent {
   })
   handleOperationChange(value) {
     const { operationType } = this.state;
-    const currentOperation = _.find(operationType, item =>
-      item.value === value) || EMPTY_OBJECT;
+    const currentOperation = _.find(operationType, item => item.value === value) || EMPTY_OBJECT;
     this.setState({
       currentSelectedOperationName: currentOperation.name,
       currentSelectedOperationId: currentOperation.key,
@@ -843,36 +836,39 @@ export default class ResultTrack extends PureComponent {
                       value={currentSelectedLevel1Indicator}
                       size="default"
                     >
-                      {_.map(level1Indicator, item =>
+                      {_.map(level1Indicator, item => (
                         <Option key={item.value} title={item.value} value={item.value}>
                           {item.value}
-                        </Option>)}
+                        </Option>
+                      ))}
                     </Select>
                   </FormItem>
                 </div>
                 {
-                  currentSelectedLevel1Indicator !== defaultIndicatorValue ?
-                    <div className={`${styles.remainingContent} ${styles.remainingContentBaseline}`}>
-                      <div className={styles.indicatorLevel2}>
-                        <Select
-                          disabled={!checked}
-                          className={classnames({
-                            [styles.hideSelectArrow]: _.size(level2Indicator) <= 1,
-                          })}
-                          value={currentSelectedLevel2Indicator}
-                          onChange={this.handleIndicator2Change}
-                          dropdownMatchSelectWidth={false}
-                        >
-                          {_.map(level2Indicator, item =>
-                            <Option key={item.value} title={item.value} value={item.value}>
-                              {item.value}
-                            </Option>)}
-                        </Select>
-                      </div>
-                      {/**
+                  currentSelectedLevel1Indicator !== defaultIndicatorValue
+                    ? (
+                      <div className={`${styles.remainingContent} ${styles.remainingContentBaseline}`}>
+                        <div className={styles.indicatorLevel2}>
+                          <Select
+                            disabled={!checked}
+                            className={classnames({
+                              [styles.hideSelectArrow]: _.size(level2Indicator) <= 1,
+                            })}
+                            value={currentSelectedLevel2Indicator}
+                            onChange={this.handleIndicator2Change}
+                            dropdownMatchSelectWidth={false}
+                          >
+                            {_.map(level2Indicator, item => (
+                              <Option key={item.value} title={item.value} value={item.value}>
+                                {item.value}
+                              </Option>
+                            ))}
+                          </Select>
+                        </div>
+                        {/**
                       * 当isProdBound为true时，代表有搜索产品功能
                       */}
-                      {
+                        {
                         isProdBound ? (
                           <div className={styles.indicatorLevel3}>
                             <span>产品：</span>
@@ -893,11 +889,11 @@ export default class ResultTrack extends PureComponent {
                         ) : null
                       }
 
-                      {/**
+                        {/**
                       * 如果operation是TRUE或者OPEN或者COMPLETE,不需要输入框，也不需要单位，
                       * 只需要显示一个状态：完善/开通/是
                       */}
-                      {
+                        {
                         ((!_.isEmpty(operationType)
                           && !_.isEmpty(operationType[0])
                           && _.isArray(operationType)
@@ -905,72 +901,85 @@ export default class ResultTrack extends PureComponent {
                           && (operationType[0].key === 'TRUE'
                             || operationType[0].key === 'OPEN'
                             || operationType[0].key === 'COMPLETE')) || (_.isEmpty(operationType[0])))
-                          ? <div className={styles.hasStateIndicator}>
-                            <span>{stateText}</span>
-                          </div> :
-                          <div className={styles.noStateIndicator}>
-                            <div className={styles.condition}>
-                              {
-                                (_.isArray(operationType) && _.size(operationType) > 1) ?
-                                  <Select
-                                    disabled={!checked}
-                                    value={currentSelectedOperationValue}
-                                    onChange={this.handleOperationChange}
-                                    className={classnames({
-                                      [styles.operationSelect]: true,
-                                      [styles.hideSelectArrow]: _.size(operationType) <= 1,
-                                    })}
-                                  >
-                                    {
-                                      _.map(operationType, item =>
+                          ? (
+                            <div className={styles.hasStateIndicator}>
+                              <span>{stateText}</span>
+                            </div>
+                          ) : (
+                            <div className={styles.noStateIndicator}>
+                              <div className={styles.condition}>
+                                {
+                                (_.isArray(operationType) && _.size(operationType) > 1)
+                                  ? (
+                                    <Select
+                                      disabled={!checked}
+                                      value={currentSelectedOperationValue}
+                                      onChange={this.handleOperationChange}
+                                      className={classnames({
+                                        [styles.operationSelect]: true,
+                                        [styles.hideSelectArrow]: _.size(operationType) <= 1,
+                                      })}
+                                    >
+                                      {
+                                      _.map(operationType, item => (
                                         <Option
                                           key={item.value}
                                           value={item.value}
                                           title={item.value}
                                         >
                                           {item.value}
-                                        </Option>)
+                                        </Option>
+                                      ))
                                     }
-                                  </Select> :
-                                  <span>{operationType[0].value}</span>
+                                    </Select>
+                                  )
+                                  : <span>{operationType[0].value}</span>
                               }
-                            </div>
-                            <div className={styles.text}>
-                              <FormItem
-                                {...inputValueErrorProps}
-                              >
-                                <InputNumber
-                                  disabled={!checked}
-                                  placeholder={''}
-                                  value={inputValue}
-                                  min={!_.isEmpty(currentMin) ? Number(currentMin) : 0}
-                                  max={!_.isEmpty(currentMax) ?
-                                    Number(currentMax) : Number.MAX_VALUE}
-                                  onChange={this.handleInputChange}
-                                  size="default"
-                                />
-                              </FormItem>
-                            </div>
-                            {
-                              !_.isEmpty(currentUnit) ?
-                                <div className={styles.unit}>
-                                  <span>{currentUnit}</span>
-                                </div> : null
+                              </div>
+                              <div className={styles.text}>
+                                <FormItem
+                                  {...inputValueErrorProps}
+                                >
+                                  <InputNumber
+                                    disabled={!checked}
+                                    placeholder=""
+                                    value={inputValue}
+                                    min={!_.isEmpty(currentMin) ? Number(currentMin) : 0}
+                                    max={!_.isEmpty(currentMax)
+                                      ? Number(currentMax) : Number.MAX_VALUE}
+                                    onChange={this.handleInputChange}
+                                    size="default"
+                                  />
+                                </FormItem>
+                              </div>
+                              {
+                              !_.isEmpty(currentUnit)
+                                ? (
+                                  <div className={styles.unit}>
+                                    <span>{currentUnit}</span>
+                                  </div>
+                                ) : null
                             }
-                          </div>
-                      }
-                    </div>
+                            </div>
+                          )}
+                      </div>
+                    )
                     : null
                 }
               </div>
             </div>
           </div>
           {
-            currentSelectedLevel1Indicator !== defaultIndicatorValue ?
-              <div className={styles.indicatorDescription}>
-                <span>{currentSelectedLevel2Indicator || ''}：</span>
-                <span>{currentIndicatorDescription}</span>
-              </div> : null
+            currentSelectedLevel1Indicator !== defaultIndicatorValue
+              ? (
+                <div className={styles.indicatorDescription}>
+                  <span>
+                    {currentSelectedLevel2Indicator || ''}
+：
+                  </span>
+                  <span>{currentIndicatorDescription}</span>
+                </div>
+              ) : null
           }
         </div>
       </Form>

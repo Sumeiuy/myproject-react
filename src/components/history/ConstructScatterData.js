@@ -35,8 +35,10 @@ const GE = ZHUNICODE.GE;
 const YUANNIAN = ZHUNICODE.YUANNIAN;
 
 export const constructScatterData = (options = {}) => {
-  const { core = EMPTY_OBJECT, contrast = EMPTY_OBJECT,
-    scatterDiagramModels = EMPTY_LIST, description, isLvIndicator, isCommissionRate } = options;
+  const {
+    core = EMPTY_OBJECT, contrast = EMPTY_OBJECT,
+    scatterDiagramModels = EMPTY_LIST, description, isLvIndicator, isCommissionRate
+  } = options;
 
   const xAxisOption = _.pick(contrast, ['key', 'name', 'value', 'unit']);
 
@@ -122,22 +124,22 @@ export const constructScatterData = (options = {}) => {
     getYAxisUnit(array, unit) {
       if (unit === YUAN) {
         return toFixedMoney(array);
-      } else if (unit === YUANNIAN) {
+      } if (unit === YUANNIAN) {
         return toFixedNewMoney(array);
-      } else if (unit === CI) {
+      } if (unit === CI) {
         return toFixedCI(array);
-      } else if (unit === GE) {
+      } if (unit === GE) {
         return toFixedGE(array);
-      } else if (unit === HU) {
+      } if (unit === HU) {
         return toFixedCust(array);
-      } else if (unit === REN) {
+      } if (unit === REN) {
         return toFixedRen(array);
-      } else if (unit === PERCENT) {
+      } if (unit === PERCENT) {
         return {
           newSeries: toFixedPercent(array, isCommissionRate),
           newUnit: unit,
         };
-      } else if (unit === PERMILLAGE) {
+      } if (unit === PERMILLAGE) {
         return {
           newSeries: toFixedPermillage(array, isCommissionRate),
           newUnit: unit,
@@ -152,7 +154,7 @@ export const constructScatterData = (options = {}) => {
     getXAxisUnit(array, currentXUnit) {
       if (currentXUnit.indexOf(HU) !== -1) {
         return fixNumberToFixedCust(array);
-      } else if (currentXUnit.indexOf(REN) !== -1) {
+      } if (currentXUnit.indexOf(REN) !== -1) {
         return toFixedRen(array);
       }
       return {

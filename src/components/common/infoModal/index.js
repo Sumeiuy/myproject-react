@@ -18,7 +18,6 @@ import logable from '../../../decorators/logable';
 import styles from './index.less';
 
 export default class InfoModal extends PureComponent {
-
   static propTypes = {
     visible: PropTypes.bool,
     content: PropTypes.node,
@@ -61,13 +60,15 @@ export default class InfoModal extends PureComponent {
           height={160}
           wrapClassName={styles.infoModal}
           visible={visible}
-          footer={
+          footer={(
             <Button
               className="confirm"
-              type={'primary'}
+              type="primary"
               onClick={this.handleConfirm}
-            >确认</Button>
-          }
+            >
+确认
+            </Button>
+)}
         >
           <div className="info">
             <Icon type="jingshi" className="tishi" />

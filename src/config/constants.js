@@ -17,39 +17,39 @@ const exported = {
   fspPrefix: '/fsp',
   inHTSCDomain: window.location.hostname.indexOf('htsc.com.cn') > -1,
 
- // 经总的level值
+  // 经总的level值
   jingZongLevel: '1',
 
- // 分公司的level值
+  // 分公司的level值
   filialeLevel: '2',
 
- // 汇总方式（汇报关系）
+  // 汇总方式（汇报关系）
   hbgxSummaryType: 'hbgx',
 
- // 汇总方式（绩效视图）
+  // 汇总方式（绩效视图）
   jxstSummaryType: 'jxst',
 
- // 是否打开本地缓存
+  // 是否打开本地缓存
   enableSessionStorage: false,
 };
 
 export default exported;
 
 export const {
- container,
- logoText,
- oldVersion,
- newVersion,
- boardId,
- boardType,
- historyBoardId,
- historyBoardType,
- apiPrefix,
- fspPrefix,
- inHTSCDomain,
- jingZongLevel,
- filialeLevel,
- hbgxSummaryType,
- jxstSummaryType,
- enableSessionStorage,
+  container,
+  logoText,
+  oldVersion,
+  newVersion,
+  boardId,
+  boardType,
+  historyBoardId,
+  historyBoardType,
+  apiPrefix,
+  fspPrefix,
+  inHTSCDomain,
+  jingZongLevel,
+  filialeLevel,
+  hbgxSummaryType,
+  jxstSummaryType,
+  enableSessionStorage,
 } = exported;

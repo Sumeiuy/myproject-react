@@ -139,7 +139,9 @@ export default class SimpleEditor extends PureComponent {
   @logable({ type: 'Click', payload: { name: '确认图标' } })
   editorConfirm(e) {
     // TODO 判断是否进行了修改
-    const { controller, confirm, editorName, form, editorValue } = this.props;
+    const {
+      controller, confirm, editorName, form, editorValue
+    } = this.props;
     const newValue = form.getFieldValue(editorName);
     let canUpdate = true;
     if (editorName === 'boardNameEditor') {
@@ -230,9 +232,13 @@ export default class SimpleEditor extends PureComponent {
   }
 
   render() {
-    const { editable, style, children, editorName } = this.props;
+    const {
+      editable, style, children, editorName
+    } = this.props;
     const { getFieldDecorator } = this.props.form;
-    const { originalValue, editing, editorValue, editTipVisible, nameHelp } = this.state;
+    const {
+      originalValue, editing, editorValue, editTipVisible, nameHelp
+    } = this.state;
     const editWrapperClass = classnames({
       [styles.editWrapper]: true,
       [styles.editable]: editable,
@@ -264,8 +270,8 @@ export default class SimpleEditor extends PureComponent {
         </div>
         <div className={editContentClass}>{originalValue}</div>
         {
-          React.Children.map(children, child =>
-            (<Form>
+          React.Children.map(children, child => (
+            <Form>
               <Tooltip
                 title={nameHelp}
                 visible={editTipVisible}
@@ -278,10 +284,10 @@ export default class SimpleEditor extends PureComponent {
                   }
                 </FormItem>
               </Tooltip>
-            </Form>))
+            </Form>
+          ))
         }
       </div>
     );
   }
 }
-

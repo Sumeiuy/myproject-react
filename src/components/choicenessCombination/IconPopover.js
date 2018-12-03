@@ -15,10 +15,13 @@ const iconStyle = {
 export default function IconPopover({ title }) {
   return (
     <div>
-      <span>{title} </span>
+      <span>
+        {title}
+        {' '}
+      </span>
       <Popover
         placement="top"
-        content={'客户当前持仓与组合当前构成中重合的证券数量/组合当前构成中证券数量'}
+        content="客户当前持仓与组合当前构成中重合的证券数量/组合当前构成中证券数量"
         trigger="hover"
         overlayStyle={{ maxWidth: 310 }}
       >

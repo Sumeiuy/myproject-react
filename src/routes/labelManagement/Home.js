@@ -68,11 +68,15 @@ const mapDispatchToProps = {
   // 获取热词列表
   getHotPossibleWds: dispatch(effects.getHotPossibleWds, { loading: false }),
   // 获取上传excel文件解析后的客户
-  queryBatchCustList: dispatch(effects.queryBatchCustList, { loading: true,
-forceFull: true }),
+  queryBatchCustList: dispatch(effects.queryBatchCustList, {
+    loading: true,
+    forceFull: true
+  }),
   // 清除数据
-  clearCreateTaskData: dispatch(effects.clearCreateTaskData, { loading: true,
-forceFull: true }),
+  clearCreateTaskData: dispatch(effects.clearCreateTaskData, {
+    loading: true,
+    forceFull: true
+  }),
   // 获取标签列表
   queryLabelList: dispatch(effects.queryLabelList, { loading: true }),
   // 删除单条标签
@@ -276,8 +280,10 @@ export default class CustomerGroupManage extends PureComponent {
 
   // 查看标签
   @autobind
-  @logPV({ pathname: '/modal/createAndEditLabelModalContent',
-title: '查看标签' })
+  @logPV({
+    pathname: '/modal/createAndEditLabelModalContent',
+    title: '查看标签'
+  })
   handleEditLabel(record, type) {
     const { id } = record;
     const { queryLabelCust } = this.props;
@@ -294,8 +300,10 @@ title: '查看标签' })
   // 删除客户分组
   @autobind
   deleteCustomerGroup({ id, labelFlagCode }) {
-    this.props.deleteLabel({ labelId: id,
-labelFlag: labelFlagCode })
+    this.props.deleteLabel({
+      labelId: id,
+      labelFlag: labelFlagCode
+    })
       .then(({ resultData }) => {
         if (resultData === 'success') {
           message.success('标签删除成功');
@@ -381,10 +389,14 @@ labelFlag: labelFlagCode })
    * @param {*} record 当前记录
    */
   @autobind
-  @logPV({ pathname: '/modal/createNewLabel',
-title: '新建标签' })
+  @logPV({
+    pathname: '/modal/createNewLabel',
+    title: '新建标签'
+  })
   showLabelDetailModal(record = {}, isCreateLabel = true, canEdit = false) {
-    const { labelName = '', labelDesc = '', id = '', labelTypeId } = record;
+    const {
+      labelName = '', labelDesc = '', id = '', labelTypeId
+    } = record;
     this.setState({
       visible: true,
       modalKey: `groupModalKey${modalKeyCount++}`,
@@ -406,8 +418,10 @@ title: '新建标签' })
   }
 
   @autobind
-  @logable({ type: 'ButtonClick',
-payload: { name: '取消' } })
+  @logable({
+    type: 'ButtonClick',
+    payload: { name: '取消' }
+  })
   handleCloseModal() {
     const { custIds } = this.detailRef.getData();
     if (!_.isEmpty(custIds)) {
@@ -579,8 +593,8 @@ payload: { name: '取消' } })
     return operateLabel({
       request: {
         labelIds: [id],
-        labelName: !isNeedQueryLabelCust ? name: null,
-        labelDesc: !isNeedQueryLabelCust ? description: null,
+        labelName: !isNeedQueryLabelCust ? name : null,
+        labelDesc: !isNeedQueryLabelCust ? description : null,
         custIds: _.isEmpty(custIds) ? null : custIds,
         excludeCustIdList: null,
         orgId: emp.getOrgId(),
@@ -603,7 +617,7 @@ payload: { name: '取消' } })
   // 创建部门change事件
   @autobind
   @logable({
-      type: 'DropdownSelect',
+    type: 'DropdownSelect',
     payload: {
       name: '创建部门',
       value: '$args[0].orgId',
@@ -744,7 +758,7 @@ payload: { name: '取消' } })
       queryLabelCust,
       labelCustInfo = EMPTY_OBJECT,
       deleteLabelCust,
-     } = this.props;
+    } = this.props;
 
     const {
       visible,
@@ -773,9 +787,9 @@ payload: { name: '取消' } })
     // 构造operation
     const actionSource = this.renderActionSource();
 
-    let  modalTitle = isCreateLabel ?  MODALTITLE_CREATELABEL : MODALTITLE_EDITLABEL;
+    let modalTitle = isCreateLabel ? MODALTITLE_CREATELABEL : MODALTITLE_EDITLABEL;
 
-    if(!isCreateLabel && !canEdit) {
+    if (!isCreateLabel && !canEdit) {
       modalTitle = '标签信息';
     }
 
@@ -838,7 +852,8 @@ payload: { name: '取消' } })
           />
         </div>
         {
-          visible && <GroupModal
+          visible && (
+          <GroupModal
             wrapperClass={styles.groupModalContainer}
             // 为了每次都能打开一个新的modal
             key={modalKey}
@@ -847,7 +862,7 @@ payload: { name: '取消' } })
             footer={this.renderModalFooter()}
             closable
             onCancel={this.handleCloseModal}
-            modalContent={
+            modalContent={(
               <CreateAndEditLabelModalContent
                 wrappedComponentRef={this.customerGroupDetailRef}
                 deleteLabelCust={deleteLabelCust}
@@ -857,10 +872,12 @@ payload: { name: '取消' } })
                 getHotPossibleWds={this.queryHotPossibleWds}
                 customerList={labelCustInfo}
                 getGroupCustomerList={queryLabelCust}
-                detailData={{ name,
-description,
-id,
-record }}
+                detailData={{
+                  name,
+                  description,
+                  id,
+                  record
+                }}
                 location={location}
                 onUpdateLabel={this.handleUpdateLabel}
                 queryBatchCustList={queryBatchCustList}
@@ -871,10 +888,12 @@ record }}
                 createTask={this.createTask}
                 title={modalTitle}
               />
-            }
+)}
           />
+          )
         }
-        {isShowGroupToLabelModal && <GroupToLabel
+        {isShowGroupToLabelModal && (
+        <GroupToLabel
           location={location}
           visible={isShowGroupToLabelModal}
           toggleGroupToLabelModalVisible={this.toggleGroupToLabelModalVisible}
@@ -887,9 +906,9 @@ record }}
           clearPossibleLabels={clearPossibleLabels}
           group2Label={group2Label}
           onComparedGetLabelList={this.handleComparedGetLabelList}
-        />}
+        />
+        )}
       </div>
     );
   }
 }
-

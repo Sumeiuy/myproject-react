@@ -6,7 +6,9 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
-import { Input, Button, Table, Icon, Popconfirm, Affix, message, Form } from 'antd';
+import {
+  Input, Button, Table, Icon, Popconfirm, Affix, message, Form
+} from 'antd';
 import DateRangePick from 'lego-react-date/src';
 import moment from 'moment';
 import _ from 'lodash';
@@ -113,7 +115,9 @@ export default class BroadcastList extends PureComponent {
     const FROM_DATE = moment().subtract(beforeM, 'months').format(dateFormatStr);
     const PAGE_NUM = 1;
     const PAGE_LEN = 20;
-    return { TO_DATE, FROM_DATE, PAGE_NUM, PAGE_LEN };
+    return {
+      TO_DATE, FROM_DATE, PAGE_NUM, PAGE_LEN
+    };
   }
 
   constructor(props) {
@@ -167,7 +171,9 @@ export default class BroadcastList extends PureComponent {
   @autobind
   onHandleGetList(option, initList) {
     const { getBoradcastList, replace, location: { pathname } } = this.props;
-    const { TO_DATE, FROM_DATE, PAGE_NUM, PAGE_LEN } = BroadcastList.initNewsListQuery();
+    const {
+      TO_DATE, FROM_DATE, PAGE_NUM, PAGE_LEN
+    } = BroadcastList.initNewsListQuery();
     const { pagination, newsListQuery } = this.props.morningBoradcast;
     const { defaultCurrent, defaultPageSize } = pagination;
     let definedQuery = {
@@ -228,18 +234,16 @@ export default class BroadcastList extends PureComponent {
       className: 'tableTitle',
       width: '35%',
       align: 'left',
-      render: (text, record, index) => {
-        return (
-          <span
-            onClick={() => { this.onHandleToDetail(record); }}
-            className={styles.textOverflow}
-            style={{ cursor: 'pointer' }}
-            title={text}
-          >
-            {text}
-          </span>
-        );
-      },
+      render: (text, record, index) => (
+        <span
+          onClick={() => { this.onHandleToDetail(record); }}
+          className={styles.textOverflow}
+          style={{ cursor: 'pointer' }}
+          title={text}
+        >
+          {text}
+        </span>
+      ),
     }, {
       title: '类型',
       dataIndex: 'newsTypValue',
@@ -286,12 +290,14 @@ export default class BroadcastList extends PureComponent {
     }
     return columns;
   }
+
   // 页码切换
   @autobind()
   onPageNumChange(page) {
     const { onHandleGetList } = this;
     onHandleGetList({ pageNum: page });
   }
+
   // 页容量切换
   @autobind()
   onPageSizeChange(current, size) {
@@ -302,6 +308,7 @@ export default class BroadcastList extends PureComponent {
     };
     onHandleGetList(query);
   }
+
   // 列表项删除
   @autobind()
   @logable({
@@ -354,8 +361,8 @@ export default class BroadcastList extends PureComponent {
   @autobind()
   disabledDate(startValue) {
     const { TO_DATE } = BroadcastList.initNewsListQuery();
-    return startValue &&
-      startValue.valueOf() > moment(TO_DATE).valueOf();
+    return startValue
+      && startValue.valueOf() > moment(TO_DATE).valueOf();
   }
 
   @autobind()
@@ -395,6 +402,7 @@ export default class BroadcastList extends PureComponent {
       visible: false,
     });
   }
+
   // Model(晨报新增、修改) --> end
   @autobind
   formQuery() {
@@ -429,7 +437,9 @@ export default class BroadcastList extends PureComponent {
       creator,
     } = this.props;
     const { getFieldDecorator } = this.props.form;
-    const { FROM_DATE, TO_DATE, TITLE, CREATE_BY } = newsListQuery;
+    const {
+      FROM_DATE, TO_DATE, TITLE, CREATE_BY
+    } = newsListQuery;
     const { visible, newsId } = this.state;
     const newBoradcastList = _.map(boradcastList, item => ({ ...item, key: `${item.newsId}` }));
     const paginationOption = {
@@ -438,7 +448,7 @@ export default class BroadcastList extends PureComponent {
       onShowSizeChange: this.onPageSizeChange,
     };
     return (
-      <div className={styles.broadcastListWrap} >
+      <div className={styles.broadcastListWrap}>
         <Affix>
           <div className={styles.header}>
             <div>
@@ -488,14 +498,14 @@ export default class BroadcastList extends PureComponent {
                 />,
               )}
               {
-                permission.hasZXMampPermission() ?
-                  (
+                permission.hasZXMampPermission()
+                  ? (
                     <span>
                       <span className={styles.division}>|</span>
                       <Button type="primary" icon="plus" size="large" onClick={() => this.showModal()}>新建</Button>
                     </span>
-                  ) :
-                  null
+                  )
+                  : null
               }
               <AddMorningBoradcast
                 dict={dict}

@@ -13,7 +13,9 @@ import { autobind } from 'core-decorators';
 
 import IfWrap from '../../common/biz/IfWrap';
 import IECharts from '../../IECharts';
-import { chartOption, EQUITY_TYPE, SOLID_RECOVERY_TYPE, CURRENCY_TYPE } from '../config';
+import {
+  chartOption, EQUITY_TYPE, SOLID_RECOVERY_TYPE, CURRENCY_TYPE
+} from '../config';
 import { filterData, filterXAxisDate } from '../utils';
 import styles from './attributionChart.less';
 
@@ -98,7 +100,7 @@ export default class AttributionChart extends PureComponent {
     const solidRecoveryRateCls = classnames([styles.value, styles.solidRecoveryRateValue]);
     // 权益类样式
     const currencyRateCls = classnames([styles.value, styles.currencyRateValue]);
-    return(
+    return (
       <div className={styles.attributionChart}>
         <div className={styles.title}>统计期 Brinson 归因趋势</div>
         <IfWrap isRender={!_.isEmpty(attributionTrend)}>

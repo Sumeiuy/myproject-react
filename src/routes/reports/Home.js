@@ -83,7 +83,6 @@ const mapDispatchToProps = {
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 export default class ReportHome extends PureComponent {
-
   static propTypes = {
     location: PropTypes.object.isRequired,
     push: PropTypes.func.isRequired,
@@ -162,6 +161,7 @@ export default class ReportHome extends PureComponent {
       classifyOrder: {},
     };
   }
+
   componentDidMount() {
     // 初始化的时候state里面还无参数
     this.props.getInitialData().then(() => {
@@ -208,13 +208,13 @@ export default class ReportHome extends PureComponent {
     const { scope, custRangeLevel } = this.state;
     if (scope) return scope;
     let addNum = 1;
-    if (((custRangeLevel && custRangeLevel === defaultFilialeLevel) ||
-      (custRange[0] && custRange[0].level === defaultFilialeLevel)) &&
-      !report.isNewOrg(custRange[0].id)) {
+    if (((custRangeLevel && custRangeLevel === defaultFilialeLevel)
+      || (custRange[0] && custRange[0].level === defaultFilialeLevel))
+      && !report.isNewOrg(custRange[0].id)) {
       addNum = 2;
     }
-    return custRangeLevel ?
-      (Number(custRangeLevel) + addNum) : (Number(custRange[0].level) + addNum);
+    return custRangeLevel
+      ? (Number(custRangeLevel) + addNum) : (Number(custRange[0].level) + addNum);
   }
 
   // 获取默认汇总方式的切换
@@ -222,8 +222,8 @@ export default class ReportHome extends PureComponent {
   getDefaultSummaryType() {
     const { custRange, initialData } = this.props;
     const summaryTypeIsShow = initialData.summaryTypeIsShow;
-    return summaryTypeIsShow && custRange[0].level !== jingZongLevel ?
-    hbgxSummaryType : jxstSummaryType;
+    return summaryTypeIsShow && custRange[0].level !== jingZongLevel
+      ? hbgxSummaryType : jxstSummaryType;
   }
 
   @autobind
@@ -231,7 +231,9 @@ export default class ReportHome extends PureComponent {
     // 所有查询参数全部放入到state里面来维护
     // 调用该方法的时候，数据全部已经取到了
     const { custRange } = this.props;
-    const { begin, cycleType, end, boardId, orgId, custRangeLevel, queryType } = this.state;
+    const {
+      begin, cycleType, end, boardId, orgId, custRangeLevel, queryType
+    } = this.state;
     const defaultSummaryType = this.getDefaultSummaryType();
     // 整理参数数据，如果么有数据，全部使用默认的值
     const payload = {
@@ -267,7 +269,9 @@ export default class ReportHome extends PureComponent {
   @autobind
   getInfo() {
     const { getAllInfo, custRange } = this.props;
-    const { boardId, begin, end, cycleType, orgId, custRangeLevel, queryType } = this.state;
+    const {
+      boardId, begin, end, cycleType, orgId, custRangeLevel, queryType
+    } = this.state;
     const newscope = this.getApiScope();
     const loginOrgId = emp.getOrgId(); // 登录人的orgId
     const defaultSummaryType = this.getDefaultSummaryType();
@@ -319,6 +323,7 @@ export default class ReportHome extends PureComponent {
       },
     });
   }
+
   @autobind
   updateCategoryScope(categoryId, v) {
     const { classifyScope } = this.state;
@@ -329,6 +334,7 @@ export default class ReportHome extends PureComponent {
       },
     });
   }
+
   @autobind
   updateCategoryOrder(categoryId, v) {
     const { classifyOrder } = this.state;
@@ -363,8 +369,8 @@ export default class ReportHome extends PureComponent {
     const maxDataDt = initialData.maxDataDt;
     const { begin, end, cycleType } = time.getDurationString('month', maxDataDt);
     let newscope = (Number(custRange[0].level) + 1);
-    if ((custRange[0] && custRange[0].level === defaultFilialeLevel) &&
-      !report.isNewOrg(custRange[0].id)) {
+    if ((custRange[0] && custRange[0].level === defaultFilialeLevel)
+      && !report.isNewOrg(custRange[0].id)) {
       newscope = (Number(custRange[0].level) + 1);
     }
     // 恢复为初始的state
@@ -417,13 +423,17 @@ export default class ReportHome extends PureComponent {
 
   render() {
     // 本页面必须在渠道custRange和visibleBoards后才能展示
-    const { custRange, visibleBoards, newVisibleBoards, initialData } = this.props;
-    if (!custRange || !custRange.length ||
-      !visibleBoards || !visibleBoards.length || !initialData) {
+    const {
+      custRange, visibleBoards, newVisibleBoards, initialData
+    } = this.props;
+    if (!custRange || !custRange.length
+      || !visibleBoards || !visibleBoards.length || !initialData) {
       return null;
     }
     const { performance, chartInfo, chartTableInfo } = this.props;
-    const { location, replace, push, reportName, preView } = this.props;
+    const {
+      location, replace, push, reportName, preView
+    } = this.props;
     // 收集用户信息的方法
     const {
       collectBoardSelect,
@@ -434,7 +444,9 @@ export default class ReportHome extends PureComponent {
     } = this.props;
     // 因为新的数据查询参数全部存放在了state里面
     const { showCharts, classifyScope, classifyOrder } = this.state;
-    const { boardId, custRangeLevel, boardType, orgId, queryType } = this.state;
+    const {
+      boardId, custRangeLevel, boardType, orgId, queryType
+    } = this.state;
     const level = custRangeLevel || (custRange[0] && custRange[0].level);
     const newscope = this.getApiScope();
     const newOrgId = orgId || (custRange[0] && custRange[0].id);
@@ -524,4 +536,3 @@ export default class ReportHome extends PureComponent {
     );
   }
 }
-

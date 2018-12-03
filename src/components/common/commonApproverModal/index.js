@@ -116,7 +116,9 @@ export default class CommonApprovalModal extends PureComponent {
   }
 
   render() {
-    const { visible, pagination, searchable, title, modalKey, rowKey } = this.props;
+    const {
+      visible, pagination, searchable, title, modalKey, rowKey
+    } = this.props;
     const { listAfterFilter } = this.state;
     // 表格中需要的操作
     const operation = {
@@ -144,17 +146,17 @@ export default class CommonApprovalModal extends PureComponent {
         <div className={styles.approverBox}>
           {
             !searchable ? null
-            : (
-              <div className={styles.serarhApprover}>
-                <Search
-                  enterButton
-                  size="large"
-                  placeholder="员工号/员工姓名"
-                  style={SERACH_INPUT_STYLE}
-                  onSearch={this.handleApprovalSearch}
-                />
-              </div>
-            )
+              : (
+                <div className={styles.serarhApprover}>
+                  <Search
+                    enterButton
+                    size="large"
+                    placeholder="员工号/员工姓名"
+                    style={SERACH_INPUT_STYLE}
+                    onSearch={this.handleApprovalSearch}
+                  />
+                </div>
+              )
           }
           <div className={styles.approverListBox}>
             <CommonTable

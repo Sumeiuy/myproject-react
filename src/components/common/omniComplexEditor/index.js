@@ -10,7 +10,9 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 import { autobind } from 'core-decorators';
-import { Form, Icon, Input, Select } from 'antd';
+import {
+  Form, Icon, Input, Select
+} from 'antd';
 import _ from 'lodash';
 
 import styles from './index.less';
@@ -139,7 +141,7 @@ export default class OmniComplexEditor extends PureComponent {
   // 当点击非下拉框区域时，收起Select的下拉框
   @autobind
   handleOutsideClick(e) {
-    if (e.type === 'click' && this.isSelectMode() ) {
+    if (e.type === 'click' && this.isSelectMode()) {
       const el = this.getEditorContentRef();
       if (el && !el.contains(e.target)) {
         this.closeSelectDropdown();
@@ -152,7 +154,9 @@ export default class OmniComplexEditor extends PureComponent {
   renderEditroNodeByMode() {
     if (this.isSelectMode()) {
       const { selectState } = this.state;
-      const { selectProps, options, optionTextKey, optionValueKey } = this.props;
+      const {
+        selectProps, options, optionTextKey, optionValueKey
+      } = this.props;
       const restProps = _.pick(selectProps, ['onChange', 'open', 'showArrow']);
       return (
         <Select
@@ -161,14 +165,13 @@ export default class OmniComplexEditor extends PureComponent {
           onChange={this.handleSelectChange}
           {...restProps}
         >
-         {_.map(options, option => (
-           <Option
-            key={option[optionValueKey]}
-            value={option[optionValueKey]}
-          >
-            {option[optionTextKey]}
-          </Option>)
-        )}
+          {_.map(options, option => (
+            <Option
+              key={option[optionValueKey]}
+              value={option[optionValueKey]}
+            >
+              {option[optionTextKey]}
+            </Option>))}
         </Select>
       );
     }
@@ -334,7 +337,9 @@ export default class OmniComplexEditor extends PureComponent {
   }
 
   render() {
-    const { editable, style, editorId, mode } = this.props;
+    const {
+      editable, style, editorId, mode
+    } = this.props;
     const { getFieldDecorator } = this.props.form;
     const {
       originalValue,
@@ -397,7 +402,7 @@ export default class OmniComplexEditor extends PureComponent {
             </FormItem>
           </Form>
           <div className={editIconClass} onClick={this.handleEditWrapperClick}><Icon type="edit" /></div>
-          <div className={selectArrowCls}><Icon type="caret-down"/></div>
+          <div className={selectArrowCls}><Icon type="caret-down" /></div>
           <div className={loadingCls}><Icon type="loading" /></div>
         </div>
         <div className={operateBoxCls}>

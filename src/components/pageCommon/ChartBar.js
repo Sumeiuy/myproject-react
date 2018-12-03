@@ -11,7 +11,6 @@ import ChartBarNormal from '../chartRealTime/ChartBarNormal';
 import logable from '../../decorators/logable';
 
 export default class ChartBar extends PureComponent {
-
   static propTypes = {
     location: PropTypes.object,
     level: PropTypes.string.isRequired,
@@ -41,7 +40,9 @@ export default class ChartBar extends PureComponent {
 
   render() {
     const { chartData: { orgModel } } = this.props;
-    const { chartData, level, location, scope, custRange, barColor } = this.props;
+    const {
+      chartData, level, location, scope, custRange, barColor
+    } = this.props;
     // 增加判断走堆叠还是普通柱状图
     if (orgModel
       && Array.isArray(orgModel)

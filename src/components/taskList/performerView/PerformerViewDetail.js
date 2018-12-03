@@ -43,7 +43,6 @@ const getPageSize = (isFoldFspLeftMenu, isFoldLeftList) => {
 };
 
 export default class PerformerViewDetail extends PureComponent {
-
   static propTypes = {
     basicInfo: PropTypes.object.isRequired,
     isFold: PropTypes.bool,

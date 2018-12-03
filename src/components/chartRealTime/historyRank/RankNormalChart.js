@@ -10,8 +10,12 @@ import { Icon } from 'antd';
 import _ from 'lodash';
 
 import IECharts from '../../IECharts';
-import { barColor, yAxis, xAxis, chartGrid, chartTooltip } from './rankChartGeneralConfig';
-import { filterData, filterRankData, dealNormalData, designGrid, optimizeGrid } from './rankDataHandle';
+import {
+  barColor, yAxis, xAxis, chartGrid, chartTooltip
+} from './rankChartGeneralConfig';
+import {
+  filterData, filterRankData, dealNormalData, designGrid, optimizeGrid
+} from './rankDataHandle';
 import { data as dataHelper } from '../../../helper';
 import { ZHUNICODE, constants } from '../../../config';
 import report from '../../../helper/page/report';
@@ -67,8 +71,8 @@ export default class RankNormalChart extends PureComponent {
           this.props.updateQueryState({
             orgId: item.id,
             level: item.level,
-            scope: item.level && item.level === defaultFilialeLevel && !report.isNewOrg(item.id) ?
-            String(Number(item.level) + 2) : String(Number(item.level) + 1),
+            scope: item.level && item.level === defaultFilialeLevel && !report.isNewOrg(item.id)
+              ? String(Number(item.level) + 2) : String(Number(item.level) + 1),
           });
         }
       });
@@ -149,6 +153,7 @@ export default class RankNormalChart extends PureComponent {
       ...others,
     };
   }
+
   // 用来占位的
   @autobind
   makeLabelShadowSeries(name, data) {
@@ -170,6 +175,7 @@ export default class RankNormalChart extends PureComponent {
       barWidth: '22',
     };
   }
+
   // 柱状图阴影
   @autobind
   makeDataShadowSeries(name, data) {
@@ -194,6 +200,7 @@ export default class RankNormalChart extends PureComponent {
       barWidth: '4',
     };
   }
+
   // 柱状图Label
   @autobind
   makeLabelSeries(name, data, labels, realLength) {
@@ -312,8 +319,8 @@ export default class RankNormalChart extends PureComponent {
               <td>${company[dataIndex]} - ${wealth[dataIndex]}</td>
             </tr>
           `;
-        } else if ((scope === '4' && axisValue !== '--' && !hasFundCenter) ||
-          (scope === '3' && axisValue !== '--')) {
+        } else if ((scope === '4' && axisValue !== '--' && !hasFundCenter)
+          || (scope === '3' && axisValue !== '--')) {
           // 3为财富中心，需要显示分公司
           // 4为营业部,只需要显示xx公司名称(非南京分公司没有有财富中心)
           tooltipHead = `

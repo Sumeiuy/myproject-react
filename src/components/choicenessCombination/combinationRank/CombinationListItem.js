@@ -73,34 +73,36 @@ export default class CombinationListItem extends PureComponent {
     }
     return data.securityList.map((item, index) => {
       const key = `key${index}`;
-      const reason = (item.reason || '').length > MAX_SIZE_LENGTH ?
-        `${item.reason.slice(0, MAX_SIZE_LENGTH)}...`
+      const reason = (item.reason || '').length > MAX_SIZE_LENGTH
+        ? `${item.reason.slice(0, MAX_SIZE_LENGTH)}...`
         : item.reason;
       return (
         <div className={`${styles.historyItem} clearfix`} key={key}>
           <span className={styles.securityName}>
             {
-              this.isStock(item.securityType) ?
-                <a
-                  title={item.securityName}
-                  onClick={() => this.handleOpenStockPage({ code: item.securityName })}
-                >
-                  {item.securityName}
-                </a>
-                :
-                <span title={item.securityName}>{item.securityName}</span>
+              this.isStock(item.securityType)
+                ? (
+                  <a
+                    title={item.securityName}
+                    onClick={() => this.handleOpenStockPage({ code: item.securityName })}
+                  >
+                    {item.securityName}
+                  </a>
+                )
+                : <span title={item.securityName}>{item.securityName}</span>
             }
           </span>
           <span className={styles.securityCode}>
             {
-              this.isStock(item.securityType) ?
-                <a
-                  onClick={() => this.handleOpenStockPage({ code: item.securityCode })}
-                >
-                  {item.securityCode}
-                </a>
-                :
-                <span>{item.securityCode}</span>
+              this.isStock(item.securityType)
+                ? (
+                  <a
+                    onClick={() => this.handleOpenStockPage({ code: item.securityCode })}
+                  >
+                    {item.securityCode}
+                  </a>
+                )
+                : <span>{item.securityCode}</span>
             }
           </span>
           <span className={styles.direction}>{item.directionName}</span>
@@ -263,10 +265,9 @@ export default class CombinationListItem extends PureComponent {
               <span className={styles.tips}>
                 {this.getRiskLevelName()}
                 {
-                  isRecommend ?
-                    <em>推荐</em>
-                  :
-                    null
+                  isRecommend
+                    ? <em>推荐</em>
+                    : null
                 }
               </span>
               {/* 收益率 */}
@@ -276,7 +277,17 @@ export default class CombinationListItem extends PureComponent {
               </span>
             </div>
             <div className={styles.secondLine}>
-               <span>{composeType} | {empName} ({empId})</span>
+              <span>
+                {composeType}
+                {' '}
+|
+                {' '}
+                {empName}
+                {' '}
+(
+                {empId}
+)
+              </span>
               <span className={styles.link}>
                 <a onClick={() => this.handleNameClick(openDetailPayload)}>组合详情 </a>
                 |
@@ -300,13 +311,14 @@ export default class CombinationListItem extends PureComponent {
             </div>
           </div>
           {
-            _.isEmpty(securityList) ?
-              <div className={styles.noData}>
-                <Icon type="meiyouxiangguanjieguo" />
-                <span>此组合暂无调仓记录</span>
-              </div>
-            :
-              null
+            _.isEmpty(securityList)
+              ? (
+                <div className={styles.noData}>
+                  <Icon type="meiyouxiangguanjieguo" />
+                  <span>此组合暂无调仓记录</span>
+                </div>
+              )
+              : null
           }
         </div>
         <div className={styles.right}>
@@ -318,7 +330,7 @@ export default class CombinationListItem extends PureComponent {
                 </div>
               )
               : (
-                  <CombinationYieldChart
+                <CombinationYieldChart
                   combinationItemData={data}
                   combinationCode={combinationCode}
                   chartData={chartData}

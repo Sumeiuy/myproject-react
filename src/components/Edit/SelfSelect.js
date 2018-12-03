@@ -5,7 +5,9 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Icon, Checkbox, Row, Col } from 'antd';
+import {
+  Icon, Checkbox, Row, Col
+} from 'antd';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 
@@ -175,6 +177,7 @@ export default class SelfSelect extends PureComponent {
     });
     document.removeEventListener('click', this.unExpandSelfSelect);
   }
+
   // 打开下拉列表
   @autobind
   @logable({ type: 'Click', payload: { name: '编辑可见范围' } })
@@ -245,12 +248,11 @@ export default class SelfSelect extends PureComponent {
             <Row>
               {
                 options.slice(1).map(
-                  item =>
-                    (
-                      <Col key={item.id} span={24}>
-                        <Checkbox value={item.id}>{item.name}</Checkbox>
-                      </Col>
-                    ),
+                  item => (
+                    <Col key={item.id} span={24}>
+                      <Checkbox value={item.id}>{item.name}</Checkbox>
+                    </Col>
+                  ),
                 )
               }
             </Row>
@@ -260,4 +262,3 @@ export default class SelfSelect extends PureComponent {
     );
   }
 }
-

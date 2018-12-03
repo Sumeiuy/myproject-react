@@ -8,7 +8,9 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Icon as AntdIcon, Button, Input, AutoComplete, message } from 'antd';
+import {
+  Icon as AntdIcon, Button, Input, AutoComplete, message
+} from 'antd';
 import ReactDOM from 'react-dom';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
@@ -110,7 +112,7 @@ export default class Search extends PureComponent {
       // 点击过搜索框，产生的历史记录值列表
       historySearchWordsList,
       isNeedRememberHistory,
-     } = this.props;
+    } = this.props;
 
     if (isNeedRememberHistory) {
       this.handleCreateHistoryList(historySearchWordsList);
@@ -177,8 +179,7 @@ export default class Search extends PureComponent {
   })
   onSelect(item) {
     const { possibleWordsData } = this.props;
-    const selectedItem = _.find(possibleWordsData, itemData =>
-      itemData.id === item) || {};
+    const selectedItem = _.find(possibleWordsData, itemData => itemData.id === item) || {};
     // 拿到的是item
     this.setState({
       inputVal: item,
@@ -419,18 +420,22 @@ export default class Search extends PureComponent {
       >
         {
           group.children.map(item => (
-            item.labelNameVal === '无' ?
-              <Option key={item.id} text={item.labelNameVal} disabled>
-                {item.labelNameVal}
-              </Option> :
-              <Option key={item.id} text={item.labelNameVal} >
-                <a
-                  onClick={this.onGroupOptionClick}
-                  rel="noopener noreferrer"
-                >
+            item.labelNameVal === '无'
+              ? (
+                <Option key={item.id} text={item.labelNameVal} disabled>
                   {item.labelNameVal}
-                </a>
-              </Option>
+                </Option>
+              )
+              : (
+                <Option key={item.id} text={item.labelNameVal}>
+                  <a
+                    onClick={this.onGroupOptionClick}
+                    rel="noopener noreferrer"
+                  >
+                    {item.labelNameVal}
+                  </a>
+                </Option>
+              )
           ))
         }
       </OptGroup>
@@ -458,7 +463,8 @@ export default class Search extends PureComponent {
           rel="noopener noreferrer"
           onClick={this.handleClearHistory}
         >
-          <AntdIcon type="delete" />清除历史记录
+          <AntdIcon type="delete" />
+清除历史记录
         </a>
       </span>
     );
@@ -473,13 +479,13 @@ export default class Search extends PureComponent {
       searchStyle,
       isNeedAddBtn,
       isNeedSearchIcon,
-     } = this.props;
+    } = this.props;
 
     // 构造下拉框数据源
     const dataSource = this.createOption();
 
-    const searcIcon = isNeedSearchIcon ?
-      <AntdIcon type="search" onClick={this.handleSearchBtn} /> : null;
+    const searcIcon = isNeedSearchIcon
+      ? <AntdIcon type="search" onClick={this.handleSearchBtn} /> : null;
 
     return (
       <div className={styles.searchBox}>
@@ -502,29 +508,33 @@ export default class Search extends PureComponent {
                 <Input
                   className={styles.inputSearch}
                   suffix={(
-                    isNeedLgSearch ?
-                      <Button
-                        className={styles.searchBtn}
-                        size="default"
-                        type="primary"
-                        onClick={this.handleSearchBtn}
-                      >
-                        {searcIcon}
-                      </Button> :
-                      searcIcon
+                    isNeedLgSearch
+                      ? (
+                        <Button
+                          className={styles.searchBtn}
+                          size="default"
+                          type="primary"
+                          onClick={this.handleSearchBtn}
+                        >
+                          {searcIcon}
+                        </Button>
+                      )
+                      : searcIcon
                   )}
                 />
               </AutoComplete>
               {
-                isNeedAddBtn ?
-                  <Button
-                    className={styles.addBtnClass}
-                    type="primary"
-                    size="default"
-                    onClick={this.handleAddClick}
-                  >
+                isNeedAddBtn
+                  ? (
+                    <Button
+                      className={styles.addBtnClass}
+                      type="primary"
+                      size="default"
+                      onClick={this.handleAddClick}
+                    >
                     添加
-                  </Button> : null
+                    </Button>
+                  ) : null
               }
             </div>
           </div>

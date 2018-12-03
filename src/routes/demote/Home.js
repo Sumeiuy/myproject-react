@@ -37,7 +37,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   replace: routerRedux.replace,
-// 获取左侧列表
+  // 获取左侧列表
   getCustList: fetchDataFunction(true, 'demote/getCustList'),
   // 获取客户列表
   updateCust: fetchDataFunction(true, 'demote/updateCust'),
@@ -181,8 +181,14 @@ export default class Demote extends PureComponent {
         <HeadBreadcrumb />
         <h2 className={styles.title}>
           <span>提醒：</span>
-          <span>{date.year()}年度，您名下有以下客户将降级划转为零售客户，请确认！<br />
-            超过{date.format('YYYY年MM月DD日')}，未做确认，系统将自动划转！</span>
+          <span>
+            {date.year()}
+年度，您名下有以下客户将降级划转为零售客户，请确认！
+            <br />
+            超过
+            {date.format('YYYY年MM月DD日')}
+，未做确认，系统将自动划转！
+          </span>
         </h2>
         <CommonTable
           data={data}

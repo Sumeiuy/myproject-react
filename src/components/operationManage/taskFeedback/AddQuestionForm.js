@@ -8,7 +8,9 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { Form, Input, Select, Button, Icon } from 'antd';
+import {
+  Form, Input, Select, Button, Icon
+} from 'antd';
 
 import { questionType } from './config';
 import logable from '../../../decorators/logable';
@@ -195,7 +197,8 @@ export default class AddQuestionForm extends PureComponent {
         {this.createAnswerNode()}
         <FormItem label=" " colon={false} {...formItemLayout}>
           <Button onClick={this.add} style={addStyle}>
-            <Icon type="plus" />添加答案
+            <Icon type="plus" />
+添加答案
           </Button>
         </FormItem>
       </div>
@@ -206,12 +209,14 @@ export default class AddQuestionForm extends PureComponent {
     const {
       form: { getFieldDecorator },
     } = this.props;
-    const selectOptions = _.map(questionType, obj => <Option
-      key={obj.code}
-      value={obj.code}
-    >
-      {obj.name}
-    </Option>);
+    const selectOptions = _.map(questionType, obj => (
+      <Option
+        key={obj.code}
+        value={obj.code}
+      >
+        {obj.name}
+      </Option>
+    ));
     return (
       <div className={styles.addQuestionForm}>
         <Form layout={formLayout}>
@@ -223,7 +228,7 @@ export default class AddQuestionForm extends PureComponent {
               rules: questionTitleRules,
             })(
               <Input placeholder="请输入问题" />,
-              )}
+            )}
           </FormItem>
           <FormItem
             label="问题类型"

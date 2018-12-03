@@ -14,7 +14,6 @@ import logable from '../../decorators/logable';
 const Option = AutoComplete.Option;
 
 export default class ProductsDropdownBox extends PureComponent {
-
   static propTypes = {
     productList: PropTypes.array,
     onSelect: PropTypes.func.isRequired,
@@ -100,6 +99,7 @@ export default class ProductsDropdownBox extends PureComponent {
       this.handleClearInput();
     }
   }
+
   render() {
     const { iconType, value } = this.state;
     const { productList } = this.props;
@@ -133,17 +133,16 @@ export default class ProductsDropdownBox extends PureComponent {
           optionLabelProp="text"
         >
           <Input
-            suffix={
+            suffix={(
               <Icon
                 type={iconType}
                 onClick={this.clearValue}
                 className={styles.searchicon}
               />
-            }
+)}
           />
         </AutoComplete>
       </div>
     );
   }
 }
-

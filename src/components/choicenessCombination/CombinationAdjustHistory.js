@@ -124,16 +124,18 @@ export default class CombinationAdjustHistory extends PureComponent {
     let reactElement = null;
     if (!_.isEmpty(value)) {
       const trimValue = _.trim(value);
-      reactElement = (<Popover
-        placement="bottomLeft"
-        content={trimValue}
-        trigger="hover"
-        overlayStyle={overlayStyle}
-      >
-        <div className={styles.ellipsis}>
-          {trimValue}
-        </div>
-      </Popover>);
+      reactElement = (
+        <Popover
+          placement="bottomLeft"
+          content={trimValue}
+          trigger="hover"
+          overlayStyle={overlayStyle}
+        >
+          <div className={styles.ellipsis}>
+            {trimValue}
+          </div>
+        </Popover>
+      );
     } else {
       reactElement = '调仓理由：暂无';
     }
@@ -189,11 +191,14 @@ export default class CombinationAdjustHistory extends PureComponent {
                             <a
                               className={styles.securityName}
                               title={securityName}
-                              onClick={() =>
-                                this.handleSecurityClick(securityType, securityCode, `${securityName}(${securityCode})`)
+                              onClick={() => this.handleSecurityClick(securityType, securityCode, `${securityName}(${securityCode})`)
                               }
                             >
-                              {securityName} ({securityCode})
+                              {securityName}
+                              {' '}
+(
+                              {securityCode}
+)
                             </a>
                             <a
                               className={styles.combinationName}
@@ -214,12 +219,12 @@ export default class CombinationAdjustHistory extends PureComponent {
                           </div>
                           {
                             flag
-                            ?
-                              <div className={styles.reasonBox}>
-                                {this.renderPopover(reason)}
-                              </div>
-                            :
-                              null
+                              ? (
+                                <div className={styles.reasonBox}>
+                                  {this.renderPopover(reason)}
+                                </div>
+                              )
+                              : null
                           }
                         </div>
                       );

@@ -50,7 +50,8 @@ export default class LeftPanel extends PureComponent {
     const {
       location: { query, pathname, query: { currentId } },
       replace,
-      list: { resultData = EMPTY_LIST, page = EMPTY_OBJECT } } = nextProps;
+      list: { resultData = EMPTY_LIST, page = EMPTY_OBJECT }
+    } = nextProps;
     const { curPageNum, pageSize } = page;
 
     // 只有当有数据，
@@ -60,8 +61,8 @@ export default class LeftPanel extends PureComponent {
     if (prevResultData !== resultData) {
       if (!_.isEmpty(resultData)) {
         if ((!currentId || (
-          currentId &&
-          _.isEmpty(_.find(resultData, item => item.id.toString() === currentId))
+          currentId
+          && _.isEmpty(_.find(resultData, item => item.id.toString() === currentId))
         ))) {
           replace({
             pathname,
@@ -162,14 +163,16 @@ export default class LeftPanel extends PureComponent {
    */
   @autobind
   constructTableColumns() {
-    const { operatorList } =this.props;
+    const { operatorList } = this.props;
     const columns = [{
       dataIndex: 'issueType.feedId.description.feedEmpInfo',
       width: '80%',
       render: (text, record) => {
         // 当前行记录
         const { feedEmpInfo = EMPTY_OBJECT, issueType } = record;
-        const { name = '无', l1 = '', l2 = '', l3 = '' } = feedEmpInfo;
+        const {
+          name = '无', l1 = '', l2 = '', l3 = ''
+        } = feedEmpInfo;
         const typeIcon = {
           type: issueType === 'DEFECT' ? 'wenti' : 'jianyi',
           className: issueType === 'DEFECT' ? 'wenti' : 'jianyi',
@@ -181,7 +184,12 @@ export default class LeftPanel extends PureComponent {
               <span className="feedbackId">{record.feedId || '无'}</span>
             </div>
             <div className="description">{record.description || '无'}</div>
-            <div className="address">来自：{name}，{`${l1 || ''}${l2 || ''}${l3 || ''}` || '无'}</div>
+            <div className="address">
+来自：
+              {name}
+，
+              {`${l1 || ''}${l2 || ''}${l3 || ''}` || '无'}
+            </div>
           </div>
         );
       },
@@ -189,9 +197,9 @@ export default class LeftPanel extends PureComponent {
       dataIndex: 'status.processer.createTime',
       width: '20%',
       render: (text, record) => {
-        let statusClass;  // 当前行记录
+        let statusClass; // 当前行记录
         let statusLabel;
-        let operator;  // 经办人对象
+        let operator; // 经办人对象
         let userCommentClass; // 用户评价分别显示的类名
         let userCommentLabelList; // 评价字段标签
         if (record.status) {
@@ -201,16 +209,16 @@ export default class LeftPanel extends PureComponent {
           });
           statusLabel = STATUS_MAP.filter(item => item.value === record.status);
         }
-        
+
         // 显示经办人
         if (!_.isEmpty(record.processer)
             && record.processer !== '无'
             && record.processer !== 'null') {
-              operator = _.find(operatorList, operator => operator.loginName === record.processer);
-              // 如果经办人是空就显示 马珂
-              if(_.isEmpty(operator)){
-                operator = _.find(operatorList, operator => operator.loginName === DEFAULT_USER_ID);
-              }
+          operator = _.find(operatorList, operator => operator.loginName === record.processer);
+          // 如果经办人是空就显示 马珂
+          if (_.isEmpty(operator)) {
+            operator = _.find(operatorList, operator => operator.loginName === DEFAULT_USER_ID);
+          }
         }
 
         // 如果有满意度
@@ -246,9 +254,9 @@ export default class LeftPanel extends PureComponent {
             </div>
             <div className="date">
               {
-                (record.createTime &&
-                record.createTime.length >= 10 &&
-                record.createTime.slice(0, 10)) || '无'
+                (record.createTime
+                && record.createTime.length >= 10
+                && record.createTime.slice(0, 10)) || '无'
               }
             </div>
           </div>
@@ -265,9 +273,7 @@ export default class LeftPanel extends PureComponent {
   constructTableDatas(dataSource) {
     const newDataSource = [];
     if (dataSource.length > 0) {
-      dataSource.forEach((currentValue, index) =>
-        newDataSource.push(_.merge(currentValue, { key: index })),
-      );
+      dataSource.forEach((currentValue, index) => newDataSource.push(_.merge(currentValue, { key: index })), );
     }
 
     return newDataSource;
@@ -314,7 +320,7 @@ export default class LeftPanel extends PureComponent {
       list: {
         resultData = EMPTY_LIST,
         page = EMPTY_OBJECT,
-        },
+      },
       location: {
         query: {
           curPageNum,
@@ -352,7 +358,7 @@ export default class LeftPanel extends PureComponent {
           columns={columns}
           dataSource={this.constructTableDatas(resultData)}
           onRow={(record, index) => ({
-            onClick: () => this.handleRowClick(record, index),       // 点击行
+            onClick: () => this.handleRowClick(record, index), // 点击行
           })}
           showHeader={false}
           pagination={paginationOptions}
@@ -364,7 +370,7 @@ export default class LeftPanel extends PureComponent {
             return '';
           }}
         />
-      </div >
+      </div>
     );
   }
 }

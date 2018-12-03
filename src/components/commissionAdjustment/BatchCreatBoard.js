@@ -77,7 +77,6 @@ const mapDispatchToProps = {
 
 @connect(mapStateToProps, mapDispatchToProps, null, { withRef: true })
 export default class BatchCreatBoard extends PureComponent {
-
   static propTypes = {
     // 登录人信息
     empInfo: PropTypes.object,

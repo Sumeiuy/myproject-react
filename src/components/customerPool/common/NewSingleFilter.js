@@ -37,6 +37,7 @@ export default class SingleFilter extends PureComponent {
     status: PropTypes.bool,
     getPopupContainer: PropTypes.func,
   }
+
   static defaultProps = {
     filterField: [],
     hideCloseIcon: true,
@@ -44,12 +45,14 @@ export default class SingleFilter extends PureComponent {
     status: false,
     getPopupContainer: () => document.body,
   }
+
   constructor(props) {
     super(props);
     this.state = {
       value: this.props.value,
     };
   }
+
   @autobind
   handleClick({ key, value }) {
     const { filter, filterLabel, onChange } = this.props;
@@ -83,7 +86,9 @@ export default class SingleFilter extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: '关闭icon' } })
   handleSelectClose() {
-    const { filter, filterLabel, onChange, onCloseIconClick } = this.props;
+    const {
+      filter, filterLabel, onChange, onCloseIconClick
+    } = this.props;
     const key = '';
     const value = '不限';
     this.setState({
@@ -103,7 +108,9 @@ export default class SingleFilter extends PureComponent {
   }
 
   render() {
-    const { filterLabel, filterField, value, getPopupContainer } = this.props;
+    const {
+      filterLabel, filterField, value, getPopupContainer
+    } = this.props;
     const selectFilter = _.find(filterField, filter => filter.key === value);
     const selectValue = {
       key: selectFilter.key,
@@ -120,15 +127,17 @@ export default class SingleFilter extends PureComponent {
     return (
       <div className={filterCls}>
         {
-          !_.isEmpty(filterLabel) ?
-            <span className={styles.filterLabel} title={filterLabel}>
-              {filterLabel}
-            </span>
+          !_.isEmpty(filterLabel)
+            ? (
+              <span className={styles.filterLabel} title={filterLabel}>
+                {filterLabel}
+              </span>
+            )
             : null
         }
         {
-          !_.isEmpty(filterLabel) ?
-            <span className={styles.filterSeperator}>：</span>
+          !_.isEmpty(filterLabel)
+            ? <span className={styles.filterSeperator}>：</span>
             : null
         }
         <Select

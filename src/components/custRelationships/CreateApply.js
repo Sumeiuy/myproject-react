@@ -69,6 +69,7 @@ export default class CreateApply extends PureComponent {
       attachment: '',
     };
   }
+
   componentDidMount() {
     // 新建页面获取审批按钮和审批人信息，新建不需要传flowId
     this.props.getApprovalInfo();
@@ -120,8 +121,10 @@ export default class CreateApply extends PureComponent {
       type: 'Submit',
       payload: {
         name: '客户关联关系信息申请',
-        value: JSON.stringify({ ...submitApplyParameter,
-auditors }),
+        value: JSON.stringify({
+          ...submitApplyParameter,
+          auditors
+        }),
       },
     });
     if (stockRepurchase === 'Y') {
@@ -145,7 +148,9 @@ auditors }),
   doApprovalFlow() {
     const { submitResult } = this.props;
     if (!_.isEmpty(submitResult)) {
-      const { groupName, operate, auditors, cust } = this.state;
+      const {
+        groupName, operate, auditors, cust
+      } = this.state;
       this.props.doApproveFlow({
         itemId: submitResult,
         groupName,
@@ -162,8 +167,10 @@ auditors }),
   }
 
   @autobind
-  @logable({ type: 'Click',
-payload: { name: '关闭新建弹框' } })
+  @logable({
+    type: 'Click',
+    payload: { name: '关闭新建弹框' }
+  })
   handleModalClose() {
     // 关闭新建申请弹出层的时候，弹出提示是否
     confirm({
@@ -183,8 +190,10 @@ payload: { name: '关闭新建弹框' } })
   }
 
   @autobind
-  @logable({ type: 'Click',
-payload: { name: '提交' } })
+  @logable({
+    type: 'Click',
+    payload: { name: '提交' }
+  })
   handleModalBtnGroupClick(btn) {
     // 点击此处，需要先进行可以提交的规则校验
     const { valid, msg } = validateData(this.state);
@@ -224,8 +233,10 @@ payload: { name: '提交' } })
   }
 
   @autobind
-  @logPV({ pathname: '/modal/choiceApproval',
-title: '选择审批人' })
+  @logPV({
+    pathname: '/modal/choiceApproval',
+    title: '选择审批人'
+  })
   handleSelectApprovalModal() {
     const { defaultNextApproverList } = this.state;
     if (_.isEmpty(defaultNextApproverList)) {

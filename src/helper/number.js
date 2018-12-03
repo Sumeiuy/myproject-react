@@ -113,7 +113,7 @@ const number = {
           newNumber = `${numberArray[0]}.${numberArray[1].substring(0, floatLength)}`;
         }
       }
-    };
+    }
     return newNumber;
   },
 
@@ -145,7 +145,7 @@ const number = {
   }) {
     // 是否是数字
     let newNum = Number(num);
-    let result = {};
+    const result = {};
     if (isNaN(newNum)) {
       return num;
     }
@@ -181,7 +181,7 @@ const number = {
     result.number = formatRound(result.number, floatLength, isRound);
     // 千位符处理
     if (isThousandFormat) {
-      result.number = thousandFormat(Number(String(result.number)), true, ',', false );
+      result.number = thousandFormat(Number(String(result.number)), true, ',', false);
     }
     return `${result.mark}${result.number}${result.unit}`;
   },
@@ -212,7 +212,9 @@ const number = {
 };
 
 export default number;
-export { hundred, thousand, wan, million, yi, billion, trillion, percent, permillage };
+export {
+  hundred, thousand, wan, million, yi, billion, trillion, percent, permillage
+};
 
 export const {
   thousandFormat,

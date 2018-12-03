@@ -43,8 +43,10 @@ export default class ActivityColumnCarousel extends Component {
   }
 
   @autobind
-  @logPV({ pathname: '/modal/ActivityColumnCarouselModal',
-title: '首页-活动栏目' })
+  @logPV({
+    pathname: '/modal/ActivityColumnCarouselModal',
+    title: '首页-活动栏目'
+  })
   handleClick(columnUrl) {
     const finalUrl = this.replaceUrl(columnUrl);
     // 获取url的信息
@@ -84,15 +86,16 @@ title: '首页-活动栏目' })
     if (isStartOfFsp) {
       const finalPath = path.slice(3);
       return _.find(defaultMenuPathList, item => _.includes(finalPath, item));
-    } else {
-      return _.find(defaultMenuPathList, item => _.includes(path, item));
     }
+    return _.find(defaultMenuPathList, item => _.includes(path, item));
   }
 
   render() {
     const { activityColumnList } = this.props;
     const activityColumnListData = _.map(activityColumnList, (item) => {
-      const { attaches, link, description, url } = item;
+      const {
+        attaches, link, description, url
+      } = item;
       const { name } = attaches[0];
       return (
         <div className={styles.itemSlide} onClick={() => this.handleClick(link)} key={data.uuid()}>

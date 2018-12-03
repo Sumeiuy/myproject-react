@@ -102,7 +102,7 @@ export default class ApplyEditForm extends PureComponent {
     if (_.isEmpty(finalEmplists)) {
       message.error('请添加服务经理');
       return;
-    } else if (finalEmplistsSize > MAXSELECTNUM) {
+    } if (finalEmplistsSize > MAXSELECTNUM) {
       message.error(`服务经理最多只能添加${MAXSELECTNUM}条`);
       return;
     }
@@ -244,7 +244,10 @@ export default class ApplyEditForm extends PureComponent {
       <div className={styles.applyEditFormbox}>
         <div className={styles.inner}>
           <div className={styles.innerWrap}>
-            <h1 className={styles.title}>编号{id}</h1>
+            <h1 className={styles.title}>
+编号
+              {id}
+            </h1>
             <div id="createApplyEmp_module" className={styles.module}>
               <InfoTitle head="服务经理" />
               <AddEmpList

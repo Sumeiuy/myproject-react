@@ -93,7 +93,10 @@ export default class Detail extends PureComponent {
     return (
       <div className={styles.detailComponent}>
         <div className={styles.dcHeader}>
-          <span className={styles.dcHaderNumb}>编号{protocolDetail.appId}</span>
+          <span className={styles.dcHaderNumb}>
+编号
+            {protocolDetail.appId}
+          </span>
         </div>
         <div className={styles.detailWrapper}>
           <InfoTitle head="基本信息" />
@@ -107,18 +110,18 @@ export default class Detail extends PureComponent {
           <InfoItem label="协议有效期" value={time.format(protocolDetail.vailDt) || EMPTY_PARAM} />
           <InfoItem label="业务类型" value={protocolDetail.softBusinessTypeText || EMPTY_PARAM} />
           {
-            !involvePermission ? null :
-            (<InfoItem label="开通权限" value={permissionText || EMPTY_PARAM} />)
+            !involvePermission ? null
+              : (<InfoItem label="开通权限" value={permissionText || EMPTY_PARAM} />)
           }
           {
-            !involveSoftware ? null :
-            (
-              <InfoItem label="软件账号" value={protocolDetail.softAccount || EMPTY_PARAM} />
-            )
+            !involveSoftware ? null
+              : (
+                <InfoItem label="软件账号" value={protocolDetail.softAccount || EMPTY_PARAM} />
+              )
           }
           {
-            !involveSoftware ? null :
-            (<InfoItem label="软件密码" value={protocolDetail.softPassword || EMPTY_PARAM} />)
+            !involveSoftware ? null
+              : (<InfoItem label="软件密码" value={protocolDetail.softPassword || EMPTY_PARAM} />)
           }
           <InfoItem label="备注" value={protocolDetail.content || EMPTY_PARAM} />
         </div>
@@ -131,17 +134,20 @@ export default class Detail extends PureComponent {
         <div className={styles.detailWrapper}>
           <InfoTitle head="附件信息" />
           {
-            !_.isEmpty(attachmentList) ?
-              attachmentList.map(item => (<MultiUploader
-                attachmentList={item.attachmentList}
-                attachment={''}
-                title={item.title}
-                key={`${protocolDetail.id}${item.title}`}
-              />))
-              :
-              <div className={styles.fileList}>
-                <div className={styles.noFile}>暂无附件</div>
-              </div>
+            !_.isEmpty(attachmentList)
+              ? attachmentList.map(item => (
+                <MultiUploader
+                  attachmentList={item.attachmentList}
+                  attachment=""
+                  title={item.title}
+                  key={`${protocolDetail.id}${item.title}`}
+                />
+              ))
+              : (
+                <div className={styles.fileList}>
+                  <div className={styles.noFile}>暂无附件</div>
+                </div>
+              )
           }
         </div>
         <div className={styles.detailWrapper}>

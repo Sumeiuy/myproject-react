@@ -10,7 +10,11 @@ import PropTypes from 'prop-types';
 import styles from './approvalRecord.less';
 
 export default function ApprovalRecord(props) {
-  const { record: { handleName, handleTime, comment, stepName } } = props;
+  const {
+    record: {
+      handleName, handleTime, comment, stepName
+    }
+  } = props;
   const header = `审批人:${handleName}于${handleTime}，步骤名称：${stepName}`;
 
   return (

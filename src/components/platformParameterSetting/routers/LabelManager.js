@@ -5,7 +5,9 @@
  */
 
 import React, { PureComponent } from 'react';
-import { Button, Input, Table, Modal, Form } from 'antd';
+import {
+  Button, Input, Table, Modal, Form
+} from 'antd';
 import { connect } from 'dva';
 import _ from 'lodash';
 import { routerRedux } from 'dva/router';
@@ -69,18 +71,22 @@ export default class LabelManager extends PureComponent {
         return (
           <div className={styles.editableWrap}>
             {
-              editorCell.id === record.id ?
-                <div>
-                  <span onClick={() => this.confirmSave(record.id)}>
-                    <Icon className={styles.confirm} type="gou" />
+              editorCell.id === record.id
+                ? (
+                  <div>
+                    <span onClick={() => this.confirmSave(record.id)}>
+                      <Icon className={styles.confirm} type="gou" />
+                    </span>
+                    <span onClick={() => this.cancel(record.id)}>
+                      <Icon className={styles.cancel} type="close1" />
+                    </span>
+                  </div>
+                )
+                : (
+                  <span onClick={() => this.edit(record)}>
+                    <Icon className={`${styles.editable} showEdit`} type="beizhu" />
                   </span>
-                  <span onClick={() => this.cancel(record.id)}>
-                    <Icon className={styles.cancel} type="close1" />
-                  </span>
-                </div>
-                : <span onClick={() => this.edit(record)}>
-                  <Icon className={`${styles.editable} showEdit`} type="beizhu" />
-                </span>
+                )
             }
           </div>
         );
@@ -126,11 +132,11 @@ export default class LabelManager extends PureComponent {
             onChange={e => this.handleChange(e.target.value, record.id, column)}
           />
           {
-            editorCell.error ?
-              (
+            editorCell.error
+              ? (
                 <div className={styles.labelError}>{editorCell.error }</div>
-              ) :
-              null
+              )
+              : null
           }
         </div>
       );
@@ -143,6 +149,7 @@ export default class LabelManager extends PureComponent {
       </div>
     );
   }
+
   handleChange(value, id) {
     this.setState({
       editorCell: {
@@ -152,6 +159,7 @@ export default class LabelManager extends PureComponent {
       },
     });
   }
+
   @autobind
   @logable({ type: 'Click', payload: { name: '编辑标签' } })
   edit(record) {
@@ -159,6 +167,7 @@ export default class LabelManager extends PureComponent {
       editorCell: record,
     });
   }
+
   // 确认是否修改个人标签
   @autobind
   @logable({ type: 'Click', payload: { name: '确认' } })
@@ -182,6 +191,7 @@ export default class LabelManager extends PureComponent {
       onOk: this.updataLabel,
     });
   }
+
   // 修改标签
   @autobind
   updataLabel() {
@@ -195,6 +205,7 @@ export default class LabelManager extends PureComponent {
         });
       });
   }
+
   @autobind
   @logable({ type: 'Click', payload: { name: '删除' } })
   cancel() {
@@ -214,6 +225,7 @@ export default class LabelManager extends PureComponent {
       onOk: () => { this.delLabel(id); },
     });
   }
+
   @autobind
   delLabel(id) {
     this.props.delLabel({ id })
@@ -221,6 +233,7 @@ export default class LabelManager extends PureComponent {
         this.props.queryAllLabels();
       });
   }
+
   // --删除标签--end
   // --添加标签--start
   @autobind
@@ -230,6 +243,7 @@ export default class LabelManager extends PureComponent {
       addLabelState: true,
     });
   }
+
   @autobind
   @logable({ type: 'Click', payload: { name: '关闭' } })
   closeAddLabel() {
@@ -237,6 +251,7 @@ export default class LabelManager extends PureComponent {
       addLabelState: false,
     });
   }
+
   @autobind
   @logable({ type: 'Click', payload: { name: '添加' } })
   addLabel() {
@@ -258,6 +273,7 @@ export default class LabelManager extends PureComponent {
         });
     }
   }
+
   // --添加标签--end
   // 分页(当前页，当前页数据)
   getPaginationAndData() {
@@ -279,9 +295,8 @@ export default class LabelManager extends PureComponent {
     }
 
     const allLabelsToTable = allLabels.map(item => ({ ...item, key: item.id }));
-    const currentLabels = _.filter(allLabelsToTable, (labelItem, index) =>
-      index + 1 > (finalCurrent - 1) * pageSize &&
-      index + 1 <= finalCurrent * pageSize);
+    const currentLabels = _.filter(allLabelsToTable, (labelItem, index) => index + 1 > (finalCurrent - 1) * pageSize
+      && index + 1 <= finalCurrent * pageSize);
     return {
       pagination: {
         total: allLabels.length,
@@ -291,6 +306,7 @@ export default class LabelManager extends PureComponent {
       currentLabels,
     };
   }
+
   // 分页变化
   @autobind
   paginationChange(pageNum) {
@@ -325,23 +341,25 @@ export default class LabelManager extends PureComponent {
         </div>
         <div className={styles.labelBody}>
           {
-            addLabelState ?
-              <div className={styles.addLabelWrap}>
-                {getFieldDecorator('labelValue')(
-                  <Input
-                    ref={(input) => { this.textInput = input; }}
-                    maxLength={15}
-                    style={{ width: 150 }}
-                  />,
-                )}
-                <span>
-                  <Icon className={styles.confirm} type="gou" onClick={this.addLabel} />
-                </span>
-                <span>
-                  <Icon className={styles.cancel} type="close1" onClick={this.closeAddLabel} />
-                </span>
-              </div> :
-              null
+            addLabelState
+              ? (
+                <div className={styles.addLabelWrap}>
+                  {getFieldDecorator('labelValue')(
+                    <Input
+                      ref={(input) => { this.textInput = input; }}
+                      maxLength={15}
+                      style={{ width: 150 }}
+                    />,
+                  )}
+                  <span>
+                    <Icon className={styles.confirm} type="gou" onClick={this.addLabel} />
+                  </span>
+                  <span>
+                    <Icon className={styles.cancel} type="close1" onClick={this.closeAddLabel} />
+                  </span>
+                </div>
+              )
+              : null
           }
           <Table
             showHeader={false}

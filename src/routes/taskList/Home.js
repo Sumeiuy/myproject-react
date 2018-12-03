@@ -88,7 +88,7 @@ export default class PerformerView extends PureComponent {
       isEmpty: true,
       activeRowIndex: 0,
       typeCode: '',
-      taskTypeCode: '',  // 自建任务，mot任务1
+      taskTypeCode: '', // 自建任务，mot任务1
       typeName: '',
       eventId: '',
       statusCode: '',
@@ -185,8 +185,8 @@ export default class PerformerView extends PureComponent {
         typeName,
         statusCode,
         eventId,
-        isSourceFromCreatorView: this.isInitiatorView(st) &&
-        this.judgeTaskInApproval(item.statusCode),
+        isSourceFromCreatorView: this.isInitiatorView(st)
+        && this.judgeTaskInApproval(item.statusCode),
       }, () => { this.getDetailByView(item); });
     } else {
       // 没有查到数据时，保存当前的视图状态
@@ -205,7 +205,9 @@ export default class PerformerView extends PureComponent {
 
   // 执行者视图获取目标客户列表项的对应浮层详情
   @autobind
-  getCustDetail({ eventId, missionId = '', custId = '', missionFlowId = '', callback = _.noop }) {
+  getCustDetail({
+    eventId, missionId = '', custId = '', missionFlowId = '', callback = _.noop
+  }) {
     const { queryTargetCustDetail, targetCustList = EMPTY_OBJECT } = this.props;
     const { list = EMPTY_LIST } = targetCustList;
     if (_.isEmpty(list)) {
@@ -715,7 +717,7 @@ export default class PerformerView extends PureComponent {
     const params = _.pick(query, QUERY_PARAMS);
     // 获取当前的视图类型
     const currentViewType = getViewInfo(missionViewType).currentViewType;
-    let finalPostData = {
+    const finalPostData = {
       pageNum: _.parseInt(newPageNum, 10),
       pageSize: _.parseInt(newPageSize, 10),
       orgId: emp.getOrgId(),
@@ -763,7 +765,9 @@ export default class PerformerView extends PureComponent {
    */
   @autobind
   loadManagerViewDetailContent(record = EMPTY_OBJECT) {
-    const { missionViewType: viewType, mssnId, id, eventId: tempEventId } = record;
+    const {
+      missionViewType: viewType, mssnId, id, eventId: tempEventId
+    } = record;
     const {
       queryMngrMissionDetailInfo,
       countFlowFeedBack,
@@ -789,7 +793,9 @@ export default class PerformerView extends PureComponent {
     }).then(
       () => {
         const { mngrMissionDetailInfo, queryMOTServeAndFeedBackExcel } = this.props;
-        const { templateId, missionName, servicePolicy, missionDesc } = mngrMissionDetailInfo;
+        const {
+          templateId, missionName, servicePolicy, missionDesc
+        } = mngrMissionDetailInfo;
         if (!_.isEmpty(templateId)) {
           // 管理者视图任务反馈统计
           countAnswersByType({ templateId });
@@ -874,10 +880,11 @@ export default class PerformerView extends PureComponent {
     const currentItemIndex = _.findIndex(resultData, item => item.mssnId === id || item.id === id);
     const currentItem = resultData[currentItemIndex] || {};
     // typeCode为任务类型，通过这个类型，查到字典中missionType的descText
-    const { missionViewType: st, typeCode, statusCode, typeName, eventId } = currentItem;
+    const {
+      missionViewType: st, typeCode, statusCode, typeName, eventId
+    } = currentItem;
     // 查出任务类型是MOT还是自荐
-    const currentMissionTypeObject = _.find(dict.missionType, item =>
-      item.key === typeCode) || EMPTY_OBJECT;
+    const currentMissionTypeObject = _.find(dict.missionType, item => item.key === typeCode) || EMPTY_OBJECT;
     const { descText } = currentMissionTypeObject;
     const isSourceFromCreatorView = this.isInitiatorView(st)
       && this.judgeTaskInApproval(statusCode);
@@ -968,7 +975,9 @@ export default class PerformerView extends PureComponent {
   @autobind
   handleListRowClick(record) {
     // typeCode为任务类型，通过这个类型，查到字典中missionType的descText
-    const { id, missionViewType: st, statusCode, mssnId } = record;
+    const {
+      id, missionViewType: st, statusCode, mssnId
+    } = record;
     const {
       replace,
       location: { pathname, query },
@@ -1081,7 +1090,9 @@ export default class PerformerView extends PureComponent {
   }
 
   render() {
-    const { location, replace, list, dict, queryCustUuid } = this.props;
+    const {
+      location, replace, list, dict, queryCustUuid
+    } = this.props;
 
     // const { currentView } = this.state;
 

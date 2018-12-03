@@ -84,8 +84,8 @@ export default class MyFeedback extends PureComponent {
         },
       },
     } = this.props;
-    if (_.isEmpty(curPageNum) ||
-      _.isEmpty(activeId)
+    if (_.isEmpty(curPageNum)
+      || _.isEmpty(activeId)
     ) {
       this.changeLocation({
         curPageNum: 1,
@@ -304,8 +304,8 @@ export default class MyFeedback extends PureComponent {
         },
       },
     } = this.props;
-    const activable = _.isEmpty(activeId) ?
-      index === 0 : record.id === parseInt(activeId, 10);
+    const activable = _.isEmpty(activeId)
+      ? index === 0 : record.id === parseInt(activeId, 10);
 
     return (
       <FeedbackRow
@@ -368,7 +368,7 @@ export default class MyFeedback extends PureComponent {
       />
     );
     return (
-      <div className={styles.personFeedbackContainer} >
+      <div className={styles.personFeedbackContainer}>
         <SplitPanel
           isEmpty={_.isEmpty(list)}
           topPanel={<div />}
@@ -378,7 +378,7 @@ export default class MyFeedback extends PureComponent {
           leftListClassName="feedbackList"
         />
         <Modal
-          title={'您还有什么需要提问？'}
+          title="您还有什么需要提问？"
           visible={visible}
           onOk={this.handleSumit}
           onCancel={this.handleCancel}
@@ -393,7 +393,7 @@ export default class MyFeedback extends PureComponent {
               value={value}
               className={styles.area}
               onChange={this.handleAreaChange}
-              placeholder={'问题未解决？继续输入您的想法和建议...'}
+              placeholder="问题未解决？继续输入您的想法和建议..."
             />
             <div className={styles.errorTip}>
               {showError ? '反馈详情描述不能为空' : ''}

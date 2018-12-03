@@ -8,7 +8,9 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Input, Form, message, Modal, Upload, Alert, Spin } from 'antd';
+import {
+  Input, Form, message, Modal, Upload, Alert, Spin
+} from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
@@ -122,8 +124,10 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
 
   // 导入数据
   @autobind
-  @logable({ type: 'Click',
-payload: { name: '客户导入' } })
+  @logable({
+    type: 'Click',
+    payload: { name: '客户导入' }
+  })
   onImportHandle() {
     this.setState({
       importVisible: true,
@@ -131,8 +135,10 @@ payload: { name: '客户导入' } })
   }
 
   @autobind
-  @logable({ type: 'ButtonClick',
-payload: { name: '否' } })
+  @logable({
+    type: 'ButtonClick',
+    payload: { name: '否' }
+  })
   importHandleCancel() {
     this.setState({
       importVisible: false,
@@ -324,7 +330,9 @@ payload: { name: '否' } })
     if (_.isEmpty(selectedItem)) {
       return;
     }
-    const { custName, custLevelName, riskLevel, brokerNumber } = selectedItem;
+    const {
+      custName, custLevelName, riskLevel, brokerNumber
+    } = selectedItem;
     const {
       custIds,
       totalRecordNum,
@@ -427,14 +435,15 @@ payload: { name: '否' } })
 
   @autobind
   deleteLabelCustForever() {
-    const { id, needDeleteBrokerNumber, dataSource, totalRecordNum } = this.state;
+    const {
+      id, needDeleteBrokerNumber, dataSource, totalRecordNum
+    } = this.state;
     this.props.deleteLabelCust({
       labelId: id,
       custId: needDeleteBrokerNumber,
     }).then(() => {
       const newDataSource = _.filter(dataSource,
-        item => item.brokerNumber !== needDeleteBrokerNumber,
-      );
+        item => item.brokerNumber !== needDeleteBrokerNumber, );
       // 数据从表格删除
       this.setState({
         dataSource: newDataSource,
@@ -611,8 +620,10 @@ payload: { name: '否' } })
     }
     form.validateFields(['name'], (error, values) => {
       if (!error) {
-        checkDuplicationName({ labelName: values.name,
-labelFlag: '1' }).then((duplicationName) => {
+        checkDuplicationName({
+          labelName: values.name,
+          labelFlag: '1'
+        }).then((duplicationName) => {
           if (duplicationName) {
             this.props.form.setFields({
               name: {
@@ -760,13 +771,15 @@ labelFlag: '1' }).then((duplicationName) => {
   // 渲染发起路径按钮
   @autobind
   renderCreateTaskButton(title, record) {
-    return title === '标签信息' &&
-      record &&
-      record.custCount > 0 ?
-        (<span className={styles.btnContainer}>
+    return title === '标签信息'
+      && record
+      && record.custCount > 0
+      ? (
+        <span className={styles.btnContainer}>
           <span className={styles.splitLine} />
           <span className={styles.createTaskBtn} onClick={this.handleCreateTaskBtnClick}>发起任务</span>
-        </span>) : null;
+        </span>
+      ) : null;
   }
 
   render() {
@@ -828,12 +841,13 @@ labelFlag: '1' }).then((duplicationName) => {
       showUploadList: false,
     };
 
-    const uploadElement = _.isEmpty(attachmentId) ?
-      (<Upload {...uploadProps} {...this.props}>
-        <a>客户导入</a>
-      </Upload>)
-      :
-      <a onClick={this.onImportHandle}>客户导入</a>;
+    const uploadElement = _.isEmpty(attachmentId)
+      ? (
+        <Upload {...uploadProps} {...this.props}>
+          <a>客户导入</a>
+        </Upload>
+      )
+      : <a onClick={this.onImportHandle}>客户导入</a>;
 
     return (
       <Form className={styles.groupDetail}>
@@ -855,37 +869,40 @@ labelFlag: '1' }).then((duplicationName) => {
         </div>
         <div className={styles.addWaySubSection}>
           {
-            isSingleAddCustomer ?
-              <div className={styles.singleCust}>
-                <Search
+            isSingleAddCustomer
+              ? (
+                <div className={styles.singleCust}>
+                  <Search
                   // 请求联想关键词
-                  queryPossibleWords={getHotPossibleWds}
+                    queryPossibleWords={getHotPossibleWds}
                   // 联想出来的数据
-                  possibleWordsData={customerHotPossibleWordsList}
+                    possibleWordsData={customerHotPossibleWordsList}
                   // 搜索className
-                  searchWrapperClass={styles.groupCustomerSearch}
+                    searchWrapperClass={styles.groupCustomerSearch}
                   // 搜索按钮功能
-                  onSearchClick={this.handleSearchClick}
+                    onSearchClick={this.handleSearchClick}
                   // placeholder
-                  placeholder="客户号/姓名"
+                    placeholder="客户号/姓名"
                   // 搜索框style
-                  searchStyle={searchStyle}
+                    searchStyle={searchStyle}
                   // 是否需要搜索图标
-                  isNeedSearchIcon={false}
+                    isNeedSearchIcon={false}
                   // 是否需要添加按钮
-                  isNeedAddBtn
+                    isNeedAddBtn
                   // 添加按钮事件
-                  addBtnCallback={this.handleAddCustomerFromSearch}
-                />
-                {this.renderCreateTaskButton(title, record)}
-              </div>
-              :
-              <div className={styles.multiCust}>
-                <Spin className={styles.uploadLoading} spinning={uploadLoading} />
-                <span className={styles.importCust}>{uploadElement}</span>
-                <a href={customerTemplet} className={styles.downloadLink}>下载模板</a>
-                {this.renderCreateTaskButton(title, record)}
-              </div>
+                    addBtnCallback={this.handleAddCustomerFromSearch}
+                  />
+                  {this.renderCreateTaskButton(title, record)}
+                </div>
+              )
+              : (
+                <div className={styles.multiCust}>
+                  <Spin className={styles.uploadLoading} spinning={uploadLoading} />
+                  <span className={styles.importCust}>{uploadElement}</span>
+                  <a href={customerTemplet} className={styles.downloadLink}>下载模板</a>
+                  {this.renderCreateTaskButton(title, record)}
+                </div>
+              )
           }
           <a className={styles.toggleBtn} onClick={this.toggleAddWay}>
             <Icon type="jiaoyiliang" />
@@ -893,17 +910,18 @@ labelFlag: '1' }).then((duplicationName) => {
           </a>
         </div>
         {
-          _.isEmpty(multiErrmsg) ?
-            null
-            :
-            <div className={styles.multiErrmsg}>
-              <Alert
-                message={newMultiErrmsg}
-                type="error"
-                onClose={this.handleCloseAlert}
-                closable
-              />
-            </div>
+          _.isEmpty(multiErrmsg)
+            ? null
+            : (
+              <div className={styles.multiErrmsg}>
+                <Alert
+                  message={newMultiErrmsg}
+                  type="error"
+                  onClose={this.handleCloseAlert}
+                  closable
+                />
+              </div>
+            )
         }
         <div className={styles.customerListTable}>
           <Table

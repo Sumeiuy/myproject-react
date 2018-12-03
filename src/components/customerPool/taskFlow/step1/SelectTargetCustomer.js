@@ -149,8 +149,8 @@ export default class SelectTargetCustomer extends PureComponent {
     }
     this.props.changeCurrentEntry(currentEntry);
 
-    if (showSightingTelescope && this.state.isFirstTimeChange &&
-      _.isEmpty(this.props.circlePeopleData)) {
+    if (showSightingTelescope && this.state.isFirstTimeChange
+      && _.isEmpty(this.props.circlePeopleData)) {
       const { getLabelInfo, isAuthorize, orgId } = this.props;
       const param = {
         condition: '',

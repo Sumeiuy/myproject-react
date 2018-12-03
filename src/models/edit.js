@@ -68,7 +68,11 @@ export default {
 
     // 各种操作
     operateBoardState(state, action) {
-      const { payload: { name, value, message, operateData } } = action;
+      const {
+        payload: {
+          name, value, message, operateData
+        }
+      } = action;
       return {
         ...state,
         [name]: value,
@@ -119,7 +123,7 @@ export default {
     },
 
     * getVisibleRange({ payload }, { call, put }) {
-       // 查询可见范围
+      // 查询可见范围
       const allVisibleRange = yield call(api.getVisibleRange, {
         orgId: payload.orgId,
       });

@@ -11,7 +11,9 @@ import { Input } from 'antd';
 import styles from './preciseQuery.less';
 
 export default function PreciseQuery(props) {
-  const { value, maxValue, handlePreciseQueryEnterPress, handlePreciseQueryChange } = props;
+  const {
+    value, maxValue, handlePreciseQueryEnterPress, handlePreciseQueryChange
+  } = props;
   return (
     <div className={styles.preciseQueryBox}>
       <Input
@@ -19,7 +21,9 @@ export default function PreciseQuery(props) {
         onChange={handlePreciseQueryChange}
         onKeyUp={handlePreciseQueryEnterPress}
       />
-      /{maxValue}人
+      /
+      {maxValue}
+人
     </div>
   );
 }
