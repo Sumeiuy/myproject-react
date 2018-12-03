@@ -5,9 +5,9 @@
  * @Last Modified time: 2018-11-30 15:01:16
  * @description 新版客户360详情的model
  */
+import _ from 'lodash';
 import { customerDetail as api } from '../api';
 
-import _ from 'lodash';
 
 export default {
   namespace: 'customerDetail',
@@ -97,7 +97,7 @@ export default {
       // 此处的地点接口，需要做一些特殊处理，比如给某些字段添加请选择选项
       const newResultData = _.mapValues(
         resultData,
-        item => ([{ key: '', value: '请选择'}, ...item]),
+        item => ([{ key: '', value: '请选择' }, ...item]),
       );
       yield put({
         type: 'queryCust360DictSuccess',
@@ -109,7 +109,7 @@ export default {
       const { resultData } = yield call(api.queryProvinceCity, payload);
       const newResultData = _.mapValues(
         resultData,
-        item => ([{ key: '', value: '请选择'}, ...item]),
+        item => ([{ key: '', value: '请选择' }, ...item]),
       );
       return newResultData;
     },

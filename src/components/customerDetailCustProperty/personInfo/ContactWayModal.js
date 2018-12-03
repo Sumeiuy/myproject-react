@@ -85,6 +85,7 @@ export default class ContactWayModal extends Component {
     // 判断是否是主服务经理
     this.isMainEmp = _.get(context.custBasic, 'isMainEmp');
   }
+
   // 刷新数据
   @autobind
   refresh(resultData) {
@@ -112,7 +113,7 @@ export default class ContactWayModal extends Component {
   @autobind
   changeNoMessage() {
     const { noMessage } = this.state;
-    this.changeSwitch((resultData)=> {
+    this.changeSwitch((resultData) => {
       const { result } = resultData;
       if (result !== 'success') {
         message.error('修改请勿发短息失败');
@@ -126,7 +127,7 @@ export default class ContactWayModal extends Component {
   @autobind
   changeNoCall() {
     const { noCall } = this.state;
-    this.changeSwitch((resultData)=> {
+    this.changeSwitch((resultData) => {
       const { result } = resultData;
       if (result !== 'success') {
         message.error('修改请勿打电话失败');
@@ -201,13 +202,13 @@ export default class ContactWayModal extends Component {
     },
   })
   handleAddContactClick() {
-    this.setState({ addContactModal: true  });
+    this.setState({ addContactModal: true });
   }
 
   @autobind
   @logable({
     type: 'Click',
-    payload: { name: '编辑个人客户电话信息'}
+    payload: { name: '编辑个人客户电话信息' }
   })
   handlePhoneEditClick(record) {
     this.setState({
@@ -220,7 +221,7 @@ export default class ContactWayModal extends Component {
   @autobind
   @logable({
     type: 'Click',
-    payload: { name: '删除个人客户电话信息'}
+    payload: { name: '删除个人客户电话信息' }
   })
   handlePhoneDelClick(record) {
     this.confirmBeforeDel({
@@ -232,7 +233,7 @@ export default class ContactWayModal extends Component {
   @autobind
   @logable({
     type: 'Click',
-    payload: { name: '编辑个人客户地址信息'}
+    payload: { name: '编辑个人客户地址信息' }
   })
   handleAddressEditClick(record) {
     this.setState({
@@ -245,7 +246,7 @@ export default class ContactWayModal extends Component {
   @autobind
   @logable({
     type: 'Click',
-    payload: { name: '删除个人客户地址信息'}
+    payload: { name: '删除个人客户地址信息' }
   })
   handleAddressDelClick(record) {
     this.confirmBeforeDel({
@@ -257,7 +258,7 @@ export default class ContactWayModal extends Component {
   @autobind
   @logable({
     type: 'Click',
-    payload: { name: '编辑个人客户其他信息'}
+    payload: { name: '编辑个人客户其他信息' }
   })
   handleOtherEditClick(record) {
     this.setState({
@@ -270,7 +271,7 @@ export default class ContactWayModal extends Component {
   @autobind
   @logable({
     type: 'Click',
-    payload: { name: '删除个人客户其他信息'}
+    payload: { name: '删除个人客户其他信息' }
   })
   handleOtherDelClick(record) {
     this.confirmBeforeDel({
@@ -302,13 +303,13 @@ export default class ContactWayModal extends Component {
   handleAddOrEditMoalOK(type, data) {
     if (type === 'phone') {
       // 新增|修改电话信息
-      this.props.updatePerPhone(data).then(this.refresh);;
+      this.props.updatePerPhone(data).then(this.refresh);
     } else if (type === 'address') {
       // 新增|修改地址信息
-      this.props.updatePerAddress(data).then(this.refresh);;
+      this.props.updatePerAddress(data).then(this.refresh);
     } else if (type === 'other') {
       // 新增|修改其他信息
-      this.props.updatePerOther(data).then(this.refresh);;
+      this.props.updatePerOther(data).then(this.refresh);
     }
     this.setState({
       addContactModal: false,

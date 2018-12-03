@@ -9,7 +9,9 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { Row, Col, Select, Input, Form } from 'antd';
+import {
+  Row, Col, Select, Input, Form
+} from 'antd';
 
 import logable from '../../../decorators/logable';
 import { isCreateContact } from './utils';
@@ -191,7 +193,7 @@ export default class OrgAddressContactForm extends PureComponent {
             <div className={styles.formItem}>
               <div className={styles.itemLable}>主要：</div>
               <div className={styles.valueArea}>
-                {/**因为只能新增修改非主要信息，因此此处使用固定的值 */}
+                {/** 因为只能新增修改非主要信息，因此此处使用固定的值 */}
                 <FormItem>
                   {getFieldDecorator('mainFlag', {
                     initialValue: 'N',
@@ -202,7 +204,7 @@ export default class OrgAddressContactForm extends PureComponent {
                     >
                       <Option value="N">N</Option>
                     </Select>
-                    )
+                  )
                   }
                 </FormItem>
               </div>
@@ -210,10 +212,13 @@ export default class OrgAddressContactForm extends PureComponent {
           </Col>
           <Col span={12}>
             <div className={styles.formItem}>
-              <div className={styles.itemLable}><span className={styles.requried}>*</span>地址类型：</div>
+              <div className={styles.itemLable}>
+                <span className={styles.requried}>*</span>
+地址类型：
+              </div>
               <div className={styles.valueArea}>
                 <FormItem>
-                {
+                  {
                   getFieldDecorator(
                     'addressTypeCode',
                     {
@@ -229,7 +234,7 @@ export default class OrgAddressContactForm extends PureComponent {
                     </Select>
                   )
                 }
-              </FormItem>
+                </FormItem>
               </div>
             </div>
           </Col>
@@ -237,7 +242,10 @@ export default class OrgAddressContactForm extends PureComponent {
         <Row type="flex" gutter={16} align="middle">
           <Col span={12}>
             <div className={styles.formItem}>
-              <div className={styles.itemLable}><span className={styles.requried}>*</span>地址：</div>
+              <div className={styles.itemLable}>
+                <span className={styles.requried}>*</span>
+地址：
+              </div>
               <div className={styles.valueArea}>
                 <FormItem>
                   {getFieldDecorator('address', {
@@ -252,7 +260,10 @@ export default class OrgAddressContactForm extends PureComponent {
           </Col>
           <Col span={12}>
             <div className={styles.formItem}>
-              <div className={styles.itemLable}><span className={styles.requried}>*</span>邮政编码：</div>
+              <div className={styles.itemLable}>
+                <span className={styles.requried}>*</span>
+邮政编码：
+              </div>
               <div className={styles.valueArea}>
                 <FormItem>
                   {getFieldDecorator('zipCode', {
@@ -283,10 +294,13 @@ export default class OrgAddressContactForm extends PureComponent {
           </Col>
           <Col span={12}>
             <div className={styles.formItem}>
-              <div className={styles.itemLable}><span className={styles.requried}>*</span>省/(直辖)市：</div>
+              <div className={styles.itemLable}>
+                <span className={styles.requried}>*</span>
+省/(直辖)市：
+              </div>
               <div className={styles.valueArea}>
                 <FormItem>
-                {
+                  {
                   getFieldDecorator(
                     'provinceCode',
                     {
@@ -302,7 +316,7 @@ export default class OrgAddressContactForm extends PureComponent {
                     </Select>
                   )
                 }
-              </FormItem>
+                </FormItem>
               </div>
             </div>
           </Col>
@@ -310,10 +324,13 @@ export default class OrgAddressContactForm extends PureComponent {
         <Row type="flex" gutter={16} align="middle">
           <Col span={12}>
             <div className={styles.formItem}>
-              <div className={styles.itemLable}><span className={styles.requried}>*</span>城市：</div>
+              <div className={styles.itemLable}>
+                <span className={styles.requried}>*</span>
+城市：
+              </div>
               <div className={styles.valueArea}>
                 <FormItem>
-                {
+                  {
                   getFieldDecorator(
                     'cityCode',
                     {
@@ -329,16 +346,19 @@ export default class OrgAddressContactForm extends PureComponent {
                     </Select>
                   )
                 }
-              </FormItem>
+                </FormItem>
               </div>
             </div>
           </Col>
           <Col span={12}>
             <div className={styles.formItem}>
-              <div className={styles.itemLable}><span className={styles.requried}>*</span>来源：</div>
+              <div className={styles.itemLable}>
+                <span className={styles.requried}>*</span>
+来源：
+              </div>
               <div className={styles.valueArea}>
                 <FormItem>
-                {getFieldDecorator('sourceCode', {
+                  {getFieldDecorator('sourceCode', {
                     initialValue: sourceCode,
                   })(
                     <Select
@@ -347,7 +367,7 @@ export default class OrgAddressContactForm extends PureComponent {
                     >
                       {this.renderSourceOption()}
                     </Select>
-                    )
+                  )
                   }
                 </FormItem>
               </div>
@@ -358,4 +378,3 @@ export default class OrgAddressContactForm extends PureComponent {
     );
   }
 }
-

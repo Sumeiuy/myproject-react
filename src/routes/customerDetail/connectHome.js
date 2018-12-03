@@ -43,8 +43,8 @@ const mapDispatchToProps = {
   // 添加服务记录窗口
   toggleServiceRecordModal: effect('app/toggleServiceRecordModal', { loading: true }),
   // 获取客户基本信息
-  getCustomerBasicInfo: effect('customerDetail/getCustomerBasicInfo', {loading: true}),
-  addCallRecord: effect('customerPool/addCallRecord', {loading: true}),
+  getCustomerBasicInfo: effect('customerDetail/getCustomerBasicInfo', { loading: true }),
+  addCallRecord: effect('customerPool/addCallRecord', { loading: true }),
   // 查询省市城市
   queryProvinceCity: effect('customerDetail/queryProvinceCity', { loading: false }),
 };
