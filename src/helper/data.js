@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 10:23:58
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-23 15:38:39
+ * @Last Modified time: 2018-12-03 13:52:24
  * @description 此处存放通用的数据格式/类型处理的方法
  */
 import _ from 'lodash';
@@ -164,7 +164,38 @@ const data = {
       ...item,
       key: data.uuid(),
     };
-  }
+  },
+
+  /**
+   * 截取超长字符串，使用...
+   * @param {Sting} str 原始字符串
+   * @param {Number} length 截取字符串字符数
+   * @return {Object} dot
+   * @return {Boolean} dot.isSubstr 是否被截取了
+   * @return {String} dot.value 如果被截取了，则为截取后的值
+   * @return {String} dot.origin 如果被截取了，则为原始值
+   */
+  dotdotdot(str, length) {
+    if (!_.isString(str)|| _.isEmpty(str)) {
+      return {
+        isSubstr: false,
+        value: str,
+        origin: str,
+      };
+    }
+    if (str.length > length) {
+      return {
+        isSubstr: true,
+        value: str.substr(0, length) + '...',
+        origin: str,
+      };
+    }
+    return {
+      isSubstr: false,
+      value: str,
+      origin: str,
+    };
+  },
 };
 
 export default data;
