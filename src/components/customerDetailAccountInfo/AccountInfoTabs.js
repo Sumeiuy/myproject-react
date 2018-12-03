@@ -130,15 +130,18 @@ export default class AccountInfoTabs extends PureComponent {
     } = this.props;
     const { activeTabKey } = this.state;
 
-    // 普通账户下的资金账户，证券账户
+    // 普通账户下的资金账户，证券账户,账户变动
     const normalFundAccount = _.get(accountInfo, 'normalAccount.fundAccount');
     const normalStockAccount = _.get(accountInfo, 'normalAccount.stockAccount');
-    // 信用账户下的资金账户，证券账户
+    const normalAccountChange = _.get(accountChangeRes, 'normalAccountChange');
+    // 信用账户下的资金账户，证券账户,账户变动
     const creditFundAccount = _.get(accountInfo, 'creditAccount.fundAccount');
     const creditStockAccount = _.get(accountInfo, 'creditAccount.stockAccount');
-    // 期权账户下的资金账户，证券账户
+    const creditAccountChange = _.get(accountChangeRes, 'creditAccountChange');
+    // 期权账户下的资金账户，证券账户,账户变动
     const optionFundAccount = _.get(accountInfo, 'optionAccount.fundAccount');
     const optionStockAccount = _.get(accountInfo, 'optionAccount.stockAccount');
+    const optionAccountChange = _.get(accountChangeRes, 'optionAccountChange');
 
     return (
       <div className={styles.tabsContainer}>
@@ -156,7 +159,7 @@ export default class AccountInfoTabs extends PureComponent {
                 fundAccount={normalFundAccount}
                 stockAccount={normalStockAccount}
                 busnTypeDict={busnTypeDict}
-                accountChangeRes={accountChangeRes}
+                accountChangeRes={normalAccountChange}
                 queryAccountChange={queryAccountChange}
               />
             </div>
@@ -169,7 +172,7 @@ export default class AccountInfoTabs extends PureComponent {
                 fundAccount={creditFundAccount}
                 stockAccount={creditStockAccount}
                 busnTypeDict={busnTypeDict}
-                accountChangeRes={accountChangeRes}
+                accountChangeRes={creditAccountChange}
                 queryAccountChange={queryAccountChange}
               />
             </div>
@@ -182,7 +185,7 @@ export default class AccountInfoTabs extends PureComponent {
                 fundAccount={optionFundAccount}
                 stockAccount={optionStockAccount}
                 busnTypeDict={busnTypeDict}
-                accountChangeRes={accountChangeRes}
+                accountChangeRes={optionAccountChange}
                 queryAccountChange={queryAccountChange}
               />
             </div>

@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性
  * @Date: 2018-11-06 16:17:28
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-30 09:30:09
+ * @Last Modified time: 2018-12-03 09:49:05
  */
 
 import React, { PureComponent } from 'react';
@@ -22,9 +22,8 @@ import {
   // COOPERATION_KEY,
   // MARKETING_KEY,
   MEMBER_INFO_KEY,
-  RELATION_INFO_KEY,
+  // RELATION_INFO_KEY,
 } from '../../../../components/customerDetailCustProperty/config';
-import { permission } from '../../../../helper';
 import logable from '../../../../decorators/logable';
 
 import styles from './home.less';
@@ -94,6 +93,10 @@ export default class CustProperty extends PureComponent {
     updateOrgPhone: PropTypes.func.isRequired,
     // 新增|修改机构客户地址信息
     updateOrgAddress: PropTypes.func.isRequired,
+    // 非隐私信息查看权限
+    custPropertyInfoPermission: PropTypes.bool,
+    // 隐私信息查看权限
+    custPropertyPrivateInfoPermission: PropTypes.bool,
   }
 
   static contextTypes = {
@@ -132,23 +135,6 @@ export default class CustProperty extends PureComponent {
     }
   }
 
-  // 客户信息中有些字段需要做隐私控制，只有主，辅服务经理，拥有“HTSC 客户资料-总部管理岗”或“HTSC 隐私信息查询权限”职责的用户可查看；
-  @autobind
-  hasDuty() {
-    const {
-      customerBasicInfo: {
-        isMainEmp,
-        isAssistantEmp,
-      },
-    } = this.props;
-    return (
-      isMainEmp
-      || isAssistantEmp
-      || permission.hasHTSCPrivateInfoCheck()
-      || permission.hasCIHMPPermission()
-    );
-  }
-
   // 和custId相关的接口，初次调用和custId发生变化时调用，避免多次重复写，统一放到一个方法里
   @autobind
   queryData(custId) {
@@ -173,11 +159,12 @@ export default class CustProperty extends PureComponent {
       updatePerOther,
       updatePerPhone,
       delContact,
+      custPropertyPrivateInfoPermission,
     } = this.props;
     return (
       <PersonInfo
         location={location}
-        hasDuty={this.hasDuty()}
+        hasDuty={custPropertyPrivateInfoPermission}
         data={person}
         personalContactWay={personalContactWay}
         queryPersonalContactWay={queryPersonalContactWay}
@@ -204,11 +191,12 @@ export default class CustProperty extends PureComponent {
       delContact,
       updateOrgAddress,
       updateOrgPhone,
+      custPropertyPrivateInfoPermission,
     } = this.props;
     return (
       <OrganizationInfo
         location={location}
-        hasDuty={this.hasDuty()}
+        hasDuty={custPropertyPrivateInfoPermission}
         data={organization}
         orgContactWay={orgContactWay}
         queryOrgContactWay={queryOrgContactWay}
@@ -231,11 +219,12 @@ export default class CustProperty extends PureComponent {
       delContact,
       updateOrgAddress,
       updateOrgPhone,
+      custPropertyPrivateInfoPermission,
     } = this.props;
     return (
       <ProductInfo
         location={location}
-        hasDuty={this.hasDuty()}
+        hasDuty={custPropertyPrivateInfoPermission}
         data={product}
         orgContactWay={orgContactWay}
         queryOrgContactWay={queryOrgContactWay}
@@ -289,6 +278,10 @@ export default class CustProperty extends PureComponent {
     });
   }
 
+  renderTabPane(tabPane, permission) {
+    return permission ? tabPane : null;
+  }
+
   render() {
     const {
       location: {
@@ -310,7 +303,37 @@ export default class CustProperty extends PureComponent {
       financeData,
       updatePerFinaceData,
       updateOrgFinaceData,
+      custPropertyInfoPermission,
     } = this.props;
+
+    const financeInfoTabPane = (
+      <TabPane tab="财务信息" key={FINANCE_INFO_KEY}>
+        <FinanceInfo
+          location={location}
+          customerBasicInfo={customerBasicInfo}
+          data={financeData}
+          queryFinanceDetail={queryFinanceDetail}
+          updatePerFinaceData={updatePerFinaceData}
+          updateOrgFinaceData={updateOrgFinaceData}
+        />
+      </TabPane>
+    );
+
+    const memberInfoTabPane = (
+      <TabPane tab="会员信息" key={MEMBER_INFO_KEY}>
+        <MemberInfo
+          location={location}
+          queryZLUmemberInfo={queryZLUmemberInfo}
+          queryZLUmemberLevelChangeRecords={queryZLUmemberLevelChangeRecords}
+          zlUMemberInfo={zlUMemberInfo}
+          zlUMemberLevelChangeRecords={zlUMemberLevelChangeRecords}
+          queryZjPointMemberInfo={queryZjPointMemberInfo}
+          zjPointMemberInfo={zjPointMemberInfo}
+          queryZjPointExchangeFlow={queryZjPointExchangeFlow}
+          zjPointExchangeFlow={zjPointExchangeFlow}
+        />
+      </TabPane>
+    );
     return (
       <div className={styles.custPropertyBox}>
         <div className={styles.custInfoBox}>
@@ -326,35 +349,14 @@ export default class CustProperty extends PureComponent {
               activeKey => this.handleTabChange(activeKey, custPropertyTabMapData[activeKey])
             }
           >
-            <TabPane tab="财务信息" key={FINANCE_INFO_KEY}>
-              <FinanceInfo
-                location={location}
-                customerBasicInfo={customerBasicInfo}
-                data={financeData}
-                queryFinanceDetail={queryFinanceDetail}
-                updatePerFinaceData={updatePerFinaceData}
-                updateOrgFinaceData={updateOrgFinaceData}
-              />
-            </TabPane>
+            {this.renderTabPane(financeInfoTabPane, custPropertyInfoPermission)}
+            {this.renderTabPane(memberInfoTabPane, custPropertyInfoPermission)}
             {/* <TabPane tab="合作业务" key={COOPERATION_KEY}>
             </TabPane>
             <TabPane tab="营销与服务" key={MARKETING_KEY}>
             </TabPane> */}
-            <TabPane tab="会员信息" key={MEMBER_INFO_KEY}>
-              <MemberInfo
-                location={location}
-                queryZLUmemberInfo={queryZLUmemberInfo}
-                queryZLUmemberLevelChangeRecords={queryZLUmemberLevelChangeRecords}
-                zlUMemberInfo={zlUMemberInfo}
-                zlUMemberLevelChangeRecords={zlUMemberLevelChangeRecords}
-                queryZjPointMemberInfo={queryZjPointMemberInfo}
-                zjPointMemberInfo={zjPointMemberInfo}
-                queryZjPointExchangeFlow={queryZjPointExchangeFlow}
-                zjPointExchangeFlow={zjPointExchangeFlow}
-              />
-            </TabPane>
-            <TabPane tab="关系信息" key={RELATION_INFO_KEY}>
-            </TabPane>
+            {/* <TabPane tab="关系信息" key={RELATION_INFO_KEY}>
+            </TabPane> */}
           </Tabs>
         </div>
       </div>

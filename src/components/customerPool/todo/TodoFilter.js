@@ -3,7 +3,7 @@
  * @Descripter: 报表头部筛选项
  * @Date: 2018-10-06 14:21:06
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-28 18:00:15
+ * @Last Modified time: 2018-11-30 16:33:58
  */
 
 import React, { PureComponent } from 'react';
@@ -161,11 +161,11 @@ name });
     const {
       startTime,
       endTime,
-      isApprove,
+      /* isApprove, */
       typeData,
       type,
-      initiatorData,
-      initiator
+      /* initiatorData, */
+      /* initiator */
      } = this.props;
      const dateRangePicker = classnames([styles.filter, styles.dateRangePickFilter]);
     return (
@@ -212,7 +212,7 @@ name });
           filterName="申请时间"
           className={dateRangePicker}
           value={[startTime, endTime]}
-          filterValue={[defaultStartTime, defaultEndTime]}
+          filterValue={[startTime, endTime]}
           onChange={this.handleDateChange}
           disabledStart={this.setDisabledStartTime}
           disabledEnd={this.setDisabledEndTime}

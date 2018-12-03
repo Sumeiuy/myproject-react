@@ -15,7 +15,8 @@ import { TreeFilter } from 'lego-tree-filter/src';
 import styles from './departmentFilter.less';
 
 function transformCustRangeData(list, parent = '') {
-  return list.map((item) => {
+  const data = list || [];
+  return data.map((item) => {
     const obj = {
       label: item.name,
       value: parent

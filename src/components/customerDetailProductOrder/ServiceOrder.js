@@ -180,6 +180,9 @@ export default class ServiceOrder extends PureComponent {
       if (column.dataIndex === 'intrRate') {
         newColumn.className = styles.intrRateStyle;
         newColumn.render = (text) => {
+          if (_.isNumber(text)) {
+            return <span className={styles.intrRateText}>{text}</span>;
+          }
           return <span className={styles.intrRateText}>{text || '--'}</span>;
         };
         return newColumn;

@@ -10,7 +10,6 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { connect } from 'dva';
-import _ from 'lodash';
 import { Tabs } from 'antd';
 
 import { dva } from '../../../../helper';

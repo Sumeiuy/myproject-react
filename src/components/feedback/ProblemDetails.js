@@ -2,7 +2,7 @@
  * @Author: yangquanjian
  * @Date: 2018-10-22 09:13:51
  * @LastEditors: li-ke
- * @LastEditTime: 2018-11-29 19:24:00
+ * @LastEditTime: 2018-11-30 15:37:54
  * @Description: 问题反馈-问题详情
  */
 
@@ -22,6 +22,8 @@ const FormItem = Form.Item;
 const Option = Select.Option;
 const EMPTY_OBJECT = {};
 const feedbackChannel = feedbackOptions.feedbackChannel;
+// 马珂默认工号
+const DEFAULT_USER_ID = feedbackOptions.defaultUserId;
 let OPTIONKEY = 0;
 
 @createForm()
@@ -159,22 +161,25 @@ export default class ProblemDetail extends PureComponent {
     }
     return '无';
   }
+
   // 显示经办人
   renderEmpResp(processerID, operatorList) {
-    // 如果经办人是无就显示defaultName 马珂
-    const defaultName = _.find(operatorList, item => item.loginName === '001423');
     if (!_.isEmpty(processerID) && !_.isEmpty(operatorList)) {
-      const nowStatus = _.find(operatorList, item =>
-        item.loginName === processerID) || {};
-      return nowStatus.lastName || defaultName.lastName;
+      let operator = _.find(operatorList, operator =>
+        operator.loginName === processerID);
+        // 如果经办人是空就显示 马珂
+        if(_.isEmpty(operator)){
+          operator = _.find(operatorList, operator => operator.loginName === DEFAULT_USER_ID);
+        }
+      return operator.lastName;
     }
     return '无';
   }
 
   // 点击编辑打开经办人下拉框
   renderEmpOption(operatorList) {
-      const empListOption = _.map(operatorList, i =>
-        <Option key={`empOptionKey${OPTIONKEY++}`} value={i.loginName}>{i.lastName}</Option>,
+      const empListOption = _.map(operatorList, operator =>
+        <Option key={`empOptionKey${OPTIONKEY++}`} value={operator.loginName}>{operator.lastName}</Option>,
       );
       return empListOption;
   }
@@ -382,14 +387,15 @@ export default class ProblemDetail extends PureComponent {
                 </div>
                 <div className={processerHiddenValue} id="select-processer">
                   <FormItem>
-                    {getFieldDecorator('processer', {initialValue: this.renderEmpResp(processer, operatorList)})
-                    (
-                      <Select style={{ width: 110 }} className="qtSelect" getPopupContainer={() => document.getElementById('select-processer')}>
-                        {
-                         this.renderEmpOption(operatorList)
-                          }
-                      </Select>,
-                    )}
+                    {
+                      getFieldDecorator('processer', {
+                        initialValue: this.renderEmpResp(processer, operatorList)
+                      })(
+                        <Select style={{ width: 110 }} className="qtSelect" getPopupContainer={() => document.getElementById('select-processer')}>
+                          {this.renderEmpOption(operatorList)}
+                        </Select>
+                      )
+                    }
                     <div className="edit-btn">
                       <a onClick={this.handleSubChange}><Icon type="success" /></a>
                       <a onClick={this.handleClose}><Icon type="close" /></a>

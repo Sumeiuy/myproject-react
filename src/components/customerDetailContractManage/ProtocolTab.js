@@ -12,6 +12,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import moment from 'moment';
 import { message } from 'antd';
+import classnames from 'classnames';
 
 import Tooltip from '../common/Tooltip';
 import Icon from '../common/Icon';
@@ -19,6 +20,7 @@ import Table from '../common/table';
 import Button from '../common/Button';
 import commonConfirm from '../common/confirm_';
 import IfTableWrap from '../common/IfTableWrap';
+import IfWrap from '../common/biz/IfWrap';
 import logable from '../../decorators/logable';
 import { url as urlHelper } from '../../helper';
 import {
@@ -167,10 +169,19 @@ export default class ProtocolTab extends PureComponent {
     const linkHandle = subTypeCode === TOUGU_SUBTYPE
     ? () => this.handleViewTouGuProtocol(record)
     : () => this.handleViewOtherProtocol(record);
+    const idClass = classnames({
+      [styles.ellipsis]: true,
+      [styles.idWrap]: true,
+    });
     return (
-      <div>
-        <a onClick={linkHandle}>{text}</a>
-      </div>
+      <Tooltip title={text}>
+        <div
+          onClick={linkHandle}
+          className={idClass}
+        >
+          {text}
+        </div>
+      </Tooltip>
     );
   }
 
@@ -214,9 +225,31 @@ export default class ProtocolTab extends PureComponent {
     if (subTypeCode !== TOUGU_SUBTYPE) {
       return null;
     }
-    // 协议状态为新建时，操作类型为：编辑、删除
     if (statusCode === 'New') {
-      return (
+      // 协议状态为新建时，操作类型为：编辑、删除
+      return this.renderNewStatusOperation(record);
+    } else if (statusCode === 'Agree') {
+      // 协议状态为同意时，操作类型为：变更、查看历史记录
+      return this.renderAgreeStatusOperation(record);
+    } else if (chargingMode === CHARGING_MODE_CODE
+    && statusCode === 'Process'
+    && node === '待扣款') {
+      // 收费模式为【账户服务费模式】
+      // 状态【处理中】
+      // 节点【待扣款】
+      // 渲染终止按钮
+      return this.renderCloseOperation(record);
+    } else {
+      // 渲染历史记录按钮
+      return this.renderOtherOperation(record);
+    }
+  }
+
+  // 渲染新建状态下的操作按钮
+  @autobind
+  renderNewStatusOperation(record) {
+    return (
+      <IfWrap isRender={this.hasPermissionOfShowBtn()}>
         <div className={styles.iconWrapper}>
           <Icon
             type="bianji1"
@@ -229,51 +262,75 @@ export default class ProtocolTab extends PureComponent {
             onClick={() => this.handleDeleteProtocol(record)}
           />
         </div>
-      );
-    } else if (statusCode === 'Agree') {
-      // 协议状态为同意时，操作类型为：变更、查看历史记录
-      // qitawenjian\wenben
-      return (
-        <div className={styles.iconWrapper}>
+      </IfWrap>
+    );
+  }
+
+  // 渲染同意状态下的操作按钮
+  @autobind
+  renderAgreeStatusOperation(record) {
+    return (
+      <div className={styles.iconWrapper}>
+        <IfWrap isRender={this.hasPermissionOfShowBtn()}>
           <Icon
             type="shuaxin1"
             title="变更"
             onClick={() => this.handleUpdateProtocol(record)}
           />
-          <Icon
-            type="chakanjilu"
-            title="查看历史记录"
-            onClick={() => this.handleViewHistoryProtocol(record)}
-          />
-        </div>
-      );
-    } else if (chargingMode === CHARGING_MODE_CODE
-    && statusCode === 'Process'
-    && node === '待扣款') {
-      return (
-        <div className={styles.iconWrapper}>
+        </IfWrap>
+        <Icon
+          type="chakanjilu"
+          title="查看历史记录"
+          onClick={() => this.handleViewHistoryProtocol(record)}
+        />
+      </div>
+    );
+  }
+
+  // 渲染终止操作按钮
+  @autobind
+  renderCloseOperation(record) {
+    return (
+      <div className={styles.iconWrapper}>
+        <IfWrap isRender={this.hasPermissionOfShowBtn()}>
           <Icon
             type="zhongzhi"
             title="终止"
             onClick={() => this.handleCloseProtocol(record)}
           />
-          <Icon
-            type="chakanjilu"
-            title="查看历史记录"
-            onClick={() => this.handleViewHistoryProtocol(record)}
-          />
-        </div>
-      );
-    } else {
-      return (
-        <div className={styles.iconWrapper}>
-          <Icon
-            type="chakanjilu"
-            onClick={() => this.handleViewHistoryProtocol(record)}
-          />
-        </div>
-      );
-    }
+        </IfWrap>
+        <Icon
+          type="chakanjilu"
+          title="查看历史记录"
+          onClick={() => this.handleViewHistoryProtocol(record)}
+        />
+      </div>
+    );
+  }
+
+  // 渲染其他状态的操作按钮
+  @autobind
+  renderOtherOperation(record) {
+    return (
+      <div className={styles.iconWrapper}>
+        <Icon
+          type="chakanjilu"
+          onClick={() => this.handleViewHistoryProtocol(record)}
+        />
+      </div>
+    );
+  }
+
+  // 是否有权限渲染操作按钮
+  @autobind
+  hasPermissionOfShowBtn() {
+    const {
+      loginInfo = EMPTY_OBJECT,
+      custInfo = EMPTY_OBJECT,
+    } = this.props;
+    const { isMainEmp = false } = custInfo;
+    const { isTouGu = false } = loginInfo;
+    return isMainEmp && isTouGu;
   }
 
   // 统一处理跳转 fsp 协议的方法
@@ -407,22 +464,27 @@ export default class ProtocolTab extends PureComponent {
     payload: { name: '终止协议' },
   })
   handleCloseProtocol(record) {
-    const {
-      submitProtocol,
-      location: { query: { custId } },
-    } = this.props;
-    submitProtocol({
-      custId,
-      rowId: record.rowId,
-    }).then(() => {
-      const {
-        queryList,
-        location: { query: { custId } },
-      } = this.props;
-      // 查询列表数据
-      queryList({
-        custId,
-      });
+    commonConfirm({
+      content: '确定要终止该协议吗？',
+      onOk: () => {
+        const {
+          submitProtocol,
+          location: { query: { custId } },
+        } = this.props;
+        submitProtocol({
+          custId,
+          rowId: record.rowId,
+        }).then(() => {
+          const {
+            queryList,
+            location: { query: { custId } },
+          } = this.props;
+          // 查询列表数据
+          queryList({
+            custId,
+          });
+        });
+      },
     });
   }
 
