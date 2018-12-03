@@ -50,7 +50,6 @@ const TASK_TYPE = {
 
 @connect(mapStateToProps, mapDispatchToProps)
 export default class ChoiceInvestAdviceModal extends PureComponent {
-
   static getDerivedStateFromProps(nextProps, prevState) {
     const { templateID: nextID, serveContent = {} } = nextProps;
     const { prevPropID } = prevState;
@@ -134,10 +133,10 @@ export default class ChoiceInvestAdviceModal extends PureComponent {
     if (isReject && fromMode === '') {
       // 如果是驳回后修改并且还未进行修改编辑的情况下
       return 'free';
-    } else if (isReject && fromMode !== '') {
+    } if (isReject && fromMode !== '') {
       // 如果是驳回后修改已经进行过修改动作了
       return fromMode;
-    } else if (!isReject && fromMode !== '') {
+    } if (!isReject && fromMode !== '') {
       // 如果是新建情况下，并且修改过的情况
       return fromMode;
     }
@@ -150,6 +149,7 @@ export default class ChoiceInvestAdviceModal extends PureComponent {
     this.title = title;
     this.desc = desc;
   }
+
   // 关闭弹出层
   @autobind
   closeModal() {
@@ -194,9 +194,11 @@ export default class ChoiceInvestAdviceModal extends PureComponent {
         if (this.checkWallCollisionStatus('title')) {
           await testWallCollision({ content: desc });
           if (this.checkWallCollisionStatus('desc')) {
-            onOK({ title,
-desc,
-mode });
+            onOK({
+              title,
+              desc,
+              mode
+            });
           }
         }
       } catch (e) {
@@ -258,11 +260,15 @@ mode });
   }
 
   @autobind
-  @logable({ type: 'Click',
-payload: { name: '选择服务内容模板' } })
+  @logable({
+    type: 'Click',
+    payload: { name: '选择服务内容模板' }
+  })
   handleSelectInvestAdviceTmpl({ id, title }) {
-    this.setState({ templateID: id,
-title });
+    this.setState({
+      templateID: id,
+      title
+    });
   }
 
   render() {
@@ -318,35 +324,33 @@ title });
             </div>
           </div>
           {
-            isFreeMode ?
-            (
-              <FreeMode
-                ref={this.setChoiceInvestAdviceFreeModeRef}
-                isUpdate={isUpdate}
-                serveContent={serveContent}
-                validateContent={validateContent}
-                validateTitle={validateTitle}
-                descErrorInfo={descErrorInfo}
-                titleErrorInfo={titleErrorInfo}
-                testWallCollisionStatus={testWallCollisionStatus}
-                onGetInvestAdviceFreeModeData={this.getInvestAdviceFreeModeData}
-                onFormDataChange={onFormDataChange}
-              />
-            )
-            :
-            (
-              <TmplMode
-                templateID={templateID}
-                tmplList={templateList}
-                onSelect={this.handleSelectInvestAdviceTmpl}
-              />
-            )
+            isFreeMode
+              ? (
+                <FreeMode
+                  ref={this.setChoiceInvestAdviceFreeModeRef}
+                  isUpdate={isUpdate}
+                  serveContent={serveContent}
+                  validateContent={validateContent}
+                  validateTitle={validateTitle}
+                  descErrorInfo={descErrorInfo}
+                  titleErrorInfo={titleErrorInfo}
+                  testWallCollisionStatus={testWallCollisionStatus}
+                  onGetInvestAdviceFreeModeData={this.getInvestAdviceFreeModeData}
+                  onFormDataChange={onFormDataChange}
+                />
+              )
+              : (
+                <TmplMode
+                  templateID={templateID}
+                  tmplList={templateList}
+                  onSelect={this.handleSelectInvestAdviceTmpl}
+                />
+              )
           }
         </div>
       </CommonModal>
     );
   }
-
 }
 
 ChoiceInvestAdviceModal.propTypes = {

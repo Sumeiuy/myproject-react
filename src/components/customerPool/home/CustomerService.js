@@ -19,7 +19,6 @@ import logable from '../../../decorators/logable';
 const SOURCE = 'manageService';
 
 export default class CustomerService extends PureComponent {
-
   static propTypes = {
     cycle: PropTypes.array.isRequired,
     location: PropTypes.object.isRequired,
@@ -59,7 +58,9 @@ export default class CustomerService extends PureComponent {
     const finishedName = isEmpty ? '' : `${parseFloat(finish).toFixed(0)}%`;
     const unfinishedName = isEmpty ? '暂无数据' : `${parseFloat(unfinished).toFixed(0)}%`;
     const fontSize = isEmpty ? '16' : '20';
-    const textStyle = { show: true, fontSize, fontWeight: 'bold', fontFamily: 'Microsoft YaHei' };
+    const textStyle = {
+      show: true, fontSize, fontWeight: 'bold', fontFamily: 'Microsoft YaHei'
+    };
     const finishLabel = isEmpty ? {} : {
       label: {
         normal: { ...textStyle, position: 'center' },
@@ -125,7 +126,7 @@ export default class CustomerService extends PureComponent {
         </div>
         <div className={classnames(styles.column, styles.secondColumn)}>
           <IECharts
-            onEvents={{ click: () => {this.handleToList(_.last(data).name, _.last(data).value || 0);} }}
+            onEvents={{ click: () => { this.handleToList(_.last(data).name, _.last(data).value || 0); } }}
             option={serviceOption}
             resizable
             style={{
@@ -140,13 +141,14 @@ export default class CustomerService extends PureComponent {
             placement="bottom"
           >
             <div
-              onClick={ () => {this.handleToList(_.last(data).name, _.last(data).value || 0);} }
+              onClick={() => { this.handleToList(_.last(data).name, _.last(data).value || 0); }}
               className={styles.text}
-            >{_.last(data).name || '--'}</div>
+            >
+              {_.last(data).name || '--'}
+            </div>
           </Tooltip>
         </div>
       </div>
     );
   }
 }
-

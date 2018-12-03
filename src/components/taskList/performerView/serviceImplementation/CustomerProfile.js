@@ -22,7 +22,9 @@ import { UPDATE } from '../../../../config/serviceRecord';
 import logable from '../../../../decorators/logable';
 import styles from './customerProfile.less';
 
-import { riskLevelConfig, PER_CODE, ORG_CODE, CALLABLE_LIST, PHONE } from './config';
+import {
+  riskLevelConfig, PER_CODE, ORG_CODE, CALLABLE_LIST, PHONE
+} from './config';
 import { isMOTReturnTypeTask } from '../../../../config/taskList/performView';
 
 import { headMainContact, headMainLinkman } from '../../../common/contactInfoPopover/config';
@@ -71,7 +73,6 @@ const rankImgSrcConfig = {
 const EMPTY_LIST = [];
 
 export default class CustomerProfile extends React.PureComponent {
-
   static propTypes = {
     targetCustDetail: PropTypes.object.isRequired,
     addServeRecord: PropTypes.func,
@@ -107,7 +108,9 @@ export default class CustomerProfile extends React.PureComponent {
   })
   openFsp360TabAction(param) {
     const { targetCustDetail = {} } = this.props;
-    const { custNature, custId, rowId, ptyId } = targetCustDetail;
+    const {
+      custNature, custId, rowId, ptyId
+    } = targetCustDetail;
     const type = (!custNature || custNature === PER_CODE) ? PER_CODE : ORG_CODE;
     const url = `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`;
     const pathname = '/fsp/customerCenter/customer360';
@@ -164,7 +167,9 @@ export default class CustomerProfile extends React.PureComponent {
       this.endTime.valueOf(),
     );
     const serviceContentDesc = `${this.startTime.format('HH:mm:ss')}给客户发起语音通话，时长${phoneDuration}。`;
-    const { missionFlowId, custId, missionId, custName } = data.userData || {};
+    const {
+      missionFlowId, custId, missionId, custName
+    } = data.userData || {};
     let payload = {
       // 任务流水id
       missionFlowId,
@@ -277,21 +282,23 @@ export default class CustomerProfile extends React.PureComponent {
     const canCall = _.includes(CALLABLE_LIST, missionStatusCode);
     // 联系方式为空判断
     const isEmpty = (
-      custNature === PER_CODE &&
-      (
-        _.isEmpty(perCustomerContactInfo) ||
-        (_.isEmpty(perCustomerContactInfo.homeTels)
+      custNature === PER_CODE
+      && (
+        _.isEmpty(perCustomerContactInfo)
+        || (_.isEmpty(perCustomerContactInfo.homeTels)
           && _.isEmpty(perCustomerContactInfo.cellPhones)
           && _.isEmpty(perCustomerContactInfo.workTels)
           && _.isEmpty(perCustomerContactInfo.otherTels))
       )
-    ) ||
-      (custNature === ORG_CODE && _.isEmpty(orgCustomerContactInfoList));
+    )
+      || (custNature === ORG_CODE && _.isEmpty(orgCustomerContactInfoList));
     if (isEmpty) {
       return null;
     }
     const perContactInfo = _.pick(perCustomerContactInfo, ['cellPhones', 'homeTels', 'workTels', 'otherTels']);
-    const userData = { missionFlowId, custId, missionId: currentId, custName };
+    const userData = {
+      missionFlowId, custId, missionId: currentId, custName
+    };
     const num = this.renderLinkNumber(custNature, perContactInfo, orgCustomerContactInfoList);
     return (
       <ContactInfoPopover
@@ -318,7 +325,7 @@ export default class CustomerProfile extends React.PureComponent {
     const { targetCustDetail = {}, eventId } = this.props;
     const {
       custName, isAllocate, isHighWorth, custId, genderValue, age,
-        riskLevelCode, isSign, levelCode, custNature,
+      riskLevelCode, isSign, levelCode, custNature,
     } = targetCustDetail;
     // 风险等级
     const riskLevel = riskLevelConfig[riskLevelCode];
@@ -342,56 +349,69 @@ export default class CustomerProfile extends React.PureComponent {
           <div className={styles.col}>
             <p className={styles.item}>
               {
-                isMotReturnVisit ?
-                (<span className={custNameUnClickCls}>{custName}</span>)
-                :
-                (
-                  <span
-                    className={custNameClickCls}
-                    onClick={this.handleCustNameClick}
-                  >
-                    {custName}
-                  </span>
-                )
+                isMotReturnVisit
+                  ? (<span className={custNameUnClickCls}>{custName}</span>)
+                  : (
+                    <span
+                      className={custNameClickCls}
+                      onClick={this.handleCustNameClick}
+                    >
+                      {custName}
+                    </span>
+                  )
               }
               {isAllocate === '0' && '(未分配)'}
             </p>
             <p className={styles.item}>
               {
                 isHighWorth
-                && <Tooltip placement="bottom" title="客户类型：高净值">
+                && (
+                <Tooltip placement="bottom" title="客户类型：高净值">
                   <span className={styles.highWorth}>高</span>
                 </Tooltip>
+                )
               }
               {
                 riskLevel
-                && <Tooltip placement="bottom" title={`风险等级：${riskLevel.title}`}>
+                && (
+                <Tooltip placement="bottom" title={`风险等级：${riskLevel.title}`}>
                   <span className={styles.riskLevel}>
                     {riskLevel.name}
                   </span>
                 </Tooltip>
+                )
               }
               {
                 isSign
-                && <Tooltip placement="bottom" title="签约客户">
+                && (
+                <Tooltip placement="bottom" title="签约客户">
                   <span className={styles.sign}>签</span>
                 </Tooltip>
+                )
               }
               {
                 rankImg
-                && <Tooltip placement="bottom" title={`客户等级：${rankImg.title}`}>
+                && (
+                <Tooltip placement="bottom" title={`客户等级：${rankImg.title}`}>
                   <img className={styles.rank} src={rankImg.src} alt="" />
                 </Tooltip>
+                )
               }
             </p>
           </div>
           <div className={styles.col}>
             <p className={`${styles.item} ${styles.textRight}`}>
               {
-                custNature === 'per' ?
-                  <span className={styles.basicInfo}>
-                    {custId}&nbsp;|&nbsp;{age}岁&nbsp;|&nbsp;{genderValue}
-                  </span>
+                custNature === 'per'
+                  ? (
+                    <span className={styles.basicInfo}>
+                      {custId}
+&nbsp;|&nbsp;
+                      {age}
+岁&nbsp;|&nbsp;
+                      {genderValue}
+                    </span>
+                  )
                   : <span className={styles.basicInfo}>{custId}</span>
               }
             </p>

@@ -29,7 +29,7 @@ export default class AssetAndIncome extends PureComponent {
     querySpecificIndexData: PropTypes.func.isRequired,
     // 资产分布的雷达上具体指标的数据
     specificIndexData: PropTypes.array.isRequired,
-     // 切换图表时间范围
+    // 切换图表时间范围
     handleTimeSelectChange: PropTypes.func.isRequired,
     // 切换对比指标
     handleCodeSelectChange: PropTypes.func.isRequired,
@@ -73,7 +73,7 @@ export default class AssetAndIncome extends PureComponent {
             querySpecificIndexData={querySpecificIndexData}
           />
         </div>
-        <div className={styles.splitLine}></div>
+        <div className={styles.splitLine} />
         <div className={styles.incomeTrend}>
           <ProfitRateChart
             onTimeChange={handleTimeSelectChange}

@@ -8,13 +8,15 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Checkbox, Tooltip, message, Modal } from 'antd';
+import {
+  Checkbox, Tooltip, message, Modal
+} from 'antd';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import Icon from '../Icon';
 import { data } from '../../../helper';
-import Table from '../../common/commonTable';
+import Table from '../commonTable';
 import GroupModal from '../../customerPool/groupManage/CustomerGroupUpdateModal';
 import Button from '../Button';
 import RestoreScrollTop from '../../../decorators/restoreScrollTop';
@@ -50,7 +52,6 @@ const renderColumnTitle = () => {
 };
 @RestoreScrollTop
 export default class MissionInvestigation extends PureComponent {
-
   static propTypes = {
     // 问题列表，包括题干，选项所有信息，还有分页信息
     questionInfo: PropTypes.object,
@@ -96,14 +97,13 @@ export default class MissionInvestigation extends PureComponent {
     })) || EMPTY_LIST;
 
     if (!_.isEmpty(idList)) {
-      newQuestionAndAnswerGroup = _.map(idList, (item, index) =>
-        this.renderQuestion(
-          index + 1,
-          currentSelectedQuestionIdList,
-          questionList,
-          questionList[index].quesId,
-          questionList[index].quesValue,
-        ));
+      newQuestionAndAnswerGroup = _.map(idList, (item, index) => this.renderQuestion(
+        index + 1,
+        currentSelectedQuestionIdList,
+        questionList,
+        questionList[index].quesId,
+        questionList[index].quesValue,
+      ));
     }
 
     this.state = {
@@ -190,9 +190,9 @@ export default class MissionInvestigation extends PureComponent {
   @autobind
   requiredDataValidate() {
     const {
-        checked,
+      checked,
       currentSelectRowKeys,
-      } = this.state;
+    } = this.state;
     if (checked && _.isEmpty(currentSelectRowKeys)) {
       this.setState({
         isShowError: true,
@@ -232,8 +232,7 @@ export default class MissionInvestigation extends PureComponent {
       newQuestionAndAnswerGroup: _.filter(newQuestionAndAnswerGroup,
         item => item.key !== currentDeleteId) || EMPTY_LIST,
       // 从当前列表里面去除quesId
-      currentSelectedQuestionIdList: _.filter(currentSelectedQuestionIdList, item =>
-        item.key !== currentDeleteId) || EMPTY_LIST,
+      currentSelectedQuestionIdList: _.filter(currentSelectedQuestionIdList, item => item.key !== currentDeleteId) || EMPTY_LIST,
       // 从当前选择的row里面去除当前要删除的quesId
       currentSelectRowKeys: _.filter(currentSelectRowKeys, item => item !== quesId),
     }, () => {
@@ -274,13 +273,13 @@ export default class MissionInvestigation extends PureComponent {
     payload: {
       name: '任务调查',
       value: instance => !instance.state.checked,
-      },
-    })
+    },
+  })
   handleCheckChange() {
     const {
       checked,
       currentSelectRowKeys,
-      } = this.state;
+    } = this.state;
     // 如果当前已选择任务调查并且已设置问题
     if (checked && !_.isEmpty(currentSelectRowKeys)) {
       // message.error('您已设置任务调查问题，如果取消选择将不对此任务进行任务调查');
@@ -419,8 +418,7 @@ export default class MissionInvestigation extends PureComponent {
 
     _.each(currentSelectRowKeys,
       (item, index) => {
-        const question = _.find(questionList, questionItem =>
-          questionItem.quesId === item) || EMPTY_OBJECT;
+        const question = _.find(questionList, questionItem => questionItem.quesId === item) || EMPTY_OBJECT;
         finalSelectedQuestionIdList = _.concat(finalSelectedQuestionIdList, [{
           key: `question_${question.quesId}`,
           value: item,
@@ -431,7 +429,8 @@ export default class MissionInvestigation extends PureComponent {
             finalSelectedQuestionIdList,
             questionList,
             question.quesId,
-            question.quesValue));
+            question.quesValue
+          ));
       });
 
     this.setState({
@@ -451,12 +450,15 @@ export default class MissionInvestigation extends PureComponent {
       return (
         <div className={styles.content}>
           {
-            _.map(currentQuestionDetail.optionInfoList, (item, index) =>
+            _.map(currentQuestionDetail.optionInfoList, (item, index) => (
               <div className={styles.anwser} key={item.optionId}>
-                <span>{data.convertNumToLetter((Number(index) + 1))}.</span>
+                <span>
+                  {data.convertNumToLetter((Number(index) + 1))}
+.
+                </span>
                 <span>{item.optionValue}</span>
-              </div>,
-            )
+              </div>
+            ), )
           }
         </div>
       );
@@ -493,8 +495,8 @@ export default class MissionInvestigation extends PureComponent {
         <div className={styles.answerSection}>
           <div className={styles.title}>
             {
-              isSingleOrMultipleQuestion(quesTypeCode) ?
-                '答案：' : '描述：'
+              isSingleOrMultipleQuestion(quesTypeCode)
+                ? '答案：' : '描述：'
             }
           </div>
           {this.renderOption(currentQuestionDetail)}
@@ -509,7 +511,8 @@ export default class MissionInvestigation extends PureComponent {
     finalSelectedQuestionIdList = EMPTY_LIST,
     questionList = EMPTY_LIST,
     quesId,
-    quesValue) {
+    quesValue
+  ) {
     return (
       <div
         className={classnames({
@@ -517,7 +520,10 @@ export default class MissionInvestigation extends PureComponent {
         })}
         key={`question_${quesId}`}
       >
-        <span className={styles.questionIndex}>{currentIndex}.&nbsp;</span>
+        <span className={styles.questionIndex}>
+          {currentIndex}
+.&nbsp;
+        </span>
         {/**
          * 当前选中的题目题干
          */}
@@ -527,7 +533,8 @@ export default class MissionInvestigation extends PureComponent {
           title={this.renderQuestionAndAnswerTooltip(
             finalSelectedQuestionIdList,
             questionList,
-            quesId)}
+            quesId
+          )}
           placement={posi}
           overlayClassName={styles.questionAndAnswer}
         >
@@ -541,7 +548,7 @@ export default class MissionInvestigation extends PureComponent {
             }}
           >
             问题详情
-        </span>
+          </span>
         </Tooltip>
 
         <Icon
@@ -595,9 +602,9 @@ export default class MissionInvestigation extends PureComponent {
           wrapperClass={`${styles.problemListModalContainer} problemListModalContainer`}
           closable
           visible={isShowTable}
-          title={'问题列表'}
+          title="问题列表"
           onCancel={this.handleCancel}
-          footer={
+          footer={(
             <div className={styles.btnSection}>
               <Button
                 type="default"
@@ -615,52 +622,55 @@ export default class MissionInvestigation extends PureComponent {
                 确定
               </Button>
             </div>
-          }
-          modalContent={
+)}
+          modalContent={(
             <div className={styles.modalContainer}>
               {
-                !_.isEmpty(dataSource) ?
-                  <Table
-                    pageData={{
-                      curPageNum: pageNum,
-                      curPageSize: INITIAL_PAGE_SIZE,
-                      totalRecordNum: totalCount,
-                    }}
-                    showHeader={false}
-                    listData={dataSource}
-                    tableClass={
+                !_.isEmpty(dataSource)
+                  ? (
+                    <Table
+                      pageData={{
+                        curPageNum: pageNum,
+                        curPageSize: INITIAL_PAGE_SIZE,
+                        totalRecordNum: totalCount,
+                      }}
+                      showHeader={false}
+                      listData={dataSource}
+                      tableClass={
                       classnames({
                         [styles.problemListTable]: true,
                       })
                     }
-                    titleColumn={titleColumn}
-                    columnWidth={['80px', '420px']}
-                    bordered={false}
-                    isNeedRowSelection
-                    onRowSelectionChange={this.handleRowSelectionChange}
-                    currentSelectRowKeys={currentSelectRowKeys}
-                    selectionType={'checkbox'}
-                    needPagination={totalCount > INITIAL_TOTAL_COUNT}
+                      titleColumn={titleColumn}
+                      columnWidth={['80px', '420px']}
+                      bordered={false}
+                      isNeedRowSelection
+                      onRowSelectionChange={this.handleRowSelectionChange}
+                      currentSelectRowKeys={currentSelectRowKeys}
+                      selectionType="checkbox"
+                      needPagination={totalCount > INITIAL_TOTAL_COUNT}
                     // 分页器是否在表格内部
-                    paginationInTable={false}
-                    onPageChange={this.handlePageChange}
+                      paginationInTable={false}
+                      onPageChange={this.handlePageChange}
                     // 分页器样式
-                    paginationClass={'selfPagination'}
-                  />
-                  :
-                  <div className={styles.emptyContent}>
-                    <span>
-                      <Icon className={styles.emptyIcon} type="frown-o" />
+                      paginationClass="selfPagination"
+                    />
+                  )
+                  : (
+                    <div className={styles.emptyContent}>
+                      <span>
+                        <Icon className={styles.emptyIcon} type="frown-o" />
                       暂无数据
-                        </span>
-                  </div>
+                      </span>
+                    </div>
+                  )
               }
             </div>
-          }
+)}
         />
         {
-          isShowError ?
-            <div className={styles.errBox}>请至少选择一个问题</div> : null
+          isShowError
+            ? <div className={styles.errBox}>请至少选择一个问题</div> : null
         }
         <div
           className={

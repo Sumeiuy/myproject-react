@@ -46,7 +46,6 @@ const tableHeader = [
 ];
 
 export default class Commissiondetail extends PureComponent {
-
   static propTypes = {
     location: PropTypes.object.isRequired,
     checkApproval: PropTypes.func.isRequired,
@@ -204,4 +203,3 @@ export default class Commissiondetail extends PureComponent {
     );
   }
 }
-

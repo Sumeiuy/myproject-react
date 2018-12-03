@@ -25,7 +25,9 @@ export default class Clickable extends PureComponent {
   @autobind
   @time('handleClick')
   handleClick(...args) {
-    const { onClick, eventName, payload, dispatch } = this.props;
+    const {
+      onClick, eventName, payload, dispatch
+    } = this.props;
     if (eventName) {
       dispatch({
         type: eventName,

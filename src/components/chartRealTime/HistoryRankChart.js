@@ -21,8 +21,10 @@ export default class HistoryRankChart extends PureComponent {
 
   render() {
     const { data: { orgModel } } = this.props;
-    const { data, level, scope, showChartUnit, custRange, updateQueryState } = this.props;
-     // 增加判断走堆叠还是普通柱状图
+    const {
+      data, level, scope, showChartUnit, custRange, updateQueryState
+    } = this.props;
+    // 增加判断走堆叠还是普通柱状图
     if (orgModel
       && Array.isArray(orgModel)
       && orgModel.length > 0

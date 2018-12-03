@@ -18,7 +18,6 @@ const getPopupContainer = () => document.querySelector(fspContainer.container) |
 const holdingSecurityTitleList = holdingCombinationSecurity;
 const EMPTY_ARRAY = [];
 export default class HoldingCombinationDetail extends PureComponent {
-
   static propTypes = {
     // 经济客户号
     custId: PropTypes.string.isRequired,
@@ -69,7 +68,9 @@ export default class HoldingCombinationDetail extends PureComponent {
 
   @autobind
   getContent() {
-    const { data, combinationCode, custId, formatAsset } = this.props;
+    const {
+      data, combinationCode, custId, formatAsset
+    } = this.props;
     const list = data[`${custId}_${combinationCode}`] || EMPTY_ARRAY;
     const newTitleList = [...holdingSecurityTitleList];
     newTitleList[2].render = (text) => {
@@ -81,7 +82,7 @@ export default class HoldingCombinationDetail extends PureComponent {
         columns={holdingSecurityTitleList}
         dataSource={list}
         pagination={false}
-        rowKey={'securityCode'}
+        rowKey="securityCode"
       />
     );
   }
@@ -110,7 +111,7 @@ export default class HoldingCombinationDetail extends PureComponent {
     return (
       <Popover
         overlayClassName={styles.popoverBox}
-        title={'客户持仓与组合持仓重合证券'}
+        title="客户持仓与组合持仓重合证券"
         content={this.getContent()}
         mouseEnterDelay={0.5}
         placement="top"

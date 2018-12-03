@@ -54,6 +54,7 @@ export default class MessageCenter extends PureComponent {
     push: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
   }
+
   constructor(props) {
     super(props);
     this.state = {
@@ -104,7 +105,9 @@ export default class MessageCenter extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: '页面跳转' } })
   handleRemindMessage(data) {
-    const { objectVal, rowId, typeName, title } = data;
+    const {
+      objectVal, rowId, typeName, title
+    } = data;
     const allocation = '转签待分配';
     const flag = title.indexOf(allocation);
     // 设置fsp项目里jsp页面中的全局消息Id
@@ -359,40 +362,40 @@ export default class MessageCenter extends PureComponent {
   handleMessageByOther(rowId, objectVal) {
     this.setState({ loadingStatus: true });
     api
-    .getFspData(`/fsp/asset/basis/queryTacticalAllocationSingle?rowId=${objectVal}&notificationId=${rowId}`)
-    .then((response) => {
-      this.setState({ loadingStatus: false });
-      Window.show({
-        id: 'queryTacticalAllocationSingle',
-        showExit: true,
-        width: 630,
-        height: 600,
-        scrollY: false,
-        scrollX: false,
-        title: '大类资产战术配置明细',
-        content: response,
+      .getFspData(`/fsp/asset/basis/queryTacticalAllocationSingle?rowId=${objectVal}&notificationId=${rowId}`)
+      .then((response) => {
+        this.setState({ loadingStatus: false });
+        Window.show({
+          id: 'queryTacticalAllocationSingle',
+          showExit: true,
+          width: 630,
+          height: 600,
+          scrollY: false,
+          scrollX: false,
+          title: '大类资产战术配置明细',
+          content: response,
+        });
+      })
+      .catch((e) => {
+        console.error(e);
       });
-    })
-    .catch((e) => {
-      console.error(e);
-    });
   }
 
   // 根据removeNotice处理的消息通知
   @autobind
   handleMessageByRemoveNotice(rowId) {
     api
-    .getFspData(`/fsp/updateSvrNotification?rowid=${rowId}`)
-    .then(() => {
+      .getFspData(`/fsp/updateSvrNotification?rowid=${rowId}`)
+      .then(() => {
       // 刷新列表
       // $('#showMessageInfo').EBDataTable('queryData');
-      const { page } = this.props.remindMessages;
-      const { curPageNum, pageSize } = page;
-      this.getRemindMessageList(curPageNum, pageSize);
-    })
-    .catch((e) => {
-      console.error(e);
-    });
+        const { page } = this.props.remindMessages;
+        const { curPageNum, pageSize } = page;
+        this.getRemindMessageList(curPageNum, pageSize);
+      })
+      .catch((e) => {
+        console.error(e);
+      });
   }
 
   render() {
@@ -407,7 +410,7 @@ export default class MessageCenter extends PureComponent {
       const isTitleLengthStatus = item.title.length > 50;
       if (isTitleLengthStatus) {
         return (
-          <li key={item.rowId} >
+          <li key={item.rowId}>
             <Tooltip
               title={item.title}
               placement="bottomLeft"
@@ -416,7 +419,8 @@ export default class MessageCenter extends PureComponent {
               <Button
                 onClick={() => this.handleRemindMessage(item)}
               >
-                {item.title.substr(0, 50)}...
+                {item.title.substr(0, 50)}
+...
               </Button>
             </Tooltip>
             <span className={styles.listCreateTime}>{item.createdTime.substr(0, 10)}</span>
@@ -451,13 +455,13 @@ export default class MessageCenter extends PureComponent {
         </div>
         {
             _.isEmpty(page) ? null
-            : (
-              <Pagination
-                current={curPageNum}
-                total={totalRecordNum}
-                pageSize={pageSize}
-                onChange={this.handlePageChange}
-              />)
+              : (
+                <Pagination
+                  current={curPageNum}
+                  total={totalRecordNum}
+                  pageSize={pageSize}
+                  onChange={this.handlePageChange}
+                />)
           }
       </div>
     );

@@ -22,7 +22,9 @@ import ApplyItem from '../../components/common/appList/ApplyItem';
 import Detail from '../../components/accountLimit/Detail';
 import commonConfirm from '../../components/common/confirm_';
 import config from '../../components/accountLimit/config';
-import { permission, env, dva, emp, convert, time } from '../../helper';
+import {
+  permission, env, dva, emp, convert, time
+} from '../../helper';
 import seibelHelper from '../../helper/page/seibel';
 import logable, { logPV } from '../../decorators/logable';
 
@@ -34,7 +36,7 @@ const {
   PAGE_VALUE,
   PAGE_TYPE,
   operateTypeArray,
-  RELIEVE_CODE,  // 限制解除的 value
+  RELIEVE_CODE, // 限制解除的 value
   basicFilters,
   moreFilters,
   moreFilterData,
@@ -238,7 +240,9 @@ export default class AccountLimitHome extends PureComponent {
   queryAppList(query, pageNum = 1, pageSize = 10) {
     const { getList } = this.props;
     const params = seibelHelper.constructSeibelPostBody(query, pageNum, pageSize);
-    getList({ ...params, type: PAGE_TYPE, business2: '', subType: params.business2 || '' }).then(this.getRightDetail);
+    getList({
+      ...params, type: PAGE_TYPE, business2: '', subType: params.business2 || ''
+    }).then(this.getRightDetail);
   }
 
   // 头部筛选后调用方法
@@ -438,7 +442,7 @@ export default class AccountLimitHome extends PureComponent {
     } = this.state;
     const isEmpty = _.isEmpty(list.resultData);
 
-        // 操作类型增加全部
+    // 操作类型增加全部
     const operateAllOptions = [
       {
         show: true,
@@ -506,30 +510,32 @@ export default class AccountLimitHome extends PureComponent {
         />
         {
           createModal
-          ? <CreateModal
-            dict={dict}
-            modalKey={createModalKey}
-            visible={createModal}
-            location={location}
-            empInfo={empInfo}
-            empData={empData}
-            queryEmpData={queryEmpData}
-            custRangeList={custRangeList}
-            searchCustData={searchCustData}
-            addedCustData={addedCustData}
-            queryCustList={queryCustList}
-            limitList={limitList}
-            queryLimtList={queryLimtList}
-            buttonData={buttonData}
-            queryButtonList={queryButtonList}
-            queryAppList={this.queryAppList}
-            closeModal={this.closeModal}
-            validateForm={validateForm}
-            validateData={validateData}
-            saveChange={saveChange}
-            clearData={clearData}
-          />
-          : null
+            ? (
+              <CreateModal
+                dict={dict}
+                modalKey={createModalKey}
+                visible={createModal}
+                location={location}
+                empInfo={empInfo}
+                empData={empData}
+                queryEmpData={queryEmpData}
+                custRangeList={custRangeList}
+                searchCustData={searchCustData}
+                addedCustData={addedCustData}
+                queryCustList={queryCustList}
+                limitList={limitList}
+                queryLimtList={queryLimtList}
+                buttonData={buttonData}
+                queryButtonList={queryButtonList}
+                queryAppList={this.queryAppList}
+                closeModal={this.closeModal}
+                validateForm={validateForm}
+                validateData={validateData}
+                saveChange={saveChange}
+                clearData={clearData}
+              />
+            )
+            : null
         }
       </div>
     );

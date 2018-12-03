@@ -46,8 +46,7 @@ export default function Detail(props) {
   }
 
   const cancelBtn = !cancelReservationFlag ? null
-    :
-    (
+    : (
       <Button
         onClick={handleCancelReservation}
       >

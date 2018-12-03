@@ -10,7 +10,7 @@ import _ from 'lodash';
 import Icon from '../common/Icon';
 import { fsp } from '../../helper';
 
-import Anchor from '../../components/common/anchor';
+import Anchor from '../common/anchor';
 import { reportAnchorOptions } from '../../config';
 import styles from './pageAnchor.less';
 import logable from '../../decorators/logable';
@@ -18,7 +18,6 @@ import logable from '../../decorators/logable';
 const { Link } = Anchor;
 
 export default class PageAnchor extends PureComponent {
-
   static propTypes = {
     chartInfo: PropTypes.array.isRequired,
   }
@@ -52,9 +51,10 @@ export default class PageAnchor extends PureComponent {
     return (
       <div>
         {
-          charInfoLength >= 3 ?
-            <Anchor className={styles.pageAnchor} offsetTop={130} >
-              {
+          charInfoLength >= 3
+            ? (
+              <Anchor className={styles.pageAnchor} offsetTop={130}>
+                {
                 chartInfo.map((item) => {
                   const { key } = item;
                   const href = `#${key}`;
@@ -67,10 +67,10 @@ export default class PageAnchor extends PureComponent {
                   );
                 })
               }
-              <Link><div className={styles.gotoTop} onClick={this.handleGotoTop}><Icon type="fanhuidingbu" /></div></Link>
-            </Anchor>
-          :
-            <div />
+                <Link><div className={styles.gotoTop} onClick={this.handleGotoTop}><Icon type="fanhuidingbu" /></div></Link>
+              </Anchor>
+            )
+            : <div />
         }
       </div>
     );

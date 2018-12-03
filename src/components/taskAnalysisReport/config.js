@@ -72,8 +72,8 @@ const eventSourceTypes = {
 
 // 报表通用配置项
 const generalOptions = {
-   // grid
-   gridOptions: {
+  // grid
+  gridOptions: {
     show: true,
     top: '40px',
     left: '20px',
@@ -318,42 +318,42 @@ const serviceChannelChangeOption = {
 
 // 表格头部信息
 const tableOption = {
-  columnsItem : [{
+  columnsItem: [{
     title: '事件名称',
     dataIndex: 'eventName',
     key: 'eventName',
     width: 150,
-  },{
+  }, {
     title: '任务数',
     dataIndex: 'taskNum',
     key: 'taskNum',
     eventType: 'task',
     width: 150,
-  },{
+  }, {
     title: '完成任务数',
     dataIndex: 'completedTaskNum',
     key: 'completedTaskNum',
     eventType: 'task',
     width: 150,
-  },{
+  }, {
     title: '任务完成率',
     dataIndex: 'taskCompletionRate',
     key: 'taskCompletionRate',
     eventType: 'task',
     width: 150,
-  },{
+  }, {
     title: '覆盖客户人次',
     dataIndex: 'coveredCustomerNum',
     key: 'coveredCustomerNum',
     eventType: 'customer',
     width: 150,
-  },{
+  }, {
     title: '已服务客户人次',
     dataIndex: 'servedCustomerNum',
     key: 'servedCustomerNum',
     eventType: 'customer',
     width: 150,
-  },{
+  }, {
     title: '各渠道服务占比',
     dataIndex: 'servicesAccounted',
     key: 'servicesAccounted',

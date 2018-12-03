@@ -75,9 +75,7 @@ export default class TabsExtra extends PureComponent {
   @autobind
   getBeginAndEndTime(value) {
     const { historyTime, customerPoolTimeSelect } = optionsMap;
-    const currentSelect = _.find(historyTime, itemData =>
-      itemData.name === _.find(customerPoolTimeSelect, item =>
-        item.key === value).name) || {};
+    const currentSelect = _.find(historyTime, itemData => itemData.name === _.find(customerPoolTimeSelect, item => item.key === value).name) || {};
     const nowDuration = time.getDurationString(currentSelect.key);
     const begin = nowDuration.begin;
     const end = nowDuration.end;
@@ -150,25 +148,29 @@ export default class TabsExtra extends PureComponent {
         </div>
         <div className={styles.custRangeForCust}>
           {
-            !_.isEmpty(custRange) ?
-              <CustRange
-                defaultFirst
-                orgId={orgId}
-                custRange={custRange}
-                location={location}
-                replace={replace}
-                updateQueryState={this.handleCustRange}
-                beginTime={begin}
-                endTime={end}
-                collectData={collectCustRange}
-                expandAll={expandAll}
-                isDown={isDown}
-              /> :
-              <Select
-                defaultValue="暂无数据"
-              >
-                <Option value="暂无数据">暂无数据</Option>
-              </Select>
+            !_.isEmpty(custRange)
+              ? (
+                <CustRange
+                  defaultFirst
+                  orgId={orgId}
+                  custRange={custRange}
+                  location={location}
+                  replace={replace}
+                  updateQueryState={this.handleCustRange}
+                  beginTime={begin}
+                  endTime={end}
+                  collectData={collectCustRange}
+                  expandAll={expandAll}
+                  isDown={isDown}
+                />
+              )
+              : (
+                <Select
+                  defaultValue="暂无数据"
+                >
+                  <Option value="暂无数据">暂无数据</Option>
+                </Select>
+              )
           }
         </div>
         {/**
@@ -177,37 +179,44 @@ export default class TabsExtra extends PureComponent {
         {
           falseValue ? <div className={styles.separateLine} /> : null
         }
-        {!isDown ?
-          <div className={styles.timeCycle}>
-            <div className={styles.icon}>
-              <Icon type="rili" />
+        {!isDown
+          ? (
+            <div className={styles.timeCycle}>
+              <div className={styles.icon}>
+                <Icon type="rili" />
+              </div>
+              <div className={styles.select}>
+                <Select
+                  value={selectValue}
+                  onChange={this.handleChange}
+                >
+                  {_.map(cycle, item => <Option key={item.key} value={item.key}>{item.value}</Option>)}
+                </Select>
+              </div>
             </div>
-            <div className={styles.select}>
-              <Select
-                value={selectValue}
-                onChange={this.handleChange}
-              >
-                {_.map(cycle, item =>
-                  <Option key={item.key} value={item.key}>{item.value}</Option>)}
-              </Select>
-            </div>
-          </div> :
-          <div>
-            {
-              falseValue ?
-                <div className={styles.downFiles}>
-                  <div className={styles.iconDown}>
-                    <Icon type="xiazai" />
+          )
+          : (
+            <div>
+              {
+              falseValue
+                ? (
+                  <div className={styles.downFiles}>
+                    <div className={styles.iconDown}>
+                      <Icon type="xiazai" />
+                    </div>
+                    <div className={styles.downLoad}>
+                      <a
+                        onClick={this.handleDownloadClick}
+                        href={`${request.prefix}/excel/custlist/exportExcel?orgId=${urlParams.orgId}&missionName=${urlParams.missionName}&missionId=${urlParams.missionId}&serviceTips=${urlParams.serviceTips}&servicePolicy=${urlParams.servicePolicy}`}
+                      >
+导出
+                      </a>
+                    </div>
                   </div>
-                  <div className={styles.downLoad}>
-                    <a
-                      onClick={this.handleDownloadClick}
-                      href={`${request.prefix}/excel/custlist/exportExcel?orgId=${urlParams.orgId}&missionName=${urlParams.missionName}&missionId=${urlParams.missionId}&serviceTips=${urlParams.serviceTips}&servicePolicy=${urlParams.servicePolicy}`}
-                    >导出</a>
-                  </div>
-                </div> : null
+                ) : null
             }
-          </div>
+            </div>
+          )
         }
       </div>
     );

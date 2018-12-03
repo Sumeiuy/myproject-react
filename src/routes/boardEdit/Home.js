@@ -5,7 +5,9 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Input, Tooltip, Button, message } from 'antd';
+import {
+  Input, Tooltip, Button, message
+} from 'antd';
 import { autobind } from 'core-decorators';
 import { routerRedux } from 'dva/router';
 import { connect } from 'dva';
@@ -55,7 +57,6 @@ const mapDispatchToProps = {
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 export default class BoardEditHome extends PureComponent {
-
   static propTypes = {
     location: PropTypes.object.isRequired,
     boardInfo: PropTypes.object.isRequired,
@@ -136,7 +137,9 @@ export default class BoardEditHome extends PureComponent {
       });
     }
     const { publishLoading: prePL, updateLoading: preUL } = this.props;
-    const { publishLoading, updateLoading, boardInfo: { id, ownerOrgId }, push } = nextProps;
+    const {
+      publishLoading, updateLoading, boardInfo: { id, ownerOrgId }, push
+    } = nextProps;
     if (prePL && !publishLoading) {
       // 发布按钮
       const { success, msg /* code */} = nextProps.operateData;
@@ -147,7 +150,7 @@ export default class BoardEditHome extends PureComponent {
         // if (code === responseCode.DUPLICATE_NAME) {
         message.error(msg);
         // } else {
-          // message.error();
+        // message.error();
         // }
       }
     }
@@ -166,7 +169,7 @@ export default class BoardEditHome extends PureComponent {
         // if (code === responseCode.DUPLICATE_NAME) {
         message.error(msg);
         // } else {
-          // message.error();
+        // message.error();
         // }
       }
     }
@@ -176,6 +179,7 @@ export default class BoardEditHome extends PureComponent {
     const { delBoardInfo } = this.props;
     delBoardInfo();
   }
+
   @autobind
   getAllUserVRKeys(orgModel) {
     return orgModel.map(o => o.id);
@@ -363,7 +367,9 @@ export default class BoardEditHome extends PureComponent {
 
   @autobind
   saveBoard(extraParam) {
-    const { bNEditorOriginal, vREditorOriginal, summuryIndicator, detailIndicator } = this.state;
+    const {
+      bNEditorOriginal, vREditorOriginal, summuryIndicator, detailIndicator
+    } = this.state;
     const { id, ownerOrgId } = this.props.boardInfo;
     // 后面新增指标库
     this.saveBoardChange({
@@ -376,6 +382,7 @@ export default class BoardEditHome extends PureComponent {
       ...extraParam,
     });
   }
+
   // 发布就是保存并将isPublished: '设置成Y',
   @autobind
   publishBoardCofirm() {
@@ -637,21 +644,20 @@ export default class BoardEditHome extends PureComponent {
             </Button>
             {/* 对于已经发布的看板不需要保存 */}
             {
-              hasPublished ?
-              null
-              :
-              (
-                <Button
-                  disabled={!saveBt}
-                  className={styles.editBt}
-                  onClick={this.handleSaveBtnClick}
-                  key="editSave"
-                  size="large"
-                  type={saveBtnType}
-                >
+              hasPublished
+                ? null
+                : (
+                  <Button
+                    disabled={!saveBt}
+                    className={styles.editBt}
+                    onClick={this.handleSaveBtnClick}
+                    key="editSave"
+                    size="large"
+                    type={saveBtnType}
+                  >
                   保存
-                </Button>
-              )
+                  </Button>
+                )
             }
           </div>
         </div>

@@ -16,7 +16,7 @@ import store from 'store';
 import introJs from 'intro.js';
 import 'intro.js/introjs.css';
 
-import logable, { logPV, logCommon} from '../../decorators/logable';
+import logable, { logPV, logCommon } from '../../decorators/logable';
 import withRouter from '../../decorators/withRouter';
 import Nav from '../../components/newHome/Nav';
 import ViewAndCombination from '../../components/newHome/ViewAndCombination';
@@ -24,7 +24,9 @@ import CommonCell from '../../components/newHome/CommonCell';
 import ChartsTab from '../../components/newHome/ChartsTab';
 import { LabelModal } from '../../components/customerPool/home';
 import ActivityColumnCarousel from '../../components/platformParameterSetting/routers/contentOperate/ActivityColumnCarousel';
-import { dva, url as urlHelper, emp, permission } from '../../helper';
+import {
+  dva, url as urlHelper, emp, permission
+} from '../../helper';
 import { isSightingScope, getFilter, getSortParam } from '../../components/customerPool/helper.js';
 import { openRctTab } from '../../utils';
 import { padSightLabelDesc } from '../../config';
@@ -62,9 +64,9 @@ const effects = {
   getCustAnalyticsIndicators: 'customerPool/getCustAnalyticsIndicators',
   queryAudioFile: 'morningBoradcast/queryAudioFile',
   queryhomePageNews: 'morningBoradcast/queryhomePageNews', // 晨报列表
-  queryCustLabelList: 'customerPool/queryCustLabelList',  // 获取首页可用客户标签列表数据
+  queryCustLabelList: 'customerPool/queryCustLabelList', // 获取首页可用客户标签列表数据
   custLabelListPaging: 'customerPool/custLabelListPaging', // 首页可用客户标签列表弹窗数据分页处理
-  queryNumbers: 'newHome/queryNumbers',  // 首页任务概览
+  queryNumbers: 'newHome/queryNumbers', // 首页任务概览
   // 获取活动栏目
   queryContent: 'morningBoradcast/queryContent',
 };
@@ -81,7 +83,7 @@ const mapStateToProps = state => ({
   // 组合推荐
   introCombination: state.newHome.introCombination,
   custRange: state.customerPool.custRange, // 客户池用户范围
-  cycle: state.app.dict.kPIDateScopeType,  // 统计周期
+  cycle: state.app.dict.kPIDateScopeType, // 统计周期
   empInfo: state.app.empInfo, // 职位信息
   custAnalyticsIndicators: state.customerPool.custAnalyticsIndicators,
   performanceIndicators: state.customerPool.performanceIndicators, // 绩效指标
@@ -130,7 +132,7 @@ let facingOneModele = '搜索栏';
 // 神策埋点需要知道用户点击下一步还是上一步 第一步搜索栏是0 用来判断  判断完会重绘
 let count = 0;
 // 神策埋点用来判断是第几个弹出框点击了上一步还是下一步
-let countStep = 1 ;
+let countStep = 1;
 
 // 获取新手引导步骤列表  因为需求更改了引导顺序 但是NEW_HOME_INTRO_后面的数字不影响顺序  只需要更改newStepList里面的排序顺序就能改变引导显示的顺序
 function getIntroStepListInNewHome() {
@@ -156,12 +158,12 @@ function getIntroStepListInNewHome() {
       intro: ' 新增“今日产品”栏目，让您及时掌握首发、开放销售、到期等关键产品信息。点击数字可以查看产品明细列表。',
       position: 'top',
     }, {
-      //组合推荐 10
+      // 组合推荐 10
       element: document.querySelector(`#${NEW_HOME_INTRO_SEVENTH_SEEP_IDNAME}`),
       intro: '近30天涨幅排名前五的投资组合在这里，点击即可查看组合详情。',
       position: 'top',
     }, {
-      //每日晨报 11
+      // 每日晨报 11
       element: document.querySelector(`#${NEW_HOME_INTRO_NINTH_SEEP_IDNAME}`),
       intro: ' 每日晨报让您可听、可看、可下载最新财经热点话题。',
       position: 'top',
@@ -173,7 +175,6 @@ function getIntroStepListInNewHome() {
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 export default class Home extends PureComponent {
-
   static propTypes = {
     push: PropTypes.func.isRequired,
     keyAttention: PropTypes.array.isRequired,
@@ -266,7 +267,7 @@ export default class Home extends PureComponent {
     // 获取活动栏目
   	queryContent();
 
-     // 这两个接口请求有点慢，延时发送请求
+    // 这两个接口请求有点慢，延时发送请求
     new Promise(resolve => resolve()).then(() => {
       // 组合推荐
       queryIntroCombination();
@@ -289,8 +290,10 @@ export default class Home extends PureComponent {
 
   // 猜你感兴趣-更多点击事件
   @autobind
-  @logPV({ pathname: '/modal/showMoreLabelModal',
-title: '猜你感兴趣-更多-可用客户标签弹窗' })
+  @logPV({
+    pathname: '/modal/showMoreLabelModal',
+    title: '猜你感兴趣-更多-可用客户标签弹窗'
+  })
   handleMoreClick() {
     this.setState({
       showMoreLabelModal: true,
@@ -312,12 +315,14 @@ title: '猜你感兴趣-更多-可用客户标签弹窗' })
       param,
       routerAction: push,
     });
-  };
+  }
 
   // 产品日历的数值点击事件
   @autobind
-  @logable({ type: 'ButtonClick',
-payload: { name: '点击产品中心' } })
+  @logable({
+    type: 'ButtonClick',
+    payload: { name: '点击产品中心' }
+  })
   handleProductCalendarValueClick(item) {
     const { push } = this.props;
     const { code } = item;
@@ -335,7 +340,7 @@ payload: { name: '点击产品中心' } })
     const { productCalendar } = this.props;
     const productData = _.isEmpty(productCalendar)
       ? []
-      : productCalendar.map(item => {
+      : productCalendar.map((item) => {
         const newItem = { ...item };
         if (newItem.code === TODAY_EVENT_CODE) {
           newItem.title = `今日关注事件${item.value}件`;
@@ -400,8 +405,10 @@ payload: { name: '点击产品中心' } })
 
   // 组合推荐，打开详情页
   @autobind
-  @logPV({ pathname: '/strategyCenter/choicenessCombination/combinationDetail',
-title: '精选组合详情' })
+  @logPV({
+    pathname: '/strategyCenter/choicenessCombination/combinationDetail',
+    title: '精选组合详情'
+  })
   handleCombinationClick(obj) {
     const { push } = this.props;
     const param = {
@@ -428,8 +435,9 @@ title: '精选组合详情' })
 
   // 重点关注、猜你感兴趣 跳转客户列表的点击事件
   @autobind
-  @logable({ type: 'Click',
-payload: {
+  @logable({
+    type: 'Click',
+    payload: {
       name: '点击$args[0].name',
     }
   })
@@ -449,6 +457,7 @@ payload: {
       type: 'LABEL',
     });
   }
+
   // 判断是否在执行者视图中使用'展开收起'功能
   isFirstUseCollapse() {
     return store.get(NEWHOMEFIRSTUSECOLLAPSE_PERFORMERVIEW);
@@ -456,11 +465,11 @@ payload: {
 
   // 神策埋点 targetElement.id是第几个元素的id名
   @autobind
-  handleIntorButtomChange(targetElement){
+  handleIntorButtomChange(targetElement) {
     const data = stepIds[targetElement.id];
     facingOneModele = data.name;
     // count = 0  data.step从第0开始 判断step是下一步还是上一步
-    let step = count < data.step ? '下一步' : '上一步';
+    const step = count < data.step ? '下一步' : '上一步';
     count = data.step;
     logCommon({
       type: 'Click',
@@ -475,23 +484,24 @@ payload: {
 
   // 神策埋点 显示是第几个弹框点击的关闭
   @autobind
-  handleIntorButtomClose(facingOneModele){
+  handleIntorButtomClose(facingOneModele) {
     logCommon({
       type: 'Click',
       payload: {
-        name:'关闭',
+        name: '关闭',
         value: facingOneModele,
       },
     });
   }
+
   // 引导功能初始化
   @autobind
   intialGuide() {
     // onexit会执行2次  使用count只执行一次
     let count = 0;
     introJs().setOptions({
-      hidePrev:true,
-      hideNext:true,
+      hidePrev: true,
+      hideNext: true,
       showBullets: true,
       showProgress: false,
       overlayOpacity: 0.4,
@@ -506,16 +516,16 @@ payload: {
       steps: getIntroStepListInNewHome(),
       scrollToElement: true,
       disableInteraction: true,
-    }).onchange((targetElement)=> {
+    }).onchange((targetElement) => {
       this.handleIntorButtomChange(targetElement);
-      }).onexit(() => {
-        // 没到最后一步点关闭按钮 执行onexit
-        if(!count){
-          count++;
-          this.handleIntorButtomClose(facingOneModele);
-        }
-      }).start();
-
+    }).onexit(() => {
+      // 没到最后一步点关闭按钮 执行onexit
+      if (!count) {
+        count++;
+        this.handleIntorButtomClose(facingOneModele);
+      }
+    })
+      .start();
   }
 
 
@@ -635,7 +645,7 @@ payload: {
       <div className={styles.container}>
         <div className={styles.leftContent}>
           <div className={styles.competitionsLink}>
-            <ActivityColumnCarousel activityColumnList={activityColumnList}/>
+            <ActivityColumnCarousel activityColumnList={activityColumnList} />
           </div>
           <div className={styles.mostFocusContentLink}>
             <CommonCell {...keyAttentionProps} />

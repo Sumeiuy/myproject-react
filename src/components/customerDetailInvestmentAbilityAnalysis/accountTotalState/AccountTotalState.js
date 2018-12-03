@@ -131,19 +131,19 @@ export default class AccountTotalState extends PureComponent {
     return (
       <div className={styles.accountTotalState}>
         <CountPeriod />
-        <InfoTitle title="客户投资特征"/>
+        <InfoTitle title="客户投资特征" />
         <InvestmentFeature
           profitAbility={profitAbility}
           investmentFeatureLabels={investmentFeatureLabels}
         />
-        <InfoTitle title="客户资产变动情况"/>
+        <InfoTitle title="客户资产变动情况" />
         <AssetChangeTable
           assetChangeList={assetChangeList}
         />
         <AssetChangeChart
           assetChangeReportData={assetChangeReportData}
         />
-        <InfoTitle title="账户收益走势"/>
+        <InfoTitle title="账户收益走势" />
         <ProfitTrendChart
           profitTrendData={profitTrendData}
         />

@@ -17,11 +17,10 @@ import styles from './toDoList.less';
 import logable from '../../../decorators/logable';
 import emptyImg from './img/empty.png';
 
-const systemCode = '102330';  // 系统代码（理财服务平台为102330）
+const systemCode = '102330'; // 系统代码（理财服务平台为102330）
 const USER_INFO_APPROVE = '投顾信息维护审核流程'; // 用户基本信息审核标识;
 
 export default class ToDoList extends PureComponent {
-
   static propTypes = {
     data: PropTypes.array.isRequired,
     todolist: PropTypes.array.isRequired,
@@ -50,8 +49,8 @@ export default class ToDoList extends PureComponent {
         title: '任务名称',
         dataIndex: 'task',
         key: 'task',
-        render: (item, recode) =>
-          (<a
+        render: (item, recode) => (
+          <a
             className={styles.title}
             target="_blank"
             rel="noopener noreferrer"
@@ -60,7 +59,8 @@ export default class ToDoList extends PureComponent {
             onClick={this.handleOpenNewPage}
           >
             {item.text}
-          </a>),
+          </a>
+        ),
       },
       {
         title: '当前步骤',
@@ -183,6 +183,7 @@ export default class ToDoList extends PureComponent {
       },
     });
   }
+
   // 请求基本信息成功，页面跳转
   @autobind
   handleSuccess() {
@@ -215,39 +216,43 @@ export default class ToDoList extends PureComponent {
     const { className, data, todolist } = this.props;
     // 没有待办流程
     if (todolist.length === 0) {
-      return (<div className={styles.empty}>
-        <Table
-          className={`${className} ${styles.todoListEmpty}`}
-          rowKey={record => record.id}
-          columns={this.columns}
-          dataSource={todolist}
-          locale={{ emptyText: '' }}
-        />
-        <div className={styles.emptyWrapper}>
-          <div className="empty-container">
-            <img src={emptyImg} alt="" />
-            <p>暂无待办流程</p>
+      return (
+        <div className={styles.empty}>
+          <Table
+            className={`${className} ${styles.todoListEmpty}`}
+            rowKey={record => record.id}
+            columns={this.columns}
+            dataSource={todolist}
+            locale={{ emptyText: '' }}
+          />
+          <div className={styles.emptyWrapper}>
+            <div className="empty-container">
+              <img src={emptyImg} alt="" />
+              <p>暂无待办流程</p>
+            </div>
           </div>
         </div>
-      </div>);
+      );
     }
     // 搜索结果为空
     if (data.length === 0) {
-      return (<div className={styles.empty}>
-        <Table
-          className={`${className} ${styles.todoListEmpty}`}
-          rowKey={record => record.id}
-          columns={this.columns}
-          dataSource={data}
-          locale={{ emptyText: '' }}
-        />
-        <div className={styles.emptyWrapper}>
-          <div className="empty-container">
-            <img src={emptyImg} alt="" />
-            <p>抱歉！没有找到相关结果</p>
+      return (
+        <div className={styles.empty}>
+          <Table
+            className={`${className} ${styles.todoListEmpty}`}
+            rowKey={record => record.id}
+            columns={this.columns}
+            dataSource={data}
+            locale={{ emptyText: '' }}
+          />
+          <div className={styles.emptyWrapper}>
+            <div className="empty-container">
+              <img src={emptyImg} alt="" />
+              <p>抱歉！没有找到相关结果</p>
+            </div>
           </div>
         </div>
-      </div>);
+      );
     }
     return (
       <Table

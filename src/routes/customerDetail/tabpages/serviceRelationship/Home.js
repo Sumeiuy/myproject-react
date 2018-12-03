@@ -10,22 +10,23 @@ import { autobind } from 'core-decorators';
 import { connect } from 'dva';
 import { dva } from '../../../../helper';
 import ServiceRelationship from '../../../../components/customerDetailServiceRelationship/ServiceRelationship';
+
 const effect = dva.generateEffect;
 const mapStateToProps = state => ({
   // 账户关系下服务团队的数据
   serviceTeam: state.detailServiceRelationship.serviceTeam,
   // 账户关系下介绍信息的数据
   introduce: state.detailServiceRelationship.introduce,
-   // 账户关系下服务历史的数据
-   serviceHistory: state.detailServiceRelationship.serviceHistory,
+  // 账户关系下服务历史的数据
+  serviceHistory: state.detailServiceRelationship.serviceHistory,
 });
 const mapDispatchToProps = {
   // 查询账户关系下的服务团队信息
   getCustServiceTeam: effect('detailServiceRelationship/getCustServiceTeam'),
- // 查询账户关系下的介绍信息
- getCustDevInfo: effect('detailServiceRelationship/getCustDevInfo'),
- // 查询账户关系下的服务历史信息
- getCustServiceHistory: effect('detailServiceRelationship/getCustServiceHistory'),
+  // 查询账户关系下的介绍信息
+  getCustDevInfo: effect('detailServiceRelationship/getCustDevInfo'),
+  // 查询账户关系下的服务历史信息
+  getCustServiceHistory: effect('detailServiceRelationship/getCustServiceHistory'),
   // 清除Redux中的数据
   clearReduxData: effect('detailServiceRelationship/clearReduxData', { loading: false }),
 };
@@ -39,7 +40,7 @@ export default class Home extends PureComponent {
     introduce: PropTypes.array.isRequired,
     // 账户关系下服务历史的数据
     serviceHistory: PropTypes.array.isRequired,
-    //查询账户关系下的服务团队信息
+    // 查询账户关系下的服务团队信息
     getCustServiceTeam: PropTypes.func.isRequired,
     // 查询账户关系下的介绍信息
     getCustDevInfo: PropTypes.func.isRequired,

@@ -23,10 +23,10 @@ const exported = {
   serviceRecordData: PropTypes.object.isRequired,
   getCustIncome: PropTypes.func.isRequired,
 
- // 接口的loading状态
+  // 接口的loading状态
   interfaceState: PropTypes.object.isRequired,
 
- // 6个月收益数据
+  // 6个月收益数据
   monthlyProfits: PropTypes.object.isRequired,
 
   targetCustDetail: PropTypes.object.isRequired,
@@ -46,10 +46,10 @@ const exported = {
   filesList: PropTypes.array,
   deleteFileResult: PropTypes.array.isRequired,
 
- // 预览客户细分
+  // 预览客户细分
   previewCustDetail: PropTypes.func.isRequired,
 
- // 预览客户细分结果
+  // 预览客户细分结果
   custDetailResult: PropTypes.object.isRequired,
 
   mngrMissionDetailInfo: PropTypes.object.isRequired,

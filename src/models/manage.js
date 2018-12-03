@@ -81,7 +81,11 @@ export default {
     },
     // 各种操作的状态
     opertateBoardState(state, action) {
-      const { payload: { name, value, message, operateData } } = action;
+      const {
+        payload: {
+          name, value, message, operateData
+        }
+      } = action;
       return {
         ...state,
         [name]: value,

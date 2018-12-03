@@ -5,7 +5,9 @@
  * @Last Modified time: 2018-08-03 15:40:58
  * @description 线上销户需要用到的配置项
  */
-import { customer, status, drafter, department, approver, applyTime } from '../../config/busApplyFilters';
+import {
+  customer, status, drafter, department, approver, applyTime
+} from '../../config/busApplyFilters';
 
 const config = {
   // 页面类型 Code

@@ -9,7 +9,9 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { DatePicker, Input, Select as AntdSelect, Popconfirm, message, Modal } from 'antd';
+import {
+  DatePicker, Input, Select as AntdSelect, Popconfirm, message, Modal
+} from 'antd';
 import _ from 'lodash';
 import moment from 'moment';
 
@@ -18,10 +20,10 @@ import InfoTitle from '../common/InfoTitle';
 import InfoForm from '../common/infoForm';
 import InfoItem from '../common/infoItem';
 import ApproveList from '../common/approveList';
-import CommonTable from '../../components/common/biz/CommonTable';
+import CommonTable from '../common/biz/CommonTable';
 import MultiUploader from '../common/biz/MultiUploader';
 import AutoComplete from '../common/similarAutoComplete';
-import Icon from '../../components/common/Icon';
+import Icon from '../common/Icon';
 import logable from '../../decorators/logable';
 import { time, regxp } from '../../helper';
 import config from './config';
@@ -115,36 +117,48 @@ export default class EditForm extends PureComponent {
       // 对接人
       const managerIdColumn = _.find(titleList, o => o.key === KEY_MANAGERID) || {};
       managerIdColumn.render = (text, record) => {
-        const { edit = false, custId, dockingList = [], managerId, managerName } = record;
+        const {
+          edit = false, custId, dockingList = [], managerId, managerName
+        } = record;
         const showName = managerId ? `${managerName} ${(managerId) || ''}` : '';
         return edit
-          ? <span><AutoComplete
-            key={custId}
-            placeholder="客户号/客户名称"
-            showNameKey="ptyMngName"
-            showIdKey="ptyMngId"
-            optionList={dockingList}
-            defaultValue={showName}
-            onSelect={v => this.handleSelectEmp(v, record)}
-            onSearch={v => this.handleSearchEmp(v, record)}
-            dropdownMatchSelectWidth={false}
-            style={autoCompleteStyle}
-          /></span>
+          ? (
+            <span>
+              <AutoComplete
+                key={custId}
+                placeholder="客户号/客户名称"
+                showNameKey="ptyMngName"
+                showIdKey="ptyMngId"
+                optionList={dockingList}
+                defaultValue={showName}
+                onSelect={v => this.handleSelectEmp(v, record)}
+                onSearch={v => this.handleSearchEmp(v, record)}
+                dropdownMatchSelectWidth={false}
+                style={autoCompleteStyle}
+              />
+            </span>
+          )
           : <div title={showName}>{showName}</div>;
       };
       // 禁止转出金额
       const limitAmountColumn = _.find(titleList, o => o.key === KEY_LIMIT_AMOUNT) || {};
       limitAmountColumn.render = (text, record) => {
         const { edit = false, newLimitAmount = '' } = record;
-        return (<div>{
+        return (
+          <div>
+            {
         edit
-        ? <Input
-          value={newLimitAmount}
-          placeholder="请输入禁止转出金额"
-          style={{ maxWidth: '160px' }}
-          onChange={e => this.handleLimitAmountChange(e, record)}
-        />
-        : newLimitAmount}</div>);
+          ? (
+            <Input
+              value={newLimitAmount}
+              placeholder="请输入禁止转出金额"
+              style={{ maxWidth: '160px' }}
+              onChange={e => this.handleLimitAmountChange(e, record)}
+            />
+          )
+          : newLimitAmount}
+          </div>
+        );
       };
     }
     // 添加操作列
@@ -155,17 +169,21 @@ export default class EditForm extends PureComponent {
       render: (text, record) => {
         const { edit } = record;
         const editElement = this.isSetLimitType()
-        ? <Icon type="beizhu" onClick={() => this.editCustomerInfo(record)} />
-        : null;
+          ? <Icon type="beizhu" onClick={() => this.editCustomerInfo(record)} />
+          : null;
         return edit
-        ? <div className={styles.operateColumn}>
-          <a onClick={() => this.cancelOperateClick(record)}>取消</a>
-          <a onClick={() => this.submitOperateClick(record)}>确定</a>
-        </div>
-        : <div className={styles.operateColumn}>
-          {editElement}
-          {this.renderPopconfirm(record)}
-        </div>;
+          ? (
+            <div className={styles.operateColumn}>
+              <a onClick={() => this.cancelOperateClick(record)}>取消</a>
+              <a onClick={() => this.submitOperateClick(record)}>确定</a>
+            </div>
+          )
+          : (
+            <div className={styles.operateColumn}>
+              {editElement}
+              {this.renderPopconfirm(record)}
+            </div>
+          );
       },
       width: 100,
     });
@@ -325,9 +343,9 @@ export default class EditForm extends PureComponent {
   @autobind
   relieveDisabledDate(current) {
     const { editFormData } = this.props;
-    return this.isSetLimitType() ?
+    return this.isSetLimitType()
       // 如果操作类型是设置限制的时候，解除日期不能小于设置日期
-      current <= moment(editFormData.limitStartTime, TIME_FORMAT_STRING)
+      ? current <= moment(editFormData.limitStartTime, TIME_FORMAT_STRING)
       :
       // 如果操作类型是解除限制的时候，解除日期不能小于今天
       current < moment().startOf('day');
@@ -512,15 +530,17 @@ export default class EditForm extends PureComponent {
   // 渲染点击删除按钮后的确认框
   @autobind
   renderPopconfirm(record) {
-    return (<Popconfirm
-      placement="top"
-      onConfirm={() => this.handleDeleteTableData(record)}
-      okText="是"
-      cancelText="否"
-      title={'是否删除此条数据？'}
-    >
-      <Icon type="shanchu" />
-    </Popconfirm>);
+    return (
+      <Popconfirm
+        placement="top"
+        onConfirm={() => this.handleDeleteTableData(record)}
+        okText="是"
+        cancelText="否"
+        title="是否删除此条数据？"
+      >
+        <Icon type="shanchu" />
+      </Popconfirm>
+    );
   }
 
   render() {
@@ -552,8 +572,8 @@ export default class EditForm extends PureComponent {
       onChange: this.handleCustPageChange,
     };
 
-    const approverName = !_.isEmpty(detailInfo.currentApproval) ?
-      `${detailInfo.currentApproval.empName} (${detailInfo.currentApproval.empNum})` : '暂无';
+    const approverName = !_.isEmpty(detailInfo.currentApproval)
+      ? `${detailInfo.currentApproval.empName} (${detailInfo.currentApproval.empNum})` : '暂无';
     const nowStep = {
       // 当前步骤
       stepName: detailInfo.currentNodeName || '暂无',
@@ -566,14 +586,16 @@ export default class EditForm extends PureComponent {
     return (
       <div className={styles.formContent}>
         <div className={styles.contentItem}>
-          <h2 className={styles.numberTitle}>编号{detailInfo.id}</h2>
+          <h2 className={styles.numberTitle}>
+编号
+            {detailInfo.id}
+          </h2>
         </div>
         <div className={`${styles.cutline} ${styles.mt20}`} />
         <div className={styles.contentItem}>
           <InfoTitle head="基本信息" />
           <InfoForm label="操作类型" style={{ width: '122px' }}>
-            {(_.filter(operateTypeArray, item =>
-                item.value === detailInfo.operateType)[0] || {}).label}
+            {(_.filter(operateTypeArray, item => item.value === detailInfo.operateType)[0] || {}).label}
           </InfoForm>
           <InfoForm label="公司简称" className={styles.inlineInfoForm} required>
             <Input
@@ -589,12 +611,13 @@ export default class EditForm extends PureComponent {
           </InfoForm>
           {
             // 操作类型是限制解除时才显示
-            this.isRelieveLimitType() ?
-              (<InfoForm label="是否银行确认" style={{ width: '160px' }} className={styles.inlineInfoForm} required>
-                {detailInfo.bankConfirm ? '是' : '否'}
-              </InfoForm>)
-              :
-              null
+            this.isRelieveLimitType()
+              ? (
+                <InfoForm label="是否银行确认" style={{ width: '160px' }} className={styles.inlineInfoForm} required>
+                  {detailInfo.bankConfirm ? '是' : '否'}
+                </InfoForm>
+              )
+              : null
           }
         </div>
         <div className={styles.cutline} />
@@ -628,22 +651,21 @@ export default class EditForm extends PureComponent {
               optionFilterProp="children"
               getPopupContainer={getPopupContainerFunction}
             >
-              {limitList.map(item =>
-                <Option key={item.key}>{this.replaceKeyWord(item.label, selectValue)}</Option>,
-              )}
+              {limitList.map(item => <Option key={item.key}>{this.replaceKeyWord(item.label, selectValue)}</Option>, )}
             </AntdSelect>
           </InfoForm>
           {
-            this.isSetLimitType() ?
-              (<InfoForm label="账户限制设置日期" style={{ width: '160px' }} className={styles.inlineInfoForm} required>
-                <DatePicker
-                  disabledDate={this.setDisabledDate}
-                  defaultValue={moment(editFormData.limitStartTime || '', TIME_FORMAT_STRING)}
-                  onChange={this.handleStartDateChange}
-                />
-              </InfoForm>)
-            :
-              null
+            this.isSetLimitType()
+              ? (
+                <InfoForm label="账户限制设置日期" style={{ width: '160px' }} className={styles.inlineInfoForm} required>
+                  <DatePicker
+                    disabledDate={this.setDisabledDate}
+                    defaultValue={moment(editFormData.limitStartTime || '', TIME_FORMAT_STRING)}
+                    onChange={this.handleStartDateChange}
+                  />
+                </InfoForm>
+              )
+              : null
           }
           <InfoForm label="账户限制解除日期" style={{ width: '160px' }} className={styles.inlineInfoForm} required>
             <DatePicker

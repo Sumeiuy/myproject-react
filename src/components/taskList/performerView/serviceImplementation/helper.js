@@ -16,4 +16,3 @@ export function getServiceState(code) {
   const state = task.isFinished(code) ? EMPTY_LIST : defaultServiceState;
   return state;
 }
-

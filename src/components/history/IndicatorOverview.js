@@ -61,6 +61,7 @@ export default class IndicatorOverview extends PureComponent {
   handleCancel() {
     this.setState({ selectTreeModal: false });
   }
+
   /**
    * 弹窗处理（开启）
   */
@@ -94,6 +95,7 @@ export default class IndicatorOverview extends PureComponent {
       [modal]: false,
     });
   }
+
   @autobind
   @logable({
     type: 'Click',
@@ -109,6 +111,7 @@ export default class IndicatorOverview extends PureComponent {
       });
     };
   }
+
   @autobind
   @logable({ type: 'Click', payload: { name: '鼠标离开Core指标' } })
   mouseLeave() {
@@ -192,7 +195,8 @@ export default class IndicatorOverview extends PureComponent {
                     <span
                       className={styles.coreName}
                     >
-                      {overviewData[selectIndex].name}:
+                      {overviewData[selectIndex].name}
+:
                     </span>
                     <span
                       className={styles.coreDesc}

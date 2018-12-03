@@ -133,6 +133,7 @@ export default class Home extends Component {
       launchDeputeModalVisible: false,
     };
   }
+
   componentDidMount() {
     const { location: { query } } = this.props;
     // 初始化查询申请列表
@@ -410,25 +411,24 @@ export default class Home extends Component {
         />
         {
           !launchDeputeModalVisible ? null
-          :
-          (
-            <CreateDeputeModal
-              deputeEmpList={deputeEmpList}
-              deputeOrgList={deputeOrgList}
-              onClose={this.handleLaunchDeputeModalClose}
-              queryCanDeputeOrg={queryCanDeputeOrg}
-              queryCanDeputeEmp={queryCanDeputeEmp}
-              getApprovalInfo={getApprovalInfo}
-              onSubmit={saveApply}
-              approval={approval}
-              doFlow={doApprove}
-              flowResult={flowResult}
-              submitResult={submitResult}
-              checkApplyAbility={checkApplyAbility}
-              checkResult={checkResult}
-              doRefreshListAfterApprove={this.doRefreshListAfterApprove}
-            />
-          )
+            : (
+              <CreateDeputeModal
+                deputeEmpList={deputeEmpList}
+                deputeOrgList={deputeOrgList}
+                onClose={this.handleLaunchDeputeModalClose}
+                queryCanDeputeOrg={queryCanDeputeOrg}
+                queryCanDeputeEmp={queryCanDeputeEmp}
+                getApprovalInfo={getApprovalInfo}
+                onSubmit={saveApply}
+                approval={approval}
+                doFlow={doApprove}
+                flowResult={flowResult}
+                submitResult={submitResult}
+                checkApplyAbility={checkApplyAbility}
+                checkResult={checkResult}
+                doRefreshListAfterApprove={this.doRefreshListAfterApprove}
+              />
+            )
         }
       </div>
     );

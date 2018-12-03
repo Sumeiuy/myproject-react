@@ -33,7 +33,7 @@ function setJspTabCache(param) {
 export default function CustDetailBreadcrumb(props) {
   // 本地缓存state
   const state = _.isEmpty(props.state) ? sessionStore.get('jspState') : props.state;
-  if(state && state.url) {
+  if (state && state.url) {
     sessionStore.set('jspState', state);
   }
   const url = (state && state.backPath) || '/customerPool/list?source=leftMenu';
@@ -50,7 +50,7 @@ export default function CustDetailBreadcrumb(props) {
   }
   // 点击按钮切换到老板
   function handleBtnClick() {
-     // 处理jsp页面的tab缓存问题
+    // 处理jsp页面的tab缓存问题
     setJspTabCache(state.param || {});
     props.push({
       pathname: '/fsp/customerPool/list/customerDetail',
@@ -85,5 +85,3 @@ export default function CustDetailBreadcrumb(props) {
     </div>
   );
 }
-
-

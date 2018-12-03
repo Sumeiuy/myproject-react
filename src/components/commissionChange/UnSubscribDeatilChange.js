@@ -12,15 +12,15 @@ import _ from 'lodash';
 
 import RejectButtons from './RejectButtons';
 import DisabledSelect from './DisabledSelect';
-import CommonUpload from '../../components/common/biz/CommonUpload';
-import Transfer from '../../components/common/biz/TableTransfer';
-import ChoiceApproverBoard from '../../components/commissionAdjustment/ChoiceApproverBoard';
-import InfoTitle from '../../components/common/InfoTitle';
-import CommissionLine from '../../components/commissionAdjustment/CommissionLine';
+import CommonUpload from '../common/biz/CommonUpload';
+import Transfer from '../common/biz/TableTransfer';
+import ChoiceApproverBoard from '../commissionAdjustment/ChoiceApproverBoard';
+import InfoTitle from '../common/InfoTitle';
+import CommissionLine from '../commissionAdjustment/CommissionLine';
 import {
   pagination,
   subScribeProColumns,
-} from '../../components/commissionAdjustment/commissionTransferHelper/transferPropsHelper';
+} from '../commissionAdjustment/commissionTransferHelper/transferPropsHelper';
 import logable, { logPV } from '../../decorators/logable';
 
 import styles from './change.less';
@@ -194,7 +194,9 @@ export default class UnSubscribeDetailToChange extends PureComponent {
 
   @autobind
   changeSubscriProList(product) {
-    const { prodRowId, prodId, prodName, children } = product;
+    const {
+      prodRowId, prodId, prodName, children
+    } = product;
     const proList = {
       key: prodRowId,
       // 产品代码
@@ -289,6 +291,7 @@ export default class UnSubscribeDetailToChange extends PureComponent {
       approvalFlg,
     };
   }
+
   // 资讯退订调整穿梭变化的时候处理程序
   @autobind
   @logable({
@@ -375,7 +378,7 @@ export default class UnSubscribeDetailToChange extends PureComponent {
     return newSubmitSubscriProList;
   }
 
-// 提交前检查各项输入的值是否符合要求
+  // 提交前检查各项输入的值是否符合要求
   @autobind
   submitCheck() {
     let result = true;
@@ -453,7 +456,7 @@ export default class UnSubscribeDetailToChange extends PureComponent {
     };
     const { operate } = flowBtn;
     if (operate === 'commit') {
-       // 提交
+      // 提交
       this.props.submitUnSub(params).then(() => this.launchFlow(flowBtn, '重新申请'),
         () => message.success('修改失败'));
     }
@@ -586,20 +589,20 @@ export default class UnSubscribeDetailToChange extends PureComponent {
             <CommonUpload {...uploadProps} />
           </div>
           {
-            !canShowAppover ? null :
-            (
-              <div className={styles.approvalBlock}>
-                <InfoTitle head="审批人" />
-                <CommissionLine label="选择审批人" labelWidth="110px">
-                  <div className={styles.checkApprover} onClick={this.openApproverBoard}>
-                    {approverName === '' ? '' : `${approverName}(${approverId})`}
-                    <div className={styles.searchIcon}>
-                      <Icon type="search" />
+            !canShowAppover ? null
+              : (
+                <div className={styles.approvalBlock}>
+                  <InfoTitle head="审批人" />
+                  <CommissionLine label="选择审批人" labelWidth="110px">
+                    <div className={styles.checkApprover} onClick={this.openApproverBoard}>
+                      {approverName === '' ? '' : `${approverName}(${approverId})`}
+                      <div className={styles.searchIcon}>
+                        <Icon type="search" />
+                      </div>
                     </div>
-                  </div>
-                </CommissionLine>
-              </div>
-            )
+                  </CommissionLine>
+                </div>
+              )
           }
         </div>
         <RejectButtons

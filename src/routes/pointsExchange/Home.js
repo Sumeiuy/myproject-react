@@ -7,7 +7,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'dva';
 import { autobind } from 'core-decorators';
-import { Form, Input, Button, Table } from 'antd';
+import {
+  Form, Input, Button, Table
+} from 'antd';
 import _ from 'lodash';
 import moment from 'moment';
 
@@ -53,7 +55,9 @@ function columns() {
     render: item => (
       <div
         title={formatString(item)}
-      >{formatString(item)}</div>
+      >
+        {formatString(item)}
+      </div>
     ),
   }, {
     title: '兑换数量',
@@ -230,12 +234,12 @@ export default class Home extends Component {
           <Form className={styles.form} layout="inline" onSubmit={this.handleSearch}>
             <div className={styles.filterBox}>
               <div className={styles.filter}>
-                <FormItem label={'产品代码'}>
+                <FormItem label="产品代码">
                   {getFieldDecorator('productCode')(<Input className={styles.input} />)}
                 </FormItem>
               </div>
               <div className={styles.filter}>
-                <FormItem label={'经纪客户号'}>
+                <FormItem label="经纪客户号">
                   {getFieldDecorator('brokerNumber')(<Input className={styles.input} />)}
                 </FormItem>
               </div>
@@ -256,16 +260,20 @@ export default class Home extends Component {
                   type="primary"
                   htmlType="submit"
                   className={styles.searchBtn}
-                >查询</Button>
+                >
+查询
+                </Button>
                 <Button
                   onClick={this.handleReset}
                   className={styles.resetBtn}
-                >重置</Button>
+                >
+重置
+                </Button>
               </div>
             </div>
           </Form>
           <Table
-            rowKey={'rowId'}
+            rowKey="rowId"
             columns={columns()}
             dataSource={exchangeList}
             pagination={false}
@@ -277,4 +285,3 @@ export default class Home extends Component {
     );
   }
 }
-

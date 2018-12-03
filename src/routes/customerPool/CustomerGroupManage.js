@@ -564,7 +564,8 @@ export default class CustomerGroupManage extends PureComponent {
 
   @autobind
   deleteCustomerFromGroup(param) {
-    const { deleteCustomerFromGroup,
+    const {
+      deleteCustomerFromGroup,
       location: { query: { curPageNum, curPageSize } },
     } = this.props;
     const { keyWord } = this.state;
@@ -647,7 +648,7 @@ export default class CustomerGroupManage extends PureComponent {
       replace,
       queryBatchCustList,
       batchCustList,
-     } = this.props;
+    } = this.props;
 
     const {
       visible,
@@ -685,7 +686,7 @@ export default class CustomerGroupManage extends PureComponent {
             <SimpleSearch
               className={styles.groupSearch}
               onSearch={this.handleSearchGroup}
-              placeholder={'分组名称'}
+              placeholder="分组名称"
               titleNode={
                 <span className={styles.name}>分组名称：</span>
               }
@@ -728,65 +729,69 @@ export default class CustomerGroupManage extends PureComponent {
           />
         </div>
         {
-          visible ?
-            <GroupModal
-              wrapperClass={
+          visible
+            ? (
+              <GroupModal
+                wrapperClass={
                 classnames({
                   [styles.groupModalContainer]: true,
                 })
               }
               // 为了每次都能打开一个新的modal
-              key={modalKey}
-              visible={visible}
-              title={modalTitle}
-              okText={'提交'}
-              cancelText={'取消'}
-              okType={'primary'}
-              onCancel={this.handleCloseModal}
-              footer={<div className={styles.operationBtnSection}>
-                <Button
-                  className={styles.cancel}
-                  onClick={this.handleCloseModal}
-                >
+                key={modalKey}
+                visible={visible}
+                title={modalTitle}
+                okText="提交"
+                cancelText="取消"
+                okType="primary"
+                onCancel={this.handleCloseModal}
+                footer={(
+                  <div className={styles.operationBtnSection}>
+                    <Button
+                      className={styles.cancel}
+                      onClick={this.handleCloseModal}
+                    >
                   取消
-                </Button>
-                <Button
-                  htmlType="submit"
-                  className={styles.submit}
-                  type="primary"
+                    </Button>
+                    <Button
+                      htmlType="submit"
+                      className={styles.submit}
+                      type="primary"
                   // 加入节流函数
-                  onClick={_.debounce(this.handleSubmit, 250)}
-                >
+                      onClick={_.debounce(this.handleSubmit, 250)}
+                    >
                   提交
-                </Button>
-              </div>}
-              modalContent={
-                <CustomerGroupDetail
-                  wrappedComponentRef={this.customerGroupDetailRef}
-                  deleteCustomerFromGroupResult={deleteCustomerFromGroupResult}
-                  deleteCustomerFromGroup={this.deleteCustomerFromGroup}
-                  custRiskBearing={custRiskBearing}
-                  canEditDetail={canEditDetail}
-                  customerHotPossibleWordsList={customerHotPossibleWordsList}
-                  getHotPossibleWds={this.queryHotPossibleWds}
-                  customerList={groupCustomerList}
-                  getGroupCustomerList={getGroupCustomerList}
-                  operateGroup={operateGroup}
-                  operateGroupResult={operateGroupResult}
-                  detailData={{
-                    name,
-                    description,
-                    groupId,
-                  }}
-                  location={location}
-                  replace={replace}
-                  onAddCustomerToGroup={this.addCustomerToExistedGroup}
-                  queryBatchCustList={queryBatchCustList}
-                  batchCustList={batchCustList}
-                />
-              }
-              onOkHandler={this.handleUpdateGroup}
-            /> : null
+                    </Button>
+                  </div>
+)}
+                modalContent={(
+                  <CustomerGroupDetail
+                    wrappedComponentRef={this.customerGroupDetailRef}
+                    deleteCustomerFromGroupResult={deleteCustomerFromGroupResult}
+                    deleteCustomerFromGroup={this.deleteCustomerFromGroup}
+                    custRiskBearing={custRiskBearing}
+                    canEditDetail={canEditDetail}
+                    customerHotPossibleWordsList={customerHotPossibleWordsList}
+                    getHotPossibleWds={this.queryHotPossibleWds}
+                    customerList={groupCustomerList}
+                    getGroupCustomerList={getGroupCustomerList}
+                    operateGroup={operateGroup}
+                    operateGroupResult={operateGroupResult}
+                    detailData={{
+                      name,
+                      description,
+                      groupId,
+                    }}
+                    location={location}
+                    replace={replace}
+                    onAddCustomerToGroup={this.addCustomerToExistedGroup}
+                    queryBatchCustList={queryBatchCustList}
+                    batchCustList={batchCustList}
+                  />
+)}
+                onOkHandler={this.handleUpdateGroup}
+              />
+            ) : null
         }
       </div>
     );

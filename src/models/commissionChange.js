@@ -76,7 +76,11 @@ export default {
     },
 
     getSingleDetailToChangeSuccess(state, action) {
-      const { payload: { base, customer, attachment, approval } } = action;
+      const {
+        payload: {
+          base, customer, attachment, approval
+        }
+      } = action;
 
       return {
         ...state,
@@ -92,11 +96,11 @@ export default {
     getSubscribeDetailToChangeSuccess(state, action) {
       const {
         payload: {
-        detailRes,
-        attachmentRes,
-        custRs,
-        subProListRs,
-        approvListRs,
+          detailRes,
+          attachmentRes,
+          custRs,
+          subProListRs,
+          approvListRs,
         },
       } = action;
       const detailResult = detailRes.resultData;
@@ -118,13 +122,13 @@ export default {
     getUnSubscribeDetailToChangeSuccess(state, action) {
       const {
         payload: {
-        detailRes,
-        attachmentRes,
-        custRs,
-        unSubProListRs,
-        approvListRs,
-      },
-    } = action;
+          detailRes,
+          attachmentRes,
+          custRs,
+          unSubProListRs,
+          approvListRs,
+        },
+      } = action;
       const detailResult = detailRes.resultData;
       const attachmentResult = attachmentRes.resultData;
       const approvList = approvListRs.resultData.employList;
@@ -469,7 +473,9 @@ export default {
       });
       yield put({
         type: 'getSubscribeDetailToChangeSuccess',
-        payload: { detailRes, attachmentRes, custRs, subProListRs, approvListRs },
+        payload: {
+          detailRes, attachmentRes, custRs, subProListRs, approvListRs
+        },
       });
     },
 
@@ -492,7 +498,9 @@ export default {
       });
       yield put({
         type: 'getUnSubscribeDetailToChangeSuccess',
-        payload: { detailRes, attachmentRes, custRs, unSubProListRs, approvListRs },
+        payload: {
+          detailRes, attachmentRes, custRs, unSubProListRs, approvListRs
+        },
       });
     },
 
@@ -527,7 +535,7 @@ export default {
       });
     },
 
-     // 新增资讯退订申请
+    // 新增资讯退订申请
     * submitConsultUnSubscribe({ payload }, { call, put }) {
       const response = yield call(api.newConsultApply, {
         action: 'update',

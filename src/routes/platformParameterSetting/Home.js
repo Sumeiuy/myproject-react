@@ -22,6 +22,7 @@ export default class PlatformParameterSetting extends PureComponent {
     match: PropTypes.object.isRequired,
     routerData: PropTypes.object.isRequired,
   };
+
   static contextTypes= {
     empInfo: PropTypes.object.isRequired,
     push: PropTypes.func.isRequired,

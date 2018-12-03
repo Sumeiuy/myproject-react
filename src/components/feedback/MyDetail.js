@@ -113,7 +113,8 @@ export default class MyDetail extends PureComponent {
             key={`${index}_${item.recordId}`}
           >
             <a href={`${request.prefix}/file/${item.attachUrl}`}>
-              <Icon type={'fujian2'} />{`${item.attachName}`}
+              <Icon type="fujian2" />
+              {`${item.attachName}`}
             </a>
           </div>
         ),
@@ -194,47 +195,60 @@ export default class MyDetail extends PureComponent {
                 <Button
                   className={styles.btn}
                   onClick={showQuestionModal}
-                >继续追问</Button>
+                >
+继续追问
+                </Button>
                 <Button
                   type="primary"
                   className={classnames(styles.btn, styles.btnPrimary)}
                   onClick={resolveQuestion}
-                >已解决</Button>
+                >
+已解决
+                </Button>
               </div>
             )
-          }{
+          }
+          {
             // 如果反馈关闭了就显示满意度调查
-            status === 'CLOSED' ?
-              (
-                <div className={styles.myFeedBackEvaluation}>满意度调查
-               {
+            status === 'CLOSED'
+              ? (
+                <div className={styles.myFeedBackEvaluation}>
+满意度调查
+                  {
                     // 如果评价了就显示评价 没评价就显示满意度评价按钮
-                    evaluationStatus ?
+                    evaluationStatus
+                      ? (
                         <div className={styles.feedbackInfo}>
                           我对本次答复的评价:
                           <span>
                             {`${userCommentLabelList[0].label}`}
                           </span>
                         </div>
-                      :
+                      )
+                      : (
                         <div className={styles.feedbackBox}>
                           <div className={styles.feedbackTitle}>您对本次反馈的答复是否满意?</div>
-                          <Button type="primary" size="large"
+                          <Button
+                            type="primary"
+                            size="large"
                             onClick={() => this.handleFeedbackChange('SATISFIED')}
                           >
                             满意
                           </Button>
-                          <Button size="large"
+                          <Button
+                            size="large"
                             onClick={() => this.handleFeedbackChange('COMMON')}
                           >
                             一般
                           </Button>
-                          <Button size="large"
+                          <Button
+                            size="large"
                             onClick={() => this.handleFeedbackChange('DISCONTENT')}
                           >
                             不满意
                           </Button>
                         </div>
+                      )
                   }
                 </div>
               )

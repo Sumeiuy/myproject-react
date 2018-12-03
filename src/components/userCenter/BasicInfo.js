@@ -5,7 +5,9 @@
  */
 
 import React, { PureComponent } from 'react';
-import { Card, List, Divider, Tag, Form, Input, Button, Popover, Modal } from 'antd';
+import {
+  Card, List, Divider, Tag, Form, Input, Button, Popover, Modal
+} from 'antd';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
@@ -68,7 +70,9 @@ export default class BasicInfo extends PureComponent {
   componentWillMount() {
     const { userInfoForm, location: { query } } = this.props;
     const { cache } = query;
-    const { newLabel = [], approver = {}, editorState, applyingDescription } = userInfoForm;
+    const {
+      newLabel = [], approver = {}, editorState, applyingDescription
+    } = userInfoForm;
     if (editorState && cache) {
       this.setState({
         newLabel,
@@ -80,7 +84,8 @@ export default class BasicInfo extends PureComponent {
   }
 
   componentDidMount() {
-    const { cacheUserInfoForm,
+    const {
+      cacheUserInfoForm,
       replace,
       location: { pathname },
     } = this.props;
@@ -260,6 +265,7 @@ export default class BasicInfo extends PureComponent {
       queryAllLabels();
     }
   }
+
   // 打开标签Popover
   @autobind
   openPopover() {
@@ -267,6 +273,7 @@ export default class BasicInfo extends PureComponent {
       selectLabelState: !preState.selectLabelState,
     }));
   }
+
   // 打开审批人选择审批人model
   @autobind
   @logPV({ pathname: '/modal/approverBoardFrame', title: '选择审批人弹框' })
@@ -279,6 +286,7 @@ export default class BasicInfo extends PureComponent {
       approverModal: true,
     });
   }
+
   // 关闭审批人选择审批人model
   @autobind
   closeApproverBoard() {
@@ -286,6 +294,7 @@ export default class BasicInfo extends PureComponent {
       approverModal: false,
     });
   }
+
   // 取消编辑状态
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '取消编辑状态' } })
@@ -301,6 +310,7 @@ export default class BasicInfo extends PureComponent {
     });
     changeEditorState();
   }
+
   // 选择审批人
   @autobind
   selectApprover(approver) {
@@ -355,7 +365,9 @@ export default class BasicInfo extends PureComponent {
         labels = [],
       },
     } = this.props;
-    const { newLabel, approverModal, approver, applyingDescription, selectLabelState } = this.state;
+    const {
+      newLabel, approverModal, approver, applyingDescription, selectLabelState
+    } = this.state;
     // 当前
     const approveSelectData = _.map(LabelAndDescApprover, item => ({ ...item, empNo: item.login }));
     const isApproving = APPROVING === userBaseInfo.flowState;
@@ -378,7 +390,10 @@ export default class BasicInfo extends PureComponent {
               renderItem={
                 item => (
                   <List.Item>
-                    <b className={styles.infoLabel}>{item.name}:</b>
+                    <b className={styles.infoLabel}>
+                      {item.name}
+:
+                    </b>
                     {userBaseInfo[item.key] || '--'}
                   </List.Item>
                 )
@@ -387,21 +402,23 @@ export default class BasicInfo extends PureComponent {
           </div>
         </div>
         {
-          tgFlag ?
-            (
+          tgFlag
+            ? (
               <Form layout="inline">
                 <Divider />
                 <div className={styles.title}>
                   <Divider type="vertical" className={styles.itemDivider} />
                   <span>个性化信息</span>
                   {
-                    !editorState ?
-                      <Icon
-                        onClick={isApproving ? null : changeEditorState}
-                        className={`${styles.editor} ${isApproving ? styles.isApprove : ''}`}
-                        type="bianji"
-                      /> :
-                      null
+                    !editorState
+                      ? (
+                        <Icon
+                          onClick={isApproving ? null : changeEditorState}
+                          className={`${styles.editor} ${isApproving ? styles.isApprove : ''}`}
+                          type="bianji"
+                        />
+                      )
+                      : null
                   }
                 </div>
                 <div className={styles.personalDesc}>
@@ -410,132 +427,159 @@ export default class BasicInfo extends PureComponent {
                     renderItem={
                       (item, index) => (
                         // 个人介绍
-                        (<List.Item>
-                          <div className={styles.label}>
-                            <div className={editorState ? styles.required : ''}>{item.name}:</div>
-                            {
-                              isApproving ?
-                                <div>(审批中)</div> :
-                                null
+                        (
+                          <List.Item>
+                            <div className={styles.label}>
+                              <div className={editorState ? styles.required : ''}>
+                                {item.name}
+:
+                              </div>
+                              {
+                              isApproving
+                                ? <div>(审批中)</div>
+                                : null
                             }
-                          </div>
-                          {
-                            index === 0 ?
+                            </div>
+                            {
+                            index === 0
                               // 个人介绍
-                              <div className={styles.inputWrap}>
-                                {
-                                  editorState ?
-                                    getFieldDecorator('applyingDescription', {
+                              ? (
+                                <div className={styles.inputWrap}>
+                                  {
+                                  editorState
+                                    ? getFieldDecorator('applyingDescription', {
                                       rules: [{ max: MAX_INTRODUCE, message: `个人介绍最多${MAX_INTRODUCE}个汉字` }],
                                       initialValue: applyingDescription || userBaseInfo[item.key],
                                     })(
                                       <TextArea
                                         autosize={{ minRows: 4, maxRows: 6 }}
-                                      />) :
-                                    userBaseInfo[item.key] || '--'
+                                      />
+                                    )
+                                    : userBaseInfo[item.key] || '--'
                                 }
-                                <span className={styles.errorInfoItem}>
-                                  {
-                                    editorState ?
-                                      getFieldError('applyingDescription') || '' :
-                                      null
+                                  <span className={styles.errorInfoItem}>
+                                    {
+                                    editorState
+                                      ? getFieldError('applyingDescription') || ''
+                                      : null
                                   }
-                                </span>
-                              </div> :
+                                  </span>
+                                </div>
+                              )
                               // 个人标签
-                              <div className={styles.inputWrap}>
-                                {editorState ?
-                                  newLabel
-                                    .map(label =>
-                                      <Tag
-                                        closable
-                                        onClose={(e) => {
-                                          this.deleteUserLabel(e, label.id);
-                                        }}
-                                        color="gold"
-                                        key={label.id}
+                              : (
+                                <div className={styles.inputWrap}>
+                                  {editorState
+                                    ? newLabel
+                                      .map(label => (
+                                        <Tag
+                                          closable
+                                          onClose={(e) => {
+                                            this.deleteUserLabel(e, label.id);
+                                          }}
+                                          color="gold"
+                                          key={label.id}
+                                        >
+                                          {label.name}
+                                        </Tag>
+                                      ), )
+                                    : (userBaseInfo[item.key] || [])
+                                      .map(label => <Tag color="gold" key={label.id}>{label.name}</Tag>)
+                                }
+                                  {
+                                  editorState
+                                    ? (
+                                      <Popover
+                                        placement="topLeft"
+                                        content={this.selectLabelContent()}
+                                        trigger="click"
+                                        overlayClassName={styles.labelPopover}
+                                        visible={selectLabelState}
+                                        onVisibleChange={this.openPopover}
                                       >
-                                        {label.name}
-                                      </Tag>,
-                                    ) :
-                                  (userBaseInfo[item.key] || [])
-                                    .map(label => <Tag color="gold" key={label.id}>{label.name}</Tag>)
-                                }
-                                {
-                                  editorState ?
-                                    <Popover
-                                      placement="topLeft"
-                                      content={this.selectLabelContent()}
-                                      trigger="click"
-                                      overlayClassName={styles.labelPopover}
-                                      visible={selectLabelState}
-                                      onVisibleChange={this.openPopover}
-                                    >
-                                      {
-                                        selectLabelState ?
-                                          <Tag
-                                            className={styles.selectLabelBtn}
-                                          >
-                                            <span>请选择标签<Icon type="xiangxia" /></span>
-                                          </Tag> :
-                                          <Tag
-                                            color="gold"
-                                            className={styles.addLabel}
-                                          >
-                                            <span><Icon type="jia" /> 添加标签</span>
-                                          </Tag>
+                                        {
+                                        selectLabelState
+                                          ? (
+                                            <Tag
+                                              className={styles.selectLabelBtn}
+                                            >
+                                              <span>
+请选择标签
+                                                <Icon type="xiangxia" />
+                                              </span>
+                                            </Tag>
+                                          )
+                                          : (
+                                            <Tag
+                                              color="gold"
+                                              className={styles.addLabel}
+                                            >
+                                              <span>
+                                                <Icon type="jia" />
+                                                {' '}
+添加标签
+                                              </span>
+                                            </Tag>
+                                          )
                                       }
-                                    </Popover> :
-                                    null
+                                      </Popover>
+                                    )
+                                    : null
                                 }
-                                {
-                                  !editorState && !labels.length ?
-                                    '暂未设置标签' :
-                                    null
+                                  {
+                                  !editorState && !labels.length
+                                    ? '暂未设置标签'
+                                    : null
                                 }
-                              </div>
+                                </div>
+                              )
                           }
-                        </List.Item>)
+                          </List.Item>
+                        )
                       )
                     }
                   />
                   {
-                    editorState ?
-                      <div className={styles.selectApprover}>
-                        <Divider />
-                        <span onClick={this.openApproverBoard}>
-                          <FormItem
-                            label="选择审批人"
-                          >
-                            {getFieldDecorator('approver', {
-                              rules: [{
-                                required: true, message: '请选择审批人',
-                              }],
-                              initialValue: empName,
-                            })(
-                              <Search
-                                placeholder="搜索内容"
-                                style={{ width: 200 }}
-                                readOnly
-                              />,
-                            )}
-                          </FormItem>
-                        </span>
-                      </div> :
-                      null
+                    editorState
+                      ? (
+                        <div className={styles.selectApprover}>
+                          <Divider />
+                          <span onClick={this.openApproverBoard}>
+                            <FormItem
+                              label="选择审批人"
+                            >
+                              {getFieldDecorator('approver', {
+                                rules: [{
+                                  required: true, message: '请选择审批人',
+                                }],
+                                initialValue: empName,
+                              })(
+                                <Search
+                                  placeholder="搜索内容"
+                                  style={{ width: 200 }}
+                                  readOnly
+                                />,
+                              )}
+                            </FormItem>
+                          </span>
+                        </div>
+                      )
+                      : null
                   }
                 </div>
               </Form>
-            ) :
-            null
+            )
+            : null
         }
         {
-          editorState ?
-            <div className={styles.editorInfoSubmit}>
-              <Button onClick={this.cancelEditor}>取消</Button>
-              <Button onClick={this.startApproval} disabled={!this.canSubmit()} type="primary">提交审批</Button>
-            </div> :
-            null
+          editorState
+            ? (
+              <div className={styles.editorInfoSubmit}>
+                <Button onClick={this.cancelEditor}>取消</Button>
+                <Button onClick={this.startApproval} disabled={!this.canSubmit()} type="primary">提交审批</Button>
+              </div>
+            )
+            : null
         }
         {
           <ChoiceApproverBoard

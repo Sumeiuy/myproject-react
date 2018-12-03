@@ -20,6 +20,7 @@ export default (ComposedComponent) => {
         dom.addClass(body, 'selfScrollBarStyle');
       }
     }
+
     componentWillUnmount() {
       const body = document.querySelector('body');
       if (env.isIE()) {

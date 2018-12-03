@@ -311,17 +311,19 @@ export default class Pageheader extends PureComponent {
   @autobind
   getMoreFilterElement(filter) {
     const { filterId } = filter.props;
-    return filterId ?
-      <HtFilter
-        className={styles.filterFl}
-        data={this.getFilterData(filter)}
-        value={this.getFilterValue(filter)}
-        onChange={this.getFilterOnChange(filter)}
-        onInputChange={this[filter.props.handleInputChange]}
-        onClose={() => this.getFilterOnClose(filter)}
-        isCloseable
-        {...filter.props}
-      /> : null;
+    return filterId
+      ? (
+        <HtFilter
+          className={styles.filterFl}
+          data={this.getFilterData(filter)}
+          value={this.getFilterValue(filter)}
+          onChange={this.getFilterOnChange(filter)}
+          onInputChange={this[filter.props.handleInputChange]}
+          onClose={() => this.getFilterOnClose(filter)}
+          isCloseable
+          {...filter.props}
+        />
+      ) : null;
   }
 
   @autobind
@@ -715,8 +717,8 @@ export default class Pageheader extends PureComponent {
           <div className={styles.filter}>
             {
               _.map(basicFilters, filter => (
-                  !_.isEmpty(filter.props) ?
-                  (
+                !_.isEmpty(filter.props)
+                  ? (
                     <HtFilter
                       key={filter.props.filterId}
                       className={styles.filterFl}
@@ -727,41 +729,44 @@ export default class Pageheader extends PureComponent {
                       {...filter.props}
                     />
                   ) : null
-                ),
-              )
+              ), )
             }
             {
               _.map(
                 moreFilterList,
-                  key => this.getMoreFilters(key))
+                key => this.getMoreFilters(key)
+              )
             }
 
           </div>
           <div className={styles.moreFilterBtn}>
             {
-              moreFilterData.length ?
-                <MoreFilter
-                  value={this.selectMoreFilter()}
-                  className={styles.filterFl}
-                  data={moreFilterData}
-                  onChange={this.moreFilterChange}
-                />
+              moreFilterData.length
+                ? (
+                  <MoreFilter
+                    value={this.selectMoreFilter()}
+                    className={styles.filterFl}
+                    data={moreFilterData}
+                    onChange={this.moreFilterChange}
+                  />
+                )
                 : null
               }
           </div>
         </div>
         {
-          hasCreatePermission ?
-            <Button
-              type="primary"
-              icon="plus"
-              size="small"
-              onClick={this.handleCreate}
-            >
-              {applyBtnText}
-            </Button>
-            :
-            null
+          hasCreatePermission
+            ? (
+              <Button
+                type="primary"
+                icon="plus"
+                size="small"
+                onClick={this.handleCreate}
+              >
+                {applyBtnText}
+              </Button>
+            )
+            : null
         }
       </div>
     );

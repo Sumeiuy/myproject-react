@@ -83,15 +83,17 @@ export default class ServiceWaySelect extends PureComponent {
         <div className={styles.title}>服务方式:</div>
         <div className={styles.content} ref={this.setServiceWrapRef}>
           {
-            isPhoneCall && autoGenerateRecordInfo.serveWay === 'HTSC Phone' ? '电话' :
-            <Select
-              value={value}
-              style={width}
-              onChange={this.handleSelectChange}
-              getPopupContainer={() => this.serviceWayRef}
-            >
-              {this.renderServiceSelectOptions(options)}
-            </Select>
+            isPhoneCall && autoGenerateRecordInfo.serveWay === 'HTSC Phone' ? '电话'
+              : (
+                <Select
+                  value={value}
+                  style={width}
+                  onChange={this.handleSelectChange}
+                  getPopupContainer={() => this.serviceWayRef}
+                >
+                  {this.renderServiceSelectOptions(options)}
+                </Select>
+              )
           }
         </div>
       </div>

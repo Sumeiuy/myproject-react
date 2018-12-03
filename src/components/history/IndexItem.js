@@ -44,7 +44,12 @@ export default class IndexItem extends PureComponent {
       if (num.indexOf('-') !== -1) {
         return (<span className={styles.less}>{num}</span>);
       }
-      return (<span>+{num}</span>);
+      return (
+        <span>
++
+          {num}
+        </span>
+      );
     }
     return (<span>--%</span>);
   }
@@ -52,7 +57,10 @@ export default class IndexItem extends PureComponent {
   render() {
     const {
       itemData:
-    { unit, value, name, parentName, incrementRate, key }, active } = this.props;
+    {
+      unit, value, name, parentName, incrementRate, key
+    }, active
+    } = this.props;
     const data = report.toUnit(value, unit, 5, _.findIndex(COMMISSION_RATE_MAP,
       item => item.key === key) > -1);
     const IndexIcon = getCoreIcon(unit);

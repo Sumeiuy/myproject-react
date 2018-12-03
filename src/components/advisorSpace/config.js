@@ -7,20 +7,20 @@
 import _ from 'lodash';
 
 const advisorSpace = {
-    pageName: '投顾空间申请',
-    pageType: '14', // 查询列表接口中的type值
-    statusOptions: [
-      {
-        show: true,
-        label: '预约成功',
-        value: '06',
-      },
-      {
-        show: true,
-        label: '已撤销',
-        value: '07',
-      }
-    ],
+  pageName: '投顾空间申请',
+  pageType: '14', // 查询列表接口中的type值
+  statusOptions: [
+    {
+      show: true,
+      label: '预约成功',
+      value: '06',
+    },
+    {
+      show: true,
+      label: '已撤销',
+      value: '07',
+    }
+  ],
 };
 // 列表项中tag的样式配置项
 const STATUS_TAGS = [

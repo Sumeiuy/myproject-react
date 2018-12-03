@@ -8,7 +8,9 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { Tabs, Collapse, Icon, Popover, Button, Input } from 'antd';
+import {
+  Tabs, Collapse, Icon, Popover, Button, Input
+} from 'antd';
 import _ from 'lodash';
 import cx from 'classnames';
 
@@ -82,7 +84,9 @@ export default class MissionBind extends PureComponent {
   }
 
   @autobind
-  queryTaskBindList({ type, pageNum = 1, pageSize = 10, keyWord = '' } = {}) {
+  queryTaskBindList({
+    type, pageNum = 1, pageSize = 10, keyWord = ''
+  } = {}) {
     const isMot = type === MOT_TASK.key;
     const query = { type, pageNum, pageSize };
     // 如果是自建任务不存在,根据关键字进行过滤查询
@@ -233,12 +237,16 @@ export default class MissionBind extends PureComponent {
     });
     return (
       <div className={styles.collapseHead}>
-        <span className={taskCls} >{item.parentClassName}</span>
+        <span className={taskCls}>{item.parentClassName}</span>
         {
           isMot ? (<span className={styles.missionId}>{item.id}</span>) : null
         }
         <span className={styles.childClass} title={item.childClassName}>{item.childClassName}</span>
-        <span className={styles.optionClass}>查看<Icon type="up" /><Icon type="down" /></span>
+        <span className={styles.optionClass}>
+查看
+          <Icon type="up" />
+          <Icon type="down" />
+        </span>
       </div>
     );
   }
@@ -332,15 +340,17 @@ export default class MissionBind extends PureComponent {
             onChange={this.handleSwitchTabClick}
             activeKey={active}
             tabBarExtraContent={
-              isMOTMission ?
-                <Search
-                  onKeyDown={this.preventKeyDownPropagation}
-                  placeholder="事件ID/事件名称"
-                  style={{ width: 186 }}
-                  onSearch={this.searchMotMission}
-                  enterButton
-                /> :
-                null
+              isMOTMission
+                ? (
+                  <Search
+                    onKeyDown={this.preventKeyDownPropagation}
+                    placeholder="事件ID/事件名称"
+                    style={{ width: 186 }}
+                    onSearch={this.searchMotMission}
+                    enterButton
+                  />
+                )
+                : null
             }
           >
             {
@@ -358,28 +368,32 @@ export default class MissionBind extends PureComponent {
             <span className={styles.optionClass}>客户反馈选项</span>
           </div>
           {
-            !_.isEmpty(missionList) ?
-              <span>
-                <Collapse
-                  activeKey={collapseActiveKey}
-                  onChange={this.handleChangeCollapse}
-                  accordion
-                >
-                  { this.renderPanelListComponent() }
-                </Collapse>
-                <div className={styles.pageBox}>
-                  <Pagination
-                    current={pageNum}
-                    total={page.totalCount}
-                    pageSize={page.pageSize}
-                    onChange={this.handlePageChange}
-                  />
-                </div>
-              </span>
-              :
-              (
+            !_.isEmpty(missionList)
+              ? (
+                <span>
+                  <Collapse
+                    activeKey={collapseActiveKey}
+                    onChange={this.handleChangeCollapse}
+                    accordion
+                  >
+                    { this.renderPanelListComponent() }
+                  </Collapse>
+                  <div className={styles.pageBox}>
+                    <Pagination
+                      current={pageNum}
+                      total={page.totalCount}
+                      pageSize={page.pageSize}
+                      onChange={this.handlePageChange}
+                    />
+                  </div>
+                </span>
+              )
+              : (
                 <div className={styles.emptyContent}>
-                  <span><Icon type="frown-o" />暂无数据</span>
+                  <span>
+                    <Icon type="frown-o" />
+暂无数据
+                  </span>
                 </div>
               )
           }
@@ -387,15 +401,15 @@ export default class MissionBind extends PureComponent {
         </div>
         {
           !addTemplateModal ? null
-          : (
-            <TaskBindTemplateModal
-              data={templateList}
-              visible={addTemplateModal}
-              onOK={this.handleTaskBindTemplateModalOK}
-              onCancel={this.handleCloseModal}
-              queryTemplateList={queryTemplateList}
-            />
-          )
+            : (
+              <TaskBindTemplateModal
+                data={templateList}
+                visible={addTemplateModal}
+                onOK={this.handleTaskBindTemplateModalOK}
+                onCancel={this.handleCloseModal}
+                queryTemplateList={queryTemplateList}
+              />
+            )
         }
       </div>
     );

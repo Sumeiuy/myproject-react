@@ -7,7 +7,10 @@ export default function TextLayout(props) {
     <div
       className={style.mlcContentList}
     >
-      <span className={style.mlcContentListTitle}>{props.title}：</span>
+      <span className={style.mlcContentListTitle}>
+        {props.title}
+：
+      </span>
       <span className={style.mlcContentListCon}>{props.content}</span>
     </div>
   );
@@ -20,4 +23,3 @@ TextLayout.propTypes = {
 TextLayout.defaultProps = {
   content: '',
 };
-

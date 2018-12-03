@@ -27,8 +27,8 @@ const padDataSource = (dataSource, pageSize, emptyListDataNeedEmptyRow) => {
     return EMPTY_LIST;
   }
   const dataSize = _.size(dataSource);
-  const emptyRowCount = _.isEmpty(dataSource) ?
-    pageSize : (Math.ceil(dataSize / pageSize) * pageSize) - dataSize;
+  const emptyRowCount = _.isEmpty(dataSource)
+    ? pageSize : (Math.ceil(dataSize / pageSize) * pageSize) - dataSize;
   let newDataSource = dataSource;
   // 填充空白行
   for (let i = 1; i <= emptyRowCount; i++) {
@@ -313,49 +313,57 @@ export default class CommonTable extends PureComponent {
             styles.link,
             { [actionClass]: !!actionClass },
           );
-          node = (<div
-            className={
+          node = (
+            <div
+              className={
               classnames({
                 [styles.operation]: true,
                 operation: true,
               })}
-          >
-            {
+            >
+              {
               _.map(actionSource, (itemData) => {
                 if (isCustomerDelete && itemData.key === 'delete') { // 如果需要自定义删除图标
-                  return (<span
-                    className={cls}
-                    style={
+                  return (
+                    <span
+                      className={cls}
+                      style={
                       record.labelTypeId && record.labelTypeId === '0' ? {} : { visibility: 'hidden' }
                     }
-                    key={itemData.key || item.type}
-                    onClick={() => itemData.handler(record)}
-                  >
-                    {itemData.type}
-                  </span>);
+                      key={itemData.key || item.type}
+                      onClick={() => itemData.handler(record)}
+                    >
+                      {itemData.type}
+                    </span>
+                  );
                 }
                 if (isCustomerDelete && itemData.key === 'launchTask') { // 是否隐藏发起任务
-                   return (<span
-                    className={cls}
-                    style={
+                  return (
+                    <span
+                      className={cls}
+                      style={
                       record.custCount && record.custCount !== '0' ? {} : { visibility: 'hidden' }
                     }
-                    key={itemData.key || item.type}
-                    onClick={() => itemData.handler(record)}
-                  >
-                    {itemData.type}
-                  </span>);
+                      key={itemData.key || item.type}
+                      onClick={() => itemData.handler(record)}
+                    >
+                      {itemData.type}
+                    </span>
+                  );
                 }
-                return (<span
+                return (
+                  <span
                     className={cls}
                     key={itemData.key || item.type}
                     onClick={() => itemData.handler(record)}
                   >
                     {itemData.type}
-                  </span>);
+                  </span>
+                );
               })
             }
-          </div>);
+            </div>
+          );
         }
         // 根据传入的可点击的列号数组和回调方法数组来进行区别的渲染
         if (
@@ -456,7 +464,7 @@ export default class CommonTable extends PureComponent {
         isHideLastButton,
         isShortPageList,
         showSizeChanger,
-        },
+      },
       tableClass,
       bordered,
       isFixedColumn,
@@ -506,19 +514,18 @@ export default class CommonTable extends PureComponent {
           bordered={bordered}
           scroll={_.merge(scrollXArea, scrollYArea)}
           onRow={(record, index) => ({
-            onClick: () => this.handleRowClick(record, index),       // 点击行
+            onClick: () => this.handleRowClick(record, index), // 点击行
           })}
           rowSelection={isNeedRowSelection ? this.renderRowSelection() : null}
-          rowClassName={(record, index) =>
-            classnames({
-              [styles.rowSelected]: curSelectedRow === index,
-              // 如果存在flag标记，说明是空白行
-              emptyRow: !_.isEmpty(record.flag),
-            })}
+          rowClassName={(record, index) => classnames({
+            [styles.rowSelected]: curSelectedRow === index,
+            // 如果存在flag标记，说明是空白行
+            emptyRow: !_.isEmpty(record.flag),
+          })}
           showHeader={showHeader}
           {...tableStyleProp}
-          pagination={(needPagination && totalRecordNum > 0) ?
-            paganationOption : false}
+          pagination={(needPagination && totalRecordNum > 0)
+            ? paganationOption : false}
           paginationClass={`${styles.pagination} ${paginationClass}`}
           {...titleProp}
         />

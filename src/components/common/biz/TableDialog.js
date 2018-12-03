@@ -73,6 +73,7 @@ export default class TableDialog extends Component {
       ...defaultConfig,
     };
   }
+
   componentWillReceiveProps(nextProps) {
     const { dataSource, rowKey } = nextProps;
     const defaultConfig = this.defaultSelected(dataSource, rowKey);
@@ -198,14 +199,15 @@ export default class TableDialog extends Component {
         wrapClassName={styles.modalContainer}
       >
         {
-          searchShow ?
-            <Search
-              placeholder={placeholder}
-              onSearch={(value) => { this.handleSearch(value); }}
-              enterButton
-            />
-            :
-            null
+          searchShow
+            ? (
+              <Search
+                placeholder={placeholder}
+                onSearch={(value) => { this.handleSearch(value); }}
+                enterButton
+              />
+            )
+            : null
         }
         <div className={styles.tableWrap}>
           <Table

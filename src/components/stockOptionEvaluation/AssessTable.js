@@ -32,15 +32,21 @@ export default class AssessTable extends PureComponent {
         render: (value, row, index) => {
           const obj = {
             children: <div title={value} className={styles.assessItem}>
-              {value}</div>,
+              {value}
+            </div>,
             props: {},
           };
           // 第4行和第5行的第1列评估要素需要合并成一行，第6行和第7行的第1列评估要素需要合并成一行，所以把第4行和第6行rowSpan设置成2
           if (index === 3 || index === 5) {
             const resultArr = value.split('\n');
             const valueStr = resultArr.join('');
-            obj.children = (<div title={valueStr} className={styles.assessItem}>
-              {resultArr[0]}<br />{resultArr[1]}</div>);
+            obj.children = (
+              <div title={valueStr} className={styles.assessItem}>
+                {resultArr[0]}
+                <br />
+                {resultArr[1]}
+              </div>
+            );
             obj.props.rowSpan = 2;
           }
           // 第4行与第5行的第1列评估要素合成了一行，第6行与第7行的第1列评估要素合成了一行，所以把第5行和第7行rowSpan设置成0
@@ -96,10 +102,17 @@ export default class AssessTable extends PureComponent {
             children: value,
             props: {},
           };
-           // 第3行和第4行的第1列评估要素需要合并成一行，所以把第3行rowSpan设置成2
+          // 第3行和第4行的第1列评估要素需要合并成一行，所以把第3行rowSpan设置成2
           if (index === 2) {
             const valueArr = value.split('\n');
-            obj.children = (<div> {valueArr[0]}<br />{valueArr[1]}</div>);
+            obj.children = (
+              <div>
+                {' '}
+                {valueArr[0]}
+                <br />
+                {valueArr[1]}
+              </div>
+            );
             obj.props.rowSpan = 2;
           }
           // 第4行与第3行的第1列评估要素合成了一行，所以把第4行和第6行rowSpan设置成0
@@ -166,6 +179,7 @@ export default class AssessTable extends PureComponent {
       },
     ];
   }
+
   // 处理评估结果在最后的评估结果
   // 比如： 符合条件: (XXX)
   @autobind
@@ -179,7 +193,8 @@ export default class AssessTable extends PureComponent {
     const valueStr = `${defaultResult}（${assessResult}）`;
     return (
       <div title={valueStr} className={styles.assessItem}>
-        {defaultResult}（
+        {defaultResult}
+（
         <span>{assessResult}</span>
         ）
       </div>
@@ -221,9 +236,11 @@ export default class AssessTable extends PureComponent {
     const valueStr = `${defaultResult1}（${assessResult}）${defaultResult2}`;
     return (
       <div title={valueStr} className={styles.assessItem}>
-        {defaultResult1}（
+        {defaultResult1}
+（
         <span>{assessResult}</span>
-        ）{defaultResult2}
+        ）
+        {defaultResult2}
       </div>
     );
   }
@@ -244,15 +261,18 @@ export default class AssessTable extends PureComponent {
     const valueStr = `${defaultResult1}（${aAcctOpenTimeFlagCn}）${defaultResult2}（${rzrqzqAcctFlagCn}）${defaultResult3}（${jrqhjyFlagCn}）`;
     return (
       <div title={valueStr} className={styles.assessItem}>
-        {defaultResult1}（
+        {defaultResult1}
+（
         <span>{aAcctOpenTimeFlagCn}</span>
         ）
         <br />
-        {defaultResult2}（
+        {defaultResult2}
+（
         <span>{rzrqzqAcctFlagCn}</span>
         ）
         <br />
-        {defaultResult3}（
+        {defaultResult3}
+（
         <span>{jrqhjyFlagCn}</span>
         ）
         <br />
@@ -274,7 +294,8 @@ export default class AssessTable extends PureComponent {
       render: (value) => {
         const obj = {
           children: (<div title={value} className={styles.assessItem}>
-            {value}</div>),
+            {value}
+          </div>),
           props: {},
         };
         return obj;
@@ -288,7 +309,8 @@ export default class AssessTable extends PureComponent {
       render: (value) => {
         const obj = {
           children: (<div title={value} className={styles.assessItem}>
-            {value}</div>),
+            {value}
+                     </div>),
           props: {},
         };
         return obj;
@@ -327,7 +349,7 @@ export default class AssessTable extends PureComponent {
         riskOptTime, // 风险评级时间
         riskOptTimeFlag, // 风险评级结果
         ageFlagCn, // 年龄条件
-        degreeFlagCn,  // 学历
+        degreeFlagCn, // 学历
         invFlagCn, // 关联A股账户在我公司开户6个月以上并具备融资融券业务资格
         aAcctOpenTimeFlagCn, // A股开立时间6个月以上
         rzrqzqAcctFlagCn, // 已开立融资融券证券账号
@@ -437,6 +459,7 @@ export default class AssessTable extends PureComponent {
     }
     return dataSource;
   }
+
   render() {
     return (
       <div className={styles.assessTableBox}>

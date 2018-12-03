@@ -68,7 +68,6 @@ const mapDispatchToProps = {
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 export default class Form extends PureComponent {
-
   static propTypes = {
     location: PropTypes.object.isRequired,
     // 查询客户
@@ -455,7 +454,7 @@ export default class Form extends PureComponent {
     };
 
     return (
-      <div className={styles.channelEditWrapper} >
+      <div className={styles.channelEditWrapper}>
         <EditForm
           {...editFormProps}
           ref={(ref) => { this.EditFormComponent = ref; }}
@@ -469,15 +468,16 @@ export default class Form extends PureComponent {
           )
         }
         {
-          approverModal ?
-            <ChoiceApproverBoard
-              visible={approverModal}
-              approverList={flowAuditors}
-              onClose={() => this.closeModal('approverModal')}
-              onOk={this.handleApproverModalOK}
-            />
-          :
-            null
+          approverModal
+            ? (
+              <ChoiceApproverBoard
+                visible={approverModal}
+                approverList={flowAuditors}
+                onClose={() => this.closeModal('approverModal')}
+                onOk={this.handleApproverModalOK}
+              />
+            )
+            : null
         }
       </div>
     );

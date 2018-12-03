@@ -20,7 +20,6 @@ import logable from '../../decorators/logable';
 const Option = Select.Option;
 const dateFormat = 'YYYY/MM/DD';
 export default class PageHeader extends PureComponent {
-
   static propTypes = {
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
@@ -199,12 +198,11 @@ export default class PageHeader extends PureComponent {
     const questionTagOptions = feedbackOptions.questionTagOptions;
     const stateOptions = feedbackOptions.stateOptions;
     const operatorOptions = feedbackOptions.operatorOptions;
-    const getSelectOption = item => item.map(i =>
-      <Option key={i.value}>{i.label}</Option>,
-    );
+    const getSelectOption = item => item.map(i => <Option key={i.value}>{i.label}</Option>, );
     // 用户评价的下拉选项
     const userDegreeOfSatisfaction = feedbackOptions.userDegreeOfSatisfaction;
-    const { location: {
+    const {
+      location: {
         query: {
           appId,
           functionName,
@@ -246,7 +244,9 @@ export default class PageHeader extends PureComponent {
             onChange={key => this.handleCascaderSelectChange('appId', 'functionName', key)}
           />
         </div>
-        类型: <Select
+        类型:
+        {' '}
+        <Select
           style={{ width: '8%' }}
           placeholder="全部"
           value={issueType}
@@ -255,7 +255,9 @@ export default class PageHeader extends PureComponent {
         >
           {getSelectOption(typeOptions)}
         </Select>
-        问题标签: <Select
+        问题标签:
+        {' '}
+        <Select
           style={{ width: '8%' }}
           placeholder="全部"
           value={feedbackTagEnum}
@@ -264,7 +266,9 @@ export default class PageHeader extends PureComponent {
         >
           {getSelectOption(questionTagOptions)}
         </Select>
-        状态: <Select
+        状态:
+        {' '}
+        <Select
           style={{ width: '6%' }}
           placeholder="解决中"
           value={feedbackStatusEnum}
@@ -273,7 +277,9 @@ export default class PageHeader extends PureComponent {
         >
           {getSelectOption(stateOptions)}
         </Select>
-        用户评价: <Select
+        用户评价:
+        {' '}
+        <Select
           style={{ width: '6%' }}
           placeholder="全部"
           value={evaluationEnum}
@@ -289,11 +295,13 @@ export default class PageHeader extends PureComponent {
           onChange={date => this.handleDateChange(date.value[0], date.value[1])}
           stateDateWrapper={date => date.format(dateFormat)}
         />
-        经办人: <Select
+        经办人:
+        {' '}
+        <Select
           style={{ width: '6%' }}
           placeholder="全部"
           value={processer}
-          onChange={ this.handleProcesserClick}
+          onChange={this.handleProcesserClick}
           allowClear
         >
           {getSelectOption(operatorOptions)}
@@ -302,4 +310,3 @@ export default class PageHeader extends PureComponent {
     );
   }
 }
-

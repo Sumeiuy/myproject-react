@@ -52,7 +52,7 @@ export default class BasicInfo extends PureComponent {
   @autobind
   updateBasicInfo(param) {
     const {
-      location: { query: { custId }}
+      location: { query: { custId } }
     } = this.props;
     return this.props.updateCustBasicInfo({
       custNature: 'per',
@@ -60,19 +60,19 @@ export default class BasicInfo extends PureComponent {
       ...param,
     }).then(
       (resultData) => {
-      //接口访问成功的时候
+      // 接口访问成功的时候
       // 使用这种方式为了让原地编辑组件能够控制loading的状态
-      if (!_.isEmpty(resultData)) {
-        const flag = resultData.result === 'success';
-        if (!flag) {
+        if (!_.isEmpty(resultData)) {
+          const flag = resultData.result === 'success';
+          if (!flag) {
           // 如果成功
-          message.error(resultData.message || '失败');
+            message.error(resultData.message || '失败');
+          }
+          return flag;
         }
-        return flag;
-      }
-      return false;
-    },
-    () => false
+        return false;
+      },
+      () => false
     );
   }
 
@@ -80,7 +80,7 @@ export default class BasicInfo extends PureComponent {
   @autobind
   refreshCustProperty() {
     const {
-      location: { query: { custId }}
+      location: { query: { custId } }
     } = this.props;
     this.props.queryCustomerProperty({
       custId,
@@ -231,7 +231,7 @@ export default class BasicInfo extends PureComponent {
               isNeedValueTitle={checkIsNeedTitle(data.maritalText || DEFAULT_VALUE)}
               isNeedOverFlowEllipsis
             />
-           {/* 本迭代中先关闭
+            {/* 本迭代中先关闭
             <BasicEditorCell
               label="婚姻状况"
               width={INFO_ITEM_WITDH_110}
@@ -246,15 +246,15 @@ export default class BasicInfo extends PureComponent {
             */}
           </div>
           <div className={styles.infoItemBox}>
-           <InfoItem
+            <InfoItem
               width={INFO_ITEM_WITDH}
               label="子女数量"
               value={this.getChildNumText(data.childNum)}
               className={styles.infoItem}
               isNeedValueTitle={checkIsNeedTitle(this.getChildNumText(data.childNum))}
               isNeedOverFlowEllipsis
-           />
-           {/* 本迭代中先关闭
+            />
+            {/* 本迭代中先关闭
              <BasicEditorCell
                label="子女数量"
                width={INFO_ITEM_WITDH}

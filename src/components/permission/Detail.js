@@ -148,9 +148,9 @@ export default class Detail extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     if (
-      this.props.addListenModify === true &&
-      nextProps.addListenModify === false &&
-      nextProps.modifyCustApplication.msg === 'success'
+      this.props.addListenModify === true
+      && nextProps.addListenModify === false
+      && nextProps.modifyCustApplication.msg === 'success'
     ) {
       this.props.onEmitClearModal('isShowModifyModal');
     }
@@ -159,7 +159,9 @@ export default class Detail extends PureComponent {
   get getBaseInfoModifyDom() {
     // 返回基本信息或者基本信息修改组件
     let result;
-    const { subType, custName, custNumber, remark } = this.props;
+    const {
+      subType, custName, custNumber, remark
+    } = this.props;
     const subTypeTxt = this.changeDisplay(subType, subTypeList);
     const info = [
       {
@@ -242,10 +244,12 @@ export default class Detail extends PureComponent {
   @autobind
   updateValue(name, value) { // 更新本地数据
     if (name === 'customer') {
-      this.setState({ customer: {
-        custName: value.custName,
-        custNumber: value.cusId,
-      } });
+      this.setState({
+        customer: {
+          custName: value.custName,
+          custNumber: value.cusId,
+        }
+      });
     }
     this.setState({ [name]: value });
   }
@@ -341,7 +345,10 @@ export default class Detail extends PureComponent {
     return (
       <div className={style.detailComponent}>
         <div className={style.dcHeader}>
-          <span className={style.dcHaderNumb}>编号{this.props.id}</span>
+          <span className={style.dcHaderNumb}>
+编号
+            {this.props.id}
+          </span>
         </div>
         {this.getBaseInfoModifyDom}
         {this.draftInfo}

@@ -129,7 +129,7 @@ const actionColumns = (category, action) => {
         <div className={styles.action}>
           <div className={styles.delete}>
             <Icon
-              type={'shanchu'}
+              type="shanchu"
               className={styles.deleteIcon}
               onClick={() => { deleteClick(category, item); }}
             />
@@ -138,7 +138,7 @@ const actionColumns = (category, action) => {
             isCenter ? (
               <div className={styles.update}>
                 <Icon
-                  type={'beizhu'}
+                  type="beizhu"
                   className={styles.updateIcon}
                   onClick={() => { updateClick(item); }}
                 />
@@ -178,7 +178,7 @@ export default class DetailTable extends Component {
           { deleteFunc: this.handleDeleteClick, updateFunc: this.handleUpdateClick },
         ),
       ];
-    } else if (category === TEAM_TABLE) {
+    } if (category === TEAM_TABLE) {
       return [...columnsTree, actionColumns(category, { deleteFunc: this.handleDeleteClick })];
     }
     return [...(columnsOne(category)), ...columnsTwo];

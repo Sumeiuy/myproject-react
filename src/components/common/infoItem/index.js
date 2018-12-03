@@ -33,7 +33,8 @@ export default function InfoItem(props) {
           marginRight: `-${width}`,
         }}
       >
-        {label}<span className={styles.colon}>:</span>
+        {label}
+        <span className={styles.colon}>:</span>
       </div>
       <div
         className={valueClassNames}
@@ -43,7 +44,9 @@ export default function InfoItem(props) {
           width: `calc(100% - ${width})`,
         }}
         title={isNeedValueTitle ? value : ''}
-      >{value}</div>
+      >
+        {value}
+      </div>
     </div>
   );
 }
@@ -68,4 +71,3 @@ InfoItem.defaultProps = {
   isNeedValueTitle: false,
   isNeedOverFlowEllipsis: false,
 };
-

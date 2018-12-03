@@ -39,10 +39,10 @@ const mapDispatchToProps = {
   // 获取客户反馈字典
   getMotCustfeedBackDict: effect('app/getMotCustfeedBackDict', { loading: true }),
   // 添加服务记录窗口
-  toggleServiceRecordModal: effect('app/toggleServiceRecordModal', {loading: true}),
+  toggleServiceRecordModal: effect('app/toggleServiceRecordModal', { loading: true }),
   // 获取客户基本信息
-  getCustomerBasicInfo: effect('customerDetail/getCustomerBasicInfo', {loading: true}),
-  addCallRecord: effect('customerPool/addCallRecord', {loading: true}),
+  getCustomerBasicInfo: effect('customerDetail/getCustomerBasicInfo', { loading: true }),
+  addCallRecord: effect('customerPool/addCallRecord', { loading: true }),
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

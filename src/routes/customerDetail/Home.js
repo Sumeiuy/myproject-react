@@ -99,7 +99,7 @@ export default class Home extends PureComponent {
       queryCustSummaryInfo,
     } = this.props;
 
-    if(custId) {
+    if (custId) {
       // 获取客户的基本信息
       getCustomerBasicInfo({ custId });
       // 获取概要信息
@@ -121,7 +121,7 @@ export default class Home extends PureComponent {
       queryCustSummaryInfo,
     } = this.props;
 
-    if(custId && custId !== prevCustId) {
+    if (custId && custId !== prevCustId) {
       // 查询基本信息
       getCustomerBasicInfo({ custId });
       // 查询概要信息
@@ -264,24 +264,24 @@ export default class Home extends PureComponent {
     return (
       <div className={styles.container}>
         <div className={styles.breadCrumb}><BreadCrumb {...breadCrumbProps} /></div>
-          <div className={styles.custInfo}>
-            <div className={styles.custBasicInfo}>
-              <IfWrap isRender={basicInfoPermission}>
-                <CustomerBasicInfo {...CustomerBasicInfoProps}/>
-              </IfWrap>
-            </div>
-            <div className={styles.custDetailInfo}>
-              <IfWrap isRender={basicInfoPermission}>
-                <SummaryInfo
-                  location={location}
-                  data={summaryInfo}
-                  moreLabelInfo={moreLabelInfo}
-                  queryAllKeyLabels={queryAllKeyLabels}
-                  replace={this.context.replace}
-                />
-              </IfWrap>
-            </div>
+        <div className={styles.custInfo}>
+          <div className={styles.custBasicInfo}>
+            <IfWrap isRender={basicInfoPermission}>
+              <CustomerBasicInfo {...CustomerBasicInfoProps} />
+            </IfWrap>
           </div>
+          <div className={styles.custDetailInfo}>
+            <IfWrap isRender={basicInfoPermission}>
+              <SummaryInfo
+                location={location}
+                data={summaryInfo}
+                moreLabelInfo={moreLabelInfo}
+                queryAllKeyLabels={queryAllKeyLabels}
+                replace={this.context.replace}
+              />
+            </IfWrap>
+          </div>
+        </div>
         <div className={styles.tabContainer}>
           <Tabs
             activeKey={activeTabKey}

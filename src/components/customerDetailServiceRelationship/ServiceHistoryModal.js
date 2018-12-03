@@ -7,8 +7,8 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import Table from '../../components/common/table';
-import Modal from '../../components/common/biz/CommonModal';
+import Table from '../common/table';
+import Modal from '../common/biz/CommonModal';
 import styles from './serviceRelationship.less';
 import { serviceHistoryColumns } from './config';
 import IfTableWrap from '../common/IfTableWrap';
@@ -18,7 +18,7 @@ const NODATA_HINT = '没有符合条件的记录';
 export default class ServiceHistoryModal extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
-    //查询账户关系下的服务历史信息
+    // 查询账户关系下的服务历史信息
     getCustServiceHistory: PropTypes.func.isRequired,
     // 账户关系下服务历史的数据
     serviceHistory: PropTypes.array.isRequired,
@@ -64,7 +64,7 @@ export default class ServiceHistoryModal extends PureComponent {
     return (
       <Modal
         title="服务历史"
-        size='large'
+        size="large"
         showOkBtn={false}
         visible={visible}
         cancelText="关闭"

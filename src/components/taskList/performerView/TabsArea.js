@@ -46,7 +46,7 @@ const TabsArea = (props) => {
   } = props;
 
   return (
-    <div className={styles.tabsContainer} >
+    <div className={styles.tabsContainer}>
       <Tabs activeKey={performerViewCurrentTab} onChange={handleTabsChange}>
         <TabPane tab="服务实施" key="serviceImplementation">
           <ServiceImplementation
@@ -69,23 +69,27 @@ const TabsArea = (props) => {
             clearCreateTaskData={clearCreateTaskData}
           />
         </TabPane>
-        {hasSurvey ?
-          <TabPane tab="任务问卷调查" key="questionnaireSurvey">
-            {
-              performerViewCurrentTab === 'questionnaireSurvey' ?
-                <Survey
-                  answersList={answersList}
-                  getTempQuesAndAnswer={getTempQuesAndAnswer}
-                  isSubmitSurveySucceed={isSubmitSurveySucceed}
-                  saveAnswersByType={saveAnswersByType}
-                  basicInfo={basicInfo}
-                  currentId={currentId}
-                  key={currentId}
+        {hasSurvey
+          ? (
+            <TabPane tab="任务问卷调查" key="questionnaireSurvey">
+              {
+              performerViewCurrentTab === 'questionnaireSurvey'
+                ? (
+                  <Survey
+                    answersList={answersList}
+                    getTempQuesAndAnswer={getTempQuesAndAnswer}
+                    isSubmitSurveySucceed={isSubmitSurveySucceed}
+                    saveAnswersByType={saveAnswersByType}
+                    basicInfo={basicInfo}
+                    currentId={currentId}
+                    key={currentId}
                   // 不是结束状态的才可以提交
-                  canSubmit={!isEndState(missionStatusCode)}
-                /> : null
+                    canSubmit={!isEndState(missionStatusCode)}
+                  />
+                ) : null
             }
-          </TabPane> : null
+            </TabPane>
+          ) : null
         }
       </Tabs>
     </div>

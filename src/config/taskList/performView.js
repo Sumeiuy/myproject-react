@@ -15,7 +15,4 @@ export const MOT_RETURN_VISIT_WORK_RESULT_LOST = '失败';
 
 // 由于投顾签约的 MOT 回访类任务对应的 EVENT_ID 值有多个
 // 所以需要提供一个函数进行判断是否 MOT 回访类任务
-export const isMOTReturnTypeTask = (eventId) => {
-  return _.includes(MOT_RETURN_TASK_EVENT_IDS, eventId);
-};
-
+export const isMOTReturnTypeTask = eventId => _.includes(MOT_RETURN_TASK_EVENT_IDS, eventId);

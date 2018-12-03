@@ -272,7 +272,7 @@ export default class IndustryThemeList extends PureComponent {
             filterType={config.industryThemeFilterType}
           />
           <Table
-            rowKey={'rowKey'}
+            rowKey="rowKey"
             columns={this.getColumns()}
             dataSource={this.getTransformList(list)}
             pagination={false}

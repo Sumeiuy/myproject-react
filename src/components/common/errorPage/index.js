@@ -17,9 +17,11 @@ export default class errorPage extends PureComponent {
     errorId: PropTypes.string.isRequired,
     location: PropTypes.object.isRequired,
   }
+
   static contextTypes = {
     push: PropTypes.func.isRequired,
   }
+
   // 返回上一页
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '返回上一页' } })
@@ -28,6 +30,7 @@ export default class errorPage extends PureComponent {
     push('/customerPool'); */
     window.history.back(-1);
   }
+
   render() {
     const { errorId } = this.props;
     const { location: { pathname } } = this.props;
@@ -40,7 +43,11 @@ export default class errorPage extends PureComponent {
           <p className={styles.errorTips}>
             <span className={styles.tipSorry}>SORRY</span>
             <br />
-            <span className={styles.tipInfo}>当前页面遇到问题，请稍后再试（{errorId}）</span>
+            <span className={styles.tipInfo}>
+当前页面遇到问题，请稍后再试（
+              {errorId}
+）
+            </span>
           </p>
           {
             !ishomePageErrorStatus && <Button type="primary" ghost onClick={this.handleBackClick}>返回上一页</Button>

@@ -69,8 +69,7 @@ function updateLocalLabelStorage(labels, key, hashString) {
   let nextMoreFilterListOpened = [];
   const moreFilterListOpened = sessionStore.get(`CUSTOMERPOOL_MORE_FILTER_STORAGE_${hashString}`);
   if (key === 'clearAll') {
-    nextMoreFilterListOpened =
-      _.filter(moreFilterListOpened, obj => obj.type === MORE_FILTER_TYPE.more);
+    nextMoreFilterListOpened = _.filter(moreFilterListOpened, obj => obj.type === MORE_FILTER_TYPE.more);
   } else {
     const isChecked = _.some(labels, item => item === key);
     if (isChecked) {
@@ -99,8 +98,7 @@ function updateLocalMoreFilterStorage(item, hashString) {
   const moreFilterListOpened = sessionStore.get(`CUSTOMERPOOL_MORE_FILTER_STORAGE_${hashString}`);
 
   if (item.key === 'clearAll') {
-    nextMoreFilterListOpened =
-      _.filter(moreFilterListOpened, obj => obj.type !== MORE_FILTER_TYPE.more);
+    nextMoreFilterListOpened = _.filter(moreFilterListOpened, obj => obj.type !== MORE_FILTER_TYPE.more);
   } else if (item.isDeleteFilterFromLocation) {
     nextMoreFilterListOpened = _.filter(moreFilterListOpened, obj => obj.key !== item.id);
   } else {
@@ -191,7 +189,8 @@ export default class Filter extends PureComponent {
   getMoreFilterOpenKeys(currentValue) {
     return moreFilters
       .filter(
-      item => _.some(_.keysIn(currentValue), key => key === item.filterId))
+        item => _.some(_.keysIn(currentValue), key => key === item.filterId)
+      )
       .map(item => item.filterId);
   }
 
@@ -239,7 +238,7 @@ export default class Filter extends PureComponent {
   getFilterData(dict, filter) {
     if (filter.dataList) {
       return this[filter.dataList[0]][filter.dataList[1]];
-    } else if (filter.dictField) {
+    } if (filter.dictField) {
       if (filter.filterId === 'businessOpened') {
         return {
           dateType: dict[filter.dictField[0]],
@@ -253,6 +252,7 @@ export default class Filter extends PureComponent {
 
   // 区分是否是从更多里面打开filter，从而控制filter菜单的默认打开
   selectFilterIdFromMore = '';
+
   // 区分是否从标签条件里面打开标签， 从而控制标签菜单的默认打开
   labelFilter = '';
 
@@ -400,8 +400,7 @@ export default class Filter extends PureComponent {
     },
   })
   handleAmountRangeSelectChange({ id, value }) {
-    const renderValue =
-      _.join([value.dateType, value.min, value.max], seperator.filterValueSeperator);
+    const renderValue = _.join([value.dateType, value.min, value.max], seperator.filterValueSeperator);
     this.props.onFilterChange({
       name: id,
       value: renderValue,
@@ -463,7 +462,7 @@ export default class Filter extends PureComponent {
 
   @autobind
   @logable({
-      type: 'CalendarSelect',
+    type: 'CalendarSelect',
     payload: {
       name: '$args[0].filterName',
       min: '$args[0].value[0]',
@@ -640,19 +639,18 @@ export default class Filter extends PureComponent {
           const filter = _.find(filters, item => item.key === key);
           if (!filter) {
             return false;
-          } else if (_.isEmpty(filter.list) || (filter.list && _.isEmpty(filter.list.filterList))) {
+          } if (_.isEmpty(filter.list) || (filter.list && _.isEmpty(filter.list.filterList))) {
             normalTag.push(key);
             return false;
           }
           return true;
         }
         return false;
-      });
+      }
+    );
 
-    const normalTagList =
-      _.compact(_.map(normalTag, tag => _.find(finalTagList, item => item.id === tag)));
-    const tagFilterList =
-      _.compact(_.map(tagFilters, tag => _.find(finalTagList, item => item.id === tag)));
+    const normalTagList = _.compact(_.map(normalTag, tag => _.find(finalTagList, item => item.id === tag)));
+    const tagFilterList = _.compact(_.map(tagFilters, tag => _.find(finalTagList, item => item.id === tag)));
 
     return {
       normalTagList,
@@ -717,8 +715,8 @@ export default class Filter extends PureComponent {
     const { hashString } = this.props;
     if (obj.type === MORE_FILTER_TYPE.more) {
       renderItem = _.find(moreFilterList, filter => filter.filterId === obj.key);
-      return renderItem ?
-        (
+      return renderItem
+        ? (
           <HtFilter
             key={renderItem.filterId}
             className={styles.filter}
@@ -744,8 +742,7 @@ export default class Filter extends PureComponent {
           filterName={renderItem.name}
           filterId={renderItem.id}
           onClose={
-            () =>
-              this.handleNormalfiterClose(renderItem.id, currentValue.primaryKeyLabels)
+            () => this.handleNormalfiterClose(renderItem.id, currentValue.primaryKeyLabels)
           }
         />
       );
@@ -770,8 +767,7 @@ export default class Filter extends PureComponent {
         data={tagfilters}
         onChange={this.handleTagfilterChange}
         onClose={
-          () =>
-            this.handleNormalfiterClose(renderItem.id, currentValue.primaryKeyLabels)
+          () => this.handleNormalfiterClose(renderItem.id, currentValue.primaryKeyLabels)
         }
       />) : null;
   }
@@ -831,8 +827,7 @@ export default class Filter extends PureComponent {
     const moreFilterListOpened = sessionStore.get(`CUSTOMERPOOL_MORE_FILTER_STORAGE_${hashString}`);
 
     // 按照是否有子标签分类渲染
-    const splitLabelList =
-      this.splitLabelList(currentValue.primaryKeyLabels, filtersOfAllSightingTelescope);
+    const splitLabelList = this.splitLabelList(currentValue.primaryKeyLabels, filtersOfAllSightingTelescope);
 
     // 自定义标签
     const currentSelectDefinedLabel = _.isArray(customLabels)
@@ -889,33 +884,36 @@ export default class Filter extends PureComponent {
           {
             _.map(
               moreFilterListOpened,
-              obj => this.renderMoreFilter(obj, moreFilters, splitLabelList, currentValue))
+              obj => this.renderMoreFilter(obj, moreFilters, splitLabelList, currentValue)
+            )
           }
         </div>
         <div className={styles.moreFilterController}>
           {
-            !_.isEmpty(this.props.tagList) ?
-              <div id={CUSTOMER_LIST_INTRO_THIRD_STEP_ID}>
-                <HtFilter
-                  type="multiWithCaterogy"
-                  className={styles.filter}
-                  filterName="大数据标签"
-                  filterId="primaryKeyLabels"
-                  value={currentValue.primaryKeyLabels}
-                  data={this.props.tagList}
-                  dataMap={['id', 'name']}
-                  dropdownStyle={{
-                    maxHeight: 324,
-                    overflowY: 'auto',
-                    width: 250,
-                    zIndex: 10,
-                  }}
-                  onChange={this.handleLabelChange}
-                  iconMore
-                  disableTitle
-                  isMoreButton
-                />
-              </div> : null
+            !_.isEmpty(this.props.tagList)
+              ? (
+                <div id={CUSTOMER_LIST_INTRO_THIRD_STEP_ID}>
+                  <HtFilter
+                    type="multiWithCaterogy"
+                    className={styles.filter}
+                    filterName="大数据标签"
+                    filterId="primaryKeyLabels"
+                    value={currentValue.primaryKeyLabels}
+                    data={this.props.tagList}
+                    dataMap={['id', 'name']}
+                    dropdownStyle={{
+                      maxHeight: 324,
+                      overflowY: 'auto',
+                      width: 250,
+                      zIndex: 10,
+                    }}
+                    onChange={this.handleLabelChange}
+                    iconMore
+                    disableTitle
+                    isMoreButton
+                  />
+                </div>
+              ) : null
           }
           <div id={CUSTOMER_LIST_INTRO_FOURTH_STEP_ID}>
             <HtFilter

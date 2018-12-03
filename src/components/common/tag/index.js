@@ -36,7 +36,9 @@ export default class Tag extends PureComponent {
   }
 
   render() {
-    const { type, color, text, clsName } = this.props;
+    const {
+      type, color, text, clsName
+    } = this.props;
     const lowType = type.toLowerCase();
     let newStyle = {};
     if (color !== '') {

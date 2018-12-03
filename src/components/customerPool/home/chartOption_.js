@@ -132,12 +132,16 @@ export default ({
   const items = [];
   data.forEach(
     (item, index) => {
-      const param = { item, width, length, index };
+      const param = {
+        item, width, length, index
+      };
       items.push(getItem(param));
     },
   );
   if (!_.isEmpty(bgColor)) {
-    const bgParam = { data, width, bgColor, maxValue };
+    const bgParam = {
+      data, width, bgColor, maxValue
+    };
     items.push(getBgItem(bgParam));
   }
   return items;
@@ -194,7 +198,7 @@ export const singleColorBar = ({
           formatter: (params) => {
             if (_.isEmpty(colourfulData)) {
               return `${params.value}`;
-            } else if (params.value !== 0 && params.dataIndex !== colourfulIndex) {
+            } if (params.value !== 0 && params.dataIndex !== colourfulIndex) {
               return `${params.value}`;
             }
             return '';
@@ -209,8 +213,8 @@ export const singleColorBar = ({
 export const tooltipConfig = {
   tooltip: {
     trigger: 'item',
-    axisPointer: {            // 坐标轴指示器，坐标轴触发有效
-      type: 'shadow',       // 默认为直线，可选为：'line' | 'shadow'
+    axisPointer: { // 坐标轴指示器，坐标轴触发有效
+      type: 'shadow', // 默认为直线，可选为：'line' | 'shadow'
     },
     formatter: (params) => {
       let tooltipString = '';

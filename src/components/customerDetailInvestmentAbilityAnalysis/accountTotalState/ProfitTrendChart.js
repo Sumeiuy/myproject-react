@@ -14,7 +14,9 @@ import IfWrap from '../../common/biz/IfWrap';
 import IECharts from '../../IECharts';
 import { data } from '../../../helper';
 import { filterData, filterXAxisDate } from '../utils';
-import { ACCOUNT_DAILY_RATE, HS300_DAILY_RATE, ACCOUNT_CUMULATIVE_RATE, HS300_CUMULATIVE_RATE, profitTrendChartTip, NOT_EXCESS_BENEFIT_TEXT, EXCESS_BENEFIT_TEXT, chartOption } from '../config';
+import {
+  ACCOUNT_DAILY_RATE, HS300_DAILY_RATE, ACCOUNT_CUMULATIVE_RATE, HS300_CUMULATIVE_RATE, profitTrendChartTip, NOT_EXCESS_BENEFIT_TEXT, EXCESS_BENEFIT_TEXT, chartOption
+} from '../config';
 import styles from './profitTrendChart.less';
 
 export default class ProfitTrendChart extends PureComponent {

@@ -169,7 +169,7 @@ export default class EllipsisMultipleLineText extends PureComponent {
           <span className={styles.title}>收起</span>
           <Icon type="shouqi2" className={styles.collapse} />
         </div>
-      </div >
+      </div>
     );
   }
 }

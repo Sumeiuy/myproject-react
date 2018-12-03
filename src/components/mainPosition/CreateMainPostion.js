@@ -12,11 +12,11 @@ import { autobind } from 'core-decorators';
 import { message } from 'antd';
 import _ from 'lodash';
 import CommonModal from '../common/biz/CommonModal';
-import InfoForm from '../../components/common/infoForm';
-import AutoComplete from '../../components/common/similarAutoComplete';
+import InfoForm from '../common/infoForm';
+import AutoComplete from '../common/similarAutoComplete';
 import BottonGroup from '../permission/BottonGroup';
 import TableDialog from '../common/biz/TableDialog';
-import CommonTable from '../../components/common/biz/CommonTable';
+import CommonTable from '../common/biz/CommonTable';
 import { emp } from '../../helper';
 import config from './config';
 import commonConfirm from '../common/confirm_';
@@ -272,10 +272,12 @@ export default class CreateFilialeCustTransfer extends PureComponent {
       },
       operate: this.checkTableData,
     };
-    const selfBtnGroup = (<BottonGroup
-      list={buttonList}
-      onEmitEvent={this.handleSubmit}
-    />);
+    const selfBtnGroup = (
+      <BottonGroup
+        list={buttonList}
+        onEmitEvent={this.handleSubmit}
+      />
+    );
     const searchProps = {
       visible: nextApproverModal,
       onOk: this.sendModifyRequest,
@@ -298,7 +300,7 @@ export default class CreateFilialeCustTransfer extends PureComponent {
         afterClose={this.afterClose}
         selfBtnGroup={selfBtnGroup}
       >
-        <div className={styles.mainPositionWrapper} >
+        <div className={styles.mainPositionWrapper}>
           <div className={styles.infoFormDiv}>
             <InfoForm label="服务经理" style={{ width: 'auto' }}>
               <AutoComplete

@@ -14,7 +14,6 @@ import logable from '../../../decorators/logable';
 import styles from './serviceManagerFilter.less';
 
 export default class ServiceManagerFilter extends PureComponent {
-
   static propTypes = {
     list: PropTypes.array.isRequired,
     currentPtyMng: PropTypes.object.isRequired,

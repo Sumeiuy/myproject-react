@@ -41,5 +41,4 @@ export default class DraftInfo extends PureComponent {
       </div>
     );
   }
-
 }

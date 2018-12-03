@@ -45,7 +45,7 @@ export default class Header extends PureComponent {
     },
   })
   handleParticipantSearch(value) {
-    this.props.filterCallback({'participant': value});
+    this.props.filterCallback({ participant: value });
   }
 
   @autobind
@@ -58,7 +58,7 @@ export default class Header extends PureComponent {
   })
   handleRoomChange(option) {
     const { value: { value } } = option;
-    this.props.filterCallback({'roomNo': value});
+    this.props.filterCallback({ roomNo: value });
   }
 
   @autobind
@@ -70,7 +70,7 @@ export default class Header extends PureComponent {
     },
   })
   handleDateChange(date, dateString) {
-    this.props.filterCallback({'orderDate': dateString});
+    this.props.filterCallback({ orderDate: dateString });
   }
 
   // 新建申请
@@ -98,7 +98,7 @@ export default class Header extends PureComponent {
     } = this.props;
     // 处理智慧前厅头部筛选项，增加不限筛选项
     const defaultRoomList = smartFrontHallList || [];
-    const roomList = [ { label: '不限', value: '' }, ...defaultRoomList ];
+    const roomList = [{ label: '不限', value: '' }, ...defaultRoomList];
     return (
       <div className={styles.Header}>
         <div className={styles.filterBox}>
@@ -113,8 +113,8 @@ export default class Header extends PureComponent {
             </div>
             <SingleFilter
               className={styles.filterFl}
-              filterName='智慧前厅'
-              filterId= 'room'
+              filterName="智慧前厅"
+              filterId="room"
               dataMap={['value', 'label']}
               filterOption={['room']}
               data={roomList}
@@ -136,17 +136,18 @@ export default class Header extends PureComponent {
           </div>
         </div>
         {
-          tgQyFlag ?
-            <Button
-              type="primary"
-              icon="plus"
-              size="small"
-              onClick={this.handleCreate}
-            >
+          tgQyFlag
+            ? (
+              <Button
+                type="primary"
+                icon="plus"
+                size="small"
+                onClick={this.handleCreate}
+              >
               新建
-            </Button>
-            :
-            null
+              </Button>
+            )
+            : null
         }
       </div>
     );

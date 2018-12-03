@@ -158,7 +158,7 @@ export default class SignCustomerLabel extends PureComponent {
       value: labelTypeName
         ? `${labelName}(${labelTypeName})`
         : labelName
-        ,
+      ,
     };
     this.setState({
       selectValue: finalValue,
@@ -182,19 +182,20 @@ export default class SignCustomerLabel extends PureComponent {
     const { labelValue } = this.state;
     const currentLabel = _.find(
       custLikeLabel,
-      labelItem =>
-        labelItem.labelName === labelValue,
+      labelItem => labelItem.labelName === labelValue,
     );
     if (currentLabel) {
       return null;
     }
     const labelText = labelValue ? `"${labelValue}"` : '';
-    return (<div
-      className={styles.newLabel}
-      onClick={this.handleCloseAddLabelModal}
-    >
-      {`+ 新建${labelText}标签`}
-    </div>);
+    return (
+      <div
+        className={styles.newLabel}
+        onClick={this.handleCloseAddLabelModal}
+      >
+        {`+ 新建${labelText}标签`}
+      </div>
+    );
   }
 
   @autobind
@@ -237,9 +238,11 @@ export default class SignCustomerLabel extends PureComponent {
       });
     }
   }
+
   render() {
     const { custLikeLabel, addLabel, checkDuplicationName } = this.props;
-    const { selectValue,
+    const {
+      selectValue,
       errorMsg,
       createLabelVisible,
       visible,
@@ -277,9 +280,9 @@ export default class SignCustomerLabel extends PureComponent {
             dropdownStyle={{ maxHeight: 324 }}
           />
           {
-            errorMsg ?
-              <div className={styles.errorMsg}>{ errorMsg }</div> :
-              null
+            errorMsg
+              ? <div className={styles.errorMsg}>{ errorMsg }</div>
+              : null
           }
         </Modal>
         <CreateLabel

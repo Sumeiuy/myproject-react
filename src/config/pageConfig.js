@@ -9,7 +9,9 @@
 */
 // TableTransfer 组件传入columns 需要引入;
 import React from 'react';
-import { customer, serviceManager, operationType, subType, status, drafter, department, approver } from './busApplyFilters';
+import {
+  customer, serviceManager, operationType, subType, status, drafter, department, approver
+} from './busApplyFilters';
 
 const TableTransferColumn = item => (
   <div title={item}>

@@ -76,16 +76,18 @@ export default class CompositionTable extends PureComponent {
   renderPopover(value) {
     let reactElement = null;
     if (value) {
-      reactElement = (<Popover
-        placement="bottomLeft"
-        content={value}
-        trigger="hover"
-        overlayStyle={overlayStyle}
-      >
-        <div className={styles.oneLineEllipsis}>
-          {value}
-        </div>
-      </Popover>);
+      reactElement = (
+        <Popover
+          placement="bottomLeft"
+          content={value}
+          trigger="hover"
+          overlayStyle={overlayStyle}
+        >
+          <div className={styles.oneLineEllipsis}>
+            {value}
+          </div>
+        </Popover>
+      );
     } else {
       reactElement = '暂无';
     }
@@ -95,15 +97,15 @@ export default class CompositionTable extends PureComponent {
   // 渲染文字或数字
   @autobind
   renderNumberOrText(text, type = '') {
-    return (<div className={styles.oneLineEllipsis} title={text}>
-      {
+    return (
+      <div className={styles.oneLineEllipsis} title={text}>
+        {
         _.isEmpty(type)
-        ?
-          text
-        :
-          this.compareWithZero(number.toFixed(text))
+          ? text
+          : this.compareWithZero(number.toFixed(text))
       }
-    </div>);
+      </div>
+    );
   }
 
   render() {

@@ -47,7 +47,6 @@ function getPercent(num) {
 }
 
 export default class MissionProgress extends PureComponent {
-
   static propTypes = {
     // 任务实施进度
     missionImplementationProgress: PropTypes.object,
@@ -85,7 +84,9 @@ export default class MissionProgress extends PureComponent {
   }
 
   getParam(param) {
-    const { total, activeCount, ratio, activeType, remainingType } = param;
+    const {
+      total, activeCount, ratio, activeType, remainingType
+    } = param;
     // 真实百分比
     const activePercent = getPercent(Number(ratio));
     return {
@@ -119,8 +120,7 @@ export default class MissionProgress extends PureComponent {
   @autobind
   findCurrentProgressType(index) {
     const { missionProgressStatusDic: dic = [] } = this.props;
-    const currentProgressType = _.find(dic, item =>
-      item.key === MISSION_PROGRESS_MAP[index].key) || {};
+    const currentProgressType = _.find(dic, item => item.key === MISSION_PROGRESS_MAP[index].key) || {};
     return currentProgressType.key;
   }
 
@@ -128,7 +128,11 @@ export default class MissionProgress extends PureComponent {
   renderTooltipContent(type, currentCount) {
     return (
       <div className={styles.content}>
-        <div className={styles.currentType}>{type}{currentCount || 0}位</div>
+        <div className={styles.currentType}>
+          {type}
+          {currentCount || 0}
+位
+        </div>
       </div>
     );
   }
@@ -249,7 +253,14 @@ export default class MissionProgress extends PureComponent {
         {/**
          * 进度条显示可以给与固定的5%，但是比例还是显示真实比例
          */}
-        <span className="ant-progress-text">{activeCount} / {activePercent}%</span>
+        <span className="ant-progress-text">
+          {activeCount}
+          {' '}
+/
+          {' '}
+          {activePercent}
+%
+        </span>
       </div>
     );
   }

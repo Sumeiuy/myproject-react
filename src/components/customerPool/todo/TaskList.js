@@ -23,11 +23,10 @@ import Pagination from '../../common/Pagination';
 import styles from './taskList.less';
 import emptyImg from './img/empty.png';
 
-const systemCode = '102330';  // 系统代码（理财服务平台为102330）
+const systemCode = '102330'; // 系统代码（理财服务平台为102330）
 const USER_INFO_APPROVE = '投顾信息维护审核流程'; // 用户基本信息审核标识;
 
 export default class TaskList extends PureComponent {
-
   static propTypes = {
     data: PropTypes.array.isRequired,
     className: PropTypes.string.isRequired,
@@ -145,6 +144,7 @@ export default class TaskList extends PureComponent {
       },
     });
   }
+
   // 请求基本信息成功，页面跳转
   @autobind
   handleSuccess() {
@@ -195,8 +195,8 @@ export default class TaskList extends PureComponent {
             title: '任务名称',
             dataIndex: 'subject',
             key: 'subject',
-            render: (item, record) =>
-              (<a
+            render: (item, record) => (
+              <a
                 target="_blank"
                 rel="noopener noreferrer"
                 title={item}
@@ -205,7 +205,8 @@ export default class TaskList extends PureComponent {
                 className={styles.title}
               >
                 {record.subject}
-              </a>),
+              </a>
+            ),
           },
           {
             width: 200,
@@ -223,14 +224,14 @@ export default class TaskList extends PureComponent {
         ];
         break;
       case 'approve':
-        taskColumns =  [
+        taskColumns = [
           {
             width: 200,
             title: '任务名称',
             dataIndex: 'subject',
             key: 'subject',
-            render: (item, record) =>
-              (<a
+            render: (item, record) => (
+              <a
                 target="_blank"
                 rel="noopener noreferrer"
                 title={item}
@@ -239,7 +240,8 @@ export default class TaskList extends PureComponent {
                 className={styles.title}
               >
                 {record.subject}
-              </a>),
+              </a>
+            ),
           },
           {
             width: 150,
@@ -282,6 +284,7 @@ export default class TaskList extends PureComponent {
     }
     return taskColumns;
   }
+
   render() {
     const {
       className,
@@ -297,14 +300,14 @@ export default class TaskList extends PureComponent {
       }
     } = this.props;
 
-    //数据为空
+    // 数据为空
     if (_.isEmpty(data)) {
       return (
         <div className={styles.empty}>
-            <div className={styles.emptyContainer}>
-              <img src={emptyImg} alt="" />
-              <p>{emptyText}</p>
-            </div>
+          <div className={styles.emptyContainer}>
+            <img src={emptyImg} alt="" />
+            <p>{emptyText}</p>
+          </div>
         </div>
       );
     }
@@ -312,7 +315,7 @@ export default class TaskList extends PureComponent {
       <div className={styles.taskList}>
         <Table
           className={className}
-          rowKey='id'
+          rowKey="id"
           columns={this.columns}
           dataSource={data}
           pagination={false}

@@ -18,8 +18,10 @@ import styles from './nav.less';
 
 export default function Nav(props) {
   const { data, list, location: { query } } = props;
-  const renderList = list.map(item => {
-    const { name, key, url, id, title } = item;
+  const renderList = list.map((item) => {
+    const {
+      name, key, url, id, title
+    } = item;
     let payload = {};
     const iconClass = classnames({
       [styles.icon]: true,
@@ -69,7 +71,7 @@ export default function Nav(props) {
     });
     return (
       <dl key={key} onClick={() => handleOpenTab(payload)}>
-        <dt className={iconClass}></dt>
+        <dt className={iconClass} />
         <dd className={styles.value}>{value}</dd>
         <dd className={styles.name}>{name}</dd>
       </dl>
@@ -97,7 +99,7 @@ export default function Nav(props) {
       name,
       title,
       data = {},
-      state = {...query},
+      state = { ...query },
     } = payload;
     const param = {
       closable: true,
@@ -114,8 +116,10 @@ export default function Nav(props) {
       param,
       state,
     });
-    sendLog({title,
-name});
+    sendLog({
+      title,
+      name
+    });
   };
 
   return (

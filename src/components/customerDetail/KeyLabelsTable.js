@@ -49,9 +49,10 @@ export default class KeyLabelsTable extends Component {
       prevLabels: props.labels,
     };
   }
+
   // 切换页面
   @autobind
-  handlePageChange(current ) {
+  handlePageChange(current) {
     this.setState({ current });
   }
 
@@ -59,7 +60,7 @@ export default class KeyLabelsTable extends Component {
   @autobind
   renderLable(label) {
     const { name, desc, id } = label;
-    return(
+    return (
       <div className={styles.item}>
         <Popover
           key={id}

@@ -14,7 +14,9 @@ import classNames from 'classnames';
 import { autobind } from 'core-decorators';
 
 import Tooltip from '../../../common/Tooltip';
-import { isSightingScope, isLocalScope, handleOpenFsp360TabAction, openProductDetailPage, getDetailBtnVisible } from '../../helper';
+import {
+  isSightingScope, isLocalScope, handleOpenFsp360TabAction, openProductDetailPage, getDetailBtnVisible
+} from '../../helper';
 import { url as urlHelper, url, number } from '../../../../helper';
 import { seperator, sessionStore } from '../../../../config';
 import { custListSearchFilterTypes } from '../config/filterConfig';
@@ -37,7 +39,9 @@ const needSelfInfoArray = ['cashAmt', 'avlAmt', 'avlAmtCrdt', 'totMktval', 'last
 
 const haveTitle = title => (title ? `<i class="tip">${title}</i>` : null);
 
-const replaceWord = ({ value, searchText, title = '', type = '' }) => {
+const replaceWord = ({
+  value, searchText, title = '', type = ''
+}) => {
   const titleDom = haveTitle(title);
   const regxp = new RegExp(searchText, 'g');
   // 瞄准镜标签后面添加字符，用以分割
@@ -106,7 +110,7 @@ export default class MatchArea extends PureComponent {
     const {
       dict: {
         custBusinessType = [],
-      custUnrightBusinessType = [],
+        custUnrightBusinessType = [],
       },
       location: {
         query,
@@ -175,9 +179,13 @@ export default class MatchArea extends PureComponent {
     if (!_.isEmpty(list)) {
       const htmlStringList = _.map(
         list,
-        item => `${replaceWord({ value: item.name,
-searchText: keyword })}/${replaceWord({ value: item.code,
-searchText: keyword })}`,
+        item => `${replaceWord({
+          value: item.name,
+          searchText: keyword
+        })}/${replaceWord({
+          value: item.code,
+          searchText: keyword
+        })}`,
       );
       const htmlString = htmlStringList.join(',');
       return (
@@ -204,10 +212,14 @@ searchText: keyword })}`,
     if (!_.isEmpty(list)) {
       const data = list[0] || {};
       const { name, code, flag } = data;
-      const codeHtmlString = replaceWord({ value: code,
-searchText: keyword });
-      const htmlString = `${replaceWord({ value: name,
-searchText: keyword })}/${codeHtmlString}`;
+      const codeHtmlString = replaceWord({
+        value: code,
+        searchText: keyword
+      });
+      const htmlString = `${replaceWord({
+        value: name,
+        searchText: keyword
+      })}/${codeHtmlString}`;
       const props = {
         custId,
         data,
@@ -220,16 +232,23 @@ searchText: keyword })}/${codeHtmlString}`;
       // flag为true，持仓产品名称可点击
       if (flag) {
         const { push } = this.context;
-        contentNode = (<i>
-          <em
-            className={styles.clickable}
-            onClick={() => { openProductDetailPage({ data,
-routerAction: push }); }}
-          >
-            {name}
-          </em>
-          /<em className="marked" dangerouslySetInnerHTML={{ __html: codeHtmlString }} />
-        </i>);
+        contentNode = (
+          <i>
+            <em
+              className={styles.clickable}
+              onClick={() => {
+                openProductDetailPage({
+                  data,
+                  routerAction: push
+                });
+              }}
+            >
+              {name}
+            </em>
+          /
+            <em className="marked" dangerouslySetInnerHTML={{ __html: codeHtmlString }} />
+          </i>
+        );
       } else {
         contentNode = <i dangerouslySetInnerHTML={{ __html: htmlString }} />;
       }
@@ -256,8 +275,7 @@ routerAction: push }); }}
       if (_.includes(needSelfInfoArray, sortType)) {
         filtersArray = [sortType, ...filtersArray];
       }
-      const filterList = _.map(_.uniq(filtersArray), item =>
-        item.split(seperator.filterInsideSeperator)[0]);
+      const filterList = _.map(_.uniq(filtersArray), item => item.split(seperator.filterInsideSeperator)[0]);
       const filterOrder = _.filter(needInfoFilter, item => _.includes(filterList, item));
       MatchArea.setFilterOrder(filterOrder, true, this.hashString);
       return filterOrder;
@@ -271,12 +289,16 @@ routerAction: push }); }}
 
   // 点击订购组合名称跳转到详情页面
   @autobind
-  @logable({ type: 'Click',
-payload: { name: '订购组合' } })
+  @logable({
+    type: 'Click',
+    payload: { name: '订购组合' }
+  })
   handleOrderCombinationClick({ name, code }) {
     const { push } = this.context;
-    const query = { id: code,
-name };
+    const query = {
+      id: code,
+      name
+    };
     const pathname = '/strategyCenter/choicenessCombination/combinationDetail';
     const detailURL = `${pathname}?${urlHelper.stringify(query)}`;
     const param = {
@@ -299,8 +321,10 @@ name };
   }
 
   @autobind
-  @logable({ type: 'Click',
-payload: { name: '收起/展开' } })
+  @logable({
+    type: 'Click',
+    payload: { name: '收起/展开' }
+  })
   showAllIndividual() {
     const { showAll } = this.state;
     this.setState({
@@ -323,7 +347,9 @@ payload: { name: '收起/展开' } })
     const {
       listItem,
     } = this.props;
-    const { name, id, unit = '', hasCycle } = item;
+    const {
+      name, id, unit = '', hasCycle
+    } = item;
     let renderValue = listItem[id];
     if (!_.isNull(renderValue)) {
       if (unit === '%') {
@@ -337,9 +363,11 @@ payload: { name: '收起/展开' } })
           <span>
             <i className="label">
               {hasCycle ? this.convertCycle(id) : ''}
-              {name}：
+              {name}
+：
             </i>
-            {renderValue}{unit}
+            {renderValue}
+            {unit}
           </span>
         </li>
       );
@@ -353,14 +381,19 @@ payload: { name: '收起/展开' } })
     const {
       listItem,
     } = this.props;
-    const { name, id, descMap, custId } = currentItem;
+    const {
+      name, id, descMap, custId
+    } = currentItem;
     let noCompleteIdList = _.omitBy(descMap, (value, key) => listItem[key] === 'Y');
     noCompleteIdList = _.values(noCompleteIdList);
     if (noCompleteIdList.length) {
       return (
         <li key={`${id}${custId}`}>
           <span>
-            <i className="label">{name}：</i>
+            <i className="label">
+              {name}
+：
+            </i>
             {_.join(noCompleteIdList, ',')}
           </span>
         </li>
@@ -380,10 +413,10 @@ payload: { name: '收起/展开' } })
     if (investPeriod) {
       return (
         <li key={`${id}${custId}`} title={dataTurn[investPeriod]}>
-            <span>
-              <i className="label">投资期限：</i>
-              {dataTurn[investPeriod]}
-            </span>
+          <span>
+            <i className="label">投资期限：</i>
+            {dataTurn[investPeriod]}
+          </span>
         </li>
       );
     }
@@ -401,10 +434,10 @@ payload: { name: '收起/展开' } })
     if (investVariety) {
       return (
         <li key={`${id}${custId}`} title={dataTurn[investVariety]}>
-            <span>
-              <i className="label">投资偏好：</i>
-              {dataTurn[investVariety]}
-            </span>
+          <span>
+            <i className="label">投资偏好：</i>
+            {dataTurn[investVariety]}
+          </span>
         </li>
       );
     }
@@ -422,8 +455,12 @@ payload: { name: '收起/展开' } })
       return (
         <li key={`${id}${listItem.custId}`}>
           <span>
-            <i className="label">{name}：</i>
-            {listItem.ttfMktVal}{unit}
+            <i className="label">
+              {name}
+：
+            </i>
+            {listItem.ttfMktVal}
+            {unit}
           </span>
         </li>
       );
@@ -465,7 +502,8 @@ payload: { name: '收起/展开' } })
                 >
                   {name}
                 </em>
-                /{combinationId}
+                /
+                {combinationId}
               </i>
               {this.isShowDetailBtn && <HoldingCombinationDetail {...props} />}
             </span>
@@ -485,8 +523,10 @@ payload: { name: '收起/展开' } })
     const { searchText = '' } = this.getFilters();
     if (name
       && name.indexOf(searchText) > -1) {
-      const markedEle = replaceWord({ value: name,
-searchText });
+      const markedEle = replaceWord({
+        value: name,
+        searchText
+      });
       return (
         <li key={`${name}${custId}`}>
           <span>
@@ -509,8 +549,10 @@ searchText });
     const { searchText = '' } = this.getFilters();
     if (listItem.idNum
       && listItem.idNum.indexOf(searchText) > -1) {
-      const markedEle = replaceWord({ value: listItem.idNum,
-searchText });
+      const markedEle = replaceWord({
+        value: listItem.idNum,
+        searchText
+      });
       return (
         <li key={listItem.idNum}>
           <span>
@@ -533,8 +575,10 @@ searchText });
     const { searchText = '' } = this.getFilters();
     if (listItem.telephone
       && listItem.telephone.indexOf(searchText) > -1) {
-      const markedEle = replaceWord({ value: listItem.telephone,
-searchText });
+      const markedEle = replaceWord({
+        value: listItem.telephone,
+        searchText
+      });
       return (
         <li key={listItem.telephone}>
           <span>
@@ -549,7 +593,7 @@ searchText });
     return null;
   }
 
-  //匹配股东账号
+  // 匹配股东账号
   // 特殊处理 搜股东账号实际上匹配客户经济号 因为股东账号是精确匹配 所以q是url字段的股东账号  这里需要把客户经济号替换成股东账号显示
   renderShareholderSccountNumber(item) {
     const {
@@ -557,19 +601,20 @@ searchText });
       q,
     } = this.props;
     const { name, id, hasCycle } = item;
-    let renderValue = listItem[id];
-      return (
-        <li key={`${renderValue}${id}${listItem.custId}`} title={renderValue}>
-          <span>
-            <i className="label">
-              {hasCycle ? this.convertCycle(id) : ''}
-              {name}：
-            </i>
-            {q}
-          </span>
-        </li>
-      );
-    }
+    const renderValue = listItem[id];
+    return (
+      <li key={`${renderValue}${id}${listItem.custId}`} title={renderValue}>
+        <span>
+          <i className="label">
+            {hasCycle ? this.convertCycle(id) : ''}
+            {name}
+：
+          </i>
+          {q}
+        </span>
+      </li>
+    );
+  }
 
   // 匹配经纪客户号
   renderCustId() {
@@ -579,8 +624,10 @@ searchText });
     const { searchText = '' } = this.getFilters();
     if (listItem.custId
       && listItem.custId.indexOf(searchText) > -1) {
-      const markedEle = replaceWord({ value: listItem.custId,
-searchText });
+      const markedEle = replaceWord({
+        value: listItem.custId,
+        searchText
+      });
       return (
         <li key={listItem.custId}>
           <span>
@@ -603,8 +650,7 @@ searchText });
     // 获取自定义标签
     const fspLabel = _.filter(
       relatedLabels,
-      labelItem =>
-        labelItem.source === FSP_LABEL_SOURCE && _.includes(finalCustomLabels, labelItem.id),
+      labelItem => labelItem.source === FSP_LABEL_SOURCE && _.includes(finalCustomLabels, labelItem.id),
     );
     const markedEle = _.map(fspLabel, (labelItem, index) => {
       const { name, description } = labelItem;
@@ -625,7 +671,8 @@ searchText });
         <li>
           <span>
             <i className="label">
-              {item.name}：
+              {item.name}
+：
             </i>
             {markedEle}
           </span>
@@ -657,12 +704,16 @@ searchText });
           // 处理后端返回null的情况
           const description = item.description || '暂无标签描述';
           // 热词改变颜色
-          let replaceWordLables = `${replaceWord({ value: item.name,
-searchText })}-${searchText}`;
+          let replaceWordLables = `${replaceWord({
+            value: item.name,
+            searchText
+          })}-${searchText}`;
           // 防止热点标签展示重复，这里从query上取source
           if (!isSightingScope(item.source)) {
-            replaceWordLables = replaceWord({ value: item.name,
-searchText });
+            replaceWordLables = replaceWord({
+              value: item.name,
+              searchText
+            });
           }
           // 在标签后面增加",",最后一个不加
           if (index !== arr.length - 1) {
@@ -733,7 +784,9 @@ searchText });
               keyword: searchText,
               routerAction: this.context.push,
             })}
-          >详情</span>
+          >
+详情
+          </span>
         </li>
       );
     }
@@ -753,7 +806,10 @@ searchText });
         return (
           <li key={listItem.unrightType} title={data}>
             <span>
-              <i className="label">{`可开通业务(${tmpList.length})`}：</i>
+              <i className="label">
+                {`可开通业务(${tmpList.length})`}
+：
+              </i>
               {data}
             </span>
           </li>
@@ -776,7 +832,10 @@ searchText });
         return (
           <li key={data} title={data}>
             <span>
-              <i className="label">{`已开通业务(${tmpList.length})`}：</i>
+              <i className="label">
+                {`已开通业务(${tmpList.length})`}
+：
+              </i>
               {data}
             </span>
           </li>
@@ -797,12 +856,11 @@ searchText });
       item => item && _.includes(item.source, 'jzyx') && _.includes(item.id, labelMapping),
     );
     // 构造成这种格式,父标签-子标签：标签值；子标签：标签值；子标签：标签值；子标签：标签值；
-    let markedEle = relatedLabels.map(item =>
-      (replaceWord({
-        value: item.name,
-        searchText: name,
-        type: AIM_LABEL_ID,
-      })));
+    let markedEle = relatedLabels.map(item => (replaceWord({
+      value: item.name,
+      searchText: name,
+      type: AIM_LABEL_ID,
+    })));
     // 去除空字符串
     markedEle = _.filter(markedEle, item => !_.isEmpty(item));
     // 只有一个标签，去除-符号
@@ -836,8 +894,8 @@ searchText });
       const { primaryKeyPrdts: [id, name] } = this.getFilters();
       const filteredProducts = this.getFilteredProductsById(holdingProducts, id);
       // 联想词进入列表并产品id匹配到的持仓产品等于1个，显示 产品的名称/产品代码(持仓详情)
-      return !_.isEmpty(filteredProducts) &&
-        this.getSingleHoldingProductNode(filteredProducts, name);
+      return !_.isEmpty(filteredProducts)
+        && this.getSingleHoldingProductNode(filteredProducts, name);
     }
     return null;
   }
@@ -852,12 +910,10 @@ searchText });
     if (!_.isEmpty(relatedLabels)
       && labelList.length) {
       // 瞄准镜标签对应的个性化信息
-      const aimLabelList = _.filter(relatedLabels, item =>
-        item.name && _.includes(labelListId, item.id) && isSightingScope(item.source));
+      const aimLabelList = _.filter(relatedLabels, item => item.name && _.includes(labelListId, item.id) && isSightingScope(item.source));
       const amiListNode = _.map(aimLabelList, item => this.renderSightingTelescope(item));
       // 普通标签对应的个性化信息
-      const normalLabelList = _.filter(relatedLabels, item =>
-        item.name && _.includes(labelListId, item.id) && isLocalScope(item.source));
+      const normalLabelList = _.filter(relatedLabels, item => item.name && _.includes(labelListId, item.id) && isLocalScope(item.source));
       const normalListNode = this.renderRelatedLabels(normalLabelList);
       return [normalListNode, ...amiListNode];
     }
@@ -947,15 +1003,17 @@ searchText });
           {individualList}
         </ul>
         {
-          individualList.length > 2 ?
-            <div className={styles.showAll}>
-              <Icon
-                type={showAll ? 'shouqi2' : 'zhankai1'}
-                className={styles.icon}
-                onClick={this.showAllIndividual}
-              />
-            </div> :
-            null
+          individualList.length > 2
+            ? (
+              <div className={styles.showAll}>
+                <Icon
+                  type={showAll ? 'shouqi2' : 'zhankai1'}
+                  className={styles.icon}
+                  onClick={this.showAllIndividual}
+                />
+              </div>
+            )
+            : null
         }
       </div>
     );

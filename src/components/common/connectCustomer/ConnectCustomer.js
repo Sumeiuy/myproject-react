@@ -22,7 +22,6 @@ import logable from '../../../decorators/logable';
 import { PER_CODE, ORG_CODE, PHONE } from '../../taskList/performerView/serviceImplementation/config';
 
 export default class ConnectCustomer extends React.PureComponent {
-
   static propTypes = {
     targetCustDetail: PropTypes.object,
     addServeRecord: PropTypes.func,
@@ -96,7 +95,7 @@ export default class ConnectCustomer extends React.PureComponent {
       serveTime: this.endTime.format('YYYY-MM-DD HH:mm'),
       // 反馈时间
       feedBackTime: moment().format('YYYY-MM-DD'),
-       // 添加成功后需要显示message提示
+      // 添加成功后需要显示message提示
       noHints: true,
     };
     // 客户反馈的二级
@@ -110,7 +109,7 @@ export default class ConnectCustomer extends React.PureComponent {
     addServeRecord(payload).then(() => {
       // 关联通话和服务记录
       this.saveServiceRecordAndPhoneRelation();
-       // 回调，关闭电话联系方式弹窗
+      // 回调，关闭电话联系方式弹窗
       this.setState({ showMask: false });
       // 显示添加服务记录弹窗，todo=update表示更新服务记录
       toggleServiceRecordModal({
@@ -179,16 +178,16 @@ export default class ConnectCustomer extends React.PureComponent {
     } = targetCustDetail;
     // 联系方式为空判断
     const isEmpty = (
-      custNature === PER_CODE &&
-      (
-        _.isEmpty(perCustomerContactInfo) ||
-        (_.isEmpty(perCustomerContactInfo.homeTels)
+      custNature === PER_CODE
+      && (
+        _.isEmpty(perCustomerContactInfo)
+        || (_.isEmpty(perCustomerContactInfo.homeTels)
           && _.isEmpty(perCustomerContactInfo.cellPhones)
           && _.isEmpty(perCustomerContactInfo.workTels)
           && _.isEmpty(perCustomerContactInfo.otherTels))
       )
-    ) ||
-      (custNature === ORG_CODE && _.isEmpty(orgCustomerContactInfoList));
+    )
+      || (custNature === ORG_CODE && _.isEmpty(orgCustomerContactInfoList));
     if (isEmpty) {
       return null;
     }
@@ -215,7 +214,7 @@ export default class ConnectCustomer extends React.PureComponent {
   render() {
     const { showMask } = this.state;
     return (
-      <div style={{display: 'inline-block'}}>
+      <div style={{ display: 'inline-block' }}>
         {this.renderContactInfo()}
         <Mask visible={showMask} onClick={this.handleMaskClick} />
       </div>

@@ -21,16 +21,19 @@ export default class ProductSaleHome extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
   };
+
   constructor(props) {
     super(props);
     this.state = {
       loading: true,
     };
   }
+
   @autobind
   handleLoad() {
     this.setState({ loading: false });
   }
+
   render() {
     const { location: { pathname } } = this.props;
     const { loading } = this.state;

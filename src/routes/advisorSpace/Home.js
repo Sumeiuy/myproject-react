@@ -146,14 +146,14 @@ export default class AdvisorSpace extends PureComponent {
   @autobind
   getRightDetail() {
     const {
-      applictionList:{
+      applictionList: {
         applicationBaseInfoList,
         page,
       },
       location: {
         pathname,
         query,
-        query:{
+        query: {
           currentId
         }
       },
@@ -287,7 +287,6 @@ export default class AdvisorSpace extends PureComponent {
   // 取消预定点击显示右侧详情
   @autobind
   handleCancelReservationSuccess() {
-
     const { cancelReservationResult } = this.props;
     if (cancelReservationResult) {
       this.getAppList();
@@ -321,7 +320,7 @@ export default class AdvisorSpace extends PureComponent {
   @autobind
   @logPV({ pathname: '/modal/createAdvisorSpaceApplyModal', title: '新建投顾空间申请弹框' })
   openCreateModalBoard() {
-    this.setState({isShowCreateModal: true});
+    this.setState({ isShowCreateModal: true });
   }
 
   // 关闭新建弹窗
@@ -409,16 +408,18 @@ export default class AdvisorSpace extends PureComponent {
           leftWidth={420}
         />
         {
-          isShowCreateModal ?
-            <CreateApply
-              onClose={this.handleCloseCreateModal}
-              createRoomData={createRoomData}
-              getRoomList={getRoomList}
-              participantData={participantData}
-              getParticipantList={getParticipantList}
-              submitResult={submitResult}
-              submitApply={submitApply}
-            />
+          isShowCreateModal
+            ? (
+              <CreateApply
+                onClose={this.handleCloseCreateModal}
+                createRoomData={createRoomData}
+                getRoomList={getRoomList}
+                participantData={participantData}
+                getParticipantList={getParticipantList}
+                submitResult={submitResult}
+                submitApply={submitApply}
+              />
+            )
             : null
         }
       </div>

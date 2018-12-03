@@ -49,4 +49,3 @@ const HOCComponent = (ComposedComponent) => {
 };
 
 export default HOCComponent;
-

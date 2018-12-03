@@ -9,7 +9,9 @@ import PropTypes from 'prop-types';
 import styles from './infoCell.less';
 
 export default function InfoCell(props) {
-  const { label, required, children, style, className } = props;
+  const {
+    label, required, children, style, className
+  } = props;
   return (
     <div className={`${styles.infoForm} ${className}`}>
       <div style={style} className={styles.infoFormLabel}>

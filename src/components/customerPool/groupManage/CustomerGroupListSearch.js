@@ -79,7 +79,9 @@ export default class CustomerGroupListSearch extends PureComponent {
   }
 
   render() {
-    const { isNeedBtn, searchStyle, titleNode, placeholder } = this.props;
+    const {
+      isNeedBtn, searchStyle, titleNode, placeholder
+    } = this.props;
     const { curSearchValue } = this.state;
 
     return (
@@ -88,23 +90,26 @@ export default class CustomerGroupListSearch extends PureComponent {
           titleNode
         }
         {
-          isNeedBtn ?
-            <Search
-              placeholder={placeholder}
-              value={curSearchValue}
-              onChange={this.handleInputChange}
-              onSearch={this.handleSearch}
-              style={searchStyle}
-              enterButton
-            />
-          :
-            <Input
-              placeholder={placeholder}
-              value={curSearchValue}
-              onChange={this.handleInputChange}
-              style={searchStyle}
-              onPressEnter={this.handleSearchEnter}
-            />
+          isNeedBtn
+            ? (
+              <Search
+                placeholder={placeholder}
+                value={curSearchValue}
+                onChange={this.handleInputChange}
+                onSearch={this.handleSearch}
+                style={searchStyle}
+                enterButton
+              />
+            )
+            : (
+              <Input
+                placeholder={placeholder}
+                value={curSearchValue}
+                onChange={this.handleInputChange}
+                style={searchStyle}
+                onPressEnter={this.handleSearchEnter}
+              />
+            )
         }
       </div>
     );

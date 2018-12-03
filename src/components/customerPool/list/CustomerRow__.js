@@ -190,10 +190,10 @@ export default class CustomerRow extends PureComponent {
     const { push } = this.props;
     const {
       listItem: {
-      pOrO,
-      custId,
-      rowId,
-      ptyId,
+        pOrO,
+        custId,
+        rowId,
+        ptyId,
       },
     } = this.props;
     // pOrO代表个人客户，机构客户
@@ -253,11 +253,18 @@ export default class CustomerRow extends PureComponent {
     const { listItem } = this.props;
     if (listItem.pOrO === PER_CODE) {
       // 客户性质为个人
-      return <span>{listItem.genderValue}/{listItem.age}岁</span>;
-    } else if (listItem.pOrO === ORG_CODE && listItem.orgTypeName) {
+      return (
+        <span>
+          {listItem.genderValue}
+/
+          {listItem.age}
+岁
+        </span>
+      );
+    } if (listItem.pOrO === ORG_CODE && listItem.orgTypeName) {
       // 客户性质为一般机构
       return <span>{listItem.orgTypeName}</span>;
-    } else if (listItem.pOrO === PROD_CODE && listItem.prodTypeCode) {
+    } if (listItem.pOrO === PROD_CODE && listItem.prodTypeCode) {
       // 客户性质为产品机构
       return <span>{listItem.prodTypeCode}</span>;
     }
@@ -296,8 +303,8 @@ export default class CustomerRow extends PureComponent {
   }
 
   renderRankImg(listItem = {}) {
-    return rankImgSrcConfig[listItem.levelCode] ?
-      <img className={styles.iconMoneyImage} src={rankImgSrcConfig[listItem.levelCode]} alt="" />
+    return rankImgSrcConfig[listItem.levelCode]
+      ? <img className={styles.iconMoneyImage} src={rankImgSrcConfig[listItem.levelCode]} alt="" />
       : null;
   }
 
@@ -312,15 +319,17 @@ export default class CustomerRow extends PureComponent {
       queryCustSignLabel,
     } = this.props;
     if (this.isMainService) {
-      return (<QuickMenu
-        listItem={listItem}
-        createModal={this.createModal}
-        toggleServiceRecordModal={toggleServiceRecordModal}
-        condition={condition}
-        location={location}
-        goGroupOrTask={goGroupOrTask}
-        queryCustSignLabel={queryCustSignLabel}
-      />);
+      return (
+        <QuickMenu
+          listItem={listItem}
+          createModal={this.createModal}
+          toggleServiceRecordModal={toggleServiceRecordModal}
+          condition={condition}
+          location={location}
+          goGroupOrTask={goGroupOrTask}
+          queryCustSignLabel={queryCustSignLabel}
+        />
+      );
     }
     return null;
   }
@@ -341,7 +350,8 @@ export default class CustomerRow extends PureComponent {
   }
 
   render() {
-    const { q, listItem, monthlyProfits, isAllSelect, selectedIds,
+    const {
+      q, listItem, monthlyProfits, isAllSelect, selectedIds,
       custIncomeReqState,
       getCustIncome,
       location,
@@ -377,9 +387,9 @@ export default class CustomerRow extends PureComponent {
     // 归集率
     let gjlRate = '--';
     if (listItem.gjlRate !== null) {
-      gjlRate = listItem.gjlRate < 0 ?
-        Number(listItem.gjlRate.toFixed(2)) :
-        `${Number((listItem.gjlRate * 100).toFixed(2))}%`;
+      gjlRate = listItem.gjlRate < 0
+        ? Number(listItem.gjlRate.toFixed(2))
+        : `${Number((listItem.gjlRate * 100).toFixed(2))}%`;
     }
     return (
       <div
@@ -413,7 +423,14 @@ export default class CustomerRow extends PureComponent {
                 <span className="cutOffLine">|</span>
                 {
                   listItem.genderValue && listItem.age
-                    ? <span>{listItem.genderValue}/{listItem.age}岁</span>
+                    ? (
+                      <span>
+                        {listItem.genderValue}
+/
+                        {listItem.age}
+岁
+                      </span>
+                    )
                     : null
                 }
                 {
@@ -426,29 +443,39 @@ export default class CustomerRow extends PureComponent {
                 </span>
                 {
                   (rskLev === '' || rskLev === 'null')
-                    ? '' :
-                    <div
-                      className={`riskLevel ${riskLevelConfig[rskLev].colorCls}`}
-                    >
-                      <Tooltip placement="left" title={`风险等级：${riskLevelConfig[rskLev].title}`}>
-                        {riskLevelConfig[rskLev].name}
-                      </Tooltip>
-                    </div>
+                    ? ''
+                    : (
+                      <div
+                        className={`riskLevel ${riskLevelConfig[rskLev].colorCls}`}
+                      >
+                        <Tooltip placement="left" title={`风险等级：${riskLevelConfig[rskLev].title}`}>
+                          {riskLevelConfig[rskLev].name}
+                        </Tooltip>
+                      </div>
+                    )
                 }
                 {listItem.highWorthFlag ? <div className="highWorthFlag">高净值</div> : null}
                 {
-                  listItem.contactFlag ?
-                    <div className="iconSingned">
-                      <Tooltip placement="topRight" title="签约客户">
+                  listItem.contactFlag
+                    ? (
+                      <div className="iconSingned">
+                        <Tooltip placement="topRight" title="签约客户">
                         签约
-                      </Tooltip>
-                    </div> : null
+                        </Tooltip>
+                      </div>
+                    ) : null
                 }
               </div>
               <div className="row-two">
-                <span className="imputation">归集率: <em>{gjlRate}</em></span>
+                <span className="imputation">
+归集率:
+                  <em>{gjlRate}</em>
+                </span>
                 <span className="cutOffLine">|</span>
-                <span className="commission">佣金率: <em>{miniFee}</em></span>
+                <span className="commission">
+佣金率:
+                  <em>{miniFee}</em>
+                </span>
                 <span className="cutOffLine">|</span>
                 <span>总资产:</span>
                 <span className="asset">{assetValue}</span>

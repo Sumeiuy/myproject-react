@@ -11,8 +11,8 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import classnames from 'classnames';
 import { autobind } from 'core-decorators';
-import IECharts from '../IECharts';
 import { SingleFilter } from 'lego-react-filter/src';
+import IECharts from '../IECharts';
 import styles from './profitRateChart.less';
 import { timeList, codeList } from '../../config/profitRateConfig';
 

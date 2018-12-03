@@ -20,4 +20,4 @@ export default function detailInvestmentAbilityAnalysis(api) {
     // 获取brinson归因分析
     queryAttributionAnalysis: query => api.post('/groovynoauth/fsp/cust/custdetail/investment/queryAttributionAnalysis', query),
   };
-};
+}

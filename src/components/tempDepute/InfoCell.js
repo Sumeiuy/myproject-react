@@ -11,7 +11,9 @@ import PropTypes from 'prop-types';
 import styles from './infoCell.less';
 
 export default function InfoCell(props) {
-  const { children, label, labelWidth, required } = props;
+  const {
+    children, label, labelWidth, required
+  } = props;
   return (
     <div className={styles.custSelectLine}>
       <div className={styles.requiredSelectItem} style={{ width: labelWidth }}>

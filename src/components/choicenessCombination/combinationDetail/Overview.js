@@ -67,20 +67,34 @@ export default class Overview extends PureComponent {
           <div className={styles.leftInfo}>
             <h3>
               近 3 个月调仓
-              <span> {adjustNumber} </span>
+              <span>
+                {' '}
+                {adjustNumber}
+                {' '}
+              </span>
               次，
-              <span className={styles.fs20}> {earnNumber} </span>
+              <span className={styles.fs20}>
+                {' '}
+                {earnNumber}
+                {' '}
+              </span>
               次赚了钱。
             </h3>
             <h3>
               近 3 个月买入的
-              <em>涨幅最高</em>的股票
-              <span className={styles.fs18}> {stockName || EMPTY_TEXT} </span>
+              <em>涨幅最高</em>
+的股票
+              <span className={styles.fs18}>
+                {' '}
+                {stockName || EMPTY_TEXT}
+                {' '}
+              </span>
             </h3>
             <h3>
               组合成立以来最大回撤
               <span className={`${this.getNumberClassName(withdraw)} ${styles.fs18}`}>
-                {this.compareWithZero(number.toFixed(withdraw))}%
+                {this.compareWithZero(number.toFixed(withdraw))}
+%
               </span>
             </h3>
           </div>
@@ -88,7 +102,9 @@ export default class Overview extends PureComponent {
         <div className={styles.right}>
           {
             showWeekMonthYear.map((item, index) => {
-              const { name, key, percent, ranking, total } = item;
+              const {
+                name, key, percent, ranking, total
+              } = item;
               const nameKey = `$${name}${index}`;
               const num = number.toFixed(data[percent]);
               const cls = `icon${key}`;
@@ -100,13 +116,16 @@ export default class Overview extends PureComponent {
                   <div className={styles.rightInfo}>
                     <h3 className="clearfix">
                       <span className={this.getNumberClassName(num)}>
-                        {this.compareWithZero(num)}%
+                        {this.compareWithZero(num)}
+%
                       </span>
                       收益率
                     </h3>
                     <h3 className="clearfix">
                       <span>
-                        <em className={styles.position}>{data[ranking]}</em>/{data[total]}
+                        <em className={styles.position}>{data[ranking]}</em>
+/
+                        {data[total]}
                       </span>
                       同类排名
                     </h3>

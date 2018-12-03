@@ -15,7 +15,6 @@ import logable from '../../decorators/logable';
 
 const pageSize = 8;
 export default class PerformanceItem extends PureComponent {
-
   static propTypes = {
     data: PropTypes.array,
   }
@@ -101,33 +100,38 @@ export default class PerformanceItem extends PureComponent {
   }
 
   render() {
-    const { performanceData, showAllBtn, showPreBtn, showNextBtn } = this.state;
+    const {
+      performanceData, showAllBtn, showPreBtn, showNextBtn
+    } = this.state;
     return (
       <div>
         <div className={styles.titleText}>总量指标</div>
         <div className={styles.items}>
           {
-            showAllBtn ?
-              <div>
-                {
-                  showPreBtn ?
-                    <a className={styles.preBtn} onClick={() => this.hanldePreClick('pre')}>
-                      <Icon type="more" />
-                    </a>
-                  :
-                    null
+            showAllBtn
+              ? (
+                <div>
+                  {
+                  showPreBtn
+                    ? (
+                      <a className={styles.preBtn} onClick={() => this.hanldePreClick('pre')}>
+                        <Icon type="more" />
+                      </a>
+                    )
+                    : null
                 }
-                {
-                  !showNextBtn ?
-                    <a className={styles.nextBtn} onClick={() => this.handleNextClick('next')}>
-                      <Icon type="more" />
-                    </a>
-                  :
-                    null
+                  {
+                  !showNextBtn
+                    ? (
+                      <a className={styles.nextBtn} onClick={() => this.handleNextClick('next')}>
+                        <Icon type="more" />
+                      </a>
+                    )
+                    : null
                 }
-              </div>
-            :
-              null
+                </div>
+              )
+              : null
           }
           <Row>
             {

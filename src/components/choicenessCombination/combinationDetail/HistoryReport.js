@@ -92,21 +92,23 @@ export default class HistoryReport extends PureComponent {
       logName: value,
     };
     if (value) {
-      reactElement = (<Popover
-        placement="bottomLeft"
-        content={value}
-        trigger="hover"
-        overlayStyle={overlayStyle}
-      >
-        <div className={styles.ellipsis}>
-          <span
-            className={styles.titleLink}
-            onClick={() => this.handleOpenReportDetailPage(payload)}
-          >
-            {value}
-          </span>
-        </div>
-      </Popover>);
+      reactElement = (
+        <Popover
+          placement="bottomLeft"
+          content={value}
+          trigger="hover"
+          overlayStyle={overlayStyle}
+        >
+          <div className={styles.ellipsis}>
+            <span
+              className={styles.titleLink}
+              onClick={() => this.handleOpenReportDetailPage(payload)}
+            >
+              {value}
+            </span>
+          </div>
+        </Popover>
+      );
     } else {
       reactElement = '标题：暂无';
     }

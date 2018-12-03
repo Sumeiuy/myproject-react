@@ -17,6 +17,7 @@ export default class BasicInfo extends PureComponent {
   static propTypes = {
     data: PropTypes.object.isRequired,
   }
+
   render() {
     const {
       econNum,

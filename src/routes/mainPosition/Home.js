@@ -414,24 +414,24 @@ export default class MainPosition extends PureComponent {
         />
         {
           !isShowCreateModal ? null
-          : (
-            <CreateMainPostion
-              location={location}
-              updateApplication={updateApplication}
-              itemId={itemId}
-              doApprove={doApprove}
-              searchEmployee={searchEmployee}
-              searchPosition={searchPosition}
-              clearProps={clearProps}
-              employeeList={employeeList}
-              positionList={positionList}
-              custRangeList={custRangeList}
-              getButtonList={getButtonList}
-              buttonList={buttonList}
-              queryAppList={this.queryAppList}
-              onEmitClearModal={this.clearModal}
-            />
-          )
+            : (
+              <CreateMainPostion
+                location={location}
+                updateApplication={updateApplication}
+                itemId={itemId}
+                doApprove={doApprove}
+                searchEmployee={searchEmployee}
+                searchPosition={searchPosition}
+                clearProps={clearProps}
+                employeeList={employeeList}
+                positionList={positionList}
+                custRangeList={custRangeList}
+                getButtonList={getButtonList}
+                buttonList={buttonList}
+                queryAppList={this.queryAppList}
+                onEmitClearModal={this.clearModal}
+              />
+            )
         }
       </div>
     );

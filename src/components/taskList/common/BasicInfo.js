@@ -12,7 +12,6 @@ import ForgeryRichText from '../../common/ForgeryRichText';
 import styles from './basicInfo.less';
 
 export default class BasicInfo extends PureComponent {
-
   static propTypes = {
     // 有效期开始时间
     triggerTime: PropTypes.string,
@@ -66,7 +65,11 @@ export default class BasicInfo extends PureComponent {
           <Row className={styles.rowItem}>
             <Col className={`${styles.colItem} ${styles.fl} ${styles.width380}`}>
               <span className={`${styles.label} ${styles.fl}`}>任务有效期:&nbsp;</span>
-              <p className={styles.content}>{triggerTime || '--'}&nbsp;~&nbsp;{endTime || '--'}</p>
+              <p className={styles.content}>
+                {triggerTime || '--'}
+&nbsp;~&nbsp;
+                {endTime || '--'}
+              </p>
             </Col>
             <Col className={`${styles.colItem} ${styles.fl} ${styles.width380}`}>
               <span className={`${styles.label} ${styles.fl}`}>任务目标:&nbsp;</span>
@@ -82,16 +85,18 @@ export default class BasicInfo extends PureComponent {
             </Col>
           </Row>
           {
-            isCurrentViewOfController ?
-              <Row className={styles.rowItem}>
-                <Col className={styles.colItem}>
-                  <span className={`${styles.label} ${styles.fl}`}>任务提示:&nbsp;</span>
-                  <p className={`${styles.content}`}>
-                    <ForgeryRichText text={missionDescription} />
-                  </p>
-                </Col>
-              </Row> :
-              null
+            isCurrentViewOfController
+              ? (
+                <Row className={styles.rowItem}>
+                  <Col className={styles.colItem}>
+                    <span className={`${styles.label} ${styles.fl}`}>任务提示:&nbsp;</span>
+                    <p className={`${styles.content}`}>
+                      <ForgeryRichText text={missionDescription} />
+                    </p>
+                  </Col>
+                </Row>
+              )
+              : null
           }
         </div>
       </div>

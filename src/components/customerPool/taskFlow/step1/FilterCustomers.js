@@ -88,8 +88,8 @@ export default class Filter extends PureComponent {
       filtersCloseIconState,
     } = this.props;
 
-    if (!isSightingScope(source) ||
-      _.isEmpty(sightingTelescopeFilters) || _.isEmpty(sightingTelescopeFilters.filterList)) {
+    if (!isSightingScope(source)
+      || _.isEmpty(sightingTelescopeFilters) || _.isEmpty(sightingTelescopeFilters.filterList)) {
       return null;
     }
     return _.map(sightingTelescopeFilters.filterList, (obj) => {
@@ -137,8 +137,8 @@ export default class Filter extends PureComponent {
       filtersCloseIconState,
     } = this.props;
 
-    if (!isSightingScope(source) ||
-      _.isEmpty(sightingTelescopeFilters) || _.isEmpty(sightingTelescopeFilters.filterList)) {
+    if (!isSightingScope(source)
+      || _.isEmpty(sightingTelescopeFilters) || _.isEmpty(sightingTelescopeFilters.filterList)) {
       return null;
     }
 
@@ -156,22 +156,20 @@ export default class Filter extends PureComponent {
   }
 
   render() {
-    const { dict, onFilterChange, currentItems, currentAllItems } = this.props;
+    const {
+      dict, onFilterChange, currentItems, currentAllItems
+    } = this.props;
     const currentValue = _.reduce(currentItems, (result, value) => {
       const [name, code] = value.split('.');
       result[name] = code; // eslint-disable-line
       return result;
     }, {});
 
-    const valueObjForCustBusinessType =
-      _.filter(currentAllItems, obj => obj.name === 'Rights')[0];
-    const valueObjForUnrightBusinessType =
-      _.filter(currentAllItems, obj => obj.name === 'Unrights')[0];
+    const valueObjForCustBusinessType = _.filter(currentAllItems, obj => obj.name === 'Rights')[0];
+    const valueObjForUnrightBusinessType = _.filter(currentAllItems, obj => obj.name === 'Unrights')[0];
 
-    const valueForCustBusinessType =
-      valueObjForCustBusinessType && valueObjForCustBusinessType.valueArray;
-    const valueForUnrightBusinessType =
-      valueObjForUnrightBusinessType && valueObjForUnrightBusinessType.valueArray;
+    const valueForCustBusinessType = valueObjForCustBusinessType && valueObjForCustBusinessType.valueArray;
+    const valueForUnrightBusinessType = valueObjForUnrightBusinessType && valueObjForUnrightBusinessType.valueArray;
 
 
     return (

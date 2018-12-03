@@ -18,7 +18,10 @@ function Header({
   return (
     <div className={styles.wrapper} style={style}>
       <p className={styles.title}>{title}</p>
-      <span className={styles.switchTarget} onClick={onClick}>切换至{switchTarget}</span>
+      <span className={styles.switchTarget} onClick={onClick}>
+切换至
+        {switchTarget}
+      </span>
     </div>
   );
 }
@@ -36,4 +39,3 @@ Header.defaultProps = {
 };
 
 export default Header;
-

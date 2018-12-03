@@ -89,8 +89,8 @@ export default class TagFilterMenu extends PureComponent {
     let nextOptionValue;
     let syncValue;
 
-    if (_.isEmpty(optionValue) ||
-      !_.find(optionValue, item => item.key === obj.filterId)) {
+    if (_.isEmpty(optionValue)
+      || !_.find(optionValue, item => item.key === obj.filterId)) {
       nextOptionValue = optionValue.concat({
         key: obj.filterId,
         optionKey: select,
@@ -124,28 +124,27 @@ export default class TagFilterMenu extends PureComponent {
     return (
       <div className={styles.tagFilterMenu}>
         {
-          _.map(data, obj =>
-            (
-              <Checkbox
-                key={obj.filterId}
-                className={styles.checkbox}
-                onChange={e => this.handleItemCheck(e, obj)}
-                checked={this.isChecked(obj, value)}
+          _.map(data, obj => (
+            <Checkbox
+              key={obj.filterId}
+              className={styles.checkbox}
+              onChange={e => this.handleItemCheck(e, obj)}
+              checked={this.isChecked(obj, value)}
+            >
+              <span
+                className={styles.label}
+                title={obj.filterDesc}
               >
-                <span
-                  className={styles.label}
-                  title={obj.filterDesc}
-                >
-                  {obj.filterDesc}
-                </span>
-                <Select
-                  className={styles.optionSelect}
-                  title={this.getSelectKey(obj, optionValue)}
-                  value={this.getSelectKey(obj, optionValue)}
-                  getPopupContainer={() => this.elem}
-                  onChange={select => this.handleSelectChange(select, obj)}
-                >
-                  {
+                {obj.filterDesc}
+              </span>
+              <Select
+                className={styles.optionSelect}
+                title={this.getSelectKey(obj, optionValue)}
+                value={this.getSelectKey(obj, optionValue)}
+                getPopupContainer={() => this.elem}
+                onChange={select => this.handleSelectChange(select, obj)}
+              >
+                {
                     _.map(obj.items, option => (
                       <Option
                         key={option.itemCode}
@@ -157,9 +156,9 @@ export default class TagFilterMenu extends PureComponent {
                       </Option>
                     ))
                   }
-                </Select>
-              </Checkbox>
-            ))
+              </Select>
+            </Checkbox>
+          ))
         }
         <div className={styles.container} ref={ref => this.elem = ref} />
         <div className={styles.btnGroup}>

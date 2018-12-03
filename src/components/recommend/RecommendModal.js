@@ -54,6 +54,7 @@ export default class recommendModal extends PureComponent {
   toFunctionIntroductionPage() {
     window.open(FUNCTION_INTRODUCTION_PAGE);
   }
+
   render() {
     const { modalVisible } = this.state;
     return (

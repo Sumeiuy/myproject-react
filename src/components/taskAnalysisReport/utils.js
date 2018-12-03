@@ -2,7 +2,7 @@
 function filterData(reportData, key) {
   const data = [];
   if (reportData) {
-    reportData.forEach(item => {
+    reportData.forEach((item) => {
       data.push(item[key]);
     });
   }

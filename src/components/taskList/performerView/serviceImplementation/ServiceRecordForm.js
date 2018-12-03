@@ -28,9 +28,9 @@ import styles from './serviceRecordForm.less';
 const effect = dva.generateEffect;
 
 const mapStateToProps = state => ({
-   // MOT回访任务可分配人员的列表
+  // MOT回访任务可分配人员的列表
   allotEmpList: state.performerView.allotEmpList,
-   // 回访任务分配结果
+  // 回访任务分配结果
   allotEmpResult: state.performerView.allotEmpResult,
 });
 
@@ -43,7 +43,6 @@ const mapDispatchToProps = {
 
 @connect(mapStateToProps, mapDispatchToProps)
 export default class ServiceRecordForm extends PureComponent {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -55,7 +54,11 @@ export default class ServiceRecordForm extends PureComponent {
   componentDidUpdate(prevProps) {
     // 判断当前的是否需要查询可分配人员列表接口
     const { formData: { custUuid: prevUUid } } = prevProps;
-    const { formData: { eventId, dispatchingAvailable, custUuid, custId } } = this.props;
+    const {
+      formData: {
+        eventId, dispatchingAvailable, custUuid, custId
+      }
+    } = this.props;
     const needQueryAllotEmpList = isMOTReturnTypeTask(eventId) && dispatchingAvailable;
     if (needQueryAllotEmpList && prevUUid !== custUuid) {
       this.props.queryAllotEmpList({
@@ -225,15 +228,15 @@ export default class ServiceRecordForm extends PureComponent {
         <div className={styles.operationSection}>
           {
             !isCurrentMissionPhoneCall
-            && <Button className={styles.cancelBtn} onClick={this.handleCancel} >取消</Button>
+            && <Button className={styles.cancelBtn} onClick={this.handleCancel}>取消</Button>
           }
           {
             !showAllocateBtn ? null
-            : (
-              <Button className={styles.cancelBtn} onClick={this.handleAllotBtnClick} >分配</Button>
-            )
+              : (
+                <Button className={styles.cancelBtn} onClick={this.handleAllotBtnClick}>分配</Button>
+              )
           }
-          <Button className={styles.submitBtn} onClick={_.debounce(this.handleSubmit, 300)} type="primary" >提交</Button>
+          <Button className={styles.submitBtn} onClick={_.debounce(this.handleSubmit, 300)} type="primary">提交</Button>
         </div>
       );
     }
@@ -270,20 +273,20 @@ export default class ServiceRecordForm extends PureComponent {
         </div>
         {
           !allotEmpModal ? null
-          : (
-            <AllotEmpModal
-              rowKey="empNo"
-              modalKey="executorAllotEmpModal"
-              title="选择处理人"
-              visible={allotEmpModal}
-              approverList={allotEmpList}
-              onClose={this.handleAllotEmpModalClose}
-              onOk={this.handleAllotEmpModalOk}
-              pagination={{
-                pageSize: 5,
-              }}
-            />
-          )
+            : (
+              <AllotEmpModal
+                rowKey="empNo"
+                modalKey="executorAllotEmpModal"
+                title="选择处理人"
+                visible={allotEmpModal}
+                approverList={allotEmpList}
+                onClose={this.handleAllotEmpModalClose}
+                onOk={this.handleAllotEmpModalOk}
+                pagination={{
+                  pageSize: 5,
+                }}
+              />
+            )
         }
       </div>
     );

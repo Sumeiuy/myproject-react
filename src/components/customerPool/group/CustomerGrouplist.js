@@ -67,7 +67,7 @@ export default class CustomerGrouplist extends PureComponent {
     const dataSource = this.addIdToDataSource(data);
 
     return (
-      <div className={'customerGrouplistTable'}>
+      <div className="customerGrouplistTable">
         <Table
           pageData={pageData}
           listData={dataSource}
@@ -89,5 +89,4 @@ export default class CustomerGrouplist extends PureComponent {
       </div>
     );
   }
-
 }

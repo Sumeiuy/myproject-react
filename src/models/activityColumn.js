@@ -17,7 +17,7 @@ export default {
   reducers: {
     // 提交活动栏目成功
     submitContentSuccess(state, action) {
-      const { payload: { resultData = {} }} = action;
+      const { payload: { resultData = {} } } = action;
       return {
         ...state,
         submitResult: resultData,

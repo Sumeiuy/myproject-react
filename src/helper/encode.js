@@ -7,7 +7,7 @@
 */
 
 const encode = {
-	/* eslint-disable */
+  /* eslint-disable */
   utf8Encode(str) {
 
     const string = str.replace(/\r\n/g, '\n').replace(/\r/g, '\n');

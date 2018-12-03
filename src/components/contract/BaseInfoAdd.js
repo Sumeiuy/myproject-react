@@ -315,65 +315,70 @@ export default class BaseInfoEdit extends PureComponent {
 
   render() {
     const { custList, contractDetail, contractNumList } = this.props;
-    const { operation, tdDescription, remark, client } = this.state;
+    const {
+      operation, tdDescription, remark, client
+    } = this.state;
     const { custName = '', brokerNumber = '' } = client || {};
-    const contractNumComponent = operation === unsubscribe ?
-      (<InfoForm label="合约编号" required>
-        <AutoComplete
-          placeholder="合约编号"
-          showNameKey="id"
-          optionKey="id"
-          defaultValue={this.state.contractNum.id || ''}
-          optionList={contractNumList}
-          onSelect={this.handleSelectContractNum}
-          onSearch={this.handleSearchContractNum}
-          getPopupContainer={getPopupContainerFunction}
-          ref={selectContractComponent => this.selectContractComponent = selectContractComponent}
-        />
-      </InfoForm>)
-      :
-      null;
-    const contractStarDateComponent = operation !== unsubscribe ?
-      (<InfoForm label="合约开始日期" required>
-        <DatePicker
-          name="contractStarDate"
-          value={
-                this.state.contractStarDate ?
-                moment(this.state.contractStarDate, 'YYYY-MM-DD')
-                :
-                ''
+    const contractNumComponent = operation === unsubscribe
+      ? (
+        <InfoForm label="合约编号" required>
+          <AutoComplete
+            placeholder="合约编号"
+            showNameKey="id"
+            optionKey="id"
+            defaultValue={this.state.contractNum.id || ''}
+            optionList={contractNumList}
+            onSelect={this.handleSelectContractNum}
+            onSearch={this.handleSearchContractNum}
+            getPopupContainer={getPopupContainerFunction}
+            ref={selectContractComponent => this.selectContractComponent = selectContractComponent}
+          />
+        </InfoForm>
+      )
+      : null;
+    const contractStarDateComponent = operation !== unsubscribe
+      ? (
+        <InfoForm label="合约开始日期" required>
+          <DatePicker
+            name="contractStarDate"
+            value={
+                this.state.contractStarDate
+                  ? moment(this.state.contractStarDate, 'YYYY-MM-DD')
+                  : ''
               }
-          onChange={this.handleSeletStartTime}
-          boxStyle={datePickerBoxStyle}
-          getCalendarContainer={getPopupContainerFunction}
-        />
-      </InfoForm>)
-      :
-      <InfoItem label="合约开始日期" value={time.format(contractDetail.startDt) || ''} />;
-    const contractPalidityComponent = operation !== unsubscribe ?
-      (<InfoForm label="合约有效期">
-        <DatePicker
-          name="contractPalidity"
-          value={
-              this.state.contractPalidity ?
-              moment(this.state.contractPalidity, 'YYYY-MM-DD')
-              :
-              ''
+            onChange={this.handleSeletStartTime}
+            boxStyle={datePickerBoxStyle}
+            getCalendarContainer={getPopupContainerFunction}
+          />
+        </InfoForm>
+      )
+      : <InfoItem label="合约开始日期" value={time.format(contractDetail.startDt) || ''} />;
+    const contractPalidityComponent = operation !== unsubscribe
+      ? (
+        <InfoForm label="合约有效期">
+          <DatePicker
+            name="contractPalidity"
+            value={
+              this.state.contractPalidity
+                ? moment(this.state.contractPalidity, 'YYYY-MM-DD')
+                : ''
             }
-          onChange={this.handleSelectValidityTime}
-          boxStyle={datePickerBoxStyle}
-          getCalendarContainer={getPopupContainerFunction}
-        />
-      </InfoForm>)
-      :
-      <InfoItem label="合约有效期" value={time.format(contractDetail.vailDt) || ''} />;
+            onChange={this.handleSelectValidityTime}
+            boxStyle={datePickerBoxStyle}
+            getCalendarContainer={getPopupContainerFunction}
+          />
+        </InfoForm>
+      )
+      : <InfoItem label="合约有效期" value={time.format(contractDetail.vailDt) || ''} />;
     const desc = operation !== unsubscribe ? remark : tdDescription;
-    const remarkComponent = (<InfoForm label="备注">
-      <TextArea
-        value={desc}
-        onChange={this.handleChangeRemark}
-      />
-    </InfoForm>);
+    const remarkComponent = (
+      <InfoForm label="备注">
+        <TextArea
+          value={desc}
+          onChange={this.handleChangeRemark}
+        />
+      </InfoForm>
+    );
     const operateType = _.filter(operationList, v => v.label !== '全部');
     return (
       <div className={styles.editWrapper}>

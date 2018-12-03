@@ -38,7 +38,7 @@ function getRateTipWhenLastEqual0(current, isMoney = true) {
   }
   return {
     isAsc,
-    tip: `去年同期${isMoney ? '0元': '0%'}，同比${actionText}${rateText}`,
+    tip: `去年同期${isMoney ? '0元' : '0%'}，同比${actionText}${rateText}`,
     rateText,
   };
 }

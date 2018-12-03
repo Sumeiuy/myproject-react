@@ -17,7 +17,6 @@ import logable, { logPV } from '../../../decorators/logable';
 import styles from './questionList.less';
 
 export default class QuestionList extends PureComponent {
-
   static propTypes = {
     replace: PropTypes.func.isRequired,
     queryQuestions: PropTypes.func.isRequired,
@@ -82,13 +81,13 @@ export default class QuestionList extends PureComponent {
     deleteQuestion({ quesId })
       .then(() => {
         const {
-        deleteSuccess,
+          deleteSuccess,
           location: {
-          query: {
-            pageSize = 10,
+            query: {
+              pageSize = 10,
+            },
           },
-        },
-      } = this.props;
+        } = this.props;
         if (deleteSuccess) {
           message.success('删除成功');
           queryQuestions({
@@ -129,11 +128,13 @@ export default class QuestionList extends PureComponent {
     if (_.isEmpty(list)) {
       return <EmptyData />;
     }
-    return _.map(list, o => (<ListItem
-      key={o.quesId}
-      item={o}
-      deleteQuestion={this.deleteOneQuestion}
-    />));
+    return _.map(list, o => (
+      <ListItem
+        key={o.quesId}
+        item={o}
+        deleteQuestion={this.deleteOneQuestion}
+      />
+    ));
   }
 
   render() {
@@ -144,7 +145,7 @@ export default class QuestionList extends PureComponent {
       location: {
         query: {
           pageNum,
-        pageSize,
+          pageSize,
         },
       },
     } = this.props;

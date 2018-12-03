@@ -32,28 +32,32 @@ export default function CommonCell(props) {
     unit,
   } = props;
   // 渲染 Popover
-  const renderPopver = item => {
+  const renderPopver = (item) => {
     const { name, description = '' } = item;
     if (!_.isEmpty(description)) {
-      return <Tooltip
-        title={name}
-        content={description}
-        placement="bottom"
-        mouseEnterDelay={0.2}
-        overlayStyle={{ maxWidth: '320px' }}
-      >
-        <span
-          className={classes.chartLabel}
+      return (
+        <Tooltip
+          title={name}
+          content={description}
+          placement="bottom"
+          mouseEnterDelay={0.2}
+          overlayStyle={{ maxWidth: '320px' }}
         >
-          {name}
-        </span>
-      </Tooltip>;
+          <span
+            className={classes.chartLabel}
+          >
+            {name}
+          </span>
+        </Tooltip>
+      );
     }
     return <span title={name}>{name}</span>;
   };
   // 渲染列表
   const renderList = _.map(data, (item, index) => {
-    const { code, id = '', value, title } = item;
+    const {
+      code, id = '', value, title
+    } = item;
     const liKey = `${id || code}${index}`;
     const showValue = number.formatToUnit({
       num: value,
@@ -61,7 +65,7 @@ export default function CommonCell(props) {
       isRound: false,
     });
     // 如果值是 0 并且需要隐藏空值
-    if (hiddenEmptyValue && showValue === '0' ) {
+    if (hiddenEmptyValue && showValue === '0') {
       return null;
     }
     return (
@@ -79,8 +83,8 @@ export default function CommonCell(props) {
   });
   // 渲染-更多
   const renderMore = isNeedExtra
-  ? <a onClick={onExtraClick}>{extraText}</a>
-  : null;
+    ? <a onClick={onExtraClick}>{extraText}</a>
+    : null;
   // 标题样式
   const titleClass = classnames({
     [styles.title]: true,
@@ -88,21 +92,25 @@ export default function CommonCell(props) {
   });
   // 渲染标题
   const renderTitle = isNeedTitle
-    ? <h2 className={titleClass} id={introPositionId}>
-    {renderMore}
-    {title}
-  </h2>
-  : null;
+    ? (
+      <h2 className={titleClass} id={introPositionId}>
+        {renderMore}
+        {title}
+      </h2>
+    )
+    : null;
 
   return (
     <div className={styles.commonWrapper}>
       {renderTitle}
       {
         _.isEmpty(data)
-        ? <div className={styles.noData}>暂无数据</div>
-        : <ul className={styles.list}>
-          { renderList }
-        </ul>
+          ? <div className={styles.noData}>暂无数据</div>
+          : (
+            <ul className={styles.list}>
+              { renderList }
+            </ul>
+          )
       }
     </div>
   );

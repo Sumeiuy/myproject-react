@@ -66,8 +66,8 @@ export default class BatchAddServiceRecordModal extends PureComponent {
     const firstItem = _.filter(list, item => item.id === code)[0] || EMPTY_OBJECT;
     const { childList = EMPTY_ARRAY } = firstItem;
     // 如果该一级反馈的二级反馈只有一个选项，并且该二级反馈的name字段和一级反馈name相同，就不需要显示选择二级反馈的选框
-    if (childList.length === 1 &&
-      childList[0].name === firstItem.name) {
+    if (childList.length === 1
+      && childList[0].name === firstItem.name) {
       return false;
     }
     return true;
@@ -83,8 +83,8 @@ export default class BatchAddServiceRecordModal extends PureComponent {
       }
       // 回访结果为失败，且 失败原因为空时，校验不通过
       if (
-        data[VISIT_RESULT_KEY] === VISIT_RESULT_FAILED_VALUE &&
-        _.isEmpty(data[VISIT_FAILURE_DESC_KEY])
+        data[VISIT_RESULT_KEY] === VISIT_RESULT_FAILED_VALUE
+        && _.isEmpty(data[VISIT_FAILURE_DESC_KEY])
       ) {
         return false;
       }
@@ -96,8 +96,8 @@ export default class BatchAddServiceRecordModal extends PureComponent {
         return false;
       }
       // 选择了一级反馈，并且需要选择二级反馈时，没有选择二级反馈，校验不通过
-      if (this.checkIsNeedSecondFeedback(data.feedbackList, data[FIRST_FEEDBACK_KEY]) &&
-        !data[SECOND_FEEDBACK_KEY]) {
+      if (this.checkIsNeedSecondFeedback(data.feedbackList, data[FIRST_FEEDBACK_KEY])
+        && !data[SECOND_FEEDBACK_KEY]) {
         return false;
       }
     }
@@ -144,8 +144,10 @@ export default class BatchAddServiceRecordModal extends PureComponent {
 
   // 点击取消按钮
   @autobind
-  @logable({ type: 'ButtonClick',
-payload: { name: '取消' } })
+  @logable({
+    type: 'ButtonClick',
+    payload: { name: '取消' }
+  })
   handleCancle() {
     this.props.closeModal(false);
   }
@@ -161,7 +163,12 @@ payload: { name: '取消' } })
 
     const selfBtnGroup = (
       <div className={styles.buttonBox}>
-        <span className={styles.tips}>已关联 <em>{this.getSelectedTaskList().length}</em> 个任务</span>
+        <span className={styles.tips}>
+已关联
+          <em>{this.getSelectedTaskList().length}</em>
+          {' '}
+个任务
+        </span>
         <Button
           key="submit"
           size="large"
@@ -181,7 +188,8 @@ payload: { name: '取消' } })
     );
 
     return (
-        visible ?
+      visible
+        ? (
           <CommonModal
             title="同步其他待办任务"
             visible={visible}
@@ -193,7 +201,11 @@ payload: { name: '取消' } })
           >
             <div className={styles.modalBox}>
               <h3 className={styles.title}>
-                该客户名下还有 <span>{data.length}</span> 个待办任务，请选择需要同步服务记录的任务并填写客户反馈
+                该客户名下还有
+                {' '}
+                <span>{data.length}</span>
+                {' '}
+个待办任务，请选择需要同步服务记录的任务并填写客户反馈
               </h3>
               {
                 data.map((item, index) => (
@@ -207,8 +219,8 @@ payload: { name: '取消' } })
               }
             </div>
           </CommonModal>
-      :
-      null
+        )
+        : null
     );
   }
 }

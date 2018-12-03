@@ -8,7 +8,9 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Select, Row, Col, Input, Form, Modal, message, Upload } from 'antd';
+import {
+  Select, Row, Col, Input, Form, Modal, message, Upload
+} from 'antd';
 import { createForm } from 'rc-form';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
@@ -44,12 +46,14 @@ export default class ProblemHandling extends PureComponent {
     inforTxt: PropTypes.string,
     operatorList: PropTypes.array.isRequired,
   }
+
   static defaultProps = {
     popContent: ' ',
     title: '问题处理',
     inforTxt: '处理问题表示对此问题做出判断处理。',
     width: '620px',
   }
+
   constructor(props) {
     super(props);
     const questionTagOptions = feedbackOptions.questionTagOptions || EMPTY_LIST;
@@ -74,6 +78,7 @@ export default class ProblemHandling extends PureComponent {
       },
     };
   }
+
   componentWillReceiveProps(nextProps) {
     const { problemDetails: preData = EMPTY_OBJECT } = this.props;
     const { problemDetails: nextData = EMPTY_OBJECT } = nextProps;
@@ -151,8 +156,7 @@ export default class ProblemHandling extends PureComponent {
   // 显示经办人
   renderEmpResp(processerID, operatorList) {
     if (!_.isEmpty(processerID) && !_.isEmpty(operatorList)) {
-      let operator = _.find(operatorList, operator =>
-        operator.loginName === processerID);
+      let operator = _.find(operatorList, operator => operator.loginName === processerID);
       // 如果经办人是空就显示 马珂
       if (_.isEmpty(operator)) {
         operator = _.find(operatorList, operator => operator.loginName === DEFAULT_USER_ID);
@@ -185,12 +189,8 @@ export default class ProblemHandling extends PureComponent {
       id,
     } = newDetails;
     const { getFieldDecorator } = form;
-    const getSelectOption = item => item.map(i =>
-      <Option key={i.value} value={i.value}>{i.label}</Option>,
-    );
-    const renderEmpOption = item => item.map(i =>
-      <Option key={i.loginName} value={i.loginName}>{i.lastName}</Option>,
-    );
+    const getSelectOption = item => item.map(i => <Option key={i.value} value={i.value}>{i.label}</Option>, );
+    const renderEmpOption = item => item.map(i => <Option key={i.loginName} value={i.loginName}>{i.lastName}</Option>, );
     return (
       <Modal
         title={title}
@@ -237,7 +237,8 @@ export default class ProblemHandling extends PureComponent {
               <Row>
                 <Col span="4">
                   <div className={styles.amLabel}>
-                    <span>*</span>经办人：
+                    <span>*</span>
+经办人：
                   </div>
                 </Col>
                 <Col span="19" offset={1}>
@@ -252,7 +253,7 @@ export default class ProblemHandling extends PureComponent {
                         style={{ width: 220 }}
                         onChange={this.handleProcesserChange}
                       >
-                      {renderEmpOption(operatorList)}
+                        {renderEmpOption(operatorList)}
                       </Select>,
                     )}
                   </FormItem>
@@ -281,7 +282,8 @@ export default class ProblemHandling extends PureComponent {
                           + 上传附件
                         </div>
                       </Dragger>,
-                    )},
+                    )}
+,
                   </FormItem>
                 </Col>
               </Row>
@@ -299,4 +301,3 @@ export default class ProblemHandling extends PureComponent {
     );
   }
 }
-

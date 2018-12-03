@@ -33,7 +33,7 @@ export default class Audio extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      canPlay: false,  // 是否加载至可开始播放
+      canPlay: false, // 是否加载至可开始播放
       playing: false,
       currentTime: 0, // 当前播放时间
     };
@@ -135,6 +135,7 @@ export default class Audio extends PureComponent {
     }
     return momentAudioTime.format('HH:mm:ss');
   }
+
   // 当音频可以播放时
   @autobind
   handleAudioCanplay() {
@@ -144,6 +145,7 @@ export default class Audio extends PureComponent {
       canPlay: true,
     });
   }
+
   // 当播放位置改变时
   handleTimeUpdate() {
     const { canPlay } = this.state;
@@ -155,6 +157,7 @@ export default class Audio extends PureComponent {
       });
     }
   }
+
   // 播放进度
   percent() {
     const { currentTime } = this.state;
@@ -198,12 +201,14 @@ export default class Audio extends PureComponent {
           />
         </div>
         {
-          (duration < Infinity) ?
-            <div className={styles.currentTime}>
-              {
+          (duration < Infinity)
+            ? (
+              <div className={styles.currentTime}>
+                {
                 this.handleTimeFormat(duration)
               }
-            </div> : null
+              </div>
+            ) : null
         }
       </div>
     );

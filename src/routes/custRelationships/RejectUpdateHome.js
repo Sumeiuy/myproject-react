@@ -198,7 +198,9 @@ export default class RejectUpdateHome extends Component {
   doApprovalFlow() {
     const { submitResult, location: { query: { flowId = '' } } } = this.props;
     if (!_.isEmpty(submitResult)) {
-      const { groupName, operate, auditors, cust, idea } = this.state;
+      const {
+        groupName, operate, auditors, cust, idea
+      } = this.state;
       this.props.doApproveFlow({
         itemId: submitResult,
         groupName,
@@ -232,8 +234,10 @@ export default class RejectUpdateHome extends Component {
   }
 
   @autobind
-  @logable({ type: 'Click',
-payload: { name: '提交' } })
+  @logable({
+    type: 'Click',
+    payload: { name: '提交' }
+  })
   handleBtnGroupClick(btn) {
     // 点击此处，需要先进行可以提交的规则校验
     const { valid, msg } = validateData(this.state);
@@ -260,8 +264,10 @@ payload: { name: '提交' } })
   }
 
   @autobind
-  @logPV({ pathname: '/modal/choiceApproval',
-title: '选择审批人' })
+  @logPV({
+    pathname: '/modal/choiceApproval',
+    title: '选择审批人'
+  })
   handleSelectApprovalModal() {
     const { defaultNextApproverList } = this.state;
     if (_.isEmpty(defaultNextApproverList)) {

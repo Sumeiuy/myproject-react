@@ -13,7 +13,7 @@ import { createForm } from 'rc-form';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
-import Icon from '../../components/common/Icon';
+import Icon from '../common/Icon';
 import { feedbackOptions } from '../../config';
 import './problemDetails.less';
 import logable from '../../decorators/logable';
@@ -80,7 +80,7 @@ export default class ProblemDetail extends PureComponent {
       return (
         <b className="toSolve">解决中</b>
       );
-    } else if (pop === 'CLOSED') {
+    } if (pop === 'CLOSED') {
       return (
         <b className="react-close">关闭</b>
       );
@@ -118,13 +118,13 @@ export default class ProblemDetail extends PureComponent {
         qtabHV: true,
       });
       return true;
-    } else if (type === 'jira') {
+    } if (type === 'jira') {
       this.setState({
         jira: true,
         jiraHV: true,
       });
       return true;
-    } else if (type === 'processer') {
+    } if (type === 'processer') {
       this.setState({
         processerV: true,
         processerHV: true,
@@ -151,6 +151,7 @@ export default class ProblemDetail extends PureComponent {
     }
     return '无';
   }
+
   /**
    * value和label显示转换
   */
@@ -165,12 +166,11 @@ export default class ProblemDetail extends PureComponent {
   // 显示经办人
   renderEmpResp(processerID, operatorList) {
     if (!_.isEmpty(processerID) && !_.isEmpty(operatorList)) {
-      let operator = _.find(operatorList, operator =>
-        operator.loginName === processerID);
-        // 如果经办人是空就显示 马珂
-        if(_.isEmpty(operator)){
-          operator = _.find(operatorList, operator => operator.loginName === DEFAULT_USER_ID);
-        }
+      let operator = _.find(operatorList, operator => operator.loginName === processerID);
+      // 如果经办人是空就显示 马珂
+      if (_.isEmpty(operator)) {
+        operator = _.find(operatorList, operator => operator.loginName === DEFAULT_USER_ID);
+      }
       return operator.lastName;
     }
     return '无';
@@ -178,10 +178,8 @@ export default class ProblemDetail extends PureComponent {
 
   // 点击编辑打开经办人下拉框
   renderEmpOption(operatorList) {
-      const empListOption = _.map(operatorList, operator =>
-        <Option key={`empOptionKey${OPTIONKEY++}`} value={operator.loginName}>{operator.lastName}</Option>,
-      );
-      return empListOption;
+    const empListOption = _.map(operatorList, operator => <Option key={`empOptionKey${OPTIONKEY++}`} value={operator.loginName}>{operator.lastName}</Option>, );
+    return empListOption;
   }
 
   /*
@@ -193,6 +191,7 @@ export default class ProblemDetail extends PureComponent {
     }
     return time;
   }
+
   @autobind
   @logable({ type: 'Click', payload: { name: '关闭图标' } })
   handleClose() {
@@ -282,9 +281,7 @@ export default class ProblemDetail extends PureComponent {
     });
 
     const questionTagOptions = feedbackOptions.questionTagOptions;
-    const getSelectOption = item => item.map(i =>
-      <Option key={`optionKey${OPTIONKEY++}`} value={i.value}>{i.label}</Option>,
-    );
+    const getSelectOption = item => item.map(i => <Option key={`optionKey${OPTIONKEY++}`} value={i.value}>{i.label}</Option>, );
     const channel = _.flattenDeep(_.map(feedbackChannel, obj => obj.children));
 
     return (

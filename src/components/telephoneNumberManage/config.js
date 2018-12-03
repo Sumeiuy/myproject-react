@@ -3,7 +3,9 @@
  * @Author: hongguangqing
  * @Date: 2018-04-18 10:26:38
  */
-import { serviceManager, status, drafter, department, approver } from '../../config/busApplyFilters';
+import {
+  serviceManager, status, drafter, department, approver
+} from '../../config/busApplyFilters';
 
 const config = {
   // 最大可以选择的服务经理的数量

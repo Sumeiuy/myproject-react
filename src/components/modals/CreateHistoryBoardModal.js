@@ -4,7 +4,9 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Modal, Form, Input, Tooltip } from 'antd';
+import {
+  Button, Modal, Form, Input, Tooltip
+} from 'antd';
 import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
@@ -102,7 +104,9 @@ export default class CreateHistoryBoardModal extends PureComponent {
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '确认' } })
   confirmCreateModal() {
-    const { form, createBoardConfirm, ownerOrgId, boardType, selectKeys } = this.props;
+    const {
+      form, createBoardConfirm, ownerOrgId, boardType, selectKeys
+    } = this.props;
     // TODO 添加确认按钮处理程序
     const boardname = form.getFieldValue('boardname');
     // 判断看板名称
@@ -188,8 +192,9 @@ export default class CreateHistoryBoardModal extends PureComponent {
                   {
                     rules: [{ required: true, message: '请输入看板名称' }],
                     initialValue: '',
-                  })(
-                    <Input placeholder="请输入看板名称" />,
+                  }
+                )(
+                  <Input placeholder="请输入看板名称" />,
                 )
               }
             </FormItem>

@@ -18,15 +18,15 @@ import {
 import styles from './serviceProductList.less';
 
 function transformColumnsData(columns) {
-  return _.map(columns, column => {
+  return _.map(columns, (column) => {
     let newColumn;
-    switch(column.dataIndex) {
+    switch (column.dataIndex) {
       case 'matchRisk':
       case 'matchTime':
       case 'matchInvestmentBrand':
         newColumn = {
           ...column,
-          render: isBool => isBool ? '是' : '否',
+          render: isBool => (isBool ? '是' : '否'),
         };
         break;
       case 'productName':

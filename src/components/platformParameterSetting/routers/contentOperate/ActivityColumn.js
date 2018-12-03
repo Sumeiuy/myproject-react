@@ -51,6 +51,7 @@ export default class ActivityColumn extends PureComponent {
     // 预览活动栏目
     queryContent: PropTypes.func.isRequired,
   }
+
   constructor(props) {
     super(props);
     this.state = {
@@ -103,18 +104,20 @@ export default class ActivityColumn extends PureComponent {
   renderActivityColumnList() {
     const { activityColumnList } = this.props;
     return _.map(activityColumnList, item => (
-       <ColumnItem
-          columnData={item}
-          onEdit={() => this.handleEditColumn(item)}
-          onDelete={() => this.handleDeleteColumnConfirm(item)}
-          key={data.uuid()}
-        />
+      <ColumnItem
+        columnData={item}
+        onEdit={() => this.handleEditColumn(item)}
+        onDelete={() => this.handleDeleteColumnConfirm(item)}
+        key={data.uuid()}
+      />
     ));
   }
 
   // 编辑活动栏目
-  @logable({ type: 'Click',
-payload: { name: '编辑' } })
+  @logable({
+    type: 'Click',
+    payload: { name: '编辑' }
+  })
   handleEditColumn(item) {
     const { description, attaches } = item;
     const descriptionCount = description.length;
@@ -148,13 +151,15 @@ payload: { name: '编辑' } })
 
   // 删除活动栏目
   @autobind
-  @logable({ type: 'Click',
-payload: { name: '删除活动栏目' } })
+  @logable({
+    type: 'Click',
+    payload: { name: '删除活动栏目' }
+  })
   handleDeleteColumn(item) {
     const { activityColumnList } = this.state;
     // 删除后新的活动栏目
     const newActivityColumnList = _.without(activityColumnList, item);
-    this.setState({ activityColumnList: newActivityColumnList}, this.handleDeleteContent);
+    this.setState({ activityColumnList: newActivityColumnList }, this.handleDeleteContent);
   }
 
   // 删除活动栏目数据
@@ -223,7 +228,7 @@ payload: { name: '删除活动栏目' } })
         },
         attachmentList: attaches,
       }, () => {
-        const { formData: {attachment}, attachmentList } = this.state;
+        const { formData: { attachment }, attachmentList } = this.state;
         if (!_.isEmpty(attachment) || !_.isEmpty(attachmentList)) {
           this.resetAttachmentErrorStatus();
         }
@@ -240,12 +245,14 @@ payload: { name: '删除活动栏目' } })
 
   // 点击确定
   @autobind
-  @logable({ type: 'ButtonClick',
-payload: { name: '确定' } })
+  @logable({
+    type: 'ButtonClick',
+    payload: { name: '确定' }
+  })
   handleConfirm() {
     const { validateFields } = this.getColumnForm().getForm();
     validateFields((err, values) => {
-      if(!err) {
+      if (!err) {
         // 校验附件失败
         if (this.checkAttachmentStatus()) {
           return;
@@ -265,19 +272,21 @@ payload: { name: '确定' } })
         const { attachId, name, creator } = attaches[0];
         const url = `${request.prefix}/file/${downloadName}?attachId=${attachId}&empId=${creator}&filename=${window.encodeURIComponent(name)}`;
         // 编辑栏目
-        const editColumnIndex = _.findIndex(activityColumnList, (item) => ( item.index === index ));
+        const editColumnIndex = _.findIndex(activityColumnList, item => (item.index === index));
         let newActivityColumnList = [];
         if (editColumnIndex < 0) {
           // 新增栏目
-          newActivityColumnList = _.concat(activityColumnList, { attachment,
-attaches,
-link,
-description,
-url,
-index: data.uuid(16)});
+          newActivityColumnList = _.concat(activityColumnList, {
+            attachment,
+            attaches,
+            link,
+            description,
+            url,
+            index: data.uuid(16)
+          });
         } else {
           // 编辑替换栏目
-          newActivityColumnList = _.map(activityColumnList, item => {
+          newActivityColumnList = _.map(activityColumnList, (item) => {
             if (item.index === index) {
               return {
                 ...formData,
@@ -297,8 +306,10 @@ index: data.uuid(16)});
 
   // 新建活动栏目
   @autobind
-  @logable({ type: 'Click',
-payload: { name: '新建活动栏目' } })
+  @logable({
+    type: 'Click',
+    payload: { name: '新建活动栏目' }
+  })
   handleCreateForm() {
     this.setState({ action: 'CREATE' }, this.handleOpenForm);
   }
@@ -315,8 +326,10 @@ payload: { name: '新建活动栏目' } })
 
   // 关闭弹窗
   @autobind
-  @logable({ type: 'Click',
-payload: { name: '关闭活动栏目弹窗' } })
+  @logable({
+    type: 'Click',
+    payload: { name: '关闭活动栏目弹窗' }
+  })
   handleCloseModal() {
     this.clearColumnData();
   }
@@ -368,8 +381,10 @@ payload: { name: '关闭活动栏目弹窗' } })
   }
 
   @autobind
-  @logable({ type: 'Click',
-payload: { name: '取消活动栏目提交' } })
+  @logable({
+    type: 'Click',
+    payload: { name: '取消活动栏目提交' }
+  })
   handleCancelSubmit() {
     this.setState({ activityColumnList: this.props.activityColumnList });
   }
@@ -417,22 +432,22 @@ payload: { name: '取消活动栏目提交' } })
         </div>
         {
           _.isEmpty(activityColumnList)
-          ? null
-          : (
-            <div className={styles.activityColumnBox}>
-              <div className={styles.activityColumn}>
-                <div className={styles.previewWrapper}>
-                  <div className={styles.activityColumnCarouselWrapper}>
-                    <ActivityColumnCarousel activityColumnList={activityColumnList}/>
+            ? null
+            : (
+              <div className={styles.activityColumnBox}>
+                <div className={styles.activityColumn}>
+                  <div className={styles.previewWrapper}>
+                    <div className={styles.activityColumnCarouselWrapper}>
+                      <ActivityColumnCarousel activityColumnList={activityColumnList} />
+                    </div>
+                    <span className={styles.previewTitle}>效果预览</span>
                   </div>
-                  <span className={styles.previewTitle}>效果预览</span>
-                </div>
-                <div className={styles.activityColumnList}>
-                  {this.renderActivityColumnList()}
+                  <div className={styles.activityColumnList}>
+                    {this.renderActivityColumnList()}
+                  </div>
                 </div>
               </div>
-            </div>
-          )
+            )
         }
         <ColumnModal
           visible={visible}

@@ -43,7 +43,9 @@ const fetchDataFunction = (globalLoading, type) => query => ({
   loading: globalLoading,
 });
 
-const { btnEnd, textEnd, unSubscribeArray, tenHQ } = config;
+const {
+  btnEnd, textEnd, unSubscribeArray, tenHQ
+} = config;
 const mapStateToProps = state => ({
   // 子类型、操作类型、协议模版
   subTypeList: state.channelsEdit.subTypeList,
@@ -203,8 +205,7 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
         operationType: protocolDetail.operationType,
       }).then(() => {
         const { templateList } = this.props;
-        const filterTemplate =
-          _.filter(templateList, o => o.prodName === protocolDetail.templateId);
+        const filterTemplate = _.filter(templateList, o => o.prodName === protocolDetail.templateId);
         this.setState({
           template: filterTemplate[0] || {},
         });
@@ -260,8 +261,8 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
   @autobind
   checkFormDataIsLegal(formData) {
     // 如果操作类型是退订并且协议模版是十档行情，不进行验证
-    if (formData.templateId === tenHQ &&
-      _.includes(unSubscribeArray, formData.operationType)) {
+    if (formData.templateId === tenHQ
+      && _.includes(unSubscribeArray, formData.operationType)) {
       return true;
     }
     if (!formData.templateId) {
@@ -296,7 +297,9 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
   // 提交保存
   @autobind
   submitSaveProtocolData(protocolData, btnItem) {
-    const { protocolDetail, saveProtocolData, doApprove, cleartBtnGroup } = this.props;
+    const {
+      protocolDetail, saveProtocolData, doApprove, cleartBtnGroup
+    } = this.props;
     if (btnItem.approverNum === 'none') {
       const auth = btnItem.flowAuditors[0];
       saveProtocolData(protocolData).then(() => {
@@ -368,7 +371,9 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
   // 审批人弹窗点击确定
   @autobind
   handleApproverModalOK(auth) {
-    const { protocolDetail, saveProtocolData, doApprove, cleartBtnGroup } = this.props;
+    const {
+      protocolDetail, saveProtocolData, doApprove, cleartBtnGroup
+    } = this.props;
     const { protocolData } = this.state;
     saveProtocolData(protocolData).then(() => {
       const {
@@ -442,14 +447,14 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
       protocolClauseList, // 所选模板对应协议条款列表
       queryChannelProtocolProduct, // 查询协议产品列表
       protocolProductList, // 协议产品列表
-      saveProtocolData,  // 保存详情
-      underCustList,  // 下挂客户列表
-      queryCust,  // 请求下挂客户接口
+      saveProtocolData, // 保存详情
+      underCustList, // 下挂客户列表
+      queryCust, // 请求下挂客户接口
       clearPropsData, // 清除props数据
       flowStepInfo, // 审批人列表
-      getCustValidate,  // 验证客户接口
-      attachmentList,  // 附件列表
-      cleartBtnGroup,  // 清除审批人
+      getCustValidate, // 验证客户接口
+      attachmentList, // 附件列表
+      cleartBtnGroup, // 清除审批人
       getFlowStepInfo,
       queryOpenPermissionList, // 查询开通权限列表，在驳回后修改的情况
       queryBusinessTypeList, // 查询业务类型列表，在驳回后修改的情况
@@ -463,10 +468,12 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
     if (_.isEmpty(protocolDetail)) {
       return null;
     }
-    const selfBtnGroup = (<BottonGroup
-      list={flowStepInfo}
-      onEmitEvent={this.footerBtnHandle}
-    />);
+    const selfBtnGroup = (
+      <BottonGroup
+        list={flowStepInfo}
+        onEmitEvent={this.footerBtnHandle}
+      />
+    );
     // editForm 需要的 props
     const editFormProps = {
       location,
@@ -517,7 +524,7 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
       handleName: approverName,
     };
     return (
-      <div className={styles.channelEditWrapper} >
+      <div className={styles.channelEditWrapper}>
         <EditForm
           {...editFormProps}
           ref={(ref) => { this.EditFormComponent = ref; }}
@@ -530,15 +537,16 @@ export default class ChannelsTypeProtocolEdit extends PureComponent {
           {selfBtnGroup}
         </div>
         {
-          approverModal ?
-            <ChoiceApproverBoard
-              visible={approverModal}
-              approverList={flowAuditors}
-              onClose={() => this.closeModal('approverModal')}
-              onOk={this.handleApproverModalOK}
-            />
-            :
-            null
+          approverModal
+            ? (
+              <ChoiceApproverBoard
+                visible={approverModal}
+                approverList={flowAuditors}
+                onClose={() => this.closeModal('approverModal')}
+                onOk={this.handleApproverModalOK}
+              />
+            )
+            : null
         }
       </div>
     );

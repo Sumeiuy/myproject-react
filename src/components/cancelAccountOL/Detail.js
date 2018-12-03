@@ -47,8 +47,7 @@ export default function Detail(props) {
   const hasPushBtn = buttonStatus !== 'notDisplay';
   const disbaledPushBtn = buttonStatus === 'disabled';
   const pushButton = !hasPushBtn ? null
-    :
-    (
+    : (
       <Button
         ghost={!disbaledPushBtn}
         type="primary"
@@ -113,18 +112,17 @@ export default function Detail(props) {
               <InfoItem label="流失去向" value={lostDirectionText} width="70px" />
             </li>
             {
-              isTransfer ?
-              (
-                <li className={styles.item2}>
-                  <InfoItem label="证券营业部" value={stockExchange} width="84px" />
-                </li>
-              )
-              :
-              (
-                <li className={styles.item2}>
-                  <InfoItem label="投资品种" value={investVarsText} width="84px" />
-                </li>
-              )
+              isTransfer
+                ? (
+                  <li className={styles.item2}>
+                    <InfoItem label="证券营业部" value={stockExchange} width="84px" />
+                  </li>
+                )
+                : (
+                  <li className={styles.item2}>
+                    <InfoItem label="投资品种" value={investVarsText} width="84px" />
+                  </li>
+                )
             }
             <li className={styles.item}>
               <InfoItem label="流失原因" value={lostReasonText} width="70px" />

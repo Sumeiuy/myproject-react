@@ -8,11 +8,11 @@ import './index.less';
 function getFilterValue({ value, unit, defaultLabel }) {
   if (!value[1] && !value[2]) {
     return defaultLabel;
-  } else if (!value[1]) {
+  } if (!value[1]) {
     return `< ${value[2]}${unit}`;
-  } else if (!value[2]) {
+  } if (!value[2]) {
     return `≥ ${value[1]}${unit}`;
-  } else if (value[1] === value[2]) {
+  } if (value[1] === value[2]) {
     return `= ${value[1]}${unit}`;
   }
 
@@ -89,4 +89,3 @@ AmountSelectFilter.defaultProps = {
     right: 8,
   },
 };
-

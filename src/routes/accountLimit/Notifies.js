@@ -84,7 +84,12 @@ export default class AccountLimitNotifies extends PureComponent {
     const newTitleList = [...custTitleList];
     const custNameColumn = _.find(newTitleList, o => o.key === KEY_CUSTNAME);
     custNameColumn.render = (text, record) => (
-      <div>{text}({record.custId})</div>
+      <div>
+        {text}
+(
+        {record.custId}
+)
+      </div>
     );
     return newTitleList;
   }

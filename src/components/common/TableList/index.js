@@ -34,20 +34,28 @@ export default class TableList extends PureComponent {
         >
           <span
             className="flex-base_2 text-center"
-          >{item.ptyMngId}</span>
+          >
+            {item.ptyMngId}
+          </span>
           <span
             className="flex-base_2 text-center"
           >
             <span
               className={item.isMain === 'true' ? style.mainManager : ''}
-            >{item.ptyMngName}</span>
+            >
+              {item.ptyMngName}
+            </span>
           </span>
           <span
             className="flex-base_2 text-center"
-          >{item.job}</span>
+          >
+            {item.job}
+          </span>
           <span
             className="flex-base_3 text-center"
-          >{item.businessDepartment}</span>
+          >
+            {item.businessDepartment}
+          </span>
           <div
             className={classnames(['text-center',
               { 'flex-base_0': statusType === 'ready' || this.props.subType === PERMISSION_CUST_CANCLE },
@@ -72,22 +80,32 @@ export default class TableList extends PureComponent {
         >
           <span
             className="flex-base_2 text-center"
-          >工号</span>
+          >
+工号
+          </span>
           <span
             className="flex-base_2 text-center"
-          >姓名</span>
+          >
+姓名
+          </span>
           <span
             className="flex-base_2 text-center"
-          >职位</span>
+          >
+职位
+          </span>
           <span
             className="flex-base_3 text-center"
-          >所属营业部</span>
+          >
+所属营业部
+          </span>
           <span
             className={classnames(['text-center',
               { 'flex-base_0': this.props.statusType === 'ready' || this.props.subType === PERMISSION_CUST_CANCLE },
               { 'flex-base_1': this.props.statusType !== 'ready' },
             ])}
-          >操作</span>
+          >
+操作
+          </span>
         </li>
         {this.eleList}
       </ul>

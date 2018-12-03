@@ -13,7 +13,6 @@ import LabelInfo from '../common/LabelInfo';
 import styles from './missionDescription.less';
 
 export default class MissionDescription extends PureComponent {
-
   static propTypes = {
     // 任务描述
     missionDescription: PropTypes.string,
@@ -30,7 +29,7 @@ export default class MissionDescription extends PureComponent {
 
     return (
       <div className={styles.missionDescriptionSection}>
-        <LabelInfo value={'描述'} />
+        <LabelInfo value="描述" />
         <div className={styles.content}>
           {missionDescription || '--'}
         </div>

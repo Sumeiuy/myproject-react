@@ -179,8 +179,7 @@ export default class TaskPreview extends PureComponent {
       });
       return;
     }
-    const newDataSource = _.filter(approvalList, item =>
-      item.login === value || item.empName === value);
+    const newDataSource = _.filter(approvalList, item => item.login === value || item.empName === value);
     this.setState({
       dataSource: newDataSource,
     });
@@ -212,8 +211,7 @@ export default class TaskPreview extends PureComponent {
 
   @autobind
   renderOption(optionInfoList = []) {
-    return _.map(optionInfoList, (item, index) =>
-      <span key={item.optionId}>{`${data.convertNumToLetter(Number(index) + 1)}.${item.optionValue || '--'}`}</span>);
+    return _.map(optionInfoList, (item, index) => <span key={item.optionId}>{`${data.convertNumToLetter(Number(index) + 1)}.${item.optionValue || '--'}`}</span>);
   }
 
   @autobind
@@ -231,7 +229,12 @@ export default class TaskPreview extends PureComponent {
       }
       return (
         <div className={styles.subjectiveQuestion} key={item.questionKey}>
-          <p>{Number(index) + 1}.{item.quesValue}(主观)</p>
+          <p>
+            {Number(index) + 1}
+.
+            {item.quesValue}
+(主观)
+          </p>
           <p>{item.quesDesp}</p>
         </div>
       );
@@ -396,21 +399,26 @@ export default class TaskPreview extends PureComponent {
               </div>
               <div>
                 <div>客户数量：</div>
-                <div>{custTotal || custNum || totalCount || 0}户</div>
+                <div>
+                  {custTotal || custNum || totalCount || 0}
+户
+                </div>
               </div>
             </div>
             {
-              isSelectCustFromSightLabel ?
-                <div className={styles.taskSection}>
-                  <div>
-                    <div>过滤条件：</div>
-                    <div>{sightLabelCondition || '--'}</div>
+              isSelectCustFromSightLabel
+                ? (
+                  <div className={styles.taskSection}>
+                    <div>
+                      <div>过滤条件：</div>
+                      <div>{sightLabelCondition || '--'}</div>
+                    </div>
+                    <div>
+                      <div>圈人规则：</div>
+                      <div>{sightLabelRule || '--'}</div>
+                    </div>
                   </div>
-                  <div>
-                    <div>圈人规则：</div>
-                    <div>{sightLabelRule || '--'}</div>
-                  </div>
-                </div>
+                )
                 : null
             }
             <div className={styles.taskSection}>
@@ -461,19 +469,20 @@ export default class TaskPreview extends PureComponent {
           </div>
         </div>
         {
-          isResultTrackChecked ?
-            <div className={styles.basicInfoSection}>
-              <div className={styles.title}>结果跟踪</div>
-              <div className={styles.divider} />
-              <div className={styles.infoDescription}>
-                <div className={styles.descriptionOrNameSection}>
-                  <div>跟踪截止日期：</div>
-                  <div>{`${currentSelectedTrackDate}` || '--'}</div>
-                </div>
-                <div className={styles.descriptionOrNameSection}>
-                  {<div>{`${indicatorLevel1Value}：` || ''}</div>}
-                  <div>
-                    {
+          isResultTrackChecked
+            ? (
+              <div className={styles.basicInfoSection}>
+                <div className={styles.title}>结果跟踪</div>
+                <div className={styles.divider} />
+                <div className={styles.infoDescription}>
+                  <div className={styles.descriptionOrNameSection}>
+                    <div>跟踪截止日期：</div>
+                    <div>{`${currentSelectedTrackDate}` || '--'}</div>
+                  </div>
+                  <div className={styles.descriptionOrNameSection}>
+                    {<div>{`${indicatorLevel1Value}：` || ''}</div>}
+                    <div>
+                      {
                       this.renderIndicatorTarget({
                         indicatorLevel2Value,
                         hasSearchedProduct,
@@ -484,24 +493,27 @@ export default class TaskPreview extends PureComponent {
                         unit,
                       })
                     }
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            )
             : null
         }
         {
-          isMissionInvestigationChecked ?
-            <div className={styles.basicInfoSection}>
-              <div className={styles.title}>任务调查</div>
-              <div className={styles.divider} />
-              <div className={styles.infoDescription}>
-                <div className={styles.descriptionOrNameSection}>
-                  <div>调查内容：</div>
-                  <div>{this.renderQuestionDetail(questionList)}</div>
+          isMissionInvestigationChecked
+            ? (
+              <div className={styles.basicInfoSection}>
+                <div className={styles.title}>任务调查</div>
+                <div className={styles.divider} />
+                <div className={styles.infoDescription}>
+                  <div className={styles.descriptionOrNameSection}>
+                    <div>调查内容：</div>
+                    <div>{this.renderQuestionDetail(questionList)}</div>
+                  </div>
                 </div>
               </div>
-            </div>
+            )
             : null
         }
         {
@@ -514,96 +526,104 @@ export default class TaskPreview extends PureComponent {
                 <span>选择审批人：</span>
                 <Search className={styles.searchSection} readOnly value={empName} />
               </div>
-              <p className={styles.tishi}><Icon type="exclamation-circle" className={styles.icon} />注：新建任务要求在5个自然日内完成审批流程，否则该任务失效，不会下发给服务经理</p>
+              <p className={styles.tishi}>
+                <Icon type="exclamation-circle" className={styles.icon} />
+注：新建任务要求在5个自然日内完成审批流程，否则该任务失效，不会下发给服务经理
+              </p>
             </div>
 
           ) : null
         }
         {
-          isShowTable && isApprovalListLoadingEnd ?
-            <GroupModal
-              wrapperClass={
+          isShowTable && isApprovalListLoadingEnd
+            ? (
+              <GroupModal
+                wrapperClass={
                 classnames({
                   [styles.approvalModalContainer]: true,
                 })
               }
-              visible={isShowTable}
-              title={'选择审批人员'}
-              okText={'确定'}
-              okType={'primary'}
-              onOk={this.handleCloseModal}
-              onCancel={this.handleCancel}
-              footer={
-                <div className={styles.btnSection}>
-                  <Button
-                    type="default"
-                    size="default"
-                    onClick={this.handleCancel}
-                  >
+                visible={isShowTable}
+                title="选择审批人员"
+                okText="确定"
+                okType="primary"
+                onOk={this.handleCloseModal}
+                onCancel={this.handleCancel}
+                footer={(
+                  <div className={styles.btnSection}>
+                    <Button
+                      type="default"
+                      size="default"
+                      onClick={this.handleCancel}
+                    >
                     取消
-                  </Button>
-                  <Button
-                    type="primary"
-                    size="default"
-                    className={styles.confirmBtn}
-                    onClick={this.handleCloseModal}
-                  >
+                    </Button>
+                    <Button
+                      type="primary"
+                      size="default"
+                      className={styles.confirmBtn}
+                      onClick={this.handleCloseModal}
+                    >
                     确定
-                  </Button>
-                </div>
-              }
-              modalContent={
-                <div className={styles.modalContainer}>
-                  <div className={styles.searchWrapper}>
-                    <Input
-                      placeholder="员工号/员工姓名"
-                      onPressEnter={this.handleSearchApproval}
-                      style={{
-                        height: '30px',
-                        width: '300px',
-                      }}
-                      ref={inst => (this.inputRef = inst)}
-                      suffix={(
-                        <Button
-                          className="search-btn"
-                          size="large"
-                          type="primary"
-                          onClick={this.handleSearchApproval}
-                        >
-                          <Icon type="search" />
-                        </Button>
-                      )}
-                    />
+                    </Button>
                   </div>
-                  {
-                    !_.isEmpty(newDataSource) ?
-                      <Table
-                        pageData={{
-                          curPageNum: 1,
-                          curPageSize: 8,
-                          totalRecordNum: dataSize,
+)}
+                modalContent={(
+                  <div className={styles.modalContainer}>
+                    <div className={styles.searchWrapper}>
+                      <Input
+                        placeholder="员工号/员工姓名"
+                        onPressEnter={this.handleSearchApproval}
+                        style={{
+                          height: '30px',
+                          width: '300px',
                         }}
-                        listData={newDataSource}
-                        tableClass={styles.approvalListTable}
-                        titleColumn={titleColumn}
-                        columnWidth={COLUMN_WIDTH}
-                        bordered={false}
-                        isNeedRowSelection
-                        onSingleRowSelectionChange={this.handleRowSelect}
-                        onRowSelectionChange={onRowSelectionChange}
-                        currentSelectRowKeys={currentSelectRowKeys}
+                        ref={inst => (this.inputRef = inst)}
+                        suffix={(
+                          <Button
+                            className="search-btn"
+                            size="large"
+                            type="primary"
+                            onClick={this.handleSearchApproval}
+                          >
+                            <Icon type="search" />
+                          </Button>
+                      )}
                       />
-                      :
-                      <div className={styles.emptyContent}>
-                        <span>
-                          <Icon className={styles.emptyIcon} type="frown-o" />
+                    </div>
+                    {
+                    !_.isEmpty(newDataSource)
+                      ? (
+                        <Table
+                          pageData={{
+                            curPageNum: 1,
+                            curPageSize: 8,
+                            totalRecordNum: dataSize,
+                          }}
+                          listData={newDataSource}
+                          tableClass={styles.approvalListTable}
+                          titleColumn={titleColumn}
+                          columnWidth={COLUMN_WIDTH}
+                          bordered={false}
+                          isNeedRowSelection
+                          onSingleRowSelectionChange={this.handleRowSelect}
+                          onRowSelectionChange={onRowSelectionChange}
+                          currentSelectRowKeys={currentSelectRowKeys}
+                        />
+                      )
+                      : (
+                        <div className={styles.emptyContent}>
+                          <span>
+                            <Icon className={styles.emptyIcon} type="frown-o" />
                           暂无数据
-                        </span>
-                      </div>
+                          </span>
+                        </div>
+                      )
                   }
-                </div>
-              }
-            />
+                  </div>
+)}
+              />
+            )
             : null
         }
       </div>

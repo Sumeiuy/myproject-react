@@ -12,7 +12,7 @@ import { status, drafter, approver } from '../../config/busApplyFilters';
 const applyTime = {
   id: 'applyTime',
   props: {
-    filterName: '申请时间',  // 过滤器中文名称
+    filterName: '申请时间', // 过滤器中文名称
     filterId: 'applyTime', // 过滤器英文代号, 首字母小写
     type: 'date', // 过滤器类型
     allowClear: true,

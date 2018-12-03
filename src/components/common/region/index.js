@@ -8,7 +8,9 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Popover, Button, Input, Icon } from 'antd';
+import {
+  Popover, Button, Input, Icon
+} from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
@@ -160,4 +162,3 @@ export default class Region extends Component {
     );
   }
 }
-

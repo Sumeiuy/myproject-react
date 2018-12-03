@@ -91,9 +91,9 @@ export default class CompleteServiceCustReport extends PureComponent {
     } = this.state;
     return (
       <div className={styles.completeServiceCustReport}>
-        <ReportTitle title='完成服务客户统计' />
+        <ReportTitle title="完成服务客户统计" />
         <ReportFilter
-          dateFilterName='任务截止时间'
+          dateFilterName="任务截止时间"
           startTime={startTime}
           endTime={endTime}
           executeType={executeType}

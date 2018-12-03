@@ -54,7 +54,6 @@ const productPattern = /\$[\u4e00-\u9fa5]{1,}#[a-zA-Z0-9]{1,}#/g;
 
 @RestoreScrollTop
 export default class CreateTaskForm extends PureComponent {
-
   static propTypes = {
     location: PropTypes.object.isRequired,
     dict: PropTypes.object,
@@ -176,7 +175,9 @@ export default class CreateTaskForm extends PureComponent {
   handleInit(query = {}) {
     const { source = '', count = '0' } = query;
     const missionDesc = this.getMissionDesc();
-    const { dict: { custIndexPlaceHolders }, missionType, taskBasicInfo, templetDesc } = this.props;
+    const {
+      dict: { custIndexPlaceHolders }, missionType, taskBasicInfo, templetDesc
+    } = this.props;
     const { motDetailModel = {} } = taskBasicInfo;
     let defaultMissionName = '';
     let defaultMissionType = '';
@@ -444,16 +445,22 @@ export default class CreateTaskForm extends PureComponent {
       templetDescSuggestion = this.renderMissionDescSuggestion(decodeURIComponent(missionDesc));
     }
 
-    const productDescSuggestions = this.isFromExternalProduct(query) ?
-      this.renderProductDesc(defaultMissionDesc) : [];
+    const productDescSuggestions = this.isFromExternalProduct(query)
+      ? this.renderProductDesc(defaultMissionDesc) : [];
     return (
       <div>
-        {!isShowTitle ?
-          <div className={styles.task_title}>
-            为{firstUserName} <b>{custCount || count}</b> 位客户新建任务
-          </div>
-          :
-          <div className={styles.task_title}>任务基本信息</div>
+        {!isShowTitle
+          ? (
+            <div className={styles.task_title}>
+            为
+              {firstUserName}
+              {' '}
+              <b>{custCount || count}</b>
+              {' '}
+位客户新建任务
+            </div>
+          )
+          : <div className={styles.task_title}>任务基本信息</div>
         }
         <div className={styles.task_from}>
           <TaskFormInfo

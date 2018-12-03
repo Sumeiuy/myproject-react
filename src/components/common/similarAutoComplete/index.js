@@ -15,7 +15,7 @@ import logable from '../../../decorators/logable';
 import styles from './style.less';
 
 const Option = AutoComplete.Option;
- // 下拉搜索组件样式
+// 下拉搜索组件样式
 const defaultStyle = {
   width: '220px',
   height: '32px',
@@ -49,10 +49,10 @@ export default class SimilarAutoComplete extends PureComponent {
   }
 
   static defaultProps = {
-    optionList: [],   // 下拉列表数据源
+    optionList: [], // 下拉列表数据源
     showNameKey: '', // 用于下拉列表的默认展示
     showIdKey: '',
-    optionKey: '',    // 相当于table的rowkey,唯一标识符
+    optionKey: '', // 相当于table的rowkey,唯一标识符
     defaultValue: '', // 初始值
     renderOptionNode: null, // 空方法
     isImmediatelySearch: false, // 是否开启即时搜索
@@ -105,7 +105,8 @@ export default class SimilarAutoComplete extends PureComponent {
             {optionValue}
           </Option>
         );
-      });
+      }
+    );
     return result;
   }
 
@@ -140,7 +141,9 @@ export default class SimilarAutoComplete extends PureComponent {
         value,
         typeStyle: 'clear',
       }, () => {
-        const { onSelect, optionList, showIdKey, optionKey } = this.props;
+        const {
+          onSelect, optionList, showIdKey, optionKey
+        } = this.props;
         // 当前的选中值
         this.currentSelect = _.find(
           optionList,
@@ -255,7 +258,7 @@ export default class SimilarAutoComplete extends PureComponent {
     const { typeStyle, value, showError } = this.state;
     const empty = [(
       <Option
-        key={'empty'}
+        key="empty"
         disabled
         className={styles.ddsDrapMenuConItem}
       >
@@ -287,13 +290,13 @@ export default class SimilarAutoComplete extends PureComponent {
         ref={ref => this.autoCompleteComponent = ref}
       >
         <Input
-          suffix={
+          suffix={(
             <Icon
               type={iconType}
               onClick={this.handleSearch}
               className={styles.searchIcon}
             />
-          }
+)}
           onPressEnter={this.handleSearch}
         />
       </AutoComplete>

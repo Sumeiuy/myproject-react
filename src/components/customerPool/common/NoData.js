@@ -17,6 +17,6 @@ const NoData = () => (
       <p>没有找到相关客户</p>
     </div>
   </div>
-  );
+);
 
 export default NoData;

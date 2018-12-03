@@ -108,7 +108,6 @@ const EMPTY_OBJECT = {};
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 export default class HistoryHome extends PureComponent {
-
   static propTypes = {
     location: PropTypes.object.isRequired,
     push: PropTypes.func.isRequired,
@@ -219,9 +218,9 @@ export default class HistoryHome extends PureComponent {
         coreIndicatorIds: [],
         indicatorId: '', // 需要清除选中的core值
       },
-        () => {
-          this.queryInitial();
-        });
+      () => {
+        this.queryInitial();
+      });
     }
 
     const {
@@ -229,7 +228,9 @@ export default class HistoryHome extends PureComponent {
       deleteLoading: preDL,
       updateLoading: prePL,
     } = this.props;
-    const { push, createLoading, deleteLoading, updateLoading, operateData } = nextProps;
+    const {
+      push, createLoading, deleteLoading, updateLoading, operateData
+    } = nextProps;
     if (preCL && !createLoading) {
       // 首先判断创建成功与否
       const { success } = operateData;
@@ -238,11 +239,11 @@ export default class HistoryHome extends PureComponent {
         this.setState({
           coreIndicatorIds: [],
         },
-          () => {
-            const { id, name } = operateData;
-            push(`/history?boardId=${id}&boardType=${boardType}`);
-            message.success(`保存成功  可通过"自定义看板-${name}"查看刚保存的看板`, 4);
-          });
+        () => {
+          const { id, name } = operateData;
+          push(`/history?boardId=${id}&boardType=${boardType}`);
+          message.success(`保存成功  可通过"自定义看板-${name}"查看刚保存的看板`, 4);
+        });
       }
     }
     if (preDL && !deleteLoading) {
@@ -251,22 +252,22 @@ export default class HistoryHome extends PureComponent {
       this.setState({
         coreIndicatorIds: [],
       },
-        () => {
-          if (boardType === 'TYPE_LSDB_JYYJ') {
-            push(`/history?boardId=${TYPE_LSDB_JYYJ}&boardType=TYPE_LSDB_JYYJ`);
-          } else if (boardType === 'TYPE_LSDB_TGJX') {
-            push(`/history?boardId=${TYPE_LSDB_TGJX}&boardType=TYPE_LSDB_TGJX`);
-          }
-        });
+      () => {
+        if (boardType === 'TYPE_LSDB_JYYJ') {
+          push(`/history?boardId=${TYPE_LSDB_JYYJ}&boardType=TYPE_LSDB_JYYJ`);
+        } else if (boardType === 'TYPE_LSDB_TGJX') {
+          push(`/history?boardId=${TYPE_LSDB_TGJX}&boardType=TYPE_LSDB_TGJX`);
+        }
+      });
     }
     if (!updateLoading && prePL) {
       message.success('保存成功');
       this.setState({
         coreIndicatorIds: [],
       },
-        () => {
-          push(`/history?boardId=${boardId}&boardType=${boardType}`);
-        });
+      () => {
+        push(`/history?boardId=${boardId}&boardType=${boardType}`);
+      });
     }
   }
 
@@ -305,15 +306,17 @@ export default class HistoryHome extends PureComponent {
   getDefaultSummaryType() {
     const { custRange, initialData } = this.props;
     const summaryTypeIsShow = initialData.summaryTypeIsShow;
-    return summaryTypeIsShow && custRange[0].level !== jingZongLevel ?
-    hbgxSummaryType : jxstSummaryType;
+    return summaryTypeIsShow && custRange[0].level !== jingZongLevel
+      ? hbgxSummaryType : jxstSummaryType;
   }
 
   // 初始查询数据
   @autobind
   queryInitial() {
     const { getInitial, custRange } = this.props;
-    const { empId, boardType, boardId, queryType, localScope, orgId } = this.state;
+    const {
+      empId, boardType, boardId, queryType, localScope, orgId
+    } = this.state;
     const newLocalScope = localScope || custRange[0].level;
     const selfNeed = ['boardId'];
     const coreQuery = this.makeQueryParams({ scope: newLocalScope }, selfNeed);
@@ -435,7 +438,9 @@ export default class HistoryHome extends PureComponent {
     // 时间段是共同的参数
     const duration = _.pick(this.state, ['begin', 'end', 'cycleType', 'contrastBegin', 'contrastEnd']);
     // 组织机构信息
-    const { orgId, scope, localScope, queryType } = this.state;
+    const {
+      orgId, scope, localScope, queryType
+    } = this.state;
     const { custRange } = this.props;
     const owner = custRange[0];
     let temporaryScope = scope || (owner && String(Number(owner.level) + 1));
@@ -466,10 +471,10 @@ export default class HistoryHome extends PureComponent {
       coreIndicatorIds,
       indicatorId,
     },
-      () => {
-        this.freshAllCore();
-        this.queryOneCoreIndicator();
-      });
+    () => {
+      this.freshAllCore();
+      this.queryOneCoreIndicator();
+    });
   }
 
   // 另存为新的历史对比看板
@@ -517,10 +522,10 @@ export default class HistoryHome extends PureComponent {
       ...durationOrg,
       indicatorId,
     },
-      () => {
-        this.freshAllCore();
-        this.queryOneCoreIndicator();
-      });
+    () => {
+      this.freshAllCore();
+      this.queryOneCoreIndicator();
+    });
   }
 
   // 切换当前核心指标
@@ -530,9 +535,9 @@ export default class HistoryHome extends PureComponent {
       indicatorId,
       swtichDefault: indicatorId,
     },
-      () => {
-        this.queryOneCoreIndicator();
-      });
+    () => {
+      this.queryOneCoreIndicator();
+    });
   }
 
   // 柱状图维度，排序，页码变化
@@ -615,9 +620,9 @@ export default class HistoryHome extends PureComponent {
       coreIndicatorIds: [],
       indicatorId: '', // 需要清除选中的core值
     },
-      () => {
-        this.queryInitial();
-      });
+    () => {
+      this.queryInitial();
+    });
   }
 
   // 切换汇总类型
@@ -658,8 +663,8 @@ export default class HistoryHome extends PureComponent {
       initialData,
     } = this.props;
 
-    if (_.isEmpty(custRange) || _.isEmpty(visibleBoards) ||
-       _.isEmpty(newVisibleBoards) || _.isEmpty(initialData)) {
+    if (_.isEmpty(custRange) || _.isEmpty(visibleBoards)
+       || _.isEmpty(newVisibleBoards) || _.isEmpty(initialData)) {
       return null;
     }
     const {
@@ -763,9 +768,12 @@ export default class HistoryHome extends PureComponent {
             />
           </div>
           <div className={styles.indicatorAnalyse}>
-            <div className={styles.caption}>{defaultIndicatorName}-详细分析</div>
+            <div className={styles.caption}>
+              {defaultIndicatorName}
+-详细分析
+            </div>
             <div className={styles.polyArea}>
-              <Row type="flex" gutter={10} >
+              <Row type="flex" gutter={10}>
                 <Col span="12">
                   <HistoryComparePolyChart data={{ ...contrastData, isCommissionRate }} />
                 </Col>

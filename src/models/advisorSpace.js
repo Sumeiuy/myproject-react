@@ -31,7 +31,7 @@ export default {
   reducers: {
     // 获取申请单列表成功
     getApplictionListSuccess(state, action) {
-      const { payload: { resultData = {} }} = action;
+      const { payload: { resultData = {} } } = action;
       return {
         ...state,
         applictionList: resultData,
@@ -39,7 +39,7 @@ export default {
     },
     // 获取右侧详情成功
     getDetailInfoSuccess(state, action) {
-      const { payload: { resultData = {} }} = action;
+      const { payload: { resultData = {} } } = action;
       return {
         ...state,
         detailInfo: resultData,
@@ -47,7 +47,7 @@ export default {
     },
     // 获取智慧前厅列表成功
     getRoomListSuccess(state, action) {
-      const { payload: { resultData = {} }} = action;
+      const { payload: { resultData = {} } } = action;
       return {
         ...state,
         roomData: resultData,
@@ -55,7 +55,7 @@ export default {
     },
     // 新建时获取智慧前厅列表成功
     getCreateRoomListSuccess(state, action) {
-      const { payload: { resultData = {} }} = action;
+      const { payload: { resultData = {} } } = action;
       return {
         ...state,
         createRoomData: resultData,
@@ -63,7 +63,7 @@ export default {
     },
     // 新建提交成功
     submitApplySuccess(state, action) {
-      const { payload: { resultData = {} }} = action;
+      const { payload: { resultData = {} } } = action;
       return {
         ...state,
         submitResult: resultData,
@@ -71,7 +71,7 @@ export default {
     },
     // 获取参与人列表成功
     getParticipantListSuccess(state, action) {
-      const { payload: { resultData = {} }} = action;
+      const { payload: { resultData = {} } } = action;
       return {
         ...state,
         participantData: resultData,
@@ -79,7 +79,7 @@ export default {
     },
     // 取消预订成功
     cancelReservationSuccess(state, action) {
-      const { payload: { resultData = '' }} = action;
+      const { payload: { resultData = '' } } = action;
       return {
         ...state,
         cancelReservationResult: resultData,

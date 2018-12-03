@@ -95,6 +95,7 @@ export default class DurationSelect extends PureComponent {
       this.setState(duration);
     }
   }
+
   // 期间变化
   @autobind
   @logable({ type: 'Click', payload: { name: '期间变化' } })
@@ -119,6 +120,7 @@ export default class DurationSelect extends PureComponent {
       cycleType: duration.cycleType,
     });
   }
+
   // 根据同环比来计算不同日期
   @autobind
   calcDateByCompare(compare, begin, end) {
@@ -148,13 +150,11 @@ export default class DurationSelect extends PureComponent {
       const distanceMonths = moment(newEnd).diff(moment(newBegin), 'months') + 1;
       // 如果 对比方式是 环比
       obj = compare === 'MoM'
-      ?
-        ({
+        ? ({
           lastBegin: moment(newBegin).subtract(distanceMonths, 'months').format(formatTxt),
           lastEnd: moment(newEnd).subtract(distanceMonths, 'months').endOf('month').format(formatTxt),
         })
-      :
-        ({
+        : ({
           lastBegin: moment(newBegin).subtract(1, 'year').format(formatTxt),
           lastEnd: moment(newEnd).subtract(1, 'year').format(formatTxt),
         });
@@ -163,13 +163,11 @@ export default class DurationSelect extends PureComponent {
       newEnd = moment(end).format(formatTxt);
       // 如果对比方式是 环比
       obj = compare === 'MoM'
-      ?
-        ({
+        ? ({
           lastBegin: moment(newBegin).subtract(distanceDays, 'days').format(formatTxt),
           lastEnd: moment(newEnd).subtract(distanceDays, 'days').format(formatTxt),
         })
-      :
-        ({
+        : ({
           lastBegin: moment(newBegin).subtract(1, 'year').format(formatTxt),
           lastEnd: moment(newEnd).subtract(1, 'year').format(formatTxt),
         });
@@ -179,6 +177,7 @@ export default class DurationSelect extends PureComponent {
     obj.newEnd = newEnd;
     return obj;
   }
+
   // 环比同比切换事件
   @autobind
   @logable({ type: 'Click', payload: { name: '环比同比切换事件' } })
@@ -195,6 +194,7 @@ export default class DurationSelect extends PureComponent {
       ...lastObj,
     }, this.saveDurationToHome);
   }
+
   // 隐藏时间段选择
   @autobind
   hideDurationPicker() {
@@ -224,6 +224,7 @@ export default class DurationSelect extends PureComponent {
   findContainer() {
     return this.durationSelect;
   }
+
   @autobind
   disabledDate(current) {
     const { initialData } = this.props;
@@ -231,6 +232,7 @@ export default class DurationSelect extends PureComponent {
     // 不能选择大于后端返回有数据的最大日期
     return current && current.valueOf() > moment(maxDataDt, formatTxt).valueOf();
   }
+
   // 用户自己选的时间段事件
   @autobind
   @logable({
@@ -260,12 +262,14 @@ export default class DurationSelect extends PureComponent {
       ...lastObj,
     }, this.saveDurationToHome);
   }
+
   @autobind
   openChange(status) {
     this.setState({
       selfDatePickerOpen: status,
     });
   }
+
   @autobind
   @logable({ type: 'Click', payload: { name: '自定义' } })
   showSelfDatePicker() {
@@ -359,10 +363,11 @@ export default class DurationSelect extends PureComponent {
           </div>
           {/* 同环比按钮 */}
           {
-            isHistory ?
-              <div className={styles.compareDiv}>
-                <RadioGroup onChange={this.compareChangeHandle} value={this.state.compare}>
-                  {
+            isHistory
+              ? (
+                <div className={styles.compareDiv}>
+                  <RadioGroup onChange={this.compareChangeHandle} value={this.state.compare}>
+                    {
                     compareArray.map((item) => {
                       const compareKey = `compare${item.key}`;
                       return (
@@ -375,10 +380,10 @@ export default class DurationSelect extends PureComponent {
                       );
                     })
                   }
-                </RadioGroup>
-              </div>
-            :
-              null
+                  </RadioGroup>
+                </div>
+              )
+              : null
           }
         </div>
         {/* 选择时间段 */}
@@ -388,20 +393,23 @@ export default class DurationSelect extends PureComponent {
           <div className="pickerFoot">
             <div className={styles.pickerFootRadio}>
               {
-                isHistory ?
-                  <RadioGroup
-                    value={cycleType}
-                    onChange={this.historyChangeDuration}
-                  >
-                    {historyTimeRadios}
-                  </RadioGroup>
-                :
-                  <RadioGroup
-                    value={cycleType}
-                    onChange={this.handleDurationChange}
-                  >
-                    {timeRadios}
-                  </RadioGroup>
+                isHistory
+                  ? (
+                    <RadioGroup
+                      value={cycleType}
+                      onChange={this.historyChangeDuration}
+                    >
+                      {historyTimeRadios}
+                    </RadioGroup>
+                  )
+                  : (
+                    <RadioGroup
+                      value={cycleType}
+                      onChange={this.handleDurationChange}
+                    >
+                      {timeRadios}
+                    </RadioGroup>
+                  )
               }
             </div>
             <div className={styles.pickerFootCustom}>

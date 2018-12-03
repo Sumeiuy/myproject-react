@@ -14,7 +14,6 @@ import styles from './ChartBoard.less';
 const barColors = ['#3983ff', '#ffb24e', '#756fb8', '#ff784e'];
 
 export default class ChartBoard extends PureComponent {
-
   static propTypes = {
     level: PropTypes.string.isRequired,
     scope: PropTypes.number.isRequired,
@@ -34,7 +33,9 @@ export default class ChartBoard extends PureComponent {
   }
 
   render() {
-    const { chartData, location, level, style, scope, custRange, updateQueryState } = this.props;
+    const {
+      chartData, location, level, style, scope, custRange, updateQueryState
+    } = this.props;
     return (
       <div className={styles.board} style={style}>
         <Row type="flex">

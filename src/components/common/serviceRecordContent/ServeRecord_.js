@@ -16,7 +16,9 @@ const { TextArea } = Input;
 const FormItem = Form.Item;
 
 export default function ServeRecord(props) {
-  const { showError, value, onChange, isPhoneCall, serviceRecordInfo = {} } = props;
+  const {
+    showError, value, onChange, isPhoneCall, serviceRecordInfo = {}
+  } = props;
   const { autoGenerateRecordInfo = {} } = serviceRecordInfo;
   const serviceContentErrorProps = showError ? {
     hasFeedback: false,

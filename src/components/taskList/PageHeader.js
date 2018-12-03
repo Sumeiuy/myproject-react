@@ -35,9 +35,11 @@ import styles from './pageHeader.less';
 
 const Search = Input.Search;
 
-const typeAll = { label: '不限',
-value: '',
-show: true }; // 不限
+const typeAll = {
+  label: '不限',
+  value: '',
+  show: true
+}; // 不限
 const creatorFilterId = 'creatorId'; // 创建者filterId
 const custFilterId = 'custId'; // 客户filterId
 const triggerFilterId = 'triggerTime'; // 触发时间filterId
@@ -110,9 +112,9 @@ export default class Pageheader extends PureComponent {
     const { status: nextStatus } = nextQuery;
 
     if (
-      status !== nextStatus ||
-      filterControl !== nextFilterControl ||
-      nextQuery.missionName !== missionName
+      status !== nextStatus
+      || filterControl !== nextFilterControl
+      || nextQuery.missionName !== missionName
     ) {
       const {
         stateAllOptions,
@@ -384,7 +386,9 @@ export default class Pageheader extends PureComponent {
   // 判断当用户选择了第一次日期之后，需要disabled掉的日期
   // 在任务状态为结束时选择的两个日期的区间范围在60天之内
   @autobind
-  isInsideOffSet({ day, firstDay, focusedInput, flag }) {
+  isInsideOffSet({
+    day, firstDay, focusedInput, flag
+  }) {
     // focusedInput 的值 只有两种情况：1.为 endDate 2.为 null
     if (focusedInput === 'endDate') {
       // 首次聚焦日历组件为 END_DATE时，需要圈定可选范围： startEnd 向后推 60 天
@@ -448,23 +452,26 @@ export default class Pageheader extends PureComponent {
     } = this.props;
     let node;
     if (missionViewType === INITIATOR) {
-      node = (<div
-        className={classNames(
-          [styles.filterFl],
-          [styles.dateWidget])
+      node = (
+        <div
+          className={classNames(
+            [styles.filterFl],
+            [styles.dateWidget]
+          )
         }
-      >
-        <DateFilter
-          hasCustomerOffset
-          filterName="创建时间"
-          filterId="startTime"
-          value={[createTimeStart, createTimeEnd]}
-          onChange={this.handleCreateDateChange}
-          isInsideOffSet={this.isInsideOffSet}
-          key={`${missionViewType}创建时间`}
-          disabledCurrentEnd={false}
-        />
-      </div>);
+        >
+          <DateFilter
+            hasCustomerOffset
+            filterName="创建时间"
+            filterId="startTime"
+            value={[createTimeStart, createTimeEnd]}
+            onChange={this.handleCreateDateChange}
+            isInsideOffSet={this.isInsideOffSet}
+            key={`${missionViewType}创建时间`}
+            disabledCurrentEnd={false}
+          />
+        </div>
+      );
     } else if (missionViewType === EXECUTOR) {
       node = this.renderEndTimer();
     }
@@ -488,7 +495,8 @@ export default class Pageheader extends PureComponent {
         <div
           className={classNames(
             [styles.filterFl],
-            [styles.dateWidget])
+            [styles.dateWidget]
+          )
           }
         >
           <DateFilter
@@ -545,6 +553,7 @@ export default class Pageheader extends PureComponent {
       </div>
     );
   }
+
   /**
    * 渲染'执行方式'筛选组件
    * 默认显示'所有方式'
@@ -552,8 +561,8 @@ export default class Pageheader extends PureComponent {
   @autobind
   renderExecuteType() {
     const { dict: { executeTypes } } = this.props;
-    const list = _.isEmpty(executeTypes) ? [] :
-      this.constructorDataType(executeTypes);
+    const list = _.isEmpty(executeTypes) ? []
+      : this.constructorDataType(executeTypes);
     const { location: { query: { executeType } } } = this.props;
     return (
       <div className={styles.filterFl}>
@@ -578,7 +587,10 @@ export default class Pageheader extends PureComponent {
     const displayValue = !_.isEmpty(custId) ? `${custName}(${custId})` : value.name;
     return (
       <div className={styles.customerFilterContent}>
-        <span className={styles.customerFilterName}>{filterName}:</span>
+        <span className={styles.customerFilterName}>
+          {filterName}
+:
+        </span>
         <span className={styles.customerFilterValue} title={displayValue}>{displayValue}</span>
       </div>
     );
@@ -594,10 +606,12 @@ export default class Pageheader extends PureComponent {
 
   @autobind
   moreFilterChange(obj) {
-    const { location: {
-      pathname,
-      query,
-    } } = this.props;
+    const {
+      location: {
+        pathname,
+        query,
+      }
+    } = this.props;
     const { replace } = this.context;
     const { isDeleteFilterFromLocation, id } = obj;
     const currentMoreFilterData = this.getMoreFilterList();
@@ -610,8 +624,10 @@ export default class Pageheader extends PureComponent {
     } else {
       // ['a','b'] => {a:'', b: ''}
       const filterMap = _.reduce(filterOption,
-        (filterQuery, itemQuery) => ({ ...filterQuery,
-[itemQuery]: '' }), {});
+        (filterQuery, itemQuery) => ({
+          ...filterQuery,
+          [itemQuery]: ''
+        }), {});
       finalQuery = _.merge(query, filterMap);
     }
     replace({
@@ -639,8 +655,10 @@ export default class Pageheader extends PureComponent {
 
   @autobind
   closeFilter(filterId) {
-    this.moreFilterChange({ id: filterId,
-isDeleteFilterFromLocation: true });
+    this.moreFilterChange({
+      id: filterId,
+      isDeleteFilterFromLocation: true
+    });
   }
 
   // 按服务经理过滤筛选
@@ -652,8 +670,10 @@ isDeleteFilterFromLocation: true });
       clearServiceManagerList,
       location: { query: { ptyMngId = '', ptyMngName = '' } },
     } = this.props;
-    const currentPtyMng = { ptyMngId,
-ptyMngName };
+    const currentPtyMng = {
+      ptyMngId,
+      ptyMngName
+    };
     // 管理者视图显示服务经理过滤筛选
     if (filterControl === CONTROLLER) {
       return (
@@ -722,8 +742,8 @@ ptyMngName };
     const { missionType } = dict;
     const typeOptions = this.constructorDataType(missionType);
     // 类型增加全部
-    const typeAllOptions = !_.isEmpty(typeOptions) ?
-      [typeAll, ...typeOptions] : typeOptions;
+    const typeAllOptions = !_.isEmpty(typeOptions)
+      ? [typeAll, ...typeOptions] : typeOptions;
 
     // 过滤器当前客户id
     const currentCustomer = _.find(customerList, { custId }) || {};
@@ -734,8 +754,8 @@ ptyMngName };
     // 默认时间
     const typeValue = !_.isEmpty(type) ? type : typeAll.value;
     // 默认取url中的missionViewType，否则从helper的getViewInfo方法中取
-    const missionViewTypeValue = !_.isEmpty(missionViewType) ?
-      missionViewType : getViewInfo().currentViewType;
+    const missionViewTypeValue = !_.isEmpty(missionViewType)
+      ? missionViewType : getViewInfo().currentViewType;
 
     const selectFilterKeys = this.selectMoreFilter();
     const currentMoreFilterData = this.getMoreFilterList();
@@ -778,59 +798,65 @@ ptyMngName };
           {this.renderTime()}
           {this.renderServiceManager()}
           {
-            currentMoreFilterData.length ?
-              <div className={classNames(styles.filterFl, styles.moreFilterBtn)}>
-                <MoreFilter
-                  value={this.selectMoreFilter()}
-                  data={currentMoreFilterData}
-                  onChange={this.moreFilterChange}
-                />
-              </div> : null
+            currentMoreFilterData.length
+              ? (
+                <div className={classNames(styles.filterFl, styles.moreFilterBtn)}>
+                  <MoreFilter
+                    value={this.selectMoreFilter()}
+                    data={currentMoreFilterData}
+                    onChange={this.moreFilterChange}
+                  />
+                </div>
+              ) : null
           }
         </div>
         <div className={styles.moreFilterBox}>
           {
             /* 执行者视图中增加客户筛选 */
-            missionViewTypeValue === EXECUTOR &&
-            _.includes(selectFilterKeys, custFilterId) ?
+            missionViewTypeValue === EXECUTOR
+            && _.includes(selectFilterKeys, custFilterId)
+              ? (
+                <div className={styles.filterFl}>
+                  <div className={styles.dropDownSelectBox}>
+                    <SingleFilter
+                      filterId={custFilterId}
+                      filterName="客户"
+                      value={currentCustId}
+                      data={customerList}
+                      dataMap={['custId', 'name']}
+                      onChange={this.selectCustomerItem}
+                      onInputChange={this.searchCustomer}
+                      getFilterLabelValue={this.renderCustFilterName}
+                      showSearch
+                      needItemObj
+                      onClose={() => { this.closeFilter(custFilterId); }}
+                      isCloseable
+                    />
+                  </div>
+                </div>
+              ) : null
+          }
+          {missionViewTypeValue !== INITIATOR
+          && _.includes(selectFilterKeys, creatorFilterId)
+            ? (
               <div className={styles.filterFl}>
                 <div className={styles.dropDownSelectBox}>
                   <SingleFilter
-                    filterId={custFilterId}
-                    filterName="客户"
-                    value={currentCustId}
-                    data={customerList}
-                    dataMap={['custId', 'name']}
-                    onChange={this.selectCustomerItem}
-                    onInputChange={this.searchCustomer}
-                    getFilterLabelValue={this.renderCustFilterName}
+                    filterId={creatorFilterId}
+                    filterName="创建者"
+                    value={creatorId || ''}
+                    data={drafterList}
+                    dataMap={['ptyMngId', 'ptyMngName']}
+                    onChange={this.selectItem}
+                    onInputChange={this.toSearch}
                     showSearch
                     needItemObj
-                    onClose={() => { this.closeFilter(custFilterId); }}
+                    onClose={() => { this.closeFilter(creatorFilterId); }}
                     isCloseable
                   />
                 </div>
-              </div> : null
-          }
-          {missionViewTypeValue !== INITIATOR &&
-          _.includes(selectFilterKeys, creatorFilterId) ?
-            <div className={styles.filterFl}>
-              <div className={styles.dropDownSelectBox}>
-                <SingleFilter
-                  filterId={creatorFilterId}
-                  filterName="创建者"
-                  value={creatorId || ''}
-                  data={drafterList}
-                  dataMap={['ptyMngId', 'ptyMngName']}
-                  onChange={this.selectItem}
-                  onInputChange={this.toSearch}
-                  showSearch
-                  needItemObj
-                  onClose={() => { this.closeFilter(creatorFilterId); }}
-                  isCloseable
-                />
               </div>
-            </div> : null
+            ) : null
           }
           {
             missionViewTypeValue === CONTROLLER

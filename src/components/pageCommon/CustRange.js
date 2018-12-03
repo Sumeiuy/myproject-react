@@ -51,7 +51,6 @@ function getNodes(arr, parent) {
 }
 
 export default class CustRange extends PureComponent {
-
   static propTypes = {
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
@@ -137,7 +136,7 @@ export default class CustRange extends PureComponent {
         value={this.state.value}
         onChange={this.onChange}
         dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-        treeNodeFilterProp={'title'}
+        treeNodeFilterProp="title"
         showSearch
         dropdownMatchSelectWidth
         labelInValue

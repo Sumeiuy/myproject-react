@@ -10,9 +10,9 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import Modal from '../../components/common/biz/CommonModal';
+import Modal from '../common/biz/CommonModal';
 import InfoItem from '../common/infoItem';
-import Table from '../../components/common/table';
+import Table from '../common/table';
 import IfTableWrap from '../common/IfTableWrap';
 import { number, time } from '../../helper';
 import Tooltip from '../common/Tooltip';
@@ -46,7 +46,7 @@ export default class DetailModal extends PureComponent {
 
   @autobind
   getTitleList() {
-    return productTitleList.map(item => {
+    return productTitleList.map((item) => {
       if (item.dataIndex === 'endTime') {
         return {
           ...item,
@@ -100,7 +100,7 @@ export default class DetailModal extends PureComponent {
       <Modal
         className={styles.detailModalBox}
         title="优惠券详情"
-        size='large'
+        size="large"
         visible={visible}
         closeModal={onCloseModal}
         showOkBtn={false}

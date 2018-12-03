@@ -8,7 +8,7 @@
 
 import PropTypes from 'prop-types';
 
-const IfWrap = props => {
+const IfWrap = (props) => {
   const { isRender } = props;
   if (!isRender) {
     return null;
@@ -22,4 +22,3 @@ IfWrap.propTypes = {
 };
 
 export default IfWrap;
-

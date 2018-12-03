@@ -20,7 +20,9 @@ import CombinationRank from '../../components/choicenessCombination/combinationR
 import CombinationModal from '../../components/choicenessCombination/CombinationModal';
 import { sourceType, securityType } from '../../components/choicenessCombination/config';
 import { seperator } from '../../config';
-import { permission, dva, url as urlHelper, emp } from '../../helper';
+import {
+  permission, dva, url as urlHelper, emp
+} from '../../helper';
 import { openRctTab } from '../../utils';
 import logable from '../../decorators/logable';
 import styles from './index.less';
@@ -84,38 +86,60 @@ const mapStateToProps = state => ({
 });
 const mapDispatchToProps = {
   getAdjustWarehouseHistory: dispatch(effects.getAdjustWarehouseHistory,
-    { loading: true,
-forceFull: true }),
+    {
+      loading: true,
+      forceFull: true
+    }),
   getCombinationSecurityList: dispatch(effects.getCombinationSecurityList,
-    { loading: true,
-forceFull: true }),
+    {
+      loading: true,
+      forceFull: true
+    }),
   getCombinationTree: dispatch(effects.getCombinationTree,
-    { loading: true,
-forceFull: true }),
+    {
+      loading: true,
+      forceFull: true
+    }),
   getCombinationRankList: dispatch(effects.getCombinationRankList,
-    { loading: false,
-forceFull: true }),
+    {
+      loading: false,
+      forceFull: true
+    }),
   getCombinationLineChart: dispatch(effects.getCombinationLineChart,
-    { loading: true,
-forceFull: true }),
+    {
+      loading: true,
+      forceFull: true
+    }),
   combinationRankTabchange: dispatch(effects.combinationRankTabchange,
-    { loading: true,
-forceFull: true }),
+    {
+      loading: true,
+      forceFull: true
+    }),
   combinationAdviserChange: dispatch(effects.combinationAdviserChange,
-    { loading: true,
-forceFull: true }),
+    {
+      loading: true,
+      forceFull: true
+    }),
   yieldRankChange: dispatch(effects.yieldRankChange,
-    { loading: true,
-forceFull: true }),
+    {
+      loading: true,
+      forceFull: true
+    }),
   riskLevelFilter: dispatch(effects.riskLevelFilter,
-    { loading: true,
-forceFull: true }),
+    {
+      loading: true,
+      forceFull: true
+    }),
   getReportHistoryList: dispatch(effects.getReportHistoryList,
-    { loading: true,
-forceFull: true }),
+    {
+      loading: true,
+      forceFull: true
+    }),
   queryCombinationCreator: dispatch(effects.queryCombinationCreator,
-    { loading: true,
-forceFull: true }),
+    {
+      loading: true,
+      forceFull: true
+    }),
   clearData: dispatch(effects.queryCombinationCreator),
 };
 
@@ -205,7 +229,7 @@ export default class ChoicenessCombination extends PureComponent {
     getCombinationTree().then(() => {
       getCombinationRankList({
         combinationType: type,
-        adviserId: adviserId,
+        adviserId,
       });
     });
     // 获取投资顾问列表
@@ -276,7 +300,9 @@ export default class ChoicenessCombination extends PureComponent {
   @autobind
   openCustomerListPage(obj) {
     const { push } = this.context;
-    const { name, code, type, source, combinationCode } = obj;
+    const {
+      name, code, type, source, combinationCode
+    } = obj;
     const query = {
       source,
     };
@@ -366,6 +392,7 @@ export default class ChoicenessCombination extends PureComponent {
       query,
     });
   }
+
   // 打开历史报告详情页
   @autobind
   openReportDetailPage(obj) {
@@ -492,15 +519,15 @@ export default class ChoicenessCombination extends PureComponent {
         />
         {
           visible
-          ?
-            <CombinationModal
-              location={location}
+            ? (
+              <CombinationModal
+                location={location}
               // 关闭弹窗
-              closeModal={this.closeModal}
-              {...modalProps[modalType]}
-            />
-          :
-            null
+                closeModal={this.closeModal}
+                {...modalProps[modalType]}
+              />
+            )
+            : null
         }
       </div>
     );

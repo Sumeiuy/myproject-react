@@ -27,7 +27,9 @@ const LIST_API_DEFAULT_QUERY = {
 
 // 根据传入的请求参数与默认参数进行合并生成最终的列表接口请求参数
 export const composeQuery = (query) => {
-  const { pageNum, pageSize, createTime, createTimeTo, approvalId } = query;
+  const {
+    pageNum, pageSize, createTime, createTimeTo, approvalId
+  } = query;
   const resetQuery = _.omit(query, ['currentId', 'drafterName', 'approvalName', 'createTime', 'createTimeTo', 'approvalId']);
   // 因为从 location 上取回来的页码器是String，作为借口参数需要转化为 Number
   return {

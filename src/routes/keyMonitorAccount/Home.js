@@ -9,7 +9,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'dva';
 import { autobind } from 'core-decorators';
-import { Input, Button, Table, Pagination } from 'antd';
+import {
+  Input, Button, Table, Pagination
+} from 'antd';
 import _ from 'lodash';
 
 import CheckInfoModal from '../../components/keyMonitorAccount/CheckInfoListModal';
@@ -93,18 +95,20 @@ export default class KeyMonitorAccountHome extends Component {
 
   @autobind
   getQueryFromLocation(location) {
-    const { query: {
+    const {
+      query: {
       // 交易所选项
-      exchangeType = '',
-      // 监管措施类型
-      punishType = '',
-      // 是否我司客户
-      isOurCust = '',
-      // 客户
-      custKeyword = '',
-      pageNum = 1,
-      pageSize = 10,
-    } } = location;
+        exchangeType = '',
+        // 监管措施类型
+        punishType = '',
+        // 是否我司客户
+        isOurCust = '',
+        // 客户
+        custKeyword = '',
+        pageNum = 1,
+        pageSize = 10,
+      }
+    } = location;
     return {
       exchangeType,
       punishType,
@@ -423,29 +427,29 @@ export default class KeyMonitorAccountHome extends Component {
         </div>
         <div className={styles.pageArea}>
           {
-            _.isEmpty(page) ? null :
-            (
-              <Pagination
-                current={page.curPageNum}
-                pageSize={page.pageSize}
-                total={page.totalRecordNum}
-                onChange={this.handlePaginationChange}
-              />
-            )
+            _.isEmpty(page) ? null
+              : (
+                <Pagination
+                  current={page.curPageNum}
+                  pageSize={page.pageSize}
+                  total={page.totalRecordNum}
+                  onChange={this.handlePaginationChange}
+                />
+              )
           }
         </div>
         {
           !checkInfoModal ? null
-          : (
-            <CheckInfoModal
-              moniKey={moniKey}
-              stockAccount={stockAccount}
-              visible={checkInfoModal}
-              data={checkListInfo}
-              getCheckInfoList={getCheckInfoList}
-              onClose={this.handleCheckInfoModalClose}
-            />
-          )
+            : (
+              <CheckInfoModal
+                moniKey={moniKey}
+                stockAccount={stockAccount}
+                visible={checkInfoModal}
+                data={checkListInfo}
+                getCheckInfoList={getCheckInfoList}
+                onClose={this.handleCheckInfoModalClose}
+              />
+            )
         }
       </div>
     );

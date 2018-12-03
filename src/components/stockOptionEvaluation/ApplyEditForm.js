@@ -62,6 +62,7 @@ export default class ApplyEditForm extends PureComponent {
     updateBindingFlow: PropTypes.func.isRequired,
     clearReduxData: PropTypes.func.isRequired,
   }
+
   static defaultProps = {
     attachmentList: [],
   }
@@ -559,7 +560,10 @@ export default class ApplyEditForm extends PureComponent {
       <div className={styles.applyEditForm}>
         <div className={styles.inner}>
           <div className={styles.innerWrap}>
-            <h1 className={styles.title}>编号{id}</h1>
+            <h1 className={styles.title}>
+编号
+              {id}
+            </h1>
             <div className={styles.module}>
               <div className={styles.coloumn}>
                 <div className={styles.label}>
@@ -594,14 +598,14 @@ export default class ApplyEditForm extends PureComponent {
               />
             </div>
             {
-              isPerCustType ?
-                (
+              isPerCustType
+                ? (
                   <div className={styles.module}>
                     <InfoTitle head="适当性评估表" />
                     <AssessTable data={detailInfo} />
                   </div>
                 )
-              : null
+                : null
             }
             <div className={styles.module}>
               <InfoTitle head="拟稿信息" />

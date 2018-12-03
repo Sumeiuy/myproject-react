@@ -100,7 +100,7 @@ const mapDispatchToProps = {
   getAttachmentList: effect(effects.getAttachmentList, { forceFull: true }),
   // 获取本营业部客户
   getBusCustList: effect(effects.getBusCustList, { forceFull: true }),
-   // 获取客户基本信息
+  // 获取客户基本信息
   getCustInfo: effect(effects.getCustInfo, { forceFull: true }),
   // 获取基本信息的多个select数据
   getSelectMap: effect(effects.getSelectMap, { forceFull: true }),
@@ -463,38 +463,40 @@ export default class StockOptionApplication extends PureComponent {
       />
     );
     return (
-      <div >
+      <div>
         <SplitPanel
           isEmpty={isEmpty}
           topPanel={topPanel}
           leftPanel={leftPanel}
           rightPanel={rightPanel}
         />
-        { isShowCreateModal ?
-          <CreateApply
-            location={location}
-            busCustList={busCustList}
-            getBusCustList={getBusCustList}
-            clearProps={clearProps}
-            onEmitClearModal={this.handleClearModal}
-            custInfo={custInfo}
-            getCustInfo={getCustInfo}
-            stockCustTypeList={stockCustTypeList}
-            optionMarketTypeList={optionMarketTypeList}
-            reqTypeList={reqTypeList}
-            busDivisionList={busDivisionList}
-            getSelectMap={getSelectMap}
-            acceptOrgData={acceptOrgData}
-            queryAcceptOrg={queryAcceptOrg}
-            createButtonListData={createButtonListData}
-            getCreateButtonList={getCreateButtonList}
-            validateResultData={validateResultData}
-            validateResult={validateResult}
-            doApprove={doApprove}
-            updateBindingFlowAppId={updateBindingFlowAppId}
-            updateBindingFlow={updateBindingFlow}
-            queryAppList={this.queryAppList}
-          />
+        { isShowCreateModal
+          ? (
+            <CreateApply
+              location={location}
+              busCustList={busCustList}
+              getBusCustList={getBusCustList}
+              clearProps={clearProps}
+              onEmitClearModal={this.handleClearModal}
+              custInfo={custInfo}
+              getCustInfo={getCustInfo}
+              stockCustTypeList={stockCustTypeList}
+              optionMarketTypeList={optionMarketTypeList}
+              reqTypeList={reqTypeList}
+              busDivisionList={busDivisionList}
+              getSelectMap={getSelectMap}
+              acceptOrgData={acceptOrgData}
+              queryAcceptOrg={queryAcceptOrg}
+              createButtonListData={createButtonListData}
+              getCreateButtonList={getCreateButtonList}
+              validateResultData={validateResultData}
+              validateResult={validateResult}
+              doApprove={doApprove}
+              updateBindingFlowAppId={updateBindingFlowAppId}
+              updateBindingFlow={updateBindingFlow}
+              queryAppList={this.queryAppList}
+            />
+          )
           : null
         }
       </div>

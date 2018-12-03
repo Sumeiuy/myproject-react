@@ -16,7 +16,6 @@ const COLLAPSE_WIDTH = 672;
 const MARGIN_LEFT = 16;
 
 export default class ServiceResult extends PureComponent {
-
   static propTypes = {
     missionImplementationProgress: PropTypes.object.isRequired,
     custFeedback: PropTypes.array.isRequired,
@@ -62,8 +61,8 @@ export default class ServiceResult extends PureComponent {
   onResize() {
     const contentWidth = this.contentWrapRef && this.contentWrapRef.clientWidth;
     if (this.memeoryWidth) {
-      if (this.memeoryWidth < COLLAPSE_WIDTH < contentWidth ||
-        contentWidth < COLLAPSE_WIDTH < this.memeoryWidth) {
+      if (this.memeoryWidth < COLLAPSE_WIDTH < contentWidth
+        || contentWidth < COLLAPSE_WIDTH < this.memeoryWidth) {
         this.setState({
           forceRender: !this.state.forceRender,
         });

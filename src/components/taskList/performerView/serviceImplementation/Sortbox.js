@@ -15,7 +15,9 @@ import ascImg from '../img/asc.png';
 import styles from './Sortbox.less';
 
 export default function Sortbox(props) {
-  const { name, isDesc, onChange, sortId } = props;
+  const {
+    name, isDesc, onChange, sortId
+  } = props;
   const handleClick = () => {
     onChange({
       sortId,

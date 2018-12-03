@@ -11,7 +11,9 @@ import { Icon } from 'antd';
 import _ from 'lodash';
 
 import IECharts from '../../IECharts';
-import { stackBarColors, yAxis, xAxis, chartGrid, stackTootip } from './rankChartGeneralConfig';
+import {
+  stackBarColors, yAxis, xAxis, chartGrid, stackTootip
+} from './rankChartGeneralConfig';
 import {
   filterData,
   filterStackSeriesData,
@@ -79,8 +81,8 @@ export default class RankStackChart extends PureComponent {
           this.props.updateQueryState({
             orgId: item.id,
             level: item.level,
-            scope: item.level && item.level === defaultFilialeLevel && !report.isNewOrg(item.id) ?
-              String(Number(item.level) + 2) : String(Number(item.level) + 1),
+            scope: item.level && item.level === defaultFilialeLevel && !report.isNewOrg(item.id)
+              ? String(Number(item.level) + 2) : String(Number(item.level) + 1),
           });
         }
       });
@@ -155,6 +157,7 @@ export default class RankStackChart extends PureComponent {
   makeDataArray(v) {
     return new Array(10).fill(v);
   }
+
   // 生成坐标轴
   @autobind
   makeAxis(gridIndex, base, others) {
@@ -164,6 +167,7 @@ export default class RankStackChart extends PureComponent {
       ...others,
     };
   }
+
   // 用来占位的
   @autobind
   makeLabelShadowSeries(name, data) {
@@ -185,6 +189,7 @@ export default class RankStackChart extends PureComponent {
       barWidth: '22',
     };
   }
+
   // 柱状图阴影
   @autobind
   makeDataShadowSeries(name, data) {
@@ -209,6 +214,7 @@ export default class RankStackChart extends PureComponent {
       barWidth: '4',
     };
   }
+
   // 柱状图Label
   @autobind
   makeLabelSeries(name, data, labels, realLength) {
@@ -327,7 +333,7 @@ export default class RankStackChart extends PureComponent {
                 title = `${company[dataIndex]} - ${wealth[dataIndex]} - ${store[dataIndex]}`;
                 tooltipEmpInfo = `${axisValue}(${id})`;
               } else if (scope === 5 && axisValue !== '--' && !hasFundCenter) {
-                 // 5为投顾或服务经理,需要显示xx公司名称-营业部(非南京分公司没有有财富中心)
+                // 5为投顾或服务经理,需要显示xx公司名称-营业部(非南京分公司没有有财富中心)
                 title = `${company[dataIndex]} - ${store[dataIndex]}`;
                 tooltipEmpInfo = `${axisValue}(${id})`;
               }

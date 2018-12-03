@@ -37,18 +37,29 @@ export default function seibelColumns(props) {
       <div className="leftSection">
         <div className="id">
           <Icon type={type} className="seibelListIcon" />
-          <span className="serialNumber">编号{record.id || '暂无'}</span>
+          <span className="serialNumber">
+编号
+            {record.id || '暂无'}
+          </span>
           {
-            (pageName === 'channelsTypeProtocol' && record.business2) ?
-              <span className="type">{changeDisplay(record.business2, operateType)}</span>
-            :
-              <span className="type">{changeTypeDisplay(record.type, pageData)}</span>
+            (pageName === 'channelsTypeProtocol' && record.business2)
+              ? <span className="type">{changeDisplay(record.business2, operateType)}</span>
+              : <span className="type">{changeTypeDisplay(record.type, pageData)}</span>
           }
         </div>
         <div className="subType">{changeDisplay(record.subType, subType)}</div>
-        <div className="drafter">拟稿人：<span className="drafterName">{record.empName}({record.empId})</span>{`${record.orgName || ''}` || '无'}</div>
+        <div className="drafter">
+拟稿人：
+          <span className="drafterName">
+            {record.empName}
+(
+            {record.empId}
+)
+          </span>
+          {`${record.orgName || ''}` || '无'}
+        </div>
       </div>
-      ),
+    ),
   }, {
     width: '40%',
     render: (text, record) => (
@@ -59,14 +70,25 @@ export default function seibelColumns(props) {
         </div>
         <div className="date">{(record.createTime && record.createTime.slice(0, 10)) || '无'}</div>
         {
-          record.subType === '0202' ?
-          (
-            <div className="cust">共{record.business2 || 0}人,已完成{record.business3 || 0}人</div>
-          )
-          :
-          (
-            <div className="cust">客户：{record.custName || '无'}({record.custNumber || '无'})</div>
-          )
+          record.subType === '0202'
+            ? (
+              <div className="cust">
+共
+                {record.business2 || 0}
+人,已完成
+                {record.business3 || 0}
+人
+              </div>
+            )
+            : (
+              <div className="cust">
+客户：
+                {record.custName || '无'}
+(
+                {record.custNumber || '无'}
+)
+              </div>
+            )
         }
       </div>
     ),

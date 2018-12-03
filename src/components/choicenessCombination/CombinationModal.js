@@ -9,7 +9,9 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { Input, Modal, TreeSelect, Popover } from 'antd';
+import {
+  Input, Modal, TreeSelect, Popover
+} from 'antd';
 import moment from 'moment';
 import _ from 'lodash';
 
@@ -63,10 +65,12 @@ export default class CombinationModal extends PureComponent {
     openCustomerListPage: PropTypes.func,
     openReportDetailPage: PropTypes.func,
   }
+
   static contextTypes = {
     push: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
   }
+
   static defaultProps = {
     title: '标题',
     treeData: [],
@@ -79,12 +83,15 @@ export default class CombinationModal extends PureComponent {
     super(props);
     const {
       treeData = [],
-      location: { query: {
-        modalType = HISTORY_TYPE,
-        directionCode = 1,
-        time = THREE_MOUNTH_KEY,
-        combinationCode = treeData[0] ? treeData[0].value : '',
-        keyword = '' } },
+      location: {
+        query: {
+          modalType = HISTORY_TYPE,
+          directionCode = 1,
+          time = THREE_MOUNTH_KEY,
+          combinationCode = treeData[0] ? treeData[0].value : '',
+          keyword = ''
+        }
+      },
     } = this.props;
     const dateObj = this.calcDate(time);
     const titleArray = this.getTitleColumns(modalType);
@@ -144,12 +151,14 @@ export default class CombinationModal extends PureComponent {
           type: securityType,
           source: sourceType.security,
         };
-        return (<a
-          className={styles.customerLink}
-          onClick={() => this.handleOpenCustomerListPage(openPayload)}
-        >
-          <Icon type="kehuzu" />
-        </a>);
+        return (
+          <a
+            className={styles.customerLink}
+            onClick={() => this.handleOpenCustomerListPage(openPayload)}
+          >
+            <Icon type="kehuzu" />
+          </a>
+        );
       };
     } else {
       // 时间
@@ -322,7 +331,7 @@ export default class CombinationModal extends PureComponent {
     }, this.sendRequest);
   }
 
-    // 分页事件
+  // 分页事件
   @autobind
   handlePaginationChange(page) {
     this.sendRequest(page);
@@ -333,16 +342,18 @@ export default class CombinationModal extends PureComponent {
   renderPopover(value) {
     let reactElement = null;
     if (value) {
-      reactElement = (<Popover
-        placement="topLeft"
-        content={value}
-        trigger="hover"
-        overlayClassName={styles.popover}
-      >
-        <div className={styles.ellipsis}>
-          {value}
-        </div>
-      </Popover>);
+      reactElement = (
+        <Popover
+          placement="topLeft"
+          content={value}
+          trigger="hover"
+          overlayClassName={styles.popover}
+        >
+          <div className={styles.ellipsis}>
+            {value}
+          </div>
+        </Popover>
+      );
     } else {
       reactElement = '暂无';
     }
@@ -350,8 +361,12 @@ export default class CombinationModal extends PureComponent {
   }
 
   render() {
-    const { modalType, time, directionCode, combinationCode, keyword, titleArray } = this.state;
-    const { title, treeData, listData = {}, closeModal } = this.props;
+    const {
+      modalType, time, directionCode, combinationCode, keyword, titleArray
+    } = this.state;
+    const {
+      title, treeData, listData = {}, closeModal
+    } = this.props;
     const { list = [], page = {} } = listData;
     const PaginationOption = {
       current: page.pageNum || 1,
@@ -359,12 +374,14 @@ export default class CombinationModal extends PureComponent {
       pageSize: page.pageSize || 10,
       onChange: this.handlePaginationChange,
     };
-    const footerContent = (<Button
-      key="close"
-      onClick={closeModal}
-    >
+    const footerContent = (
+      <Button
+        key="close"
+        onClick={closeModal}
+      >
       关闭
-    </Button>);
+      </Button>
+    );
     return (
       <div className={styles.combinationModal}>
         <Modal
@@ -398,18 +415,18 @@ export default class CombinationModal extends PureComponent {
             </div>
             {
               modalType === HISTORY_TYPE
-              ?
-                <div className={styles.headerItem}>
-                  <span>调仓方向</span>
-                  <Select
-                    name="directionCode"
-                    data={directionRange}
-                    value={directionCode}
-                    onChange={(key, value) => this.handleSelectChange(key, value, '调仓方向')}
-                  />
-                </div>
-              :
-                null
+                ? (
+                  <div className={styles.headerItem}>
+                    <span>调仓方向</span>
+                    <Select
+                      name="directionCode"
+                      data={directionRange}
+                      value={directionCode}
+                      onChange={(key, value) => this.handleSelectChange(key, value, '调仓方向')}
+                    />
+                  </div>
+                )
+                : null
             }
             <div className={styles.headerItem}>
               <Search

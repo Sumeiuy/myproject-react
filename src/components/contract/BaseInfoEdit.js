@@ -182,51 +182,54 @@ export default class BaseInfoEdit extends PureComponent {
         <InfoItem label="子类型" value={this.state.childType} />
         <InfoItem label="客户" value={`${oldData.custName} ${oldData.econNum}`} />
         {
-          isSubscribe ?
-            <InfoItem label="合约开始日期" value={contractStarDate} />
-          :
-            <InfoForm label="合约开始日期" required>
-              <DatePicker
-                name="contractStarDate"
-                value={moment(contractStarDate, 'YYYY-MM-DD')}
-                onChange={this.handleSelectStartTime}
-                boxStyle={datePickerBoxStyle}
-                getCalendarContainer={getPopupContainerFunction}
-              />
-            </InfoForm>
+          isSubscribe
+            ? <InfoItem label="合约开始日期" value={contractStarDate} />
+            : (
+              <InfoForm label="合约开始日期" required>
+                <DatePicker
+                  name="contractStarDate"
+                  value={moment(contractStarDate, 'YYYY-MM-DD')}
+                  onChange={this.handleSelectStartTime}
+                  boxStyle={datePickerBoxStyle}
+                  getCalendarContainer={getPopupContainerFunction}
+                />
+              </InfoForm>
+            )
         }
         {
-          isSubscribe ?
-            <InfoItem label="合约有效期" value={contractPalidity} />
-          :
-            <InfoForm label="合约有效期">
-              <DatePicker
-                name="contractPalidity"
-                value={moment(contractPalidity, 'YYYY-MM-DD')}
-                onChange={this.handleSelectValidityTime}
-                boxStyle={datePickerBoxStyle}
-                getCalendarContainer={getPopupContainerFunction}
-              />
-            </InfoForm>
+          isSubscribe
+            ? <InfoItem label="合约有效期" value={contractPalidity} />
+            : (
+              <InfoForm label="合约有效期">
+                <DatePicker
+                  name="contractPalidity"
+                  value={moment(contractPalidity, 'YYYY-MM-DD')}
+                  onChange={this.handleSelectValidityTime}
+                  boxStyle={datePickerBoxStyle}
+                  getCalendarContainer={getPopupContainerFunction}
+                />
+              </InfoForm>
+            )
         }
         {
-          isSubscribe ?
-            <InfoForm label="合约编号">
-              <Select
-                name="contractNum"
-                data={[
-                  {
-                    show: true,
-                    label: baseInfo.contractNum,
-                    value: baseInfo.contractNum,
-                  },
-                ]}
-                value={baseInfo.contractNum}
-                getPopupContainer={getPopupContainerFunction}
-              />
-            </InfoForm>
-          :
-            null
+          isSubscribe
+            ? (
+              <InfoForm label="合约编号">
+                <Select
+                  name="contractNum"
+                  data={[
+                    {
+                      show: true,
+                      label: baseInfo.contractNum,
+                      value: baseInfo.contractNum,
+                    },
+                  ]}
+                  value={baseInfo.contractNum}
+                  getPopupContainer={getPopupContainerFunction}
+                />
+              </InfoForm>
+            )
+            : null
         }
         <InfoForm label="备注">
           <TextArea
@@ -237,5 +240,4 @@ export default class BaseInfoEdit extends PureComponent {
       </div>
     );
   }
-
 }

@@ -21,37 +21,33 @@ export default function getCustomerDetailPermission(empInfo = {}) {
   } = permission;
 
   // 客户基本信息权限判定
-  const basicInfoPermission =
-    hasCIHMPPermission() ||
-    hasCIBMPPermission() ||
-    hasNPCIHMPPermission() ||
-    hasNPCIBMPPermission() ||
-    hasCDMPermission() ||
-    empInfo.isMainEmp ||
-    empInfo.isAssistantEmp || false;
+  const basicInfoPermission = hasCIHMPPermission()
+    || hasCIBMPPermission()
+    || hasNPCIHMPPermission()
+    || hasNPCIBMPPermission()
+    || hasCDMPermission()
+    || empInfo.isMainEmp
+    || empInfo.isAssistantEmp || false;
 
   // 客户属性-tab-权限判定
-  const custPropertyTabPermission =
-    hasPRIVATEINFOCHECKPermission() || basicInfoPermission;
+  const custPropertyTabPermission = hasPRIVATEINFOCHECKPermission() || basicInfoPermission;
 
   // 客户属性-(非隐私信息)-权限判定
   const custPropertyInfoPermission = basicInfoPermission;
   // 客户属性-隐私信息-权限判定
-  const custPropertyPrivateInfoPermission =
-    hasCIHMPPermission() ||
-    hasPRIVATEINFOCHECKPermission() ||
-    empInfo.isMainEmp ||
-    empInfo.isAssistantEmp || false;
+  const custPropertyPrivateInfoPermission = hasCIHMPPermission()
+    || hasPRIVATEINFOCHECKPermission()
+    || empInfo.isMainEmp
+    || empInfo.isAssistantEmp || false;
 
   // 账户信息tab-(私密客户)-权限判定
-  const accountInfoTabPrivatePermission =
-    hasPCTIQPermission() ||
-    empInfo.isMainEmp ||
-    empInfo.isAssistantEmp || false;
+  const accountInfoTabPrivatePermission = hasPCTIQPermission()
+    || empInfo.isMainEmp
+    || empInfo.isAssistantEmp || false;
 
   // 账户信息tab-权限判定
-  const accountInfoTabPermission = (_.isEmpty(empInfo) || empInfo.isPrivateCustomer) ?
-    accountInfoTabPrivatePermission : (hasNPCTIQPermission() || accountInfoTabPrivatePermission);
+  const accountInfoTabPermission = (_.isEmpty(empInfo) || empInfo.isPrivateCustomer)
+    ? accountInfoTabPrivatePermission : (hasNPCTIQPermission() || accountInfoTabPrivatePermission);
 
   // 业务办理tab-权限判定
   const businessHandTabPermission = basicInfoPermission;
@@ -86,4 +82,3 @@ export default function getCustomerDetailPermission(empInfo = {}) {
     infoEditPermission,
   };
 }
-

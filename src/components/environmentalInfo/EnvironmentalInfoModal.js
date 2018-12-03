@@ -12,7 +12,7 @@ import CommonModal from '../common/biz/CommonModal';
 import { env } from '../../helper';
 
 import Icon from './img/environmentalInfoIcon.png';
-import styles from  './environmentalInfoModal.less';
+import styles from './environmentalInfoModal.less';
 
 export default function EnvironmentalInfo(props) {
   const {
@@ -39,7 +39,7 @@ export default function EnvironmentalInfo(props) {
     >
       <div className={styles.environmentalInfoContent}>
         <div className={styles.environmentalInfoImg}>
-          <img src={Icon} alt='environmentalInfoImg' />
+          <img src={Icon} alt="environmentalInfoImg" />
         </div>
         <div className={styles.environmentalInfoText}>
           <div className={styles.environmentalInfoTextPart}>

@@ -5,7 +5,9 @@
  */
 
 import React, { PureComponent } from 'react';
-import { Spin, Icon, message, Table, Checkbox, Tooltip } from 'antd';
+import {
+  Spin, Icon, message, Table, Checkbox, Tooltip
+} from 'antd';
 import { autobind } from 'core-decorators';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
@@ -14,7 +16,9 @@ import ServiceResultLayout from '../../common/ServiceResultLayout';
 import Button from '../../../common/Button';
 import { MISSION_PROGRESS_MAP, OPEN_IN_TAB_PARAM } from './config';
 import { SOURCE_SERVICE_RESULT_CUST } from '../../../../config/createTaskEntry';
-import { url as urlHelper, emp, permission, number } from '../../../../helper';
+import {
+  url as urlHelper, emp, permission, number
+} from '../../../../helper';
 import { openInTab } from '../../../../utils';
 import logable from '../../../../decorators/logable';
 
@@ -24,7 +28,6 @@ const DEFAULT_DETIAL_TITLE = '客户明细';
 // 获取客户详情接口默认的pagesize
 const PAGE_SIZE = 5;
 export default class ServiceResult extends PureComponent {
-
   static getDerivedStateFromProps(props, state) {
     const { prevProps } = state;
     const { currentId } = prevProps;
@@ -98,15 +101,11 @@ export default class ServiceResult extends PureComponent {
       currentFeedback,
     } = item;
     if (missionProgressStatus) {
-      const currentMapItem = _.filter(MISSION_PROGRESS_MAP, mapItem =>
-        mapItem.value === item.missionProgressStatus && mapItem.type === item.progressFlag,
-      )[0];
+      const currentMapItem = _.filter(MISSION_PROGRESS_MAP, mapItem => mapItem.value === item.missionProgressStatus && mapItem.type === item.progressFlag, )[0];
       this.setCustDetailTitle(currentMapItem.name);
     }
     if (feedbackIdL1) {
-      const currentFeedbackItem = _.filter(currentFeedback, feedbackItem =>
-        feedbackIdL1 === feedbackItem.feedbackIdL1,
-      )[0];
+      const currentFeedbackItem = _.filter(currentFeedback, feedbackItem => feedbackIdL1 === feedbackItem.feedbackIdL1, )[0];
       this.setCustDetailTitle(currentFeedbackItem.feedbackName);
     }
     this.getExecutorDetail({
@@ -190,8 +189,10 @@ export default class ServiceResult extends PureComponent {
 
   // 验证通过后跳转到创建任务
   @autobind
-  @logable({ type: 'ButtonClick',
-payload: { name: '发起任务' } })
+  @logable({
+    type: 'ButtonClick',
+    payload: { name: '发起任务' }
+  })
   handleCreateTaskClick() {
     const { isSendCustsServedByPostn } = this.props;
     const { isSelectAll, currentParam, selectedRowKeys } = this.state;
@@ -303,8 +304,10 @@ payload: { name: '发起任务' } })
 
   // 加载而更多
   @autobind
-  @logable({ type: 'Click',
-payload: { name: '加载更多' } })
+  @logable({
+    type: 'Click',
+    payload: { name: '加载更多' }
+  })
   handlePageChange() {
     const { currentParam } = this.state;
     this.setState({
@@ -352,7 +355,13 @@ payload: { name: '加载更多' } })
   // 获取每列Columns render的通用方法,增加title
   @autobind
   getColumnsTitleRender(text) {
-    return <div title={`${text}`}> {text || '--'} </div>;
+    return (
+      <div title={`${text}`}>
+        {' '}
+        {text || '--'}
+        {' '}
+      </div>
+    );
   }
 
   // 渲染客户明细表格的columns
@@ -446,7 +455,9 @@ payload: { name: '加载更多' } })
 
 
   render() {
-    const { serviceProgress, custFeedBack, isShowExecutorDetailLoading, custDetail } = this.props;
+    const {
+      serviceProgress, custFeedBack, isShowExecutorDetailLoading, custDetail
+    } = this.props;
     const { pageNum } = this.state;
     const { list = [], page = {} } = custDetail;
     // 自定义旋转图标
@@ -470,15 +481,17 @@ payload: { name: '加载更多' } })
           />
           {
             pageNum < page.totalPage || page.totalPage === 0
-            ? <div className={styles.shuaxinWrap}>
-              {
+              ? (
+                <div className={styles.shuaxinWrap}>
+                  {
                 isShowExecutorDetailLoading
-                ? <Spin indicator={customIcon} />
-                : <Icon type="reload" />
+                  ? <Spin indicator={customIcon} />
+                  : <Icon type="reload" />
               }
-              <a onClick={this.handlePageChange}>加载更多</a>
-            </div>
-            : null
+                  <a onClick={this.handlePageChange}>加载更多</a>
+                </div>
+              )
+              : null
           }
         </div>
       </div>

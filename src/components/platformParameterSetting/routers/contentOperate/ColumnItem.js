@@ -47,7 +47,7 @@ export default function ColumnItem(props) {
           <Icon type="shenqing" />
         </div>
         <div className={styles.defaultDelete} onClick={props.onDelete}>
-          <Icon type="shanchu"/>
+          <Icon type="shanchu" />
         </div>
       </div>
     </div>
