@@ -27,12 +27,13 @@ export default class IfTableWrap extends PureComponent {
       PropTypes.number,
       PropTypes.string,
     ]),
+    children: PropTypes.node.isRequired,
   }
 
-  static defaultPropTypes = {
-    text: null,
-    iconStyle: null,
-    noDataStyle: null,
+  static defaultProps = {
+    text: '',
+    iconStyle: {},
+    noDataStyle: {},
     height: '100%',
   }
 
