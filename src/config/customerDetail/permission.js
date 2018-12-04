@@ -2,8 +2,8 @@
  * @Author: zhufeiyang
  * @Description: 客户360-客户属性
  * @Date: 2018-11-06 16:17:28
- * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-26 18:11:35
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-12-03 16:21:06
  */
 import _ from 'lodash';
 import { permission } from '../../helper';
@@ -63,7 +63,8 @@ export default function getCustomerDetailPermission(empInfo = {}) {
   const discountCouponTabPermission = basicInfoPermission;
   // 客户画像tab-权限判定
   const customerProfileTabPermission = basicInfoPermission;
-
+  // 投资能力分析tab-权限判定
+  const investAnalyzeTabPermission = basicInfoPermission;
   // 信息编辑权限
   const infoEditPermission = empInfo.isMainEmp;
   return {
@@ -80,5 +81,6 @@ export default function getCustomerDetailPermission(empInfo = {}) {
     discountCouponTabPermission,
     customerProfileTabPermission,
     infoEditPermission,
+    investAnalyzeTabPermission,
   };
 }

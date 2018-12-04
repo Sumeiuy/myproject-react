@@ -3,16 +3,16 @@
  * @Date: 2018-11-19 15:39:12
  * @Last Modified time: 2018-11-23 20:37:55
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-28 11:07:31
+ * @Last Modified time: 2018-12-03 16:25:08
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { Tabs } from 'antd';
 
-import AccountTotalState from '../../../../components/customerDetailInvestmentAbilityAnalysis/accountTotalState/AccountTotalState';
-import AssetConfigAnalysis from '../../../../components/customerDetailInvestmentAbilityAnalysis/assetConfigAnalysis/AssetConfigAnalysis';
-import ProfitAttributionAnalysis from '../../../../components/customerDetailInvestmentAbilityAnalysis/profitAttributionAnalysis/ProfitAttributionAnalysis';
+import AccountTotalState from '../../../../components/customerDetailInvestAnalyze/accountTotalState/AccountTotalState';
+import AssetConfigAnalysis from '../../../../components/customerDetailInvestAnalyze/assetConfigAnalysis/AssetConfigAnalysis';
+import ProfitAttributionAnalysis from '../../../../components/customerDetailInvestAnalyze/profitAttributionAnalysis/ProfitAttributionAnalysis';
 import logable from '../../../../decorators/logable';
 import styles from './home.less';
 
