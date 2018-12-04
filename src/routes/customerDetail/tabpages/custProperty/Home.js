@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性
  * @Date: 2018-11-06 16:17:28
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-03 09:49:05
+ * @Last Modified time: 2018-12-04 17:52:42
  */
 
 import React, { PureComponent } from 'react';
@@ -99,6 +99,11 @@ export default class CustProperty extends PureComponent {
     custPropertyPrivateInfoPermission: PropTypes.bool,
   }
 
+  static defaultProps = {
+    custPropertyInfoPermission: false,
+    custPropertyPrivateInfoPermission: false,
+  }
+
   static contextTypes = {
     replace: PropTypes.func.isRequired,
   }
@@ -140,6 +145,25 @@ export default class CustProperty extends PureComponent {
   queryData(custId) {
     this.props.queryCustomerProperty({
       custId,
+    });
+  }
+
+  @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '$args[1]',
+    },
+  })
+  handleTabChange(activeKey) {
+    const { replace } = this.context;
+    const { location: { query, pathName } } = this.props;
+    replace({
+      pathName,
+      query: {
+        ...query,
+        custPropertyTabKey: activeKey,
+      }
     });
   }
 
@@ -192,6 +216,7 @@ export default class CustProperty extends PureComponent {
       updateOrgAddress,
       updateOrgPhone,
       custPropertyPrivateInfoPermission,
+      queryCustomerProperty,
     } = this.props;
     return (
       <OrganizationInfo
@@ -203,6 +228,7 @@ export default class CustProperty extends PureComponent {
         delContact={delContact}
         updateOrgAddress={updateOrgAddress}
         updateOrgPhone={updateOrgPhone}
+        queryCustomerProperty={queryCustomerProperty}
       />
     );
   }
@@ -220,6 +246,7 @@ export default class CustProperty extends PureComponent {
       updateOrgAddress,
       updateOrgPhone,
       custPropertyPrivateInfoPermission,
+      queryCustomerProperty,
     } = this.props;
     return (
       <ProductInfo
@@ -231,6 +258,7 @@ export default class CustProperty extends PureComponent {
         delContact={delContact}
         updateOrgAddress={updateOrgAddress}
         updateOrgPhone={updateOrgPhone}
+        queryCustomerProperty={queryCustomerProperty}
       />
     );
   }
@@ -257,25 +285,6 @@ export default class CustProperty extends PureComponent {
         break;
     }
     return component;
-  }
-
-  @autobind
-  @logable({
-    type: 'Click',
-    payload: {
-      name: '$args[1]',
-    },
-  })
-  handleTabChange(activeKey) {
-    const { replace } = this.context;
-    const { location: { query, pathName } } = this.props;
-    replace({
-      pathName,
-      query: {
-        ...query,
-        custPropertyTabKey: activeKey,
-      }
-    });
   }
 
   renderTabPane(tabPane, permission) {

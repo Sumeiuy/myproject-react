@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 19:36:22
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-30 18:14:07
+ * @Last Modified time: 2018-12-04 17:58:29
  * @description 机构客户添加联系方式Modal
  */
 
@@ -42,6 +42,8 @@ export default class ContactWayModal extends PureComponent {
     updateOrgAddress: PropTypes.func.isRequired,
     // 刷新联系方式
     refreshContact: PropTypes.func.isRequired,
+    // 是否进行了修改
+    saveUpdateState: PropTypes.func.isRequired,
   }
 
   static contextTypes = {
@@ -51,6 +53,7 @@ export default class ContactWayModal extends PureComponent {
   constructor(props, context) {
     super(props);
     this.state = {
+      // eslint-disable-next-line
       prevProps: props,
       // 添加联系方式Modal
       addContactModal: false,
@@ -63,10 +66,32 @@ export default class ContactWayModal extends PureComponent {
     this.isMainEmp = _.get(context.custBasic, 'isMainEmp');
   }
 
+  // 修改机构客户的电话信息的Columns
+  @autobind
+  getOrgPhoneColumns(columns) {
+    return _.map(columns, (column) => {
+      // 机构客户的手机信息、固定电话、电子邮件传递过来的数据是一个对象，我们展示他的value
+      const { dataIndex } = column;
+      if (
+        dataIndex === 'mobile'
+        || dataIndex === 'landline'
+        || dataIndex === 'email'
+      ) {
+        return {
+          ...column,
+          render: text => text.value,
+        };
+      }
+      return column;
+    });
+  }
+
   // 刷新数据
   @autobind
   refresh(resultData) {
     if (resultData.result === 'success') {
+      // 告诉父组件进行了修改
+      this.props.saveUpdateState();
       this.props.refreshContact();
     }
   }
@@ -91,26 +116,6 @@ export default class ContactWayModal extends PureComponent {
     confirm({
       content: '确定要删除该条联系方式吗？',
       onOk: () => this.delOrgContact(query),
-    });
-  }
-
-  // 修改机构客户的电话信息的Columns
-  @autobind
-  getOrgPhoneColumns(columns) {
-    return _.map(columns, (column) => {
-      // 机构客户的手机信息、固定电话、电子邮件传递过来的数据是一个对象，我们展示他的value
-      const { dataIndex } = column;
-      if (
-        dataIndex === 'mobile'
-        || dataIndex === 'landline'
-        || dataIndex === 'email'
-      ) {
-        return {
-          ...column,
-          render: text => text.value,
-        };
-      }
-      return column;
     });
   }
 

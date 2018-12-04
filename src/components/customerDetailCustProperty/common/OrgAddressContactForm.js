@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 19:02:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-30 16:37:50
+ * @Last Modified time: 2018-12-04 17:41:34
  * @description 添加机构客户地址信息联系方式的Form
  */
 import React, { PureComponent } from 'react';
@@ -13,6 +13,7 @@ import {
   Row, Col, Select, Input, Form
 } from 'antd';
 
+import { regxp } from '../../../helper';
 import logable from '../../../decorators/logable';
 import { isCreateContact } from './utils';
 import { FORM_STYLE, SOURCE_CODE } from './config';
@@ -56,6 +57,7 @@ export default class OrgAddressContactForm extends PureComponent {
     } = data;
     this.state = {
       // 是否主要,只传N
+      // eslint-disable-next-line
       mainFlag: 'N',
       // 地址类型
       addressTypeCode: isCreate ? '' : addressTypeCode,
@@ -137,7 +139,7 @@ export default class OrgAddressContactForm extends PureComponent {
       value: '$args[0]',
     },
   })
-  handleCityChange(cityCode) {
+  handleCityChange() {
     // 记录日志用
   }
 
@@ -214,7 +216,7 @@ export default class OrgAddressContactForm extends PureComponent {
             <div className={styles.formItem}>
               <div className={styles.itemLable}>
                 <span className={styles.requried}>*</span>
-地址类型：
+                地址类型：
               </div>
               <div className={styles.valueArea}>
                 <FormItem>
@@ -244,7 +246,7 @@ export default class OrgAddressContactForm extends PureComponent {
             <div className={styles.formItem}>
               <div className={styles.itemLable}>
                 <span className={styles.requried}>*</span>
-地址：
+                地址：
               </div>
               <div className={styles.valueArea}>
                 <FormItem>
@@ -262,12 +264,14 @@ export default class OrgAddressContactForm extends PureComponent {
             <div className={styles.formItem}>
               <div className={styles.itemLable}>
                 <span className={styles.requried}>*</span>
-邮政编码：
+                邮政编码：
               </div>
               <div className={styles.valueArea}>
                 <FormItem>
                   {getFieldDecorator('zipCode', {
-                    rules: [{ required: true, message: '请填写邮政编码' }],
+                    rules: [
+                      { pattern: regxp.zipCode, message: '邮政编码格式不正确' }
+                    ],
                     initialValue: zipCode,
                   })(
                     <Input style={FORM_STYLE} />,
@@ -296,7 +300,7 @@ export default class OrgAddressContactForm extends PureComponent {
             <div className={styles.formItem}>
               <div className={styles.itemLable}>
                 <span className={styles.requried}>*</span>
-省/(直辖)市：
+                省/(直辖)市：
               </div>
               <div className={styles.valueArea}>
                 <FormItem>
@@ -304,7 +308,6 @@ export default class OrgAddressContactForm extends PureComponent {
                   getFieldDecorator(
                     'provinceCode',
                     {
-                      rules: [{ required: true, message: '请选择省/(直辖)市' }],
                       initialValue: provinceCode,
                     }
                   )(
@@ -326,7 +329,7 @@ export default class OrgAddressContactForm extends PureComponent {
             <div className={styles.formItem}>
               <div className={styles.itemLable}>
                 <span className={styles.requried}>*</span>
-城市：
+                城市：
               </div>
               <div className={styles.valueArea}>
                 <FormItem>
@@ -353,8 +356,7 @@ export default class OrgAddressContactForm extends PureComponent {
           <Col span={12}>
             <div className={styles.formItem}>
               <div className={styles.itemLable}>
-                <span className={styles.requried}>*</span>
-来源：
+                来源：
               </div>
               <div className={styles.valueArea}>
                 <FormItem>

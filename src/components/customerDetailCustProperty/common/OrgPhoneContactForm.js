@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 20:29:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-30 16:56:24
+ * @Last Modified time: 2018-12-04 17:38:46
  * @description 添加机构客户电话信息Form
  */
 import React, { PureComponent } from 'react';
@@ -13,6 +13,7 @@ import {
   Row, Col, Select, Input, Form
 } from 'antd';
 
+import { regxp } from '../../../helper';
 import logable from '../../../decorators/logable';
 import { isCreateContact } from './utils';
 import { FORM_STYLE, SOURCE_CODE } from './config';
@@ -57,6 +58,7 @@ export default class OrgPhoneContactForm extends PureComponent {
     } = data;
     this.state = {
       // 是否主要,只传N
+      // eslint-disable-next-line
       mainFlag: 'N',
       // 姓名
       name: isCreate ? '' : name,
@@ -130,20 +132,6 @@ export default class OrgPhoneContactForm extends PureComponent {
     }, this.saveChange);
   }
 
-  // 证件类型下拉
-  @autobind
-  @logable({
-    type: 'Click',
-    payload: {
-      name: '证件类型',
-      value: '$args[0]',
-    },
-  })
-  handleCretifiateTypeChange(cretificateType) {
-    // 日志记录用
-    // this.setState({ cretificateType }, this.saveChange);
-  }
-
   // 职务下拉
   @autobind
   @logable({
@@ -153,9 +141,8 @@ export default class OrgPhoneContactForm extends PureComponent {
       value: '$args[0]',
     },
   })
-  handleDutyChange(dutyCode) {
+  handleDutyChange() {
     // 日志记录用
-    // this.setState({ dutyCode }, this.saveChange);
   }
 
   // 联系人类型下拉
@@ -167,9 +154,8 @@ export default class OrgPhoneContactForm extends PureComponent {
       value: '$args[0]',
     },
   })
-  handleLinkManChange(contacterTypeCode) {
+  handleLinkManChange() {
     // 日志记录用
-    // this.setState({ contacterTypeCode }, this.saveChange);
   }
 
   @autobind
@@ -247,7 +233,7 @@ export default class OrgPhoneContactForm extends PureComponent {
             <div className={styles.formItem}>
               <div className={styles.itemLable}>
                 <span className={styles.requried}>*</span>
-姓名：
+                姓名：
               </div>
               <div className={styles.valueArea}>
                 <FormItem>
@@ -271,8 +257,7 @@ export default class OrgPhoneContactForm extends PureComponent {
           <Col span={12}>
             <div className={styles.formItem}>
               <div className={styles.itemLable}>
-                <span className={styles.requried}>*</span>
-证件类型：
+                证件类型：
               </div>
               <div className={styles.valueArea}>
                 <FormItem>
@@ -280,13 +265,12 @@ export default class OrgPhoneContactForm extends PureComponent {
                   getFieldDecorator(
                     'cretificateType',
                     {
-                      rules: [{ required: true, message: '请选择证件类型' }],
                       initialValue: cretificateType,
                     }
                   )(
                     <Select
+                      disabled
                       style={FORM_STYLE}
-                      onChange={this.handleCretifiateTypeChange}
                     >
                       {this.renderCretificateOption()}
                     </Select>
@@ -299,8 +283,7 @@ export default class OrgPhoneContactForm extends PureComponent {
           <Col span={12}>
             <div className={styles.formItem}>
               <div className={styles.itemLable}>
-                <span className={styles.requried}>*</span>
-证件号码：
+                证件号码：
               </div>
               <div className={styles.valueArea}>
                 <FormItem>
@@ -308,11 +291,10 @@ export default class OrgPhoneContactForm extends PureComponent {
                   getFieldDecorator(
                     'cretificateNumber',
                     {
-                      rules: [{ required: true, message: '请输入证件号码' }],
                       initialValue: cretificateNumber,
                     }
                   )(
-                    <Input style={FORM_STYLE} />
+                    <Input disabled style={FORM_STYLE} />
                   )
                 }
                 </FormItem>
@@ -330,7 +312,6 @@ export default class OrgPhoneContactForm extends PureComponent {
                     getFieldDecorator(
                       'dutyCode',
                       {
-                        rules: [{ required: true, message: '请选择职务' }],
                         initialValue: dutyCode,
                       }
                     )(
@@ -350,7 +331,7 @@ export default class OrgPhoneContactForm extends PureComponent {
             <div className={styles.formItem}>
               <div className={styles.itemLable}>
                 <span className={styles.requried}>*</span>
-联系人类型：
+                联系人类型：
               </div>
               <div className={styles.valueArea}>
                 <FormItem>
@@ -385,7 +366,9 @@ export default class OrgPhoneContactForm extends PureComponent {
                   getFieldDecorator(
                     'mobileValue',
                     {
-                      rules: [{ required: true, message: '请输入证件号码' }],
+                      rules: [
+                        { pattern: regxp.cellPhone, message: '手机号码格式不正确' }
+                      ],
                       initialValue: mobileValue,
                     }
                   )(
@@ -405,7 +388,9 @@ export default class OrgPhoneContactForm extends PureComponent {
                   getFieldDecorator(
                     'landlineValue',
                     {
-                      rules: [{ required: true, message: '请输入证件号码' }],
+                      rules: [
+                        { pattern: regxp.tellPhone, message: '固定电话号码格式不正确' }
+                      ],
                       initialValue: landlineValue,
                     }
                   )(
@@ -427,7 +412,9 @@ export default class OrgPhoneContactForm extends PureComponent {
                   getFieldDecorator(
                     'emailValue',
                     {
-                      rules: [{ required: true, message: '请输入证件号码' }],
+                      rules: [
+                        { pattern: regxp.email, message: '电子邮件格式不正确' }
+                      ],
                       initialValue: emailValue,
                     }
                   )(
