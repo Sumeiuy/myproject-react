@@ -2,10 +2,10 @@
  * @Author: zhangjun
  * @Date: 2018-11-20 15:53:09
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-28 10:55:53
+ * @Last Modified time: 2018-12-03 16:26:19
  * @Description: 客户360-投资能力分析相关api
  */
-export default function detailInvestmentAbilityAnalysis(api) {
+export default function detailInvestAnalyze(api) {
   return {
     // 获取客户盈利能力
     queryProfitAbility: query => api.post('/groovynoauth/fsp/cust/custdetail/investment/queryProfitAbility', query),

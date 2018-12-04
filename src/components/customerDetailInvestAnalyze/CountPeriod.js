@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-20 14:32:56
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-22 09:16:24
+ * @Last Modified time: 2018-12-03 21:21:28
  * @description 统计期间
  */
 
@@ -13,7 +13,7 @@ import styles from './countPeriod.less';
 
 const COUNT_PERIOD = `${lastYearDataOfLastMonth}-${endDateOfLastMonth}(一年期)`;
 
-export default function CountPeriod(props) {
+export default function CountPeriod() {
   return (
     <div className={styles.countPeriod}>
       <span className={styles.label}>
