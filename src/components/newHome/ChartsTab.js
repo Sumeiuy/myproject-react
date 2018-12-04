@@ -21,6 +21,7 @@ import { emp, time, permission } from '../../helper';
 import { transformDateTypeToDate } from '../customerPool/helper';
 import { PerformanceIndicators } from '../customerPool/home';
 import AnalysisCharts from './AnalysisCharts';
+import PerformanceCharts from './PerformanceCharts';
 import TabController from './TabController';
 import logable from '../../decorators/logable';
 import styles from './chartsTab.less';
@@ -52,9 +53,6 @@ export default class ChartsTab extends PureComponent {
 
   constructor(props) {
     super(props);
-    this.state = {
-      location: props.location,
-    };
     // 初始化当前登录用户的orgId
     this.loginOrgId = emp.getOrgId();
     // HTSC 首页指标查询
@@ -259,13 +257,16 @@ export default class ChartsTab extends PureComponent {
         {
           tgQyFlag ? (
             <TabPane tab="投顾绩效" key="performance">
-              <PerformanceIndicators
+              {/* <PerformanceIndicators
                 indicators={performanceIndicators}
                 location={location}
                 cycle={cycle}
                 custCount={custCount}
                 category="performance"
                 isNewHome
+              /> */}
+              <PerformanceCharts
+                indicators={performanceIndicators}
               />
             </TabPane>
           ) : null

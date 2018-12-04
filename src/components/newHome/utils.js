@@ -52,14 +52,18 @@ function getCustClassChartData(data) {
     dataSource[0].custNumRate = 50;
     dataSource[1].custNumRate = 50;
   } else {
-    dataSource[0].custNumRate = Math.floor((dataSource[0].custNum / (dataSource[0].custNum + dataSource[1].custNum)) * 100);
+    dataSource[0].custNumRate = Math.floor(
+      (dataSource[0].custNum / (dataSource[0].custNum + dataSource[1].custNum)) * 100
+    );
     dataSource[1].custNumRate = 100 - dataSource[0].custNumRate;
   }
   if (dataSource[0].asset + dataSource[1].asset === 0) {
     dataSource[0].assetRate = 50;
     dataSource[1].assetRate = 50;
   } else {
-    dataSource[0].assetRate = Math.floor((dataSource[0].asset / (dataSource[0].asset + dataSource[1].asset)) * 100);
+    dataSource[0].assetRate = Math.floor(
+      (dataSource[0].asset / (dataSource[0].asset + dataSource[1].asset)) * 100
+    );
     dataSource[1].assetRate = 100 - dataSource[0].assetRate;
   }
   const option = {
@@ -78,18 +82,18 @@ function getCustClassChartData(data) {
         fontSize: 12,
       },
       formatter: (params) => {
-        let data = {
+        let formatData = {
           value: number.thousandFormat(params.data.custNum),
           unit: '人',
         };
         if (params.name === '托管资产') {
           const item = transformItemUnit(params.data.asset);
-          data = {
+          formatData = {
             value: item.newItem,
             unit: item.newUnit,
           };
         }
-        return `${params.data.name} ${params.name}：${data.value}${data.unit}`;
+        return `${params.data.name} ${params.name}：${formatData.value}${formatData.unit}`;
       }
     },
     xAxis: {
@@ -268,18 +272,18 @@ function getCustomTypeChartData(data) {
         fontSize: 12,
       },
       formatter: (params) => {
-        let data = {
+        let formatData = {
           value: number.thousandFormat(params.data.custNum),
           unit: '人',
         };
         if (params.name === '托管资产') {
           const item = transformItemUnit(params.data.asset);
-          data = {
+          formatData = {
             value: item.newItem,
             unit: item.newUnit,
           };
         }
-        return `${params.data.name} ${params.name}：${data.value}${data.unit}`;
+        return `${params.data.name} ${params.name}：${formatData.value}${formatData.unit}`;
       }
     },
     xAxis: {
@@ -481,11 +485,11 @@ function getMaxCostRateChartData(data) {
         fontSize: 12,
       },
       formatter: (params) => {
-        const data = {
+        const formatData = {
           value: number.thousandFormat(params.data.value),
           unit: '人',
         };
-        return `${params.data.name} 客户数：${data.value}${data.unit}`;
+        return `${params.data.name} 客户数：${formatData.value}${formatData.unit}`;
       }
     },
     xAxis: [
@@ -686,11 +690,11 @@ function getPftAmtChartData(data) {
         fontSize: 12,
       },
       formatter: (params) => {
-        const data = {
+        const formatData = {
           value: number.thousandFormat(params.data.value),
           unit: '人',
         };
-        return `${params.data.name} 客户数：${data.value}${data.unit}`;
+        return `${params.data.name} 客户数：${formatData.value}${formatData.unit}`;
       }
     },
     xAxis: [
@@ -828,10 +832,104 @@ function getHoldingChart(data) {
   return option;
 }
 
+// 业务开通
+function getOpenedAccountsChartData(data) {
+  const xAxisLabel = ['融资融券', '天天发', '沪港通', '深港通', '个股期权', '新三板'];
+  const {
+    rzrqBusiCurr, // 融资融券
+    ttfBusiCurr, // 天天发
+    hgtBusiCurr, // 沪港通
+    sgtBusiCurr, // 深港通
+    gpqqBusiCurr, // 个股期权
+    xsbBusiCurr, // 新三板
+  } = data;
+  const dataSource = [
+    {
+      name: '融资融券',
+      value: (rzrqBusiCurr && rzrqBusiCurr.value) || 50,
+    },
+    {
+      name: '天天发',
+      value: (ttfBusiCurr && ttfBusiCurr.value) || 20,
+    },
+    {
+      name: '沪港通',
+      value: (hgtBusiCurr && hgtBusiCurr.value) || 45,
+    },
+    {
+      name: '深港通',
+      value: (sgtBusiCurr && sgtBusiCurr.value) || 26,
+    },
+    {
+      name: '个股期权',
+      value: (gpqqBusiCurr && gpqqBusiCurr.value) || 15,
+    },
+    {
+      name: '新三板',
+      value: (xsbBusiCurr && xsbBusiCurr.value) || 30,
+    },
+  ];
+  const option = {
+    color: ['#49b6ff'],
+    grid: {
+      left: '10px',
+      right: '10px',
+      bottom: '50px',
+      top: '15px',
+      containLabel: false,
+    },
+    xAxis: [
+      {
+        type: 'category',
+        data: _.map(dataSource, item => item.name),
+        show: true,
+        axisLine: {
+          lineStyle: {
+            color: '#a8b6d4',
+            width: 2,
+          }
+        },
+        axisTick: {
+          alignWithLabel: true,
+          length: 0,
+        },
+        axisLabel: {
+          rotate: 30,
+          color: '#666',
+        },
+      }
+    ],
+    yAxis: [
+      {
+        type: 'value',
+        show: false,
+      }
+    ],
+    series: [{
+      data: dataSource,
+      type: 'bar',
+      barWidth: 14,
+      label: {
+        normal: {
+          show: true,
+          position: 'top',
+          color: '#333',
+          fontSize: 12,
+        },
+      },
+    }],
+  };
+  return {
+    xAxisLabel,
+    option,
+  };
+}
+
 export {
   getCustClassChartData,
   getCustomTypeChartData,
   getMaxCostRateChartData,
   getPftAmtChartData,
   getHoldingChart,
+  getOpenedAccountsChartData,
 };
