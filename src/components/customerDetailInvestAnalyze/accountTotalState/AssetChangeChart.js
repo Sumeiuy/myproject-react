@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-23 09:25:41
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-28 16:51:06
+ * @Last Modified time: 2018-12-03 21:20:53
  * @description 资产变动报表
  */
 import React, { PureComponent } from 'react';
@@ -26,20 +26,6 @@ export default class AssetChangeChart extends PureComponent {
   static propTypes = {
     // 账户资产变动图表数据
     assetChangeReportData: PropTypes.array.isRequired,
-  }
-
-  @autobind
-  tooltipFormat(params) {
-    const { dataIndex } = params[0];
-    const { assetChangeReportData } = this.props;
-    // 账户资产变动图表返回的日期
-    const filterDate = filterData(assetChangeReportData, 'date');
-    const dateData = filterDate[dataIndex];
-    return `
-      <div>${dateData}</div>
-      <div>${params[0].marker}${params[0].seriesName}: ${thousandFormat(params[0].value)}</div>
-      <div>${params[1].marker}${params[1].seriesName}: ${thousandFormat(params[1].value)}</div>
-    `;
   }
 
   @autobind
@@ -80,6 +66,20 @@ export default class AssetChangeChart extends PureComponent {
       ],
     };
     return option;
+  }
+
+  @autobind
+  tooltipFormat(params) {
+    const { dataIndex } = params[0];
+    const { assetChangeReportData } = this.props;
+    // 账户资产变动图表返回的日期
+    const filterDate = filterData(assetChangeReportData, 'date');
+    const dateData = filterDate[dataIndex];
+    return `
+      <div>${dateData}</div>
+      <div>${params[0].marker}${params[0].seriesName}: ${thousandFormat(params[0].value)}</div>
+      <div>${params[1].marker}${params[1].seriesName}: ${thousandFormat(params[1].value)}</div>
+    `;
   }
 
   render() {

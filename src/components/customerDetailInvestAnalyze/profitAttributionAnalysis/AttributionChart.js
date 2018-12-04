@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-27 17:35:41
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-28 16:48:42
+ * @Last Modified time: 2018-12-03 21:15:11
  * @description 归因图表
  */
 import React, { PureComponent } from 'react';
@@ -23,22 +23,6 @@ export default class AttributionChart extends PureComponent {
   static propTypes = {
     // brinson归因趋势
     attributionTrend: PropTypes.array.isRequired,
-  }
-
-  // 图表浮层提示框
-  @autobind
-  tooltipFormat(params) {
-    const { dataIndex } = params[0];
-    const { attributionTrend } = this.props;
-    // 账户收益走势图表返回的日期
-    const filterDate = filterData(attributionTrend, 'date');
-    const dateData = filterDate[dataIndex];
-    return `
-      <div>${dateData}</div>
-      <div>${params[0].marker}${params[0].seriesName}: ${params[0].value}%</div>
-      <div>${params[1].marker}${params[1].seriesName}: ${params[1].value}%</div>
-      <div>${params[2].marker}${params[2].seriesName}: ${params[2].value}%</div>
-    `;
   }
 
   // 图表配置项
@@ -88,6 +72,22 @@ export default class AttributionChart extends PureComponent {
       ],
     };
     return option;
+  }
+
+  // 图表浮层提示框
+  @autobind
+  tooltipFormat(params) {
+    const { dataIndex } = params[0];
+    const { attributionTrend } = this.props;
+    // 账户收益走势图表返回的日期
+    const filterDate = filterData(attributionTrend, 'date');
+    const dateData = filterDate[dataIndex];
+    return `
+      <div>${dateData}</div>
+      <div>${params[0].marker}${params[0].seriesName}: ${params[0].value}%</div>
+      <div>${params[1].marker}${params[1].seriesName}: ${params[1].value}%</div>
+      <div>${params[2].marker}${params[2].seriesName}: ${params[2].value}%</div>
+    `;
   }
 
   render() {

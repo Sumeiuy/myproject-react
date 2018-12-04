@@ -2,16 +2,16 @@
  * @Author: zhangjun
  * @Date: 2018-11-20 16:01:36
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-28 10:58:20
+ * @Last Modified time: 2018-12-03 16:29:24
  * @description 新版客户360详情下的账户信息Tab页面的model
  */
-import { detailInvestmentAbilityAnalysis as api } from '../../api';
+import { detailInvestAnalyze as api } from '../../api';
 
 const EMPTY_ARRAY = [];
 const EMPTY_OBJECT = {};
 
 export default {
-  namespace: 'detailInvestmentAbilityAnalysis',
+  namespace: 'detailInvestAnalyze',
   state: {
     // 盈利能力
     profitAbility: EMPTY_OBJECT,

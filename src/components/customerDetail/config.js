@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: Description
  * @Date: 2018-11-23 11:03:14
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-11-23 11:07:57
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-12-03 16:58:40
  */
 
 
@@ -27,6 +27,8 @@ export const INVESTOR_ASSESSMENT_TAB_KEY = 'investorAssessment';
 export const PRODUCT_ORDER_TAB_KEY = 'productOrder';
 // 理财优惠券
 export const DISCOUNT_COUPON_TAB_KEY = 'discountCoupon';
+// 客户画像
+export const CUST_PRFIT_TAB_KEY = 'customerProfit';
 
 export const custDetailTabMap = {
   [ACCOUNT_INFO_TAB_KEY]: '账户信息',
@@ -39,4 +41,5 @@ export const custDetailTabMap = {
   [INVESTOR_ASSESSMENT_TAB_KEY]: '投资者评估',
   [PRODUCT_ORDER_TAB_KEY]: '产品订单',
   [DISCOUNT_COUPON_TAB_KEY]: '理财优惠券',
+  [CUST_PRFIT_TAB_KEY]: '客户画像',
 };

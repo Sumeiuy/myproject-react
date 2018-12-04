@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-27 16:21:53
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-28 13:20:23
+ * @Last Modified time: 2018-12-03 20:53:41
  * @Description: 客户360-投资能力分析相关effect,mapStateToProps,mapDispatchToProps
  */
 import { connect } from 'dva';
@@ -14,32 +14,32 @@ const effect = dva.generateEffect;
 
 const effects = {
   // 获取客户盈利能力
-  getProfitAbility: 'detailInvestmentAbilityAnalysis/getProfitAbility',
+  getProfitAbility: 'detailInvestAnalyze/getProfitAbility',
   // 获取投资账户特征
-  getInvestmentFeatureLabels: 'detailInvestmentAbilityAnalysis/getInvestmentFeatureLabels',
+  getInvestmentFeatureLabels: 'detailInvestAnalyze/getInvestmentFeatureLabels',
   // 获取账户资产变动
-  getAssetChangeState: 'detailInvestmentAbilityAnalysis/getAssetChangeState',
+  getAssetChangeState: 'detailInvestAnalyze/getAssetChangeState',
   // 获取账户资产变动图表
-  getAssetChangeReport: 'detailInvestmentAbilityAnalysis/getAssetChangeReport',
+  getAssetChangeReport: 'detailInvestAnalyze/getAssetChangeReport',
   // 获取账户收益走势图表数据
-  getProfitTrendReport: 'detailInvestmentAbilityAnalysis/getProfitTrendReport',
+  getProfitTrendReport: 'detailInvestAnalyze/getProfitTrendReport',
   // 获取brinson归因结果
-  getAttributionAnalysis: 'detailInvestmentAbilityAnalysis/getAttributionAnalysis',
+  getAttributionAnalysis: 'detailInvestAnalyze/getAttributionAnalysis',
 };
 
 const mapStateToProps = state => ({
   // 客户盈利能力
-  profitAbility: state.detailInvestmentAbilityAnalysis.profitAbility,
+  profitAbility: state.detailInvestAnalyze.profitAbility,
   // 投资账户特征
-  investmentFeatureLabels: state.detailInvestmentAbilityAnalysis.investmentFeatureLabels,
+  investmentFeatureLabels: state.detailInvestAnalyze.investmentFeatureLabels,
   // 账户资产变动
-  assetChangeList: state.detailInvestmentAbilityAnalysis.assetChangeList,
+  assetChangeList: state.detailInvestAnalyze.assetChangeList,
   // 账户资产变动图表数据
-  assetChangeReportData: state.detailInvestmentAbilityAnalysis.assetChangeReportData,
+  assetChangeReportData: state.detailInvestAnalyze.assetChangeReportData,
   // 账户收益走势图表数据
-  profitTrendData: state.detailInvestmentAbilityAnalysis.profitTrendData,
+  profitTrendData: state.detailInvestAnalyze.profitTrendData,
   // brinson归因数据
-  attributionData: state.detailInvestmentAbilityAnalysis.attributionData,
+  attributionData: state.detailInvestAnalyze.attributionData,
 });
 
 const mapDispatchToProps = {

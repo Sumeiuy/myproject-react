@@ -29,6 +29,11 @@ const loadingEnd = (Component) => {
       effect: '',
     }
 
+    constructor(props) {
+      super(props);
+      this.isFirstRequest = true;
+    }
+
     render() {
       const {
         effect,
@@ -39,11 +44,19 @@ const loadingEnd = (Component) => {
 
       let shouldRenderComponent = false;
 
+      // 没有需要监听的请求，直接渲染占位图组件
       if (_.isEmpty(effect)) {
         shouldRenderComponent = true;
       }
 
+      // 如果不是第一次请求，直接渲染占位图组件
+      if (!this.isFirstRequest) {
+        shouldRenderComponent = true;
+      }
+
+      // 当请求回来的时候设置不是第一次请求，shouldRenderComponent设置为true
       if (interfaceState[effect] === false) {
+        this.isFirstRequest = false;
         shouldRenderComponent = true;
       }
 
@@ -54,7 +67,8 @@ const loadingEnd = (Component) => {
               {...remainingProps}
               ref={wrappedComponentRef}
             />
-          ) : null
+          )
+          : (<div />)
       );
     }
   }

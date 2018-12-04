@@ -44,7 +44,7 @@ import detailProductOrderAPI from './detailProductOrder';
 import activityColumnAPI from './activityColumn';
 import taskAnalysisReportAPI from './taskAnalysisReport';
 import detailDiscountCouponAPI from './detailDiscountCoupon';
-import detailInvestmentAbilityAnalysisAPI from './detailInvestmentAbilityAnalysis';
+import detailInvestAnalyzeAPI from './detailInvestAnalyze';
 import detailBusinessHandAPI from './detailBusinessHand';
 import detailContractManageAPI from './detailContractManage';
 
@@ -176,7 +176,7 @@ const exported = {
   // ========== 新版客户360详情下理财优惠券Tab组件的API
   detailDiscountCoupon: detailDiscountCouponAPI(api),
   // ========== 客户360-投资能力分析相关api
-  detailInvestmentAbilityAnalysis: detailInvestmentAbilityAnalysisAPI(api),
+  detailInvestAnalyze: detailInvestAnalyzeAPI(api),
   // ========== 新版客户360详情下业务办理的API
   detailBusinessHand: detailBusinessHandAPI(api),
   // ========== 新版客户360-合约管理-协议
@@ -231,7 +231,7 @@ export const {
   activityColumn,
   taskAnalysisReport,
   detailDiscountCoupon,
-  detailInvestmentAbilityAnalysis,
+  detailInvestAnalyze,
   detailBusinessHand,
   detailContractManage,
 } = exported;

@@ -6,23 +6,19 @@
  * @description 判断是否渲染子组件
  */
 
-import { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import loadingEnd from '../../../decorators/loadingEnd';
 
-@loadingEnd
-export default class IfWrap extends PureComponent {
-  static propTypes = {
-    // 是否渲染
-    isRender: PropTypes.bool.isRequired,
-    children: PropTypes.node.isRequired,
+const IfWrap = (props) => {
+  const { isRender } = props;
+  if (!isRender) {
+    return null;
   }
+  return props.children;
+};
 
-  render() {
-    const { isRender, children } = this.props;
-    if (!isRender) {
-      return null;
-    }
-    return children;
-  }
-}
+IfWrap.propTypes = {
+  // 是否渲染
+  isRender: PropTypes.bool.isRequired,
+};
+
+export default IfWrap;
