@@ -1,8 +1,8 @@
 /**
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-29 10:07:40
+  * @Last Modified by: sunweibin
+  * @Last Modified time: 2018-12-04 09:59:05
  */
 
 import React, { PureComponent } from 'react';
@@ -33,6 +33,7 @@ import {
   SERVICE_RECORD_TAB_KEY,
   SERVICE_RELATION_TAB_KEY,
   CONTRACT_MANAGE_TAB_KEY,
+  /* INVESTOR_ASSESSMENT_TAB_KEY, */
   PRODUCT_ORDER_TAB_KEY,
   DISCOUNT_COUPON_TAB_KEY,
   CUST_PRFIT_TAB_KEY,
@@ -257,12 +258,6 @@ export default class Home extends PureComponent {
       </TabPane>
     );
 
-    const custProfitTabPane = (
-      <TabPane tab="客户画像" key={CUST_PRFIT_TAB_KEY}>
-        <CustProfit location={location} />
-      </TabPane>
-    );
-
     const serviceRecordTabPane = (
       <TabPane tab="服务记录" key={SERVICE_RECORD_TAB_KEY}>
         <ServiceRecord location={location} />
@@ -290,6 +285,12 @@ export default class Home extends PureComponent {
     const discountCouponTabPane = (
       <TabPane tab="理财优惠券" key={DISCOUNT_COUPON_TAB_KEY}>
         <DiscountCoupon location={location} />
+      </TabPane>
+    );
+
+    const custProfitTabPane = (
+      <TabPane tab="客户画像" key={CUST_PRFIT_TAB_KEY}>
+        <CustProfit location={location} />
       </TabPane>
     );
 
