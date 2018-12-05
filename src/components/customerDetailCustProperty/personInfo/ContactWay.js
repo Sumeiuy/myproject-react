@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性-个人客户联系方式
  * @Date: 2018-11-07 14:33:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-30 17:56:55
+ * @Last Modified time: 2018-12-05 11:21:24
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -66,9 +66,11 @@ export default class ContactWay extends PureComponent {
     updatePerOther: PropTypes.func.isRequired,
     // 删除个人|机构客户的非主要联系方式
     delContact: PropTypes.func.isRequired,
+    // 查询个人客户联系方式,用于修改编辑后刷新显示的信息
+    queryCustomerProperty: PropTypes.func.isRequired,
   }
 
-  static defaultPropTypes = {
+  static defaultProps = {
     noMessage: false,
     noCall: false,
   }
@@ -82,6 +84,8 @@ export default class ContactWay extends PureComponent {
     this.state = {
       // 编辑联系方式Modal的visible
       personalContactWayModal: false,
+      // 是否进行过联系方式的修改
+      hasUpdatedContact: false,
     };
   }
 
@@ -142,6 +146,12 @@ export default class ContactWay extends PureComponent {
     return this.getPrivateValue(value);
   }
 
+  // 子组件修改|新增|编辑后
+  @autobind
+  saveUpdatedStatus() {
+    this.setState({ hasUpdatedContact: true });
+  }
+
   // 刷新个人客户的联系方式列表
   @autobind
   refreshPerContact() {
@@ -176,6 +186,19 @@ export default class ContactWay extends PureComponent {
   // 关闭个人客户添加联系方式的Modal
   @autobind
   handleContactWayModalClose() {
+    const { hasUpdatedContact } = this.state;
+    if (hasUpdatedContact) {
+      // 如果修改了，则刷新
+      const {
+        location: {
+          query: { custId },
+        },
+      } = this.props;
+      this.props.queryCustomerProperty({
+        custId,
+      });
+      this.setState({ hasUpdatedContact: false });
+    }
     this.setState({ personalContactWayModal: false });
   }
 
@@ -200,7 +223,7 @@ export default class ContactWay extends PureComponent {
         <div className={styles.title}>
           联系方式
           {/** 只有主服务经理才可以进入编辑谭宽 */}
-          <IFWrap isRender={!isMainEmp}>
+          <IFWrap isRender={isMainEmp}>
             <span
               className={styles.contactWayEdit}
               onClick={this.handleContactWayEditClick}
@@ -290,6 +313,7 @@ export default class ContactWay extends PureComponent {
             updatePerOther={updatePerOther}
             delContact={delContact}
             refreshContact={this.refreshPerContact}
+            saveUpdatedStatus={this.saveUpdatedStatus}
           />
         </IFWrap>
       </div>

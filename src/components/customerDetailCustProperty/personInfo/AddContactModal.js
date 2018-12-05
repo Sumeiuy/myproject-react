@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 13:52:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-30 17:15:20
+ * @Last Modified time: 2018-12-04 17:11:32
  * @description 添加联系方式的Modal
  */
 
@@ -120,7 +120,7 @@ export default class AddContactModal extends PureComponent {
       // TODO 此处需要校验选择的数据
       const phoneForm = this.getPerPhoneForm();
       // 校验完成后调用提交回调
-      phoneForm.validateFields((err, values) => {
+      phoneForm.validateFields({ force: true }, (err, values) => {
         if (!err) {
           this.handlePerContactSubmit('phone', values);
         }
@@ -142,7 +142,7 @@ export default class AddContactModal extends PureComponent {
       // TODO 此处需要校验选择的数据
       const addressForm = this.getPerAddressForm();
       // 校验完成后调用提交回调
-      addressForm.validateFields((err, values) => {
+      addressForm.validateFields({ force: true }, (err, values) => {
         if (!err) {
           this.handlePerContactSubmit('address', values);
         }
@@ -171,7 +171,7 @@ export default class AddContactModal extends PureComponent {
     } else {
       this.setState({ showMainEmail: false });
       // 校验完成后调用提交回调
-      otherForm.validateFields((err, values) => {
+      otherForm.validateFields({ force: true }, (err, values) => {
         if (!err) {
           this.handlePerContactSubmit('other', values);
         }
@@ -208,24 +208,6 @@ export default class AddContactModal extends PureComponent {
         name: ADD_CONTACT_TABS[activeTabKey],
       }
     });
-  }
-
-  // 保存用户填写的电话信息数据
-  @autobind
-  handlePhoneChange(phoneData) {
-    this.setState({ phoneData });
-  }
-
-  // 保存用户填写的地址信息数据
-  @autobind
-  handleAddressChange(addressData) {
-    this.setState({ addressData });
-  }
-
-  // 保存用户填写的其他信息数据
-  @autobind
-  handleOtherChange(otherData) {
-    this.setState({ otherData });
   }
 
   // 渲染警告提示

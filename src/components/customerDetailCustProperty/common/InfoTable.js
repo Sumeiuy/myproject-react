@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-26 16:44:23
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-27 11:51:59
+ * @Last Modified time: 2018-12-05 10:41:18
  * @description 联系方式使用的Table
  */
 import React from 'react';
@@ -26,9 +26,9 @@ function InfoTable(props) {
       return {
         ...column,
         render: (text, record) => {
-          const { mainFlag } = record;
+          const { mainFlag, sourceCode } = record;
           // 主服务经理可以查看和编辑客户的电话信息、地址信息和其他信息
-          if (mainFlag === 'N' && !isMainEmp && !isFromNoSupportUpdateSource()) {
+          if (mainFlag === 'N' && isMainEmp && !isFromNoSupportUpdateSource(sourceCode)) {
             // 只有主服务经理能够修改非主要的并且来自可以修改的来源的存在操作列
             return (
               <span>
