@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-27 16:21:53
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-03 20:53:41
+ * @Last Modified time: 2018-12-04 13:22:57
  * @Description: 客户360-投资能力分析相关effect,mapStateToProps,mapDispatchToProps
  */
 import { connect } from 'dva';
@@ -25,6 +25,10 @@ const effects = {
   getProfitTrendReport: 'detailInvestAnalyze/getProfitTrendReport',
   // 获取brinson归因结果
   getAttributionAnalysis: 'detailInvestAnalyze/getAttributionAnalysis',
+  // 获取期末资产配置数据
+  getEndTermAssetConfig: 'detailInvestAnalyze/getEndTermAssetConfig',
+  // 获取资产配置变动走势
+  getAssetConfigTrend: 'detailInvestAnalyze/getAssetConfigTrend',
 };
 
 const mapStateToProps = state => ({
@@ -40,6 +44,10 @@ const mapStateToProps = state => ({
   profitTrendData: state.detailInvestAnalyze.profitTrendData,
   // brinson归因数据
   attributionData: state.detailInvestAnalyze.attributionData,
+  // 期末资产配置数据
+  endTermAssetConfigData: state.detailInvestAnalyze.endTermAssetConfigData,
+  // 资产配置变动走势数据
+  assetConfigTrendData: state.detailInvestAnalyze.assetConfigTrendData,
 });
 
 const mapDispatchToProps = {
@@ -55,6 +63,10 @@ const mapDispatchToProps = {
   getProfitTrendReport: effect(effects.getProfitTrendReport, { forceFull: true }),
   // 获取brinson归因结果
   getAttributionAnalysis: effect(effects.getAttributionAnalysis, { forceFull: true }),
+  // 获取期末资产配置数据
+  getEndTermAssetConfig: effect(effects.getEndTermAssetConfig, { forceFull: true }),
+  // 获取资产配置变动走势
+  getAssetConfigTrend: effect(effects.getAssetConfigTrend, { forceFull: true }),
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);
