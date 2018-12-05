@@ -64,7 +64,7 @@ export default class Person extends PureComponent {
     let displayValue = value;
     // 是数字类型
     if (_.isNumber(value)) {
-      displayValue = `${number.thousandFormat(number.toFixed(value))}(元)`;
+      displayValue = `${number.thousandFormat(number.toFixed(value))}元`;
     }
     return _.isEmpty(displayValue) ? DEFAULT_VALUE : displayValue;
   }

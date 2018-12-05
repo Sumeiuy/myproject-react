@@ -8,11 +8,12 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+import _ from 'lodash';
+import { number } from '../../../helper';
 import InfoItem from '../../common/infoItem';
 import {
   DEFAULT_VALUE,
   DEFAULT_PRIVATE_VALUE,
-  getViewTextByNum,
   checkIsNeedTitle,
 } from '../config';
 import styles from './basicInfo.less';
@@ -30,6 +31,24 @@ export default class BasicInfo extends PureComponent {
   getPrivateValue(value) {
     const { hasDuty } = this.props;
     return hasDuty ? (value || DEFAULT_VALUE) : DEFAULT_PRIVATE_VALUE;
+  }
+
+  // 获取数值显示数据
+  @autobind
+  getViewTextByNum(value) {
+    return _.isNumber(value)
+      ? number.formatToUnit({
+        num: value,
+        floatLength: 2,
+        unit: '元',
+      })
+      : DEFAULT_VALUE;
+  }
+
+  // 获取title
+  @autobind
+  getViewTitleByNum(value) {
+    return _.isNumber(value) ? `${number.thousandFormat(value)}元` : DEFAULT_VALUE;
   }
 
   render() {
@@ -181,10 +200,11 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='注册资金（万元）'
-              value={getViewTextByNum(data.registeredFund)}
+              label='注册资金'
+              value={this.getViewTextByNum(data.registeredFund)}
               className={styles.infoItem}
-              isNeedValueTitle={checkIsNeedTitle(getViewTextByNum(data.registeredFund))}
+              isNeedValueTitle={checkIsNeedTitle(this.getViewTextByNum(data.registeredFund))}
+              title={this.getViewTitleByNum(data.registeredFund)}
               isNeedOverFlowEllipsis
             />
           </div>
