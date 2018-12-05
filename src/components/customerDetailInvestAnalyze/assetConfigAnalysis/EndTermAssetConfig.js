@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-12-04 10:00:23
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-05 11:20:19
+ * @Last Modified time: 2018-12-05 12:09:03
  * @description 期末资产配置
  */
 import React, { PureComponent } from 'react';
@@ -14,7 +14,7 @@ import EndTermAssetChart from './EndTermAssetChart';
 import EndTermAssetTable from './EndTermAssetTable';
 import Summary from '../Summary';
 import { data } from '../../../helper';
-import { END_TERM_ASSET_TIP } from './config';
+import { END_TERM_ASSET_TIP, LARGE_CLASS_ASSET } from './config';
 import logable from '../../../decorators/logable';
 import styles from './endTermAssetConfig.less';
 
@@ -38,7 +38,7 @@ export default class EndTermAssetConfig extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      classify: '01'
+      classify: LARGE_CLASS_ASSET,
     };
   }
 

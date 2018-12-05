@@ -2,9 +2,11 @@
  * @Author: zhangjun
  * @Date: 2018-12-04 11:09:01
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-05 11:07:48
+ * @Last Modified time: 2018-12-05 12:08:37
  */
 
+// 按大类资产分布
+const LARGE_CLASS_ASSET = '01';
 // 资产分类
 const ASSET_CLASSIFY_LIST = [
   {
@@ -99,6 +101,7 @@ const END_TERM_ASSET_TIP = [
 ];
 
 export {
+  LARGE_CLASS_ASSET,
   ASSET_CLASSIFY_LIST,
   CHART_RADAR_OPTIONS,
   CHART_SERIES_OPTIONS,
