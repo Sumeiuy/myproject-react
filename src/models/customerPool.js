@@ -324,8 +324,8 @@ export default {
         payload: response,
       });
     },
-    // 代办流程任务列表
-    * getToDoList({ payload }, { call, put }) {  //eslint-disable-line
+    // 待办流程任务列表
+    * getToDoList({ payload }, { call, put }) {
       const response = yield call(api.getToDoList, payload);
       yield put({
         type: 'getToDoListSuccess',
