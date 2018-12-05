@@ -8,7 +8,6 @@
 
 import _ from 'lodash';
 import moment from 'moment';
-import { number } from '../../helper';
 
 export const CUST_TYPE = {
   // 个人客户类型标识
@@ -42,10 +41,6 @@ export const getViewTextByBool = (bool) => {
   return DEFAULT_VALUE;
 };
 
-// 获取数值显示数据
-export const getViewTextByNum = (value) => {
-  return _.isNumber(value) ? number.thousandFormat(value) : DEFAULT_VALUE;
-};
 const config = {
   MemberGradeColumns: [
     {

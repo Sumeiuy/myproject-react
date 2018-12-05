@@ -8,11 +8,12 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+import _ from 'lodash';
+import { number } from '../../../helper';
 import InfoItem from '../../common/infoItem';
 import {
   DEFAULT_VALUE,
   DEFAULT_PRIVATE_VALUE,
-  getViewTextByNum,
   checkIsNeedTitle,
 } from '../config';
 import styles from './basicInfo.less';
@@ -32,6 +33,24 @@ export default class BasicInfo extends PureComponent {
     return hasDuty ? (value || DEFAULT_VALUE) : DEFAULT_PRIVATE_VALUE;
   }
 
+  // 获取数值显示数据
+  @autobind
+  getViewTextByNum(value) {
+    return _.isNumber(value)
+      ? number.formatToUnit({
+        num: value,
+        floatLength: 2,
+        unit: '元',
+      })
+      : DEFAULT_VALUE;
+  }
+
+  // 获取title
+  @autobind
+  getViewTitleByNum(value) {
+    return _.isNumber(value) ? `${number.thousandFormat(value)}元` : DEFAULT_VALUE;
+  }
+
   render() {
     const { data } = this.props;
     return (
@@ -41,7 +60,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH_110}
-              label='产品简称'
+              label="产品简称"
               value={data.productShortName || DEFAULT_VALUE}
               className={styles.infoItem}
               isNeedValueTitle={checkIsNeedTitle(data.productShortName || DEFAULT_VALUE)}
@@ -51,7 +70,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='产品类别'
+              label="产品类别"
               value={data.productType || DEFAULT_VALUE}
               className={styles.infoItem}
               isNeedValueTitle={checkIsNeedTitle(data.productType || DEFAULT_VALUE)}
@@ -61,7 +80,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='产品结构'
+              label="产品结构"
               value={data.productConstruct || DEFAULT_VALUE}
               className={styles.infoItem}
               isNeedValueTitle={checkIsNeedTitle(data.productConstruct || DEFAULT_VALUE)}
@@ -71,7 +90,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='收益特征'
+              label="收益特征"
               value={data.earningsFeature || DEFAULT_VALUE}
               className={styles.infoItem}
               isNeedValueTitle={checkIsNeedTitle(data.earningsFeature || DEFAULT_VALUE)}
@@ -81,7 +100,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH_110}
-              label='持有人类别'
+              label="持有人类别"
               value={data.holdersType || DEFAULT_VALUE}
               className={styles.infoItem}
               isNeedValueTitle={checkIsNeedTitle(data.holdersType || DEFAULT_VALUE)}
@@ -91,7 +110,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='管理人名称'
+              label="管理人名称"
               value={data.adminName || DEFAULT_VALUE}
               className={styles.infoItem}
               isNeedValueTitle={checkIsNeedTitle(data.adminName || DEFAULT_VALUE)}
@@ -101,7 +120,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='产品到期日'
+              label="产品到期日"
               value={data.productExpireDate || DEFAULT_VALUE}
               className={styles.infoItem}
               isNeedValueTitle={checkIsNeedTitle(data.productExpireDate || DEFAULT_VALUE)}
@@ -111,7 +130,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='企业类型'
+              label="企业类型"
               value={data.companyType || DEFAULT_VALUE}
               className={styles.infoItem}
               isNeedValueTitle={checkIsNeedTitle(data.companyType || DEFAULT_VALUE)}
@@ -121,7 +140,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH_110}
-              label='机构类别'
+              label="机构类别"
               value={data.orgType || DEFAULT_VALUE}
               className={styles.infoItem}
               isNeedValueTitle={checkIsNeedTitle(data.orgType || DEFAULT_VALUE)}
@@ -131,7 +150,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='机构类别性质'
+              label="机构类别性质"
               value={data.orgNature || DEFAULT_VALUE}
               className={styles.infoItem}
               isNeedValueTitle={checkIsNeedTitle(data.orgNature || DEFAULT_VALUE)}
@@ -141,7 +160,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='所属行业'
+              label="所属行业"
               value={data.industry || DEFAULT_VALUE}
               className={styles.infoItem}
               isNeedValueTitle={checkIsNeedTitle(data.orgNature || DEFAULT_VALUE)}
@@ -151,7 +170,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='上市属性'
+              label="上市属性"
               value={data.listedProperty || DEFAULT_VALUE}
               className={styles.infoItem}
               isNeedValueTitle={checkIsNeedTitle(data.listedProperty || DEFAULT_VALUE)}
@@ -161,7 +180,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH_110}
-              label='国有属性'
+              label="国有属性"
               value={data.stateOwnedAttribute || DEFAULT_VALUE}
               className={styles.infoItem}
               isNeedValueTitle={checkIsNeedTitle(data.stateOwnedAttribute || DEFAULT_VALUE)}
@@ -171,7 +190,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='资本属性'
+              label="资本属性"
               value={data.capitalAttribute || DEFAULT_VALUE}
               className={styles.infoItem}
               isNeedValueTitle={checkIsNeedTitle(data.capitalAttribute || DEFAULT_VALUE)}
@@ -181,17 +200,18 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='注册资金（万元）'
-              value={getViewTextByNum(data.registeredFund)}
+              label="注册资金"
+              value={this.getViewTextByNum(data.registeredFund)}
               className={styles.infoItem}
-              isNeedValueTitle={checkIsNeedTitle(getViewTextByNum(data.registeredFund))}
+              isNeedValueTitle={checkIsNeedTitle(this.getViewTextByNum(data.registeredFund))}
+              title={this.getViewTitleByNum(data.registeredFund)}
               isNeedOverFlowEllipsis
             />
           </div>
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='注册地点'
+              label="注册地点"
               value={data.registeredAddress || DEFAULT_VALUE}
               className={styles.infoItem}
               isNeedValueTitle={checkIsNeedTitle(data.registeredAddress || DEFAULT_VALUE)}
@@ -201,7 +221,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH_110}
-              label='营业执照'
+              label="营业执照"
               value={this.getPrivateValue(data.businessLicenseId)}
               className={styles.infoItem}
               isNeedValueTitle={checkIsNeedTitle(this.getPrivateValue(data.businessLicenseId))}
@@ -211,7 +231,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='营业执照到期日'
+              label="营业执照到期日"
               value={this.getPrivateValue(data.businessLicenseValdate)}
               className={styles.infoItem}
               isNeedValueTitle={checkIsNeedTitle(this.getPrivateValue(data.businessLicenseValdate))}
@@ -221,7 +241,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='组织机构代码'
+              label="组织机构代码"
               value={this.getPrivateValue(data.orgInstitutionCode)}
               className={styles.infoItem}
               isNeedValueTitle={checkIsNeedTitle(this.getPrivateValue(data.orgInstitutionCode))}
@@ -231,7 +251,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='组织机构到期日'
+              label="组织机构到期日"
               value={this.getPrivateValue(data.orgInstitutionValdate)}
               className={styles.infoItem}
               isNeedValueTitle={checkIsNeedTitle(this.getPrivateValue(data.orgInstitutionValdate))}
@@ -241,7 +261,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH_110}
-              label='国税税务登记号'
+              label="国税税务登记号"
               value={this.getPrivateValue(data.nationalTaxId)}
               className={styles.infoItem}
               isNeedValueTitle={checkIsNeedTitle(this.getPrivateValue(data.nationalTaxId))}
@@ -251,7 +271,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='国税务登记到期日'
+              label="国税务登记到期日"
               value={this.getPrivateValue(data.nationalTaxValdate)}
               className={styles.infoItem}
               isNeedValueTitle={checkIsNeedTitle(this.getPrivateValue(data.nationalTaxValdate))}
@@ -261,7 +281,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='地税税务登记号'
+              label="地税税务登记号"
               value={this.getPrivateValue(data.landTaxId)}
               className={styles.infoItem}
               isNeedValueTitle={checkIsNeedTitle(this.getPrivateValue(data.landTaxId))}
@@ -271,7 +291,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='地税务登记到期日'
+              label="地税务登记到期日"
               value={this.getPrivateValue(data.landTaxValdate)}
               className={styles.infoItem}
               isNeedValueTitle={checkIsNeedTitle(this.getPrivateValue(data.landTaxValdate))}
@@ -281,7 +301,7 @@ export default class BasicInfo extends PureComponent {
           <div>
             <InfoItem
               width={INFO_ITEM_WITDH_110}
-              label='经营范围'
+              label="经营范围"
               value={data.businessScope || DEFAULT_VALUE}
               className={styles.infoItem}
               isNeedValueTitle={checkIsNeedTitle(data.businessScope || DEFAULT_VALUE)}
