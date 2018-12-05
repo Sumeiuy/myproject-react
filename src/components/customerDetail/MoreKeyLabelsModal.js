@@ -64,7 +64,10 @@ export default class MoreKeyLabelsModal extends Component {
             tabBarGutter={5}
           >
             <TabPane tab="自定义标签" key="definedLabels">
-              <KeyLabelsTable labels={definedLabels} />
+              <KeyLabelsTable
+                labels={definedLabels}
+                placeholder="还没有为该客户设置自定义标签"
+              />
             </TabPane>
             <TabPane tab="大数据标签" key="bigdataLabels">
               <KeyLabelsTable labels={bigDataLabels} />

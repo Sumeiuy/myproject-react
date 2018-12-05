@@ -19,10 +19,12 @@ import styles from './keyLablesTable.less';
 export default class KeyLabelsTable extends Component {
   static propTypes = {
     labels: PropTypes.array,
+    placeholder: PropTypes.string,
   }
 
   static defaultProps = {
     labels: [],
+    placeholder: '暂无标签数据',
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -81,7 +83,7 @@ export default class KeyLabelsTable extends Component {
           <div className={styles.noDataHead}>
             <Icon type="zanwushuju" className={styles.noDataIcon} />
           </div>
-          <div className={styles.noDataTip}>暂无标签数据</div>
+          <div className={styles.noDataTip}>{this.props.placeholder}</div>
         </div>
       </div>
     );

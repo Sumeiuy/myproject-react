@@ -68,6 +68,13 @@ export default class ServiceOrder extends PureComponent {
   }
 
   @autobind
+  getTableRowCls(record) {
+    if (record && !_.isEmpty(record.children)) {
+      return 'tabRow';
+    }
+  }
+
+  @autobind
   handlePageChange(current) {
     this.getServiceOrderData({
       pageNum: current,
@@ -240,7 +247,7 @@ export default class ServiceOrder extends PureComponent {
           dataSource={productList}
           rowKey="name"
           pagination={pagination}
-          rowClassName={styles.tableRow}
+          rowClassName={this.getTableRowCls}
           columns={this.transformColumnsData()}
           indentSize={0}
         />
