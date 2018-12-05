@@ -1,8 +1,8 @@
 /**
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-04 09:59:05
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-11-29 10:07:40
  */
 
 import React, { PureComponent } from 'react';
@@ -22,13 +22,12 @@ import ServiceRecord from './tabpages/serviceRecord/Home';
 import DiscountCoupon from './tabpages/discountCoupon/connectedHome';
 import { logCommon } from '../../decorators/logable';
 import ProductOrder from './tabpages/productOrder/Home';
-import InvestAnalyze from './tabpages/investAnalyze/connectedHome';
+/* import InvestmentAbilityAnalysis from './tabpages/investmentAbilityAnalysis/Home'; */
 import ContractManage from './tabpages/contractManage/Home';
-import CustProfit from './tabpages/custProfit/Home';
 import {
   ACCOUNT_INFO_TAB_KEY,
   CUSTOMER_INFO_TAB_KEY,
-  INVEST_ANALYZE_TAB_KEY,
+  /* INVEST_ANALYZE_TAB_KEY, */
   BUNESSINESS_PROCESS_TAB_KEY,
   SERVICE_RECORD_TAB_KEY,
   SERVICE_RELATION_TAB_KEY,
@@ -36,7 +35,6 @@ import {
   /* INVESTOR_ASSESSMENT_TAB_KEY, */
   PRODUCT_ORDER_TAB_KEY,
   DISCOUNT_COUPON_TAB_KEY,
-  CUST_PRFIT_TAB_KEY,
   custDetailTabMap,
 } from '../../components/customerDetail/config';
 
@@ -77,35 +75,11 @@ export default class Home extends PureComponent {
     addCallRecord: PropTypes.func.isRequired,
     // 当前服务记录id
     currentCommonServiceRecord: PropTypes.object.isRequired,
-    // 字典
-    cust360Dict: PropTypes.object.isRequired,
-    // 查询省市城市数据
-    queryProvinceCity: PropTypes.func.isRequired,
   }
 
   static contextTypes = {
     push: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
-  }
-
-  static childContextTypes = {
-    custBasic: PropTypes.object,
-    cust360Dict: PropTypes.object,
-    queryProvinceCity: PropTypes.func,
-  };
-
-  @autobind
-  getChildContext() {
-    const {
-      customerBasicInfo,
-      cust360Dict,
-      queryProvinceCity,
-    } = this.props;
-    return {
-      custBasic: customerBasicInfo,
-      cust360Dict,
-      queryProvinceCity,
-    };
   }
 
   componentDidMount() {
@@ -225,7 +199,6 @@ export default class Home extends PureComponent {
       contractManagementTabPermission,
       productOrderTabPermission,
       discountCouponTabPermission,
-      investAnalyzeTabPermission,
     } = getCustomerDetailPermission(customerBasicInfo || {});
 
     const accountInfoTabPane = (
@@ -240,14 +213,6 @@ export default class Home extends PureComponent {
           location={location}
           custPropertyInfoPermission={custPropertyInfoPermission}
           custPropertyPrivateInfoPermission={custPropertyPrivateInfoPermission}
-        />
-      </TabPane>
-    );
-
-    const investAnalyzeTabPane = (
-      <TabPane tab="投资能力分析" key={INVEST_ANALYZE_TAB_KEY}>
-        <InvestAnalyze
-          location={location}
         />
       </TabPane>
     );
@@ -288,12 +253,6 @@ export default class Home extends PureComponent {
       </TabPane>
     );
 
-    const custProfitTabPane = (
-      <TabPane tab="客户画像" key={CUST_PRFIT_TAB_KEY}>
-        <CustProfit location={location} />
-      </TabPane>
-    );
-
     return (
       <div className={styles.container}>
         <div className={styles.breadCrumb}><BreadCrumb {...breadCrumbProps} /></div>
@@ -325,14 +284,12 @@ export default class Home extends PureComponent {
           >
             {this.renderTabPane(accountInfoTabPane, accountInfoTabPermission)}
             {this.renderTabPane(custPropertyTabPane, custPropertyTabPermission)}
-            {this.renderTabPane(investAnalyzeTabPane, investAnalyzeTabPermission)}
             {this.renderTabPane(businessHandTabPane, businessHandTabPermission)}
             {this.renderTabPane(serviceRecordTabPane, serviceRecordTabPermission)}
             {this.renderTabPane(serviceRelationshipTabPane, serviceRelationshipTabPermission)}
             {this.renderTabPane(contractManageTabPane, contractManagementTabPermission)}
             {this.renderTabPane(productOrderTabPane, productOrderTabPermission)}
             {this.renderTabPane(discountCouponTabPane, discountCouponTabPermission)}
-            {this.renderTabPane(custProfitTabPane, true)}
           </Tabs>
         </div>
       </div>
