@@ -1,8 +1,8 @@
 /*
  * @Author: sunweibin
  * @Date: 2018-10-15 20:43:07
- * @Last Modified by: zhangmei
- * @Last Modified time: 2018-10-19 14:34:16
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-12-05 16:08:28
  * @description 客户360详情左侧服务记录信息
  */
 import React from 'react';
@@ -36,6 +36,19 @@ export default function SummaryService(props) {
     recentServeText = `${serviceDate} ${serviceRecordTitle}-${serviceRecordType}`;
   }
 
+  // 定位到具体的tabPane
+  const navToTabPane = (options) => {
+    const { query } = location;
+    replace({
+      query: {
+        ...query,
+        ...options,
+      }
+    });
+    // 页面定位到tabPane的位置
+    document.documentElement.scrollTop = 335;
+  };
+
   // 定位到服务记录
   const handleLastServiceDateClick = () => {
     navToTabPane({
@@ -48,19 +61,6 @@ export default function SummaryService(props) {
     navToTabPane({
       activeTabKey: 'businessProcessing',
     });
-  };
-
-  // 定位到具体的tabPane
-  const navToTabPane = (options) => {
-    const { query } = location;
-    replace({
-      query: {
-        ...query,
-        ...options,
-      }
-    });
-    // 页面定位到tabPane的位置
-    document.documentElement.scrollTop = 335;
   };
 
   return (

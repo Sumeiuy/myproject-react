@@ -2,63 +2,83 @@
  * @Author: sunweibin
  * @Date: 2018-10-15 22:30:04
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-24 16:52:45
+ * @Last Modified time: 2018-12-05 17:24:56
  * @description 客户360详情交易数据展示模块
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
 
-import MoneyCell from './MoneyCell';
-import RateCell from './RateCell';
-import { displayMoney } from '../customerDetailAccountInfo/utils';
-import { number } from '../../helper';
-
+import Cell from './Cell';
+import { openFspTab } from '../../utils';
 import styles from './summaryTransaction.less';
 
-export default function SummaryTransaction(props) {
-  const { data } = props;
-  if (_.isEmpty(data)) {
-    return null;
-  }
-  // 总资产
-  const assetText = displayMoney(data.asset);
-  // 净佣金
-  const purRake = displayMoney(data.purRake);
-  // 利息收入
-  const netIncome = displayMoney(data.netIncome);
-  // 天天发
-  const ttfMtkVal = displayMoney(data.ttfMtkVal);
-  // 资金余额
-  const cashAmt = displayMoney(data.cashAmt);
-  // 年产品销量
-  const yearProdAmt = displayMoney(data.yearProdAmt);
-  // 产品日均保有
-  const yearProdHold = displayMoney(data.yearProdHold);
-  // 归集率
-  const gjlRate = number.convertRate(data.gjlRate);
-  // 股基佣金率,此值是千分比
-  const minFee = number.convertPermillage(data.minFee);
+export default function SummaryTransaction(props, context) {
+  const { data, custRowId } = props;
+  const { push, custBasic: { custNature } } = context;
+  // 跳转到股基佣金率详情页面
+  const jumpToGJDetial = () => {
+    const param = {
+      id: 'FSP_360VIEW_org_commission',
+      title: '佣金查询',
+      // 必须要写上，否则，在360视图存在的情况下，再跳转到360视图时，360视图不会刷新，且React界面如果有弹框存在，不会消失
+      forceRefresh: true,
+    };
+    const url = `/customerCenter/360/${custNature}/toCommission?rowId=${custRowId}`;
+    openFspTab({
+      routerAction: push,
+      pathname: '/fsp/customerCenter/customer360',
+      url,
+      state: {
+        param,
+        url,
+      },
+    });
+  };
+
+  // 股基佣金率详情入口
+  const gjlRateDetailIcon = (<span onClick={jumpToGJDetial} className={styles.detail}>详情</span>);
+
   return (
     <div className={styles.wrap}>
-      <MoneyCell title="总资产" content={assetText} />
-      <RateCell title="年日均资产" current={data.yearAvgAssets} last={data.lastYearAvgAssets} />
-      <RateCell title="年收益率" current={data.yearMaxCostRate} last={data.lastYearMaxCostRate} isMoney={false} />
-      <RateCell title="年股基交易量" current={data.yearGjAmt} last={data.lastYearGjAmt} />
-      <MoneyCell title="净佣金" content={purRake} />
-      <MoneyCell title="利息收入" content={netIncome} />
-      <MoneyCell title="年产品销量" content={yearProdAmt} />
-      <MoneyCell title="产品日均保有" content={yearProdHold} />
-      <MoneyCell title="天天发" content={ttfMtkVal} />
-      <MoneyCell title="资金余额" content={cashAmt} />
-      <MoneyCell title="归集率" content={gjlRate} />
-      <MoneyCell title="股基佣金率" content={minFee} />
+      <Cell title="总资产" indicator={data.asset} />
+      <Cell title="年日均资产" indicator={data.yearAvgAssets} compareTip />
+      <Cell
+        title="年收益率"
+        indicator={data.yearMaxCostRate}
+        compareTip
+        valueType="percent"
+      />
+      <Cell
+        title="年股基交易量"
+        indicator={data.yearGjAmt}
+        compareTip
+      />
+      <Cell title="净佣金" indicator={data.purRake} />
+      <Cell title="利息收入" indicator={data.netIncome} />
+      <Cell title="年产品销量" indicator={data.yearProdAmt} />
+      <Cell title="产品日均保有" indicator={data.yearProdHold} />
+      <Cell title="天天发" indicator={data.ttfMtkVal} />
+      <Cell title="资金余额" indicator={data.cashAmt} />
+      <Cell title="归集率" indicator={data.gjlRate} />
+      <Cell
+        title="股基佣金率"
+        indicator={data.minFee}
+        valueType="permillage"
+        titleExtra={gjlRateDetailIcon}
+      />
     </div>
   );
 }
 
 SummaryTransaction.propTypes = {
+  // 客户的RowId
+  custRowId: PropTypes.string.isRequired,
+  // 交易数据
   data: PropTypes.object,
+};
+SummaryTransaction.contextTypes = {
+  custBasic: PropTypes.object.isRequired,
+  push: PropTypes.func.isRequired,
 };
 SummaryTransaction.defaultProps = {
   data: {},
