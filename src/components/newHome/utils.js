@@ -834,7 +834,6 @@ function getHoldingChart(data) {
 
 // 业务开通
 function getOpenedAccountsChartData(data) {
-  const xAxisLabel = ['融资融券', '天天发', '沪港通', '深港通', '个股期权', '新三板'];
   const {
     rzrqBusiCurr, // 融资融券
     ttfBusiCurr, // 天天发
@@ -894,8 +893,10 @@ function getOpenedAccountsChartData(data) {
           length: 0,
         },
         axisLabel: {
-          rotate: 30,
           color: '#666',
+          align: 'center',
+          margin: 20,
+          rotate: 30,
         },
       }
     ],
@@ -920,7 +921,6 @@ function getOpenedAccountsChartData(data) {
     }],
   };
   return {
-    xAxisLabel,
     option,
   };
 }

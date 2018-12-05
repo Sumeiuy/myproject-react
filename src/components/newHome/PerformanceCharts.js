@@ -31,12 +31,18 @@ export default class PerformanceCharts extends PureComponent {
         <IECharts
           option={option}
           style={{
-            height: '170px',
+            height: '200px',
+            paddingTop: '15px',
           }}
           resizable
         />
       </ChartContiner>
     );
+  }
+
+  // 净创收
+  @autobind
+  renderNetIncome() {
   }
 
   render() {
@@ -62,7 +68,7 @@ export default class PerformanceCharts extends PureComponent {
               {this.renderOpenedAccounts()}
             </Col>
             <Col span={8}>
-              TEST5
+              {this.renderNetIncome()}
             </Col>
             <Col span={8}>
               TEST6
