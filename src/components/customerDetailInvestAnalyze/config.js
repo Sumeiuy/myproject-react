@@ -1,8 +1,8 @@
 /*
  * @Author: zhangjun
  * @Date: 2018-11-20 14:30:09
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-29 10:02:01
+ * @Last Modified by: zuoguangzu
+ * @Last Modified time: 2018-12-05 09:21:19
  */
 
 import moment from 'moment';
@@ -157,6 +157,29 @@ const attributionTableColumns = [
   },
 ];
 
+const ACCUMULATED_PROFIT = '累计盈利额（元）';
+const STOCKPERIOD_UPDOWN = '股票期间涨跌';
+const SHAREHOLDING_YIELD = '持股收益率';
+// 个股收益明细表格列
+const incomeDetailTableColumns = [
+  {
+    dataIndex: 'stockName',
+    width: 150,
+  },
+  {
+    title: ACCUMULATED_PROFIT,
+    dataIndex: 'accumulatedProfit',
+  },
+  {
+    title: STOCKPERIOD_UPDOWN,
+    dataIndex: 'stockPeriodUpDown',
+  },
+  {
+    title: SHAREHOLDING_YIELD,
+    dataIndex: 'shareHoldingYield',
+  },
+];
+
 export {
   endDateOfLastMonth,
   lastYearDataOfLastMonth,
@@ -176,4 +199,5 @@ export {
   SOLID_RECOVERY_TYPE,
   CURRENCY_TYPE,
   attributionTableColumns,
+  incomeDetailTableColumns,
 };

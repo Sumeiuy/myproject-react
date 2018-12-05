@@ -1,8 +1,8 @@
 /*
  * @Author: zhangjun
  * @Date: 2018-11-27 16:21:53
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-03 20:53:41
+ * @Last Modified by: zuoguangzu
+ * @Last Modified time: 2018-12-04 19:51:04
  * @Description: 客户360-投资能力分析相关effect,mapStateToProps,mapDispatchToProps
  */
 import { connect } from 'dva';
@@ -25,6 +25,8 @@ const effects = {
   getProfitTrendReport: 'detailInvestAnalyze/getProfitTrendReport',
   // 获取brinson归因结果
   getAttributionAnalysis: 'detailInvestAnalyze/getAttributionAnalysis',
+  // 获取个体收益明细结果
+  getEachStockIncomeDetails: 'detailInvestAnalyze/getEachStockIncomeDetails',
 };
 
 const mapStateToProps = state => ({
@@ -40,6 +42,8 @@ const mapStateToProps = state => ({
   profitTrendData: state.detailInvestAnalyze.profitTrendData,
   // brinson归因数据
   attributionData: state.detailInvestAnalyze.attributionData,
+  // 个体收益明细数据
+  incomeDetailData: state.detailInvestAnalyze.incomeDetailData,
 });
 
 const mapDispatchToProps = {
@@ -55,6 +59,8 @@ const mapDispatchToProps = {
   getProfitTrendReport: effect(effects.getProfitTrendReport, { forceFull: true }),
   // 获取brinson归因结果
   getAttributionAnalysis: effect(effects.getAttributionAnalysis, { forceFull: true }),
+  // 获取个体收益明细
+  getEachStockIncomeDetails: effect(effects.getEachStockIncomeDetails, { forceFull: true }),
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

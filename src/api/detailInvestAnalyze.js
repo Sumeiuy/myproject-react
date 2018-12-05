@@ -1,8 +1,8 @@
 /*
  * @Author: zhangjun
  * @Date: 2018-11-20 15:53:09
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-03 16:26:19
+ * @Last Modified by: zuoguangzu
+ * @Last Modified time: 2018-12-04 19:35:30
  * @Description: 客户360-投资能力分析相关api
  */
 export default function detailInvestAnalyze(api) {
@@ -19,5 +19,7 @@ export default function detailInvestAnalyze(api) {
     queryProfitTrendReport: query => api.post('/groovynoauth/fsp/cust/custdetail/investment/queryProfitTrendReport', query),
     // 获取brinson归因分析
     queryAttributionAnalysis: query => api.post('/groovynoauth/fsp/cust/custdetail/investment/queryAttributionAnalysis', query),
+    // 获取个股收益明细
+    queryEachStockIncomeDetails: query => api.post('/groovynoauth/fsp/cust/custdetail/investment/queryEachStockIncomeDetails', query),
   };
 }
