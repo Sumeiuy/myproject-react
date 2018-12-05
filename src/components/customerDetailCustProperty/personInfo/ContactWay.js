@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性-个人客户联系方式
  * @Date: 2018-11-07 14:33:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-04 13:43:42
+ * @Last Modified time: 2018-12-05 11:21:24
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -223,7 +223,7 @@ export default class ContactWay extends PureComponent {
         <div className={styles.title}>
           联系方式
           {/** 只有主服务经理才可以进入编辑谭宽 */}
-          <IFWrap isRender={!isMainEmp}>
+          <IFWrap isRender={isMainEmp}>
             <span
               className={styles.contactWayEdit}
               onClick={this.handleContactWayEditClick}

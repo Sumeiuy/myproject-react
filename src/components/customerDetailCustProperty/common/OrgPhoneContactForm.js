@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 20:29:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-04 17:38:46
+ * @Last Modified time: 2018-12-05 13:20:40
  * @description 添加机构客户电话信息Form
  */
 import React, { PureComponent } from 'react';
@@ -71,14 +71,24 @@ export default class OrgPhoneContactForm extends PureComponent {
       // 联系人类型
       contacterTypeCode: isCreate ? '' : contactTypeCode,
       // 手机号码, 因为ecif那边传递过来修改需要传递手机号码为一个对象
-      mobileValue: isCreate ? '' : (mobile.value || ''),
+      mobileValue: isCreate ? '' : this.getContactValue(mobile),
       // 固定号码，因为ecif那边传递过来修改需要传递固定电话为一个对象
-      landlineValue: isCreate ? '' : (landline.value || ''),
+      landlineValue: isCreate ? '' : this.getContactValue(landline),
       // 电子邮件，因为ecif那边传递过来修改需要传递电子邮件为一个对象
-      emailValue: isCreate ? '' : (email.value || ''),
+      emailValue: isCreate ? '' : this.getContactValue(email),
       // 来源
       sourceCode: isCreate ? SOURCE_CODE.ocrm : sourceCode,
     };
+  }
+
+  // 因为手机、固定电话、电子邮件为对象，没有相关的值
+  // 则对象为null，因此此处需要针对该种情况做特殊处理
+  @autobind
+  getContactValue(contact) {
+    if (!_.isEmpty(contact) && _.hasIn(contact, 'value')) {
+      return contact.value;
+    }
+    return '';
   }
 
   // 手机号码

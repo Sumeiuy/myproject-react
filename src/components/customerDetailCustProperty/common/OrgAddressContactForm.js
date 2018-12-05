@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 19:02:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-04 17:41:34
+ * @Last Modified time: 2018-12-05 17:05:01
  * @description 添加机构客户地址信息联系方式的Form
  */
 import React, { PureComponent } from 'react';
@@ -98,7 +98,13 @@ export default class OrgAddressContactForm extends PureComponent {
   // 保存城市联动的数据
   @autobind
   saveCity({ addrDictList }) {
-    this.setState({ cityList: addrDictList });
+    if (_.isEmpty(addrDictList)) {
+      this.setState({
+        cityList: [{ key: '', value: '请选择' }],
+      });
+    } else {
+      this.setState({ cityList: addrDictList });
+    }
   }
 
   // 地址类型下拉
@@ -165,7 +171,10 @@ export default class OrgAddressContactForm extends PureComponent {
   // 渲染机构客户的城市
   @autobind
   renderCityOption() {
-    const { cityList } = this.state;
+    let { cityList } = this.state;
+    if (_.isEmpty(cityList)) {
+      cityList = [{ key: '', value: '请选择' }];
+    }
     return _.map(cityList, this.renderOption);
   }
 
@@ -263,7 +272,6 @@ export default class OrgAddressContactForm extends PureComponent {
           <Col span={12}>
             <div className={styles.formItem}>
               <div className={styles.itemLable}>
-                <span className={styles.requried}>*</span>
                 邮政编码：
               </div>
               <div className={styles.valueArea}>

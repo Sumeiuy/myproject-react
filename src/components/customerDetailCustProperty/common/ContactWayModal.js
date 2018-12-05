@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 19:36:22
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-04 17:58:29
+ * @Last Modified time: 2018-12-05 17:02:01
  * @description 机构客户添加联系方式Modal
  */
 
@@ -79,7 +79,12 @@ export default class ContactWayModal extends PureComponent {
       ) {
         return {
           ...column,
-          render: text => text.value,
+          render(text) {
+            if (!_.isEmpty(text) && _.hasIn(text, 'value')) {
+              return text.value || '';
+            }
+            return '';
+          },
         };
       }
       return column;
@@ -93,6 +98,10 @@ export default class ContactWayModal extends PureComponent {
       // 告诉父组件进行了修改
       this.props.saveUpdateState();
       this.props.refreshContact();
+      this.setState({
+        addContactModal: false,
+        editContactModal: false,
+      });
     }
   }
 
@@ -208,10 +217,6 @@ export default class ContactWayModal extends PureComponent {
       // 新增|修改机构客户地址信息
       this.props.updateOrgAddress(data).then(this.refresh);
     }
-    this.setState({
-      addContactModal: false,
-      editContactModal: false,
-    });
   }
 
   @autobind
