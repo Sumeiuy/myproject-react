@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-09 16:52:56
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-23 15:40:48
+ * @Last Modified time: 2018-12-10 13:05:03
  * @description 新版客户360详情下的账户信息Tab页面的model
  */
 import _ from 'lodash';
@@ -46,16 +46,25 @@ export default {
     productHistoryHoldingData: {},
     // 期权历史持仓明细
     optionHistoryHoldingData: {},
-    // 业务类别
-    busnTypeDict: {},
-    // 产品代码
-    finProductList: {
-      list: [],
+    // 交易流水弹出层中的历史账户下的业务类别(包含普通、信用)
+    tradeFlowBusnTypeDict: {
+      normal: [],
+      credit: [],
+    },
+    // 交易流水弹出层中的资金变动下的业务类别(包含普通、信用、期权)
+    tradeFlowCapitalBusnTypeDict: {
+      normal: [],
+      credit: [],
+      option: [],
+    },
+    // 账户信息下的业务类别(包含普通、信用、期权)
+    accountBusnTypeDict: {
+      normal: [],
+      credit: [],
+      option: [],
     },
     // 全产品目录
-    productCatalogTree: {
-      allProductMenuTree: []
-    },
+    productCatalogTree: [],
     // 普通账户交易流水
     standardTradeFlowRes: {},
     // 信用账户交易流水
@@ -181,25 +190,44 @@ export default {
         optionHistoryHoldingData: resultData || {},
       };
     },
-    queryBusnTypeDictSuccess(state, action) {
-      const { payload: { resultData } } = action;
+    queryTradeFlowBusnTypeDictSuccess(state, action) {
+      const { payload } = action;
+      const { tradeFlowBusnTypeDict } = state;
       return {
         ...state,
-        busnTypeDict: resultData || {},
+        tradeFlowBusnTypeDict: {
+          ...tradeFlowBusnTypeDict,
+          ...payload,
+        }
       };
     },
-    queryFinProductListSuccess(state, action) {
-      const { payload: { resultData } } = action;
+    queryTradeFlowCaptialBusnTypeDictSuccess(state, action) {
+      const { payload } = action;
+      const { tradeFlowCapitalBusnTypeDict } = state;
       return {
         ...state,
-        finProductList: resultData || {},
+        tradeFlowCapitalBusnTypeDict: {
+          ...tradeFlowCapitalBusnTypeDict,
+          ...payload,
+        }
+      };
+    },
+    queryAccountBusnTypeDictSuccess(state, action) {
+      const { payload } = action;
+      const { accountBusnTypeDict } = state;
+      return {
+        ...state,
+        accountBusnTypeDict: {
+          ...accountBusnTypeDict,
+          ...payload,
+        }
       };
     },
     queryProductCatalogTreeSuccess(state, action) {
       const { payload: { resultData } } = action;
       return {
         ...state,
-        productCatalogTree: resultData || {},
+        productCatalogTree: (resultData && resultData.allProductMenuTree) || [],
       };
     },
     queryStandardTradeFlowSuccess(state, action) {
@@ -380,21 +408,44 @@ export default {
         payload: response,
       });
     },
-    // 查询业务类别
-    * queryBusnTypeDict({ payload }, { put, call }) {
-      const response = yield call(api.queryBusnTypeDict, payload);
+    // 查询交易流水中的账户历史Tabs业务类别
+    * queryTradeFlowBusnTypeDict({ payload }, { put, call }) {
+      // 因为业务类别中普通账户和信用账户的是不一样的，所以需要这样做区分
+      const { accountType } = payload;
+      const { resultData } = yield call(api.queryBusnTypeDict, payload);
+      const type = _.lowerCase(accountType);
       yield put({
-        type: 'queryBusnTypeDictSuccess',
-        payload: response,
+        type: 'queryTradeFlowBusnTypeDictSuccess',
+        payload: { [type]: (resultData && resultData.list) || [] },
+      });
+    },
+    // 查询交易流水中的资金变动的业务类别
+    * queryTradeFlowCapitalBusnTypeDict({ payload }, { put, call }) {
+      // 因为资金变动的与交易流水历史账户中的业务类别不一样
+      const { accountType } = payload;
+      const { resultData } = yield call(api.queryBusnTypeDict, payload);
+      const type = _.lowerCase(accountType);
+      yield put({
+        type: 'queryTradeFlowCaptialBusnTypeDictSuccess',
+        payload: { [type]: (resultData && resultData.list) || [] },
+      });
+    },
+    // 查询账户信息下的业务类别，因为与交易流水中的也不一样所以分开处理
+    * queryAccountBusnTypeDict({ payload }, { put, call }) {
+      // 因为业务类别中普通账户/信用账户/期权账户的是不一样的，所以需要这样做区分
+      const { accountType } = payload;
+      const { resultData } = yield call(api.queryBusnTypeDict, payload);
+      const type = _.lowerCase(accountType);
+      yield put({
+        type: 'queryAccountBusnTypeDictSuccess',
+        payload: { [type]: (resultData && resultData.list) || [] },
       });
     },
     // 查询产品代码
-    * queryFinProductList({ payload }, { put, call }) {
-      const response = yield call(api.queryFinProductList, payload);
-      yield put({
-        type: 'queryFinProductListSuccess',
-        payload: response,
-      });
+    * queryProductCodeList({ payload }, { call }) {
+      // 目前查询产品代码使用此种方式，直接将数据返回给结果，由调用者自己保存
+      const { resultData } = yield call(api.queryFinProductList, payload);
+      return (resultData && resultData.list) || [];
     },
     // 查询全产品目录
     * queryProductCatalogTree({ payload }, { put, call }) {
