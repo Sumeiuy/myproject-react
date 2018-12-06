@@ -11,6 +11,8 @@ var UAT_FORWARD_URL = 'http://168.61.8.82:5086';
 var SIT_FORWARD_URL = 'http://168.61.8.81:5087';
 // DOClever的接口mock地址
 var MOCK_FORWARD_URL = 'http://168.61.8.81:5090';
+// 新版客户360详情下客户画像的访问地址
+var CUST_PROFIT_DEV_URL = 'http://168.61.125.20:8080';
 
 
 function generateProxy(proxyList) {
@@ -52,33 +54,25 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: generateProxy([
       '/finereport/ReportServer', // 报表中心
-      {
-        target: UAT_FORWARD_URL,
-      },
+      { target: UAT_FORWARD_URL },
       '/fspa/phone',
-      {
-        target: UAT_FORWARD_URL,
-      },
+      { target: UAT_FORWARD_URL },
+      prefix + '/groovynoauth/fsp/cust/custdetail/queryAccountSummaryInfo',
+      { target: MOCK_FORWARD_URL },
+      prefix + '/groovynoauth/fsp/cust/custdetail/queryCustTradeInfo',
+      { target: MOCK_FORWARD_URL },
       prefix,
-      {
-        target: UAT_FORWARD_URL,
-      },
+      { target: UAT_FORWARD_URL },
       '/fspa/log',
-      {
-        target: UAT_FORWARD_URL,
-      },
+      { target: UAT_FORWARD_URL },
       '/fsp',
-      {
-        target: UAT_FORWARD_URL,
-      },
+      { target: UAT_FORWARD_URL },
       '/htsc-product-base',
-      {
-        target: UAT_FORWARD_URL,
-      },
+      { target: UAT_FORWARD_URL },
       '/jeip',
-      {
-        target: UAT_FORWARD_URL,
-      },
+      { target: UAT_FORWARD_URL },
+      '/yt/',
+      { target: CUST_PROFIT_DEV_URL },
     ]),
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README
