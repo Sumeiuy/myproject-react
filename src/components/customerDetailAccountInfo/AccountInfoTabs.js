@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-23 10:39:57
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-24 13:31:58
+ * @Last Modified time: 2018-12-06 13:19:02
  * @description 新版客户360详情底部概览信息
  */
 import React, { PureComponent } from 'react';
@@ -40,11 +40,35 @@ export default class AccountInfoTabs extends PureComponent {
     accountChangeRes: PropTypes.object.isRequired,
   }
 
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const {
+      location: {
+        query: { custId: nextId },
+      },
+    } = nextProps;
+    const { custId } = prevState;
+    if (nextId !== custId && !_.isEmpty(nextId)) {
+      // 如果切换了用户，则需要将Tab切换到账户概览，并且查询下数据
+      return {
+        custId: nextId,
+        activeTabKey: 'accountSummary',
+      };
+    }
+    return null;
+  }
+
   constructor(props) {
     super(props);
+    const {
+      location: {
+        query: { custId },
+      },
+    } = props;
     this.state = {
       // 默认激活的Tab，为账户概览
       activeTabKey: 'accountSummary',
+      // 保存客户ID
+      custId,
     };
   }
 
@@ -58,7 +82,7 @@ export default class AccountInfoTabs extends PureComponent {
     const { location: { query: { custId: prevId } } } = prevProps;
     if (nextId !== prevId && !_.isEmpty(nextId)) {
       // 如果切换了用户，则需要将Tab切换到账户概览，并且查询下数据
-      this.setState({ activeTabKey: 'accountSummary' });
+      // state变化移动到getDerivedStateFromProps函数中处理
       this.querySummary();
     }
   }

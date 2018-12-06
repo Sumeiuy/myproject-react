@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-12-05 14:04:02
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-05 15:40:51
+ * @Last Modified time: 2018-12-06 14:48:54
  * @description 新版的概要信息展示组件
  */
 import React from 'react';
@@ -12,7 +12,6 @@ import _ from 'lodash';
 import Tooltip from '../common/Tooltip';
 import IFWrap from '../common/biz/IfWrap';
 import CellCompareTip from './CellCompareTip';
-// import Icon from '../common/Icon';
 import { displayMoney } from '../customerDetailAccountInfo/utils';
 import { calcSameTimeRate } from './utils';
 import { number, data } from '../../helper';
