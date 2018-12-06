@@ -834,58 +834,32 @@ function getHoldingChart(data) {
 
 // 业务开通
 function getOpenedAccountsChartData(data) {
-  const {
-    rzrqBusiCurr, // 融资融券
-    ttfBusiCurr, // 天天发
-    hgtBusiCurr, // 沪港通
-    sgtBusiCurr, // 深港通
-    gpqqBusiCurr, // 个股期权
-    xsbBusiCurr, // 新三板
-  } = data;
-  const dataSource = [
-    {
-      name: '融资融券',
-      value: (rzrqBusiCurr && rzrqBusiCurr.value) || 50,
-    },
-    {
-      name: '天天发',
-      value: (ttfBusiCurr && ttfBusiCurr.value) || 20,
-    },
-    {
-      name: '沪港通',
-      value: (hgtBusiCurr && hgtBusiCurr.value) || 45,
-    },
-    {
-      name: '深港通',
-      value: (sgtBusiCurr && sgtBusiCurr.value) || 26,
-    },
-    {
-      name: '个股期权',
-      value: (gpqqBusiCurr && gpqqBusiCurr.value) || 15,
-    },
-    {
-      name: '新三板',
-      value: (xsbBusiCurr && xsbBusiCurr.value) || 30,
-    },
-  ];
   const option = {
     color: ['#49b6ff'],
     grid: {
       left: '10px',
       right: '10px',
-      bottom: '50px',
+      bottom: '1px',
       top: '15px',
       containLabel: false,
+    },
+    tooltip: {
+      position: 'top',
+      backgroundColor: 'rgba(2, 22, 55, 0.8)',
+      padding: 10,
+      textStyle: {
+        fontSize: 12,
+      },
     },
     xAxis: [
       {
         type: 'category',
-        data: _.map(dataSource, item => item.name),
+        data: _.map(data, item => item.name),
         show: true,
         axisLine: {
           lineStyle: {
             color: '#a8b6d4',
-            width: 2,
+            width: 1,
           }
         },
         axisTick: {
@@ -907,7 +881,7 @@ function getOpenedAccountsChartData(data) {
       }
     ],
     series: [{
-      data: dataSource,
+      data,
       type: 'bar',
       barWidth: 14,
       label: {

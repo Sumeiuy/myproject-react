@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-12-04 13:54:08
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-12-05 20:16:50
+ * @LastEditTime: 2018-12-06 17:51:59
  * @Description: 首页-投顾绩效-图表
  */
 
@@ -11,18 +11,28 @@ import PropTypes from 'prop-types';
 import {
   Row, Col, Progress,
 } from 'antd';
-import { autobind } from 'core-decorators';
+// import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import ChartContiner from './ChartContainer';
 import Icon from '../common/Icon';
 import {
-  formatToUnit,
-  thousandFormat,
+  formatByBorders,
 } from '../../helper/number';
 import IECharts from '../IECharts';
+import Tooltip from '../common/Tooltip';
 import {
   getOpenedAccountsChartData,
 } from './utils';
+import {
+  EMPTY_VALUE,
+  POINT_INDICATORS_CONFIG,
+  CUSTOMER_AND_ASSET_CONFIG,
+  FINANCIAL_PRODUCT_CONFIG,
+  OPEN_ACCOUNTS_CONFIG,
+  NET_INCOME_CONFIG,
+  SERVICE_INDICATOR_CONFIG,
+  getValueByResponse,
+} from './chartsConfig';
 import styles from './performanceCharts.less';
 
 export default class PerformanceCharts extends PureComponent {
@@ -31,66 +41,40 @@ export default class PerformanceCharts extends PureComponent {
   };
 
   // 重点指标
-  renderMainIndicator(indicators) {
-    const {
-      newEffCust,
-      netAddedEffCust,
-      newActiveCustNum,
-      newCustBuyFinaNum,
-      clCustNewAvgAset,
-      newAddCustAset,
-    } = indicators;
-    const mainIndicators = [
-      {
-        name: '新开客户新增有效户',
-        value: (newEffCust && newEffCust.value) || 560,
-        isAsset: false,
-      },
-      {
-        name: '净新增有效户',
-        value: (netAddedEffCust && netAddedEffCust.value) || 1125,
-        isAsset: false,
-      },
-      {
-        name: '新增激活客户数',
-        value: (newActiveCustNum && newActiveCustNum.value) || 3879,
-        isAsset: false,
-      },
-      {
-        name: '新增金融产品客户数',
-        value: (newCustBuyFinaNum && newCustBuyFinaNum.value) || 645,
-        isAsset: false,
-      },
-      {
-        name: '存量客户新增日均资产',
-        value: (clCustNewAvgAset && clCustNewAvgAset.value) || 187900000000,
-        isAsset: true,
-      },
-      {
-        name: '新开客户净新增资产',
-        value: (newAddCustAset && newAddCustAset.value) || 387900000000,
-        isAsset: true,
-      },
-    ];
-    const maxCount = _.maxBy(_.filter(mainIndicators, ['isAsset', false]), 'value').value / 0.9; // 最大值的百分比认为0.9
-    const maxAsset = _.maxBy(_.filter(mainIndicators, 'isAsset'), 'value').value / 0.9;
+  renderPointIndicator(indicators) {
+    const pointIndicators = getValueByResponse(indicators, POINT_INDICATORS_CONFIG);
+
+    const countList = _.filter(pointIndicators, ['isAsset', false]);
+    const maxCount = _.every(countList, { formatedValue: EMPTY_VALUE }) // 所有值都为空
+      ? 1
+      : _.maxBy(countList, 'value').value / 0.9; // 最大值的百分比认为0.9
+
+    const assetList = _.filter(pointIndicators, 'isAsset');
+    const maxAsset = _.every(assetList, { formatedValue: EMPTY_VALUE }) // 所有值都为空
+      ? 1
+      : _.maxBy(assetList, 'value').value / 0.9; // 最大值的百分比认为0.9
+
     return (
       <ChartContiner dataSource={{ title: '重点指标' }}>
         <div className={styles.indicatorDetailWrap}>
           {
-            _.map(mainIndicators, (item) => {
-              const percent = item.isAsset
-                ? _.round(item.value * 100 / maxAsset)
-                : _.round(item.value * 100 / maxCount);
-              const formatedValue = item.isAsset
-                ? formatToUnit({ num: item.value, floatLength: 2 })
-                : `${thousandFormat(item.value)}户`;
+            _.map(pointIndicators, (item) => {
+              let percent;
+              if (item.formatedValue === EMPTY_VALUE) {
+                percent = 0;
+              } else {
+                percent = item.isAsset
+                  ? _.round(item.value * 100 / maxAsset)
+                  : _.round(item.value * 100 / maxCount);
+              }
               return (
                 <div className={styles.mainIndicatorItem} key={item.name}>
                   <div className={styles.indicatorText}>
-                    {item.name}
+                    <Tooltip title={item.description} placement="top">
+                      {item.name}
+                    </Tooltip>
                     <span className={styles.indicatorValue}>
-                      {formatedValue}
+                      {item.formatedValue}
                     </span>
                   </div>
                   <div className={styles.progress}>
@@ -112,66 +96,28 @@ export default class PerformanceCharts extends PureComponent {
 
   // 客户及资产
   renderCustomerAndAsset(indicators) {
-    const {
-      custNum,
-      totAset,
-      currSignCustNum,
-      currSignCustAset,
-      clCustNewAvgAset,
-      avgPrdtMktValCreate,
-    } = indicators;
-    const customerAndAssets = [
-      {
-        name: '服务客户数',
-        value: (custNum && custNum.value) || 21345,
-        isAccount: true,
-      },
-      {
-        name: '服务客户资产',
-        value: (totAset && totAset.value) || 216700000000,
-      },
-      {
-        name: '签约客户数',
-        value: (currSignCustNum && currSignCustNum.value) || 3891,
-        isAccount: true,
-      },
-      {
-        name: '签约客户资产',
-        value: (currSignCustAset && currSignCustAset.value) || 13242000000,
-      },
-      {
-        name: '存量客户新增日均资产',
-        value: (clCustNewAvgAset && clCustNewAvgAset.value) || 3432000000,
-      },
-      {
-        name: '产品日均保有市值',
-        value: (avgPrdtMktValCreate && avgPrdtMktValCreate.value) || 34789000000,
-      },
-    ];
+    const customerAndAssets = getValueByResponse(indicators, CUSTOMER_AND_ASSET_CONFIG);
     return (
       <ChartContiner dataSource={{ title: '客户及资产' }}>
         <div className={styles.customerAndAssetWrap}>
           {
-            _.map(customerAndAssets, (item, index) => {
-              const value = item.isAccount
-                ? `${thousandFormat(item.value)}户`
-                : `${formatToUnit({ num: item.value, floatLength: 2 })}`;
-              return (
-                <div className={styles.detail}>
-                  <div className={styles.value}>
-                    {value}
-                  </div>
-                  <div title={item.name} className={styles.name}>
-                    {item.name}
-                  </div>
-                  {
-                    index % 2 === 0
-                      ? <div className={styles.line} />
-                      : null
-                  }
+            _.map(customerAndAssets, (item, index) => (
+              <div className={styles.detail} key={item.name}>
+                <div className={styles.value}>
+                  {item.formatedValue}
                 </div>
-              );
-            })
+                <div className={styles.name}>
+                  <Tooltip title={item.description} placement="top">
+                    {item.name}
+                  </Tooltip>
+                </div>
+                {
+                  index % 2 === 0
+                    ? <div className={styles.line} />
+                    : null
+                }
+              </div>
+            ))
           }
         </div>
       </ChartContiner>
@@ -180,61 +126,46 @@ export default class PerformanceCharts extends PureComponent {
 
   // 金融产品
   renderFinancialProduct(indicators) {
-    const {
-      kfTranAmt,
-      taTranAmt,
-      otcTranAmt,
-      smTranAmt,
-      zdcxPrdt,
-    } = indicators;
-    const financialProducts = [
-      {
-        name: '公募基金',
-        value: (kfTranAmt && kfTranAmt.value) || 25890000000,
-      },
-      {
-        name: '紫金产品',
-        value: (taTranAmt && taTranAmt.value) || 4350000000,
-      },
-      {
-        name: 'OTC',
-        value: (otcTranAmt && otcTranAmt.value) || 139009000000,
-      },
-      {
-        name: '私募基金',
-        value: (smTranAmt && smTranAmt.value) || 89098000000,
-      },
-    ];
-    const formatedZdcxPrdt = {
-      name: '重点创新产品',
-      value: (zdcxPrdt && zdcxPrdt.value) || 1567000000
-    };
-    const totalValue = _.sumBy(financialProducts, 'value');
+    const financialProducts = getValueByResponse(indicators, FINANCIAL_PRODUCT_CONFIG);
+    const zdcxPrdt = _.find(financialProducts, { key: 'zdcxPrdt' });
+    const commonProducts = _.filter(financialProducts, product => product.key !== 'zdcxPrdt');
+    const totalValue = _.every(commonProducts, { formatedValue: EMPTY_VALUE })
+      ? EMPTY_VALUE
+      : _.sumBy(commonProducts, 'value');
+    const totalDescription = '公募基金、紫金产品、OTC、私募基金销量合计';
     return (
       <ChartContiner dataSource={{ title: '金融产品' }}>
         <div className={styles.financialProductWrap}>
           <div className={styles.main}>
             <div>
-              <span className={styles.name}>销量总计</span>
+              <span className={styles.name}>
+                <Tooltip title={totalDescription} placement="top">销量合计</Tooltip>
+              </span>
               <span className={styles.total}>
-                {formatToUnit({ num: totalValue, floatLength: 2 })}
+                {formatByBorders({ num: totalValue })}
               </span>
             </div>
             {
-              _.map(financialProducts, item => (
-                <div className={styles.product}>
-                  <span className={styles.name}>{item.name}</span>
+              _.map(commonProducts, item => (
+                <div className={styles.product} key={item.key}>
+                  <span className={styles.name}>
+                    <Tooltip title={item.description} placement="top">
+                      {item.name}
+                    </Tooltip>
+                  </span>
                   <span className={styles.value}>
-                    {formatToUnit({ num: item.value, floatLength: 2 })}
+                    {item.formatedValue}
                   </span>
                 </div>
               ))
             }
           </div>
           <div className={styles.innovationProduct}>
-            <span className={styles.name}>{formatedZdcxPrdt.name}</span>
+            <span className={styles.name}>
+              <Tooltip title={zdcxPrdt.description} placement="top">{zdcxPrdt.name}</Tooltip>
+            </span>
             <span className={styles.value}>
-              {formatToUnit({ num: formatedZdcxPrdt.value, floatLength: 2 })}
+              {zdcxPrdt.formatedValue}
             </span>
           </div>
         </div>
@@ -243,57 +174,56 @@ export default class PerformanceCharts extends PureComponent {
   }
 
   // 业务开通（户）
-  @autobind
-  renderOpenedAccounts() {
-    const { option } = getOpenedAccountsChartData(this.props.indicators);
+  renderOpenedAccounts(indicators) {
+    const openAccounts = getValueByResponse(indicators, OPEN_ACCOUNTS_CONFIG);
+    const { option } = getOpenedAccountsChartData(openAccounts);
     return (
       <ChartContiner dataSource={{ title: '业务开通（户）' }}>
-        <IECharts
-          option={option}
-          style={{
-            height: '200px',
-            paddingTop: '15px',
-          }}
-          resizable
-        />
+        <div className={styles.openAccountsWrap}>
+          <IECharts
+            option={option}
+            style={{
+              height: '160px',
+              paddingTop: '15px',
+            }}
+            resizable
+          />
+          <div className={styles.labels}>
+            {
+              _.map(openAccounts, item => (
+                <Tooltip title={item.description} placement="top" key={item.name}>
+                  <span className={styles.label}>
+                    {item.name}
+                  </span>
+                </Tooltip>
+              ))
+            }
+          </div>
+        </div>
       </ChartContiner>
     );
   }
 
   // 净创收
   renderNetIncome(indicators) {
-    const {
-      dlmmZqIncome, // 代理买卖证券净创收
-      prdtPurFee, // 产品净手续费收入
-      purInteIncome, // 净利息收入
-    } = indicators;
-    const incomes = [
-      {
-        name: '代理买卖证券净创收',
-        value: (dlmmZqIncome && dlmmZqIncome.value) || 599030000,
-      },
-      {
-        name: '产品净手续费收入',
-        value: (prdtPurFee && prdtPurFee.value) || 51980000,
-      },
-      {
-        name: '净利息收入',
-        value: (purInteIncome && purInteIncome.value) || 2980920000,
-      },
-    ];
-    const max = _.maxBy(incomes, 'value').value / 0.9; // 最大值的百分比认为0.9
+    const incomes = getValueByResponse(indicators, NET_INCOME_CONFIG);
+    const max = _.every(incomes, { formatedValue: EMPTY_VALUE }) // 所有值都为空
+      ? 1
+      : _.maxBy(incomes, 'value').value / 0.9; // 最大值的百分比认为0.9
     return (
       <ChartContiner dataSource={{ title: '净创收' }}>
         <div className={styles.netIncomeWrap}>
           {
             _.map(incomes, (item) => {
-              const percent = _.round(item.value * 100 / max);
+              const percent = item.formatedValue === EMPTY_VALUE
+                ? 0
+                : _.round(item.value * 100 / max);
               return (
                 <div className={styles.incomeItem} key={item.name}>
                   <div className={styles.incomeText}>
-                    {item.name}
+                    <Tooltip title={item.description} placement="top">{item.name}</Tooltip>
                     <span className={styles.incomeValue}>
-                      {formatToUnit({ num: item.value, floatLength: 2 })}
+                      {item.formatedValue}
                     </span>
                   </div>
                   <div className={styles.progress}>
@@ -323,44 +253,22 @@ export default class PerformanceCharts extends PureComponent {
 
   // 服务指标
   renderServiceIndicator(indicators) {
-    const {
-      motCompletePercent,
-      serviceCompPercent,
-      shzNpRate,
-    } = indicators;
-    const serviceIndicators = [
-      {
-        name: '必做MOT完成率',
-        value: (motCompletePercent && motCompletePercent.value) || 68,
-        color: 'orange',
-      },
-      {
-        name: '服务覆盖率',
-        value: (serviceCompPercent && serviceCompPercent.value) || 43,
-        color: 'yellow',
-      },
-      {
-        name: '归集率',
-        value: (shzNpRate && shzNpRate.value) || 89,
-        color: 'red',
-      },
-    ];
+    const serviceIndicators = getValueByResponse(indicators, SERVICE_INDICATOR_CONFIG);
     return (
       <ChartContiner dataSource={{ title: '服务指标' }}>
         <div className={styles.serviceIndicatorWrap}>
           {
             _.map(serviceIndicators, item => (
-              <div className={styles.serviceItem}>
+              <div className={styles.serviceItem} key={item.name}>
                 <div className={styles.serviceText}>
-                  {item.name}
+                  <Tooltip title={item.description} placement="top">{item.name}</Tooltip>
                   <div className={styles.number}>
-                    {item.value}
-                    %
+                    {item.formatedValue}
                   </div>
                 </div>
                 <div className={styles.progress} color={item.color}>
                   <Progress
-                    percent={item.value}
+                    percent={item.formatedValue === EMPTY_VALUE ? 0 : item.value}
                     showInfo={false}
                     type="circle"
                     width={39}
@@ -386,7 +294,7 @@ export default class PerformanceCharts extends PureComponent {
         <div className={styles.listItem}>
           <Row gutter={gutter}>
             <Col span={8}>
-              {this.renderMainIndicator(indicators)}
+              {this.renderPointIndicator(indicators)}
             </Col>
             <Col span={8}>
               {this.renderCustomerAndAsset(indicators)}
@@ -399,7 +307,7 @@ export default class PerformanceCharts extends PureComponent {
         <div className={styles.listItem}>
           <Row gutter={gutter}>
             <Col span={8}>
-              {this.renderOpenedAccounts()}
+              {this.renderOpenedAccounts(indicators)}
             </Col>
             <Col span={8}>
               {this.renderNetIncome(indicators)}
