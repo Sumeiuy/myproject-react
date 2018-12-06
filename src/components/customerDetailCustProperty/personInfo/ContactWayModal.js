@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-26 13:58:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-30 18:12:53
+ * @Last Modified time: 2018-12-04 17:31:44
  * @description 联系方式弹框-个人客户联系方式修改
  */
 import React, { Component } from 'react';
@@ -46,6 +46,8 @@ export default class ContactWayModal extends Component {
     delContact: PropTypes.func.isRequired,
     // 新增|删除|修改后刷新联系方式列表
     refreshContact: PropTypes.func.isRequired,
+    // 是否修改
+    saveUpdatedStatus: PropTypes.func.isRequired,
   }
 
   static contextTypes = {
@@ -91,11 +93,15 @@ export default class ContactWayModal extends Component {
   refresh(resultData) {
     if (resultData.result === 'success') {
       this.props.refreshContact();
+      // 告知父组件进行过修改了
+      this.props.saveUpdatedStatus();
+    } else if (resultData.result === 'fail') {
+      message.error('删除联系方式失败！');
     }
   }
 
   @autobind
-  changeSwitch(callback) {
+  changeSwitch() {
     const {
       location: {
         query: { custId },
@@ -106,35 +112,21 @@ export default class ContactWayModal extends Component {
       noMessage,
       noCall,
       custId,
-    }).then(callback);
+    });
+    // 告知父组件进行过修改了
+    this.props.saveUpdatedStatus();
   }
 
   // 修改请勿发短信
   @autobind
   changeNoMessage() {
-    const { noMessage } = this.state;
-    this.changeSwitch((resultData) => {
-      const { result } = resultData;
-      if (result !== 'success') {
-        message.error('修改请勿发短息失败');
-        // 失败了要回退到原来状态
-        this.setState({ noMessage: !noMessage });
-      }
-    });
+    this.changeSwitch();
   }
 
   // 修改请勿打电话
   @autobind
   changeNoCall() {
-    const { noCall } = this.state;
-    this.changeSwitch((resultData) => {
-      const { result } = resultData;
-      if (result !== 'success') {
-        message.error('修改请勿打电话失败');
-        // 失败了要回退到原来状态
-        this.setState({ noCall: !noCall });
-      }
-    });
+    this.changeSwitch();
   }
 
   // 删除前的确认框
@@ -226,6 +218,8 @@ export default class ContactWayModal extends Component {
   handlePhoneDelClick(record) {
     this.confirmBeforeDel({
       id: record.id,
+      number: record.phoneNumber,
+      contactWayCode: record.contactWayCode,
       contactType: 'phone',
     });
   }
@@ -276,6 +270,8 @@ export default class ContactWayModal extends Component {
   handleOtherDelClick(record) {
     this.confirmBeforeDel({
       id: record.id,
+      number: record.contactText,
+      contactWayCode: record.contactWayCode,
       contactType: 'other',
     });
   }

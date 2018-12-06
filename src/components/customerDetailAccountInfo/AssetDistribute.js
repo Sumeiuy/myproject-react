@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-11 16:30:07
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-30 14:49:07
+ * @Last Modified time: 2018-12-05 10:22:23
  * @description 新版客户360详情下账户信息Tab下的资产分布组件
  */
 import React, { PureComponent } from 'react';
@@ -33,7 +33,6 @@ import { composeIndicatorAndData, pickRadarDisplayData } from './assetRadarHelpe
 import { number } from '../../helper';
 import logable, { logPV, logCommon } from '../../decorators/logable';
 import styles from './assetDistribute.less';
-import IfWrap from '../common/biz/IfWrap';
 
 export default class AssetDistribute extends PureComponent {
   static propTypes = {
@@ -56,6 +55,8 @@ export default class AssetDistribute extends PureComponent {
     super(props);
 
     this.state = {
+      // 保存以前的props指标详情数据
+      prevData: props.specificIndexData,
       // 选中含信用的checkbox
       checkedCredit: true,
       // 负债详情弹出层
@@ -69,32 +70,36 @@ export default class AssetDistribute extends PureComponent {
     };
   }
 
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const { prevData } = prevState;
+    const { specificIndexData } = nextProps;
+    if (specificIndexData !== prevData) {
+      // 如果发现指标详情数据变化了，则修改展开的指标key
+      return {
+        assetDetailExpandKeys: _.map(specificIndexData, item => item.key),
+      };
+    }
+    return null;
+  }
+
   componentDidMount() {
     this.getInitialData();
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps) {
     // 如果 custId不同需要重新查一下数据
     const {
       location: {
         query: { custId: nextCustId },
       },
-      specificIndexData: nextSD,
     } = this.props;
     const {
       location: {
         query: { custId: prevCustId },
       },
-      specificIndexData: prevSD,
     } = prevProps;
     if (nextCustId !== prevCustId && _.isEmpty(nextCustId)) {
       this.freshDataForDiffUser();
-    }
-    if (prevSD !== nextSD) {
-      // 当数据变化了之后，重新获取表格数据的key
-      this.setState({
-        assetDetailExpandKeys: _.map(nextSD, item => item.key),
-      });
     }
   }
 
@@ -182,11 +187,11 @@ export default class AssetDistribute extends PureComponent {
             const nameLable = name.split('|');
             const axisName = nameLable[0];
             const { radarIndexName } = this.state;
-            const value = displayMoneyWithoutUnit(Number(nameLable[2]));
+            const indexValue = displayMoneyWithoutUnit(Number(nameLable[2]));
             if (radarIndexName === axisName) {
-              return `{hightLightName|${axisName}}\n{hightLightValue|${value}}`;
+              return `{hightLightName|${axisName}}\n{hightLightValue|${indexValue}}`;
             }
-            return `{name|${axisName}}\n{value|${value}}`;
+            return `{name|${axisName}}\n{value|${indexValue}}`;
           },
         },
         indicator: composedIndicators,
@@ -351,7 +356,7 @@ export default class AssetDistribute extends PureComponent {
 
   // 渲染收益/收益率的单元格
   @autobind
-  renderTableProfitColumn(profit, record) {
+  renderTableProfitColumn(profit) {
     // TODO 本期暂时不展示收益率，后期需要展示，所以暂时保留处理逻辑
     // const { profitPercent } = record;
     // const fixedPercent = profitPercent || 0;
@@ -459,7 +464,7 @@ export default class AssetDistribute extends PureComponent {
                   </div>
                 </div>
                 <div className={styles.indexDetailArea}>
-                  <IfTableWrap isRender={!_.isEmpty(specificIndexData)} text={`暂无${radarIndexName}数据`}>
+                  <IfTableWrap isRender={!_.isEmpty(specificIndexData)} text={`无${radarIndexName}明细`}>
                     <Table
                       expandedRowKeys={assetDetailExpandKeys}
                       rowKey="key"

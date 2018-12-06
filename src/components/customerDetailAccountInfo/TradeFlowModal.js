@@ -2,7 +2,7 @@
  * @Author: liqianwen
  * @Date: 2018-11-07 13:31:51
  * @Last Modified by: liqianwen
- * @Last Modified time: 2018-11-30 22:58:53
+ * @Last Modified time: 2018-12-03 21:27:18
  * @description 新版客户360详情的交易流水的弹出层
  */
 import React, { PureComponent } from 'react';
@@ -621,6 +621,7 @@ export default class TradeFlowModal extends PureComponent {
         if (isNumber) {
           return number.thousandFormat(number.toFixed(text), false);
         }
+        return text;
       },
     };
   }
@@ -630,7 +631,7 @@ export default class TradeFlowModal extends PureComponent {
   transformColumnsData(columns) {
     return _.map(columns, (column) => {
       const {
-        isNumber = false, isAmount = false, width, dataIndex
+        isNumber = false, isAmount = false, dataIndex
       } = column;
       if (isNumber || isAmount) {
         return this.updateMoneyColumn(column);
@@ -726,7 +727,10 @@ render() {
   const closeBtn = [(
     <Button onClick={this.handleModalClose}>关闭</Button>
   )];
-  const { defaultStartDate, defaultEndDate } = this.getDefaultDate(capitalStartDate, capitalEndDate);
+  const {
+    defaultStartDate,
+    defaultEndDate,
+  } = this.getDefaultDate(capitalStartDate, capitalEndDate);
 
   return (
     <Modal
@@ -802,7 +806,11 @@ render() {
                   />
                 </div>
               </div>
-              <IfTableWrap isRender={isRenderStandard} text={NODATA_STANDARD}>
+              <IfTableWrap
+                isRender={isRenderStandard}
+                text={NODATA_STANDARD}
+                effect="detailAccountInfo/queryStandardTradeFlow"
+              >
                 <div className={styles.body}>
                   <Table
                     pagination={false}
@@ -867,7 +875,11 @@ render() {
                   />
                 </div>
               </div>
-              <IfTableWrap isRender={isRenderCredit} text={NODATA_CREDIT}>
+              <IfTableWrap
+                isRender={isRenderCredit}
+                text={NODATA_CREDIT}
+                effect="detailAccountInfo/queryCreditTradeFlow"
+              >
                 <div className={styles.body}>
                   <Table
                     pagination={false}
@@ -917,7 +929,11 @@ render() {
                   />
                 </div>
               </div>
-              <IfTableWrap isRender={isRenderOption} text={NODATA_OPTION}>
+              <IfTableWrap
+                isRender={isRenderOption}
+                text={NODATA_OPTION}
+                effect="detailAccountInfo/queryOptionTradeFlow"
+              >
                 <div className={styles.body}>
                   <Table
                     pagination={false}
@@ -949,7 +965,11 @@ render() {
                 </div>
                 <div className={styles.filterArea}>
                   <span className={styles.label}>账户类型:</span>
-                  <RadioGroup onChange={this.handleAccountTypeRadioChange} value={accountTypeRadio} className={styles.radioGroup}>
+                  <RadioGroup
+                    onChange={this.handleAccountTypeRadioChange}
+                    value={accountTypeRadio}
+                    className={styles.radioGroup}
+                  >
                     <Radio className={styles.accountTypeRadio} value="normal">普通</Radio>
                     <Radio className={styles.accountTypeRadio} value="credit">信用</Radio>
                     <Radio className={styles.accountTypeRadio} value="option">期权</Radio>

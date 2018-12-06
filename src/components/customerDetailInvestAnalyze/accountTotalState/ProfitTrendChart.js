@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-25 11:31:40
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-03 21:19:40
+ * @Last Modified time: 2018-12-05 11:14:16
  * @description 账户收益走势图表
  */
 import React, { PureComponent } from 'react';
@@ -12,6 +12,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import IfWrap from '../../common/biz/IfWrap';
 import IECharts from '../../IECharts';
+import Summary from '../Summary';
 import { data } from '../../../helper';
 import { filterData, filterXAxisDate } from '../utils';
 import {
@@ -184,10 +185,14 @@ export default class ProfitTrendChart extends PureComponent {
                 {profitTrendTipData}
               </div>
             </div>
-            <div className={styles.profitTrendSummary}>
-              <p className={styles.profitContrast}>{profitTrendSummary}</p>
-              <p className={styles.timeRate}>{timeRateText}</p>
-            </div>
+            <Summary>
+              <p className={styles.profitContrast}>
+                <span>{profitTrendSummary}</span>
+              </p>
+              <p className={styles.timeRate}>
+                <span>{timeRateText}</span>
+              </p>
+            </Summary>
           </div>
         </IfWrap>
       </div>

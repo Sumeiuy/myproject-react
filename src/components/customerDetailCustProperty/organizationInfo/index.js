@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性-普通机构属性
  * @Date: 2018-11-07 14:39:15
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-30 09:31:33
+ * @Last Modified time: 2018-12-04 17:53:43
  */
 
 import React, { PureComponent } from 'react';
@@ -28,6 +28,8 @@ export default class OrganizationInfo extends PureComponent {
     updateOrgPhone: PropTypes.func.isRequired,
     // 新增|修改机构客户地址信息
     updateOrgAddress: PropTypes.func.isRequired,
+    // 用于修改后刷新客户属性中的数据
+    queryCustomerProperty: PropTypes.func.isRequired,
   }
 
   render() {
@@ -40,6 +42,7 @@ export default class OrganizationInfo extends PureComponent {
       delContact,
       updateOrgAddress,
       updateOrgPhone,
+      queryCustomerProperty,
     } = this.props;
     const {
       phones = [],
@@ -64,6 +67,7 @@ export default class OrganizationInfo extends PureComponent {
             delContact={delContact}
             updateOrgAddress={updateOrgAddress}
             updateOrgPhone={updateOrgPhone}
+            queryCustomerProperty={queryCustomerProperty}
           />
         </IfWrap>
       </div>

@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 19:10:24
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-30 15:06:26
+ * @Last Modified time: 2018-12-04 17:23:32
  * @description 个人客户添加其他信息
  */
 
@@ -14,9 +14,10 @@ import {
   Row, Col, Select, Input, Form
 } from 'antd';
 
+import { regxp } from '../../../helper';
 import logable from '../../../decorators/logable';
 import { FORM_STYLE, SOURCE_CODE } from '../common/config';
-import { isCreateContact } from '../common/utils';
+import { isCreateContact, isEmail } from '../common/utils';
 import styles from '../contactForm.less';
 
 const Option = Select.Option;
@@ -52,6 +53,7 @@ export default class PerOtherContactForm extends PureComponent {
     } = data;
     this.state = {
       // 是否主要,无论新增还是修改都是N
+      // eslint-disable-next-line
       mainFlag: 'N',
       // 号码：
       contactWayValue: isCreate ? '' : contactText,
@@ -62,6 +64,24 @@ export default class PerOtherContactForm extends PureComponent {
     };
   }
 
+  // 校验号码
+  @autobind
+  validateTellPhoneNumber(rule, value, callback) {
+    const contactWayCode = this.props.form.getFieldValue('contactWayCode');
+    const newInput = _.trim(value);
+    if (!_.isEmpty(contactWayCode) && !_.isEmpty(newInput)) {
+      // 如果选择的是电子邮件
+      if (isEmail(contactWayCode) && !regxp.email.test(newInput)) {
+        callback('电子邮件格式不正确');
+      } else {
+        callback();
+      }
+    } else {
+      // 必须要调用
+      callback();
+    }
+  }
+
   @autobind
   @logable({
     type: 'Click',
@@ -70,7 +90,7 @@ export default class PerOtherContactForm extends PureComponent {
       value: '$args[0]',
     },
   })
-  handleContactSelectChange(contactWayCode) {
+  handleContactSelectChange() {
     // 记录日志用
   }
 
@@ -129,12 +149,16 @@ export default class PerOtherContactForm extends PureComponent {
             <div className={styles.formItem}>
               <div className={styles.itemLable}>
                 <span className={styles.requried}>*</span>
-号码：
+                号码：
               </div>
               <div className={styles.valueArea}>
                 <FormItem>
                   {getFieldDecorator('contactWayValue', {
-                    rules: [{ required: true, message: '请输入号码' }],
+                    rules: [
+                      { required: true, message: '请输入号码' },
+                      { whitespace: true, message: '头尾不能有空格' },
+                      { validator: this.validateTellPhoneNumber },
+                    ],
                     initialValue: contactWayValue,
                   })(
                     <Input style={FORM_STYLE} />,
@@ -149,7 +173,7 @@ export default class PerOtherContactForm extends PureComponent {
             <div className={styles.formItem}>
               <div className={styles.itemLable}>
                 <span className={styles.requried}>*</span>
-联系方式：
+                联系方式：
               </div>
               <div className={styles.valueArea}>
                 <FormItem>
@@ -172,7 +196,7 @@ export default class PerOtherContactForm extends PureComponent {
             <div className={styles.formItem}>
               <div className={styles.itemLable}>
                 <span className={styles.requried}>*</span>
-来源：
+                来源：
               </div>
               <div className={styles.valueArea}>
                 <FormItem>
