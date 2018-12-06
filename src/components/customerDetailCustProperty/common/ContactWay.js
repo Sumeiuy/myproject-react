@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性-(普通机构, 产品机构)客户联系方式
  * @Date: 2018-11-07 14:33:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-30 18:16:21
+ * @Last Modified time: 2018-12-04 17:56:55
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -51,6 +51,8 @@ export default class ContactWay extends PureComponent {
     updateOrgPhone: PropTypes.func.isRequired,
     // 新增|修改机构客户地址信息
     updateOrgAddress: PropTypes.func.isRequired,
+    // 用于修改后刷新客户属性数据
+    queryCustomerProperty: PropTypes.func.isRequired,
   }
 
   static contextTypes = {
@@ -62,6 +64,8 @@ export default class ContactWay extends PureComponent {
     this.state = {
       // 添加机构客户联系方式的的Modal
       addOrgContactWayModal: false,
+      // 是否进行了修改
+      hasUpdated: false,
     };
   }
 
@@ -133,9 +137,27 @@ export default class ContactWay extends PureComponent {
     });
   }
 
+  // 保存是否修改了
+  @autobind
+  saveUpdateState() {
+    this.setState({ hasUpdated: true });
+  }
+
   // 关闭机构客户联系方式弹框
   @autobind
   handleContactWayModalClose() {
+    const { hasUpdated } = this.state;
+    if (hasUpdated) {
+      const {
+        location: {
+          query: { custId },
+        },
+      } = this.props;
+      this.props.queryCustomerProperty({
+        custId,
+      });
+      this.setState({ hasUpdated: false });
+    }
     this.setState({ addOrgContactWayModal: false });
   }
 
@@ -172,7 +194,7 @@ export default class ContactWay extends PureComponent {
     return (
       <div className={styles.contactWayBox}>
         <div className={styles.title}>
-联系方式
+          联系方式
           {/** 只有主服务经理才可以进入编辑谭宽 */}
           <IFWrap isRender={isMainEmp}>
             <span
@@ -232,6 +254,7 @@ export default class ContactWay extends PureComponent {
             updateOrgAddress={updateOrgAddress}
             updateOrgPhone={updateOrgPhone}
             refreshContact={this.refreshContact}
+            saveUpdateState={this.saveUpdateState}
           />
         </IFWrap>
       </div>

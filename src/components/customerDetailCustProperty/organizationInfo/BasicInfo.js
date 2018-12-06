@@ -37,7 +37,19 @@ export default class BasicInfo extends PureComponent {
   // 获取数值显示数据
   @autobind
   getViewTextByNum(value) {
-    return _.isNumber(value) ? number.thousandFormat(value) : DEFAULT_VALUE;
+    return _.isNumber(value)
+      ? number.formatToUnit({
+        num: value,
+        floatLength: 2,
+        unit: '元',
+      })
+      : DEFAULT_VALUE;
+  }
+
+  // 获取title
+  @autobind
+  getViewTitleByNum(value) {
+    return _.isNumber(value) ? `${number.thousandFormat(value)}元` : DEFAULT_VALUE;
   }
 
   render() {
@@ -99,10 +111,11 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label="注册资金（万元）"
+              label="注册资金"
               value={this.getViewTextByNum(data.registeredFund)}
               className={styles.infoItem}
               isNeedValueTitle={checkIsNeedTitle(this.getViewTextByNum(data.registeredFund))}
+              title={this.getViewTitleByNum(data.registeredFund)}
               isNeedOverFlowEllipsis
             />
           </div>

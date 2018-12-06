@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 客户360-客户属性-财务信息-个人财务信息
  * @Date: 2018-11-07 14:33:00
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-11-20 16:46:39
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-12-06 09:15:29
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -55,7 +55,7 @@ export default class Person extends PureComponent {
     updatePerFinaceData: PropTypes.func.isRequired,
   }
 
-  static defaultPropTypes = {
+  static defaultProps = {
     isMainEmp: false,
   }
 
@@ -64,9 +64,15 @@ export default class Person extends PureComponent {
     let displayValue = value;
     // 是数字类型
     if (_.isNumber(value)) {
-      displayValue = `${number.thousandFormat(number.toFixed(value))}(元)`;
+      displayValue = `${number.thousandFormat(number.toFixed(value))}元`;
     }
     return _.isEmpty(displayValue) ? DEFAULT_VALUE : displayValue;
+  }
+
+  @autobind
+  getYieldValue(value) {
+    return (_.isEmpty(value) && !_.isNumber(value))
+      ? DEFAULT_VALUE : `${number.toFixed(value)}%`;
   }
 
   @autobind
@@ -128,12 +134,6 @@ export default class Person extends PureComponent {
       validate: true,
       msg: '',
     };
-  }
-
-  @autobind
-  getYieldValue(value) {
-    return (_.isEmpty(value) && !_.isNumber(value))
-      ? DEFAULT_VALUE : `${number.toFixed(value)}%`;
   }
 
   @autobind

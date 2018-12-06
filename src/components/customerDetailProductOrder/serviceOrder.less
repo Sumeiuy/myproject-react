@@ -11,14 +11,17 @@
     }
   }
   .table {
+    table-layout: fixed;
     background: #fff;
     :global {
       table > thead > tr > th,
       table > tbody > tr > td {
         padding: 0 40px;
       }
-      table > tbody > tr > td {
-        border: 0;
+      tr.ant-table-row.ant-table-row-level-1 {
+        td {
+          border: 0;
+        }
       }
     }
     .intrRateStyle {

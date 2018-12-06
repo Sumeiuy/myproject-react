@@ -31,19 +31,26 @@
       .historyHoldingTable {
         :global {
           .ant-table-tbody > tr > td {
-            height: 40px;
-            padding: 10px 16px;
+            height: 38px;
+            padding: 10px 0 10px 20px;
             white-space: nowrap;
-            line-height: 20px;
+            line-height: 18px;
             font-size: 14px;
             color: #333;
+
+            &:last-child {
+              padding-right: 20px;
+            }
           }
           .ant-table-thead > tr > th {
-            padding: 10px 16px;
+            padding: 10px 0 10px 20px;
             white-space: nowrap;
             font-size: 14px;
             font-weight: bold;
             color: #666;
+            &:last-child {
+              padding-right: 20px;
+            }
           }
         }
 

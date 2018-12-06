@@ -4,8 +4,6 @@
  * @author maoquan(maoquan@htsc.com)
  */
 
-import { inHTSCDomain } from './constants';
-
 const EVENT_PROFILE_ACTION = 'sendProfile';
 
 const config = {
@@ -13,7 +11,7 @@ const config = {
   interval: 1 * 60 * 1000,
   // 开启日志监控
   enable: true,
-  projectName: inHTSCDomain ? 'FSP_2' : 'DEV_TEST',
+  projectName: 'FSP_2',
   blacklist: [
     '@@DVA_LOADING/HIDE',
     '@@DVA_LOADING/SHOW',

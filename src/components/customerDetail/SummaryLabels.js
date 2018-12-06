@@ -62,7 +62,7 @@ export default class SummaryLabels extends PureComponent {
     return (
       <div className={styles.wrap}>
         <div className={styles.header}>
-          <span className={styles.title}>重点标签</span>
+          <span className={styles.title}>重点匹配标签</span>
           <span className={styles.xq} onClick={this.handleMoreLabelClick}>更多</span>
         </div>
         <div className={styles.body}>

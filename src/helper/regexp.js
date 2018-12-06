@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 10:16:02
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-22 10:09:22
+ * @Last Modified time: 2018-12-04 17:15:12
  * @description 此处存放通用的正则表达式
  */
 const regexp = {
@@ -22,6 +22,10 @@ const regexp = {
    * 电子邮箱的正则表达式
    */
   email: /\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/,
+  /**
+   * 邮政编码的正则表达式
+   */
+  zipCode: /^[0-9]{6}$/,
   /**
    * 整数部分千分位格式化的正则表达式
    * 例子：12345604 => 12,345,604

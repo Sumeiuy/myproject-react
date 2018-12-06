@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-28 10:55:01
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-30 17:01:34
+ * @Last Modified time: 2018-12-05 11:18:56
  * @description 客户属性中个人客户|机构客户的电话信息、地址信息、其他信息的编辑弹框
  */
 import React, { PureComponent } from 'react';
@@ -86,7 +86,7 @@ export default class EditContactWayModal extends PureComponent {
     return this.orgAddressFormRef.current;
   }
 
-  // 编辑通过校验后提交个人客户联系方式
+  // 编辑通过校验后提交机构客户联系方式
   @autobind
   handleContactSubmit(type, query) {
     const {
@@ -153,17 +153,25 @@ export default class EditContactWayModal extends PureComponent {
         } = values;
         // 新增的时候需要将这三个值转换成对象,因为后端的接口需要这样弄,
         // 因为机构客户的联系人信息有多个手机信息、固定电话、邮箱
+        // 因为老的数据中有可能手机、固定、邮箱会给与null，因此如果为null,
+        // 则id、contactWayCode传空字符串，相当于新增这条数据
         this.handleContactSubmit('phone', {
           ...restValue,
           email: {
+            id: '',
+            contactWayCode: '',
             ...email,
             value: emailValue,
           },
           mobile: {
+            id: '',
+            contactWayCode: '',
             ...mobile,
             value: mobileValue,
           },
           landline: {
+            id: '',
+            contactWayCode: '',
             ...landline,
             value: landlineValue,
           },
@@ -218,10 +226,13 @@ export default class EditContactWayModal extends PureComponent {
       // 编辑个人客户的地址信息
       this.checkPerAddressForSubmit();
     } else if (formType === 'per_other') {
+      // 编辑个人客户的其他信息
       this.checkPerOtherForSubmit();
     } else if (formType === 'org_phone') {
+      // 编辑机构客户的电话信息
       this.checkOrgPhoneForSubmit();
     } else if (formType === 'org_address') {
+      // 编辑机构客户的地址信息
       this.checkOrgAddressForSubmit();
     }
   }
