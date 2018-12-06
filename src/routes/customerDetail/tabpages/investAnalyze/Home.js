@@ -3,7 +3,7 @@
  * @Date: 2018-11-19 15:39:12
  * @Last Modified time: 2018-11-23 20:37:55
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-03 16:25:08
+ * @Last Modified time: 2018-12-04 13:45:33
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -45,6 +45,14 @@ export default class Home extends PureComponent {
     getAttributionAnalysis: PropTypes.func.isRequired,
     // brinson归因数据
     attributionData: PropTypes.object.isRequired,
+    // 获取期末资产配置数据
+    getEndTermAssetConfig: PropTypes.func.isRequired,
+    // 期末资产配置数据
+    endTermAssetConfigData: PropTypes.object.isRequired,
+    // 获取资产配置变动走势
+    getAssetConfigTrend: PropTypes.func.isRequired,
+    // 资产配置变动走势数据
+    assetConfigTrendData: PropTypes.object.isRequired,
   }
 
   static contextTypes = {
@@ -101,6 +109,10 @@ export default class Home extends PureComponent {
       profitTrendData,
       getAttributionAnalysis,
       attributionData,
+      getEndTermAssetConfig,
+      endTermAssetConfigData,
+      getAssetConfigTrend,
+      assetConfigTrendData,
     } = this.props;
     return (
       <div className={styles.investmentAbilityAnalysis}>
@@ -121,7 +133,13 @@ export default class Home extends PureComponent {
             />
           </TabPane>
           <TabPane tab="资产配置分析" key="assetAllocationAnalysis">
-            <AssetConfigAnalysis />
+            <AssetConfigAnalysis
+              location={location}
+              getEndTermAssetConfig={getEndTermAssetConfig}
+              endTermAssetConfigData={endTermAssetConfigData}
+              getAssetConfigTrend={getAssetConfigTrend}
+              assetConfigTrendData={assetConfigTrendData}
+            />
           </TabPane>
           <TabPane tab="收益归因分析" key="profitAttributionAnalysis">
             <ProfitAttributionAnalysis

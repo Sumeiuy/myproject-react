@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 19:02:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-05 17:05:01
+ * @Last Modified time: 2018-12-05 17:40:47
  * @description 添加机构客户地址信息联系方式的Form
  */
 import React, { PureComponent } from 'react';
@@ -272,12 +272,14 @@ export default class OrgAddressContactForm extends PureComponent {
           <Col span={12}>
             <div className={styles.formItem}>
               <div className={styles.itemLable}>
+                <span className={styles.requried}>*</span>
                 邮政编码：
               </div>
               <div className={styles.valueArea}>
                 <FormItem>
                   {getFieldDecorator('zipCode', {
                     rules: [
+                      { required: true, message: '请填写邮政编码' },
                       { pattern: regxp.zipCode, message: '邮政编码格式不正确' }
                     ],
                     initialValue: zipCode,

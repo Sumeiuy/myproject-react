@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 客户360-客户属性-财务信息-机构财务信息
  * @Date: 2018-11-07 14:33:00
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-11-20 16:14:02
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-12-06 09:15:50
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -49,8 +49,18 @@ export default class Organization extends PureComponent {
     queryFinanceDetail: PropTypes.func.isRequired,
   }
 
-  static defaultPropTypes = {
+  static defaultProps = {
     isMainEmp: false,
+  }
+
+  @autobind
+  getViewData(value) {
+    let displayValue = value;
+    // 是数字类型
+    if (_.isNumber(value)) {
+      displayValue = `${number.thousandFormat(number.toFixed(value))}元`;
+    }
+    return _.isEmpty(displayValue) ? DEFAULT_VALUE : displayValue;
   }
 
   // 主服务经理并且不是上市公司可以编辑
@@ -122,16 +132,6 @@ export default class Organization extends PureComponent {
       validate: true,
       msg: '',
     };
-  }
-
-  @autobind
-  getViewData(value) {
-    let displayValue = value;
-    // 是数字类型
-    if (_.isNumber(value)) {
-      displayValue = `${number.thousandFormat(number.toFixed(value))}(元)`;
-    }
-    return _.isEmpty(displayValue) ? DEFAULT_VALUE : displayValue;
   }
 
   @autobind
