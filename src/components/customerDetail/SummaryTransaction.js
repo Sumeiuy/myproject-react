@@ -2,36 +2,27 @@
  * @Author: sunweibin
  * @Date: 2018-10-15 22:30:04
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-05 17:24:56
+ * @Last Modified time: 2018-12-06 15:54:36
  * @description 客户360详情交易数据展示模块
  */
 import React from 'react';
 import PropTypes from 'prop-types';
 
 import Cell from './Cell';
-import { openFspTab } from '../../utils';
 import styles from './summaryTransaction.less';
 
 export default function SummaryTransaction(props, context) {
   const { data, custRowId } = props;
-  const { push, custBasic: { custNature } } = context;
+  const { custBasic: { custNature } } = context;
   // 跳转到股基佣金率详情页面
   const jumpToGJDetial = () => {
-    const param = {
-      id: 'FSP_360VIEW_org_commission',
-      title: '佣金查询',
-      // 必须要写上，否则，在360视图存在的情况下，再跳转到360视图时，360视图不会刷新，且React界面如果有弹框存在，不会消失
-      forceRefresh: true,
-    };
     const url = `/customerCenter/360/${custNature}/toCommission?rowId=${custRowId}`;
-    openFspTab({
-      routerAction: push,
-      pathname: '/fsp/customerCenter/customer360',
-      url,
+    // 新版直接使用push
+    context.push({
+      pathname: '/fsp/customerCenter/toCommission',
       state: {
-        param,
         url,
-      },
+      }
     });
   };
 
