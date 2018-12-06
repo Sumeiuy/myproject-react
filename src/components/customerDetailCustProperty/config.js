@@ -2,18 +2,12 @@
  * @Author: XuWenKang
  * @Description: 客户360，客户属性tab相关配置
  * @Date: 2018-11-07 15:17:38
-<<<<<<< HEAD
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-27 20:32:53
-=======
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-29 09:03:42
->>>>>>> b20181130
+ * @Last Modified time: 2018-12-06 09:05:53
  */
 
 import _ from 'lodash';
 import moment from 'moment';
-import { number } from '../../helper';
 
 export const CUST_TYPE = {
   // 个人客户类型标识
@@ -47,8 +41,6 @@ export const getViewTextByBool = (bool) => {
   return DEFAULT_VALUE;
 };
 
-// 获取数值显示数据
-export const getViewTextByNum = value => (_.isNumber(value) ? number.thousandFormat(value) : DEFAULT_VALUE);
 const config = {
   MemberGradeColumns: [
     {
@@ -152,7 +144,7 @@ const config = {
       className: 'publicStyle',
     },
     {
-      title: '取消的交易ID	',
+      title: '取消的交易ID',
       dataIndex: 'cancelledId',
       key: 'cancelledId',
       className: 'lastStyle',
@@ -161,7 +153,9 @@ const config = {
 };
 
 // 根据传入的参数判断是否需要显示title，如果值等于默认值则不显示
-export const checkIsNeedTitle = value => (value !== DEFAULT_VALUE && value !== DEFAULT_PRIVATE_VALUE && !_.isEmpty(value));
+export const checkIsNeedTitle = value => (
+  value !== DEFAULT_VALUE && value !== DEFAULT_PRIVATE_VALUE && !_.isEmpty(value)
+);
 
 export default config;
 export const {
@@ -179,6 +173,7 @@ export const newMemberGradeColumns = _.map(MemberGradeColumns, (items) => {
         if (!_.isEmpty(record.afterChangeLevel)) {
           return moment(text).format('YYYY-MM-DD hh:mm:ss');
         }
+        return '';
       }
     };
   }
