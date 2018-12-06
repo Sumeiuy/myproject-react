@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-12-05 14:04:02
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-06 14:48:54
+ * @Last Modified time: 2018-12-06 15:21:51
  * @description 新版的概要信息展示组件
  */
 import React from 'react';
@@ -24,6 +24,7 @@ export default function Cell(props) {
     indicator,
     valueType,
     compareTip,
+    titleExtra,
   } = props;
 
   /**
@@ -81,6 +82,7 @@ export default function Cell(props) {
             )
             : title
         }
+        {titleExtra}
       </div>
       <div className={styles.content}>
         <span>{content}</span>
