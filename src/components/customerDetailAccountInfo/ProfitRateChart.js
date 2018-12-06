@@ -92,8 +92,8 @@ export default class ProfitRateChart extends Component {
     const timePrefix = timeItem.slice(0, timeItem.indexOf('/') + 1);
     return `
       <div>${timePrefix + params[0].axisValueLabel}</div>
-      <div>${params[1].marker}${params[1].seriesName}: ${combinationNum.toFixed(2)}%</div>
       <div>${params[0].marker}${params[0].seriesName}: ${baseNum.toFixed(2)}%</div>
+      <div>${params[1].marker}${params[1].seriesName}: ${combinationNum.toFixed(2)}%</div>
     `;
   }
 
@@ -122,8 +122,13 @@ export default class ProfitRateChart extends Component {
           show: false,
         },
         data: _.map(custCompareData.timeLine, value => value && value.slice(value.indexOf('/') + 1)),
+        axisLine: {
+          lineStyle: {
+            color: '#999',
+          },
+        },
         axisLabel: {
-          color: '#333',
+          color: '#8995a5',
           showMinLabel: true,
           showMaxLabel: true,
           fontSize: 12,
@@ -144,8 +149,8 @@ export default class ProfitRateChart extends Component {
         },
         type: 'value',
         axisLabel: {
-          color: '#333',
-          formatter: '{value} %',
+          color: '#8995a5',
+          formatter: '{value}%',
           fontSize: 12,
         },
       },
@@ -180,6 +185,8 @@ export default class ProfitRateChart extends Component {
             }
           </div>
           <div className={styles.codeSelectBox}>
+            <span className={styles.basicCode} />
+            <span className={styles.text}>账户收益率</span>
             <span className={styles.compareCode} />
             <span className={styles.codeController}>
               <SingleFilter
@@ -189,8 +196,6 @@ export default class ProfitRateChart extends Component {
                 onChange={onCompareCodeChange}
               />
             </span>
-            <span className={styles.basicCode} />
-            <span className={styles.text}>账户收益率</span>
           </div>
         </div>
         <div className={styles.chartWrapper}>

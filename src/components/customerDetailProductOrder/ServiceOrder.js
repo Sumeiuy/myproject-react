@@ -28,7 +28,7 @@ const NODATA_HINT = '客户暂无服务订购信息';
 const warning = Modal.warning;
 
 export default class ServiceOrder extends PureComponent {
-  static propsType = {
+  static propTypes = {
     location: PropTypes.object.isRequired,
     serviceOrderData: PropTypes.object.isRequired,
     queryCustCanChangeCommission: PropTypes.func.isRequired,
@@ -52,6 +52,7 @@ export default class ServiceOrder extends PureComponent {
     this.getServiceOrderData();
   }
 
+  @autobind
   getServiceOrderData(options) {
     const { sortType, sortValue } = this.state;
     const { location: { query: { custId } } } = this.props;
@@ -65,6 +66,14 @@ export default class ServiceOrder extends PureComponent {
         ...options,
       });
     }
+  }
+
+  @autobind
+  getTableRowCls(record) {
+    if (record && !_.isEmpty(record.children)) {
+      return 'tabRow';
+    }
+    return '';
   }
 
   @autobind
@@ -238,7 +247,7 @@ export default class ServiceOrder extends PureComponent {
             dataSource={productList}
             rowKey="name"
             pagination={pagination}
-            rowClassName={styles.tableRow}
+            rowClassName={this.getTableRowCls}
             columns={this.transformColumnsData()}
             indentSize={0}
           />
