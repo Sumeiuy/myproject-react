@@ -2,7 +2,7 @@
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-06 19:55:23
+ * @Last Modified time: 2018-12-06 17:28:12
  */
 
 import React, { PureComponent } from 'react';
@@ -267,7 +267,7 @@ export default class Home extends PureComponent {
     this.state = {
       location: props.location,
       // 是否打开负债详情的Modal
-      debtDetailModalVisible: false,
+      // debtDetailModalVisible: false,
       // 选中的时间范围
       time: timeList[0].key,
       // 选中的对比指标
@@ -292,6 +292,29 @@ export default class Home extends PureComponent {
 
     if (custId && custId !== prevCustId) {
       this.getProfitRateInfo({ initial: true });
+    }
+  }
+
+  @autobind
+  getProfitRateInfo(options) {
+    const { location: { query }, queryProfitRateInfo } = this.props;
+    // 初始化时传递下面的参数发送请求
+    if (options.initial) {
+      queryProfitRateInfo({
+        custId: query && query.custId,
+        indexCode: '000300',
+        startDate: transformTime('month').startDate,
+        endDate: transformTime('month').endDate,
+        withCustPofit: true,
+      });
+    } else { // 用户点击触发请求传递参数
+      queryProfitRateInfo({
+        custId: query && query.custId,
+        indexCode: options.indexCode,
+        startDate: transformTime(options.time).startDate,
+        endDate: transformTime(options.time).endDate,
+        withCustPofit: options.withCustPofit,
+      });
     }
   }
 
@@ -339,30 +362,7 @@ export default class Home extends PureComponent {
       option: queryOptionTradeFlow,
       capital: queryCapitalTradeFlow,
     };
-    _.isFunction(tradeFlowMap[type]) && tradeFlowMap[type](otherQuery);
-  }
-
-  @autobind
-  getProfitRateInfo(options) {
-    const { location: { query }, queryProfitRateInfo } = this.props;
-    // 初始化时传递下面的参数发送请求
-    if (options.initial) {
-      queryProfitRateInfo({
-        custId: query && query.custId,
-        indexCode: '000300',
-        startDate: transformTime('month').startDate,
-        endDate: transformTime('month').endDate,
-        withCustPofit: true,
-      });
-    } else { // 用户点击触发请求传递参数
-      queryProfitRateInfo({
-        custId: query && query.custId,
-        indexCode: options.indexCode,
-        startDate: transformTime(options.time).startDate,
-        endDate: transformTime(options.time).endDate,
-        withCustPofit: options.withCustPofit,
-      });
-    }
+    tradeFlowMap[type](otherQuery);
   }
 
   @autobind

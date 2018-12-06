@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-09 16:52:56
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-23 15:40:48
+ * @Last Modified time: 2018-12-06 17:24:27
  * @description 新版客户360详情下的账户信息Tab页面的model
  */
 import _ from 'lodash';
