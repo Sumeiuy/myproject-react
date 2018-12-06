@@ -967,15 +967,21 @@ export default {
           list: resultData.object || {},
         };
       }
-      const allSightingTelescopeFilters = yield select(state => state.customerPool.allSightingTelescopeFilters);
+      const allSightingTelescopeFilters = yield select(
+        state => state.customerPool.allSightingTelescopeFilters
+      );
 
       const { sightingTelescopeList } = payload;
       let resultData = [];
 
-      const reqestSightingTelescopes = _.filter(sightingTelescopeList, key => !_.some(allSightingTelescopeFilters, item => item.key === key));
+      const reqestSightingTelescopes = _.filter(
+        sightingTelescopeList, key => !_.some(allSightingTelescopeFilters, item => item.key === key)
+      );
 
       if (!_.isEmpty(reqestSightingTelescopes)) {
-        resultData = yield _.map(reqestSightingTelescopes, key => getFiltersOfSightingTelescopewithKey(key));
+        resultData = yield _.map(
+          reqestSightingTelescopes, key => getFiltersOfSightingTelescopewithKey(key)
+        );
       }
       resultData = allSightingTelescopeFilters.concat(resultData);
       yield put({
@@ -1709,11 +1715,10 @@ export default {
         productList: payload,
       };
     },
-    clearSearchPersonList(state, action) {
-      const { payload } = action;
+    clearSearchPersonList(state) {
       return {
         ...state,
-        searchServerPersonList: payload,
+        searchServerPersonList: EMPTY_LIST,
       };
     },
     // 审批流程获取按钮成功
