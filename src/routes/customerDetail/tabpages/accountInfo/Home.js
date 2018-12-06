@@ -23,32 +23,32 @@ import styles from './home.less';
 
 // 转化时间范围
 function transformTime(key, format = 'YYYYMMDD') {
-  const today = moment().format(format);
+  const endDate = moment().subtract(1, 'days').format(format);
   switch (key) {
     case 'month':
       return {
         startDate: moment().subtract(1, 'months').format(format),
-        endDate: today,
+        endDate,
       };
     case 'season':
       return {
         startDate: moment().subtract(3, 'months').format(format),
-        endDate: today,
+        endDate,
       };
     case 'halfYear':
       return {
         startDate: moment().subtract(6, 'months').format(format),
-        endDate: today,
+        endDate,
       };
     case 'currentYear':
       return {
         startDate: moment().startOf('year').format(format),
-        endDate: today,
+        endDate,
       };
     default:
       return {
         startDate: moment().subtract(1, 'months').format(format),
-        endDate: today,
+        endDate,
       };
   }
 }
@@ -266,8 +266,6 @@ export default class Home extends PureComponent {
     super(props);
     this.state = {
       location: props.location,
-      // 是否打开负债详情的Modal
-      debtDetailModalVisible: false,
       // 选中的时间范围
       time: timeList[0].key,
       // 选中的对比指标
@@ -292,6 +290,29 @@ export default class Home extends PureComponent {
 
     if (custId && custId !== prevCustId) {
       this.getProfitRateInfo({ initial: true });
+    }
+  }
+
+  @autobind
+  getProfitRateInfo(options) {
+    const { location: { query }, queryProfitRateInfo } = this.props;
+    // 初始化时传递下面的参数发送请求
+    if (options.initial) {
+      queryProfitRateInfo({
+        custId: query && query.custId,
+        indexCode: '000300',
+        startDate: transformTime('month').startDate,
+        endDate: transformTime('month').endDate,
+        withCustPofit: true,
+      });
+    } else { // 用户点击触发请求传递参数
+      queryProfitRateInfo({
+        custId: query && query.custId,
+        indexCode: options.indexCode,
+        startDate: transformTime(options.time).startDate,
+        endDate: transformTime(options.time).endDate,
+        withCustPofit: options.withCustPofit,
+      });
     }
   }
 
@@ -339,31 +360,9 @@ export default class Home extends PureComponent {
       option: queryOptionTradeFlow,
       capital: queryCapitalTradeFlow,
     };
-    _.isFunction(tradeFlowMap[type]) && tradeFlowMap[type](otherQuery);
+    return _.isFunction(tradeFlowMap[type]) && tradeFlowMap[type](otherQuery);
   }
 
-  @autobind
-  getProfitRateInfo(options) {
-    const { location: { query }, queryProfitRateInfo } = this.props;
-    // 初始化时传递下面的参数发送请求
-    if (options.initial) {
-      queryProfitRateInfo({
-        custId: query && query.custId,
-        indexCode: '000300',
-        startDate: transformTime('month').startDate,
-        endDate: transformTime('month').endDate,
-        withCustPofit: true,
-      });
-    } else { // 用户点击触发请求传递参数
-      queryProfitRateInfo({
-        custId: query && query.custId,
-        indexCode: options.indexCode,
-        startDate: transformTime(options.time).startDate,
-        endDate: transformTime(options.time).endDate,
-        withCustPofit: options.withCustPofit,
-      });
-    }
-  }
 
   @autobind
   @logable({
