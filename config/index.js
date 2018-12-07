@@ -5,6 +5,16 @@ var devEnv = require('./dev.env');
 // 以此前缀开头的请求全部转发至指定服务器`targetUrl`
 var prefix = devEnv.REMOVE_PREFIX === true ? '/mcrm/api' : '/fspa/mcrm/api';
 
+// UAT环境的开发转发环境地址
+var UAT_FORWARD_URL = 'http://168.61.8.82:5086';
+// SIT环境的开发转发华宁地址
+var SIT_FORWARD_URL = 'http://168.61.8.81:5087';
+// DOClever的接口mock地址
+var MOCK_FORWARD_URL = 'http://168.61.8.81:5090';
+// 新版客户360详情下客户画像的访问地址
+var CUST_PROFIT_DEV_URL = 'http://168.61.125.20:8080';
+
+
 function generateProxy(proxyList) {
   var result = {};
   var len = proxyList.length;
@@ -44,40 +54,29 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: generateProxy([
       '/finereport/ReportServer', // 报表中心
-      {
-        target: 'http://168.61.8.82:5086', // uat
-      },
+      { target: UAT_FORWARD_URL },
       '/fspa/phone',
-      {
-        target: 'http://168.61.8.82:5086', // uat
-      },
+      { target: UAT_FORWARD_URL },
+      prefix + '/groovynoauth/fsp/cust/custdetail/queryAccountSummaryInfo',
+      { target: MOCK_FORWARD_URL },
+      prefix + '/groovynoauth/fsp/cust/custdetail/queryCustTradeInfo',
+      { target: MOCK_FORWARD_URL },
       prefix,
-      {
-        target: 'http://168.61.8.82:5086', // uat
-        // target: 'http://160.9.228.231:8082', // xzx
-        // target: 'http://168.61.8.81:5087', // SIT
-        // target: 'http://168.61.8.81:5090', // DOClever
-      },
+      { target: UAT_FORWARD_URL },
       '/fspa/log',
       {
-        // target: 'http://168.61.8.82:5085', // SIT
-        target: 'http://168.61.8.82:5086', // uat
+        target: UAT_FORWARD_URL,
       },
-      '/fsp',
+      '/fsp/',
       {
-        // target: 'http://168.61.8.81:5087', // SIT
-        target: 'http://168.61.8.82:5086', // UAT
+        target: UAT_FORWARD_URL,
       },
       '/htsc-product-base',
-      {
-        // target: 'http://168.61.8.82:5085', // SIT
-        target: 'http://168.61.8.82:5086', // uat
-      },
+      { target: UAT_FORWARD_URL },
       '/jeip',
-      {
-        // target: 'http://168.61.8.82:5085', // SIT
-        target: 'http://168.61.8.82:5086', // UAT
-      },
+      { target: UAT_FORWARD_URL },
+      '/yt/',
+      { target: CUST_PROFIT_DEV_URL },
     ]),
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README

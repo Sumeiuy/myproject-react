@@ -9,8 +9,9 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import isNumber from 'lodash/isNumber';
-import styles from './index.less';
 import loadingEnd from '../../../decorators/loadingEnd';
+
+import styles from './index.less';
 
 @loadingEnd
 export default class IfTableWrap extends PureComponent {

@@ -16,9 +16,8 @@ import ChartContiner from './ChartContainer';
 import IECharts from '../IECharts';
 import styles from './analysisCharts.less';
 import { seperator } from '../../config';
-import { toFixedNum } from '../chartRealTime/FixNumber';
+import { toFixedNum, transformItemUnit } from '../chartRealTime/FixNumber';
 import { number } from '../../helper';
-import { transformItemUnit } from '../chartRealTime/FixNumber';
 
 import {
   getCustClassChartData,
@@ -150,16 +149,8 @@ export default class PerformanceIndicators extends PureComponent {
     const assetData = transformItemUnit(item.asset);
     return (
       <div>
-        <div>
-客户数：
-          {number.thousandFormat(item.custNum)}
-人
-        </div>
-        <div>
-托管资产：
-          {assetData.newItem}
-          {assetData.newUnit}
-        </div>
+        <div>客户数：{number.thousandFormat(item.custNum)}人</div>
+        <div>托管资产：{assetData.newItem}{assetData.newUnit}</div>
       </div>
     );
   }

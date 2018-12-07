@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性-个人属性
  * @Date: 2018-11-07 14:39:15
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-29 20:31:43
+ * @Last Modified time: 2018-12-04 13:26:50
  */
 
 import React, { PureComponent } from 'react';
@@ -84,6 +84,7 @@ export default class PersonInfo extends PureComponent {
             updatePerAddress={updatePerAddress}
             updatePerOther={updatePerOther}
             delContact={delContact}
+            queryCustomerProperty={queryCustomerProperty}
           />
         </IfWrap>
       </div>

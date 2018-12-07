@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-05 13:31:51
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-03 14:27:45
+ * @Last Modified time: 2018-12-05 11:44:08
  * @description 新版客户360详情的历史持仓的弹出层
  */
 import React, { PureComponent } from 'react';
@@ -56,10 +56,6 @@ export default class HistoryHoldingModal extends PureComponent {
     productHistoryHolding: PropTypes.object.isRequired,
     // 期权持仓明细数据
     optionHistoryHolding: PropTypes.object.isRequired,
-  }
-
-  static defaultProps = {
-    holdingsData: {},
   }
 
   static contextTypes = {
@@ -291,6 +287,7 @@ export default class HistoryHoldingModal extends PureComponent {
             onClick: () => this.jumpToStockPage(record),
           };
         }
+        return {};
       }
     };
   }
@@ -328,6 +325,7 @@ export default class HistoryHoldingModal extends PureComponent {
             onClick: () => this.jumpToStockPage(record),
           };
         }
+        return {};
       }
     };
   }
@@ -453,7 +451,7 @@ export default class HistoryHoldingModal extends PureComponent {
         || dataIndex === 'optionKind'
         || dataIndex === 'optionCode'
         || dataIndex === 'stockCode'
-        ) {
+      ) {
         // 期权产品名称、期权种类、期权代码、证券代码
         return this.updateTableWordsColumn(column, 8);
       }
@@ -675,7 +673,10 @@ export default class HistoryHoldingModal extends PureComponent {
                 <div className={styles.header}>
                   <div className={styles.accountTypeArea}>
                     <span className={styles.label}>账户类型:</span>
-                    <RadioGroup onChange={this.handleAccountTypeRadioChange} value={accountTypeRadio}>
+                    <RadioGroup
+                      onChange={this.handleAccountTypeRadioChange}
+                      value={accountTypeRadio}
+                    >
                       <Radio className={styles.accountTypeRadio} value="all">全部</Radio>
                       <Radio className={styles.accountTypeRadio} value="normal">普通</Radio>
                       <Radio className={styles.accountTypeRadio} value="credit">信用</Radio>

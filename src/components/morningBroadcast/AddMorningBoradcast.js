@@ -211,7 +211,7 @@ export default class AddMorningBoradcast extends PureComponent {
       }
     }
     if (file.status === 'error') {
-      this.setState({ fileAudioList: fileList });
+      this.setState({ audioFileList: fileList });
     }
   }
 
@@ -416,7 +416,7 @@ export default class AddMorningBoradcast extends PureComponent {
     };
     const audioProps = {
       ...sourceProps,
-      action: `${request.prefix}/file/ceFileReplaceUpload `,
+      action: `${request.prefix}/file/ceFileReplaceUpload2`,
       accept: 'audio/*',
       data: {
         attachment: finalNewUuid[0],
@@ -475,7 +475,9 @@ export default class AddMorningBoradcast extends PureComponent {
               })(
                 <Select placeholder="晨报类型">
                   {
-                    morningBoradcastType.map(item => <Option key={item.key} value={item.key}>{item.value}</Option>, )
+                    morningBoradcastType.map(
+                      item => <Option key={item.key} value={item.key}>{item.value}</Option>
+                    )
                   }
                 </Select>,
               )}

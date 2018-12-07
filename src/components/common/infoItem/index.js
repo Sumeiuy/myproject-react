@@ -5,10 +5,22 @@
  */
 
 import React from 'react';
+import _ from 'lodash';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 
 import styles from './index.less';
+
+function getTitle({
+  isNeedValueTitle = false,
+  title = '',
+  value = '',
+}) {
+  if (isNeedValueTitle) {
+    return _.isEmpty(title) ? value : title;
+  }
+  return '';
+}
 
 export default function InfoItem(props) {
   const {
@@ -19,11 +31,14 @@ export default function InfoItem(props) {
     className,
     isNeedValueTitle,
     isNeedOverFlowEllipsis,
+    title,
   } = props;
   const valueClassNames = classnames({
     [styles.value]: true,
     [styles.textOverFlow]: isNeedOverFlowEllipsis,
   });
+  // 如果传递的title值为空的是直接使用value直来代替title
+  const newTitle = getTitle({ isNeedValueTitle, title, value });
   return (
     <div className={`${styles.wrap} ${className}`}>
       <div
@@ -43,7 +58,7 @@ export default function InfoItem(props) {
           color: valueColor,
           width: `calc(100% - ${width})`,
         }}
-        title={isNeedValueTitle ? value : ''}
+        title={newTitle}
       >
         {value}
       </div>
@@ -61,6 +76,8 @@ InfoItem.propTypes = {
   isNeedValueTitle: PropTypes.bool,
   // 是否需要value字段超出宽度打点
   isNeedOverFlowEllipsis: PropTypes.bool,
+  // 鼠标移入显示的title，不传默认为传入的value
+  title: PropTypes.string,
 };
 InfoItem.defaultProps = {
   label: '标题',
@@ -70,4 +87,5 @@ InfoItem.defaultProps = {
   className: '',
   isNeedValueTitle: false,
   isNeedOverFlowEllipsis: false,
+  title: '',
 };
