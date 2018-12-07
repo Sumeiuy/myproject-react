@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-11 18:37:20
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-05 13:10:18
+ * @Last Modified time: 2018-12-06 16:42:53
  * @description 新版客户360详情的账户信息Tab下页面的配置项
  */
 
@@ -112,9 +112,12 @@ export const TRADE_FLOW_TABS = {
   capitalChange: '资金变动',
 };
 
+// 历史持仓的表格的滚动props
 export const STOCK_HISTORY_HOLDING_TABLE_SCROLL = { x: 1900 };
 export const PRODUCT_HISTORY_HOLDING_TABLE_SCROLL = { x: 2000 };
 export const OPTION_HISTORY_HOLDING_TABLE_SCROLL = { x: 2200 };
+
+// 交易流水三个表格的滚动props
 export const STANDARD_TRADE_FLOW_TABLE_SCROLL = { x: 2100 };
 export const CREDIT_TRADE_FLOW_TABLE_SCROLL = { x: 1800 };
 export const OPTION_TRADE_FLOW_TABLE_SCROLL = { x: 2500 };

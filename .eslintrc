@@ -10,6 +10,7 @@
   "rules": {
     "semi": [2],
     "no-unused-vars": [1],
+    "react/jsx-one-expression-per-line": [0],
     "no-trailing-spaces": [2],
     "eol-last": [2],
     "eqeqeq": [2],
@@ -48,6 +49,7 @@
     "react/no-danger": [0],
     "react/destructuring-assignment": [0],   
     "jsx-a11y/no-static-element-interactions": [0],
+    "jsx-a11y/no-noninteractive-element-interactions": [0],
     "jsx-a11y/anchor-is-valid": [0],
     "jsx-a11y/click-events-have-key-events": [0],
     "sensors/actions-add-sensors-log": [0],

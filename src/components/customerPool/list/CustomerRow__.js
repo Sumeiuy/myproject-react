@@ -144,9 +144,6 @@ export default class CustomerRow extends PureComponent {
 
   constructor(props) {
     super(props);
-    this.state = {
-      checked: false,
-    };
     const { listItem: { empId }, empInfo: { rowId } } = props;
     // 判断是否主服务经理
     this.isMainService = empId === rowId;
@@ -220,9 +217,6 @@ export default class CustomerRow extends PureComponent {
       state: {
         url,
         param,
-        query: {
-          activeTabKey: 'customerInfo',
-        },
         backPath: window.location.hash.slice(1),
       },
     });
