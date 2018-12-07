@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-12-05 14:04:02
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-06 15:21:51
+ * @Last Modified time: 2018-12-07 10:28:57
  * @description 新版的概要信息展示组件
  */
 import React from 'react';
@@ -35,7 +35,11 @@ export default function Cell(props) {
    *   如果当期值与同期值都为0, 则不展示
    */
   let showCompareTip = compareTip;
-  const { value = 0, lastValue = 0, description = '' } = indicator;
+  const {
+    value = 0,
+    lastValue = 0,
+    description = '',
+  } = indicator;
   if (compareTip) {
     const isAllZero = value === 0 && lastValue === 0;
     const ascRateEqualO = lastValue !== 0 && calcSameTimeRate(value, lastValue) === 0;
@@ -65,9 +69,9 @@ export default function Cell(props) {
    * 因为指标说明有可能有多段文字，接口与后端约定好，需要分段显示的使用“|”分割
    */
   const descMulitSection = _.split(description, '|');
-  const descNode = _.map(descMulitSection, (o) => {
+  const descNode = _.map(descMulitSection, (desc) => {
     const uuid = data.uuid();
-    return (<div key={uuid} className={styles.paragraph}>{o}</div>);
+    return (<div key={uuid} className={styles.paragraph}>{desc}</div>);
   });
 
   return (

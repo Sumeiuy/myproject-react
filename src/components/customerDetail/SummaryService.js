@@ -2,12 +2,14 @@
  * @Author: sunweibin
  * @Date: 2018-10-15 20:43:07
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-05 16:08:28
+ * @Last Modified time: 2018-12-07 10:27:52
  * @description 客户360详情左侧服务记录信息
  */
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+
+import { TAB_POSITION_TOP } from './config';
 
 import styles from './summaryService.less';
 
@@ -46,7 +48,7 @@ export default function SummaryService(props) {
       }
     });
     // 页面定位到tabPane的位置
-    document.documentElement.scrollTop = 335;
+    document.documentElement.scrollTop = TAB_POSITION_TOP;
   };
 
   // 定位到服务记录

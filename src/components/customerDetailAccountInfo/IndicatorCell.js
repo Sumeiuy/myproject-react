@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-23 14:24:16
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-06 15:01:52
+ * @Last Modified time: 2018-12-07 10:29:31
  * @description 账户概览信息展示
  */
 import React from 'react';
@@ -23,7 +23,10 @@ export default function IndicatorCell(props) {
   }
 
   const {
-    name, description, value, valueType
+    name,
+    description,
+    value,
+    valueType,
   } = indicator;
   /**
    * 1. 判断指标类型,
@@ -56,9 +59,9 @@ export default function IndicatorCell(props) {
   if (showIndicatorDesc) {
     showIndicatorDesc = !_.isEmpty(description);
     const descMulitSection = _.split(description, '|');
-    descNode = _.map(descMulitSection, (o) => {
+    descNode = _.map(descMulitSection, (desc) => {
       const uuid = data.uuid();
-      return (<div key={uuid} className={styles.c}>{o}</div>);
+      return (<div key={uuid} className={styles.c}>{desc}</div>);
     });
   }
 
