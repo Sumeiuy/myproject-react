@@ -56,6 +56,23 @@ const optionsMap = {
       name: '本年',
     },
   ],
+  performanceCycleSelect: [
+    {
+      key: '518003',
+      name: '本月',
+      dateKey: 'month',
+    },
+    {
+      key: '518004',
+      name: '上月',
+      dateKey: 'lastMonth',
+    },
+    {
+      key: '518005',
+      name: '上上月',
+      dateKey: 'beforeLastMonth',
+    },
+  ],
   historyTime: [
     {
       key: 'month',
@@ -289,4 +306,5 @@ export const {
   boardKeyName,
   summaryTypeSelect,
   charRadarOrgClass,
+  performanceCycleSelect,
 } = optionsMap;
