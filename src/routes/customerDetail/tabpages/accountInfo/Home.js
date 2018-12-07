@@ -2,7 +2,7 @@
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-06 19:55:23
+ * @Last Modified time: 2018-12-07 10:00:20
  */
 
 import React, { PureComponent } from 'react';
@@ -360,9 +360,8 @@ export default class Home extends PureComponent {
       option: queryOptionTradeFlow,
       capital: queryCapitalTradeFlow,
     };
-    return _.isFunction(tradeFlowMap[type]) && tradeFlowMap[type](otherQuery);
+    tradeFlowMap[type](otherQuery);
   }
-
 
   @autobind
   @logable({
