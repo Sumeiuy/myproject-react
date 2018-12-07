@@ -52,14 +52,18 @@ function getCustClassChartData(data) {
     dataSource[0].custNumRate = 50;
     dataSource[1].custNumRate = 50;
   } else {
-    dataSource[0].custNumRate = Math.floor((dataSource[0].custNum / (dataSource[0].custNum + dataSource[1].custNum)) * 100);
+    dataSource[0].custNumRate = Math.floor(
+      (dataSource[0].custNum / (dataSource[0].custNum + dataSource[1].custNum)) * 100
+    );
     dataSource[1].custNumRate = 100 - dataSource[0].custNumRate;
   }
   if (dataSource[0].asset + dataSource[1].asset === 0) {
     dataSource[0].assetRate = 50;
     dataSource[1].assetRate = 50;
   } else {
-    dataSource[0].assetRate = Math.floor((dataSource[0].asset / (dataSource[0].asset + dataSource[1].asset)) * 100);
+    dataSource[0].assetRate = Math.floor(
+      (dataSource[0].asset / (dataSource[0].asset + dataSource[1].asset)) * 100
+    );
     dataSource[1].assetRate = 100 - dataSource[0].assetRate;
   }
   const option = {
@@ -78,18 +82,18 @@ function getCustClassChartData(data) {
         fontSize: 12,
       },
       formatter: (params) => {
-        let data = {
+        let formatData = {
           value: number.thousandFormat(params.data.custNum),
           unit: '人',
         };
         if (params.name === '托管资产') {
           const item = transformItemUnit(params.data.asset);
-          data = {
+          formatData = {
             value: item.newItem,
             unit: item.newUnit,
           };
         }
-        return `${params.data.name} ${params.name}：${data.value}${data.unit}`;
+        return `${params.data.name} ${params.name}：${formatData.value}${formatData.unit}`;
       }
     },
     xAxis: {
@@ -268,18 +272,18 @@ function getCustomTypeChartData(data) {
         fontSize: 12,
       },
       formatter: (params) => {
-        let data = {
+        let formatData = {
           value: number.thousandFormat(params.data.custNum),
           unit: '人',
         };
         if (params.name === '托管资产') {
           const item = transformItemUnit(params.data.asset);
-          data = {
+          formatData = {
             value: item.newItem,
             unit: item.newUnit,
           };
         }
-        return `${params.data.name} ${params.name}：${data.value}${data.unit}`;
+        return `${params.data.name} ${params.name}：${formatData.value}${formatData.unit}`;
       }
     },
     xAxis: {
@@ -481,11 +485,11 @@ function getMaxCostRateChartData(data) {
         fontSize: 12,
       },
       formatter: (params) => {
-        const data = {
+        const formatData = {
           value: number.thousandFormat(params.data.value),
           unit: '人',
         };
-        return `${params.data.name} 客户数：${data.value}${data.unit}`;
+        return `${params.data.name} 客户数：${formatData.value}${formatData.unit}`;
       }
     },
     xAxis: [
@@ -686,11 +690,11 @@ function getPftAmtChartData(data) {
         fontSize: 12,
       },
       formatter: (params) => {
-        const data = {
+        const formatData = {
           value: number.thousandFormat(params.data.value),
           unit: '人',
         };
-        return `${params.data.name} 客户数：${data.value}${data.unit}`;
+        return `${params.data.name} 客户数：${formatData.value}${formatData.unit}`;
       }
     },
     xAxis: [
@@ -828,10 +832,78 @@ function getHoldingChart(data) {
   return option;
 }
 
+// 业务开通
+function getOpenedAccountsChartData(data) {
+  const option = {
+    color: ['#49b6ff'],
+    grid: {
+      left: '10px',
+      right: '10px',
+      bottom: '1px',
+      top: '15px',
+      containLabel: false,
+    },
+    tooltip: {
+      position: 'top',
+      backgroundColor: 'rgba(2, 22, 55, 0.8)',
+      padding: 10,
+      textStyle: {
+        fontSize: 12,
+      },
+    },
+    xAxis: [
+      {
+        type: 'category',
+        data: _.map(data, item => item.name),
+        show: true,
+        axisLine: {
+          lineStyle: {
+            color: '#a8b6d4',
+            width: 1,
+          }
+        },
+        axisTick: {
+          alignWithLabel: true,
+          length: 0,
+        },
+        axisLabel: {
+          color: '#666',
+          align: 'center',
+          margin: 20,
+          rotate: 30,
+        },
+      }
+    ],
+    yAxis: [
+      {
+        type: 'value',
+        show: false,
+      }
+    ],
+    series: [{
+      data,
+      type: 'bar',
+      barWidth: 14,
+      label: {
+        normal: {
+          show: true,
+          position: 'top',
+          color: '#333',
+          fontSize: 12,
+        },
+      },
+    }],
+  };
+  return {
+    option,
+  };
+}
+
 export {
   getCustClassChartData,
   getCustomTypeChartData,
   getMaxCostRateChartData,
   getPftAmtChartData,
   getHoldingChart,
+  getOpenedAccountsChartData,
 };
