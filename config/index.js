@@ -64,9 +64,13 @@ module.exports = {
       prefix,
       { target: UAT_FORWARD_URL },
       '/fspa/log',
-      { target: UAT_FORWARD_URL },
-      '/fsp',
-      { target: UAT_FORWARD_URL },
+      {
+        target: UAT_FORWARD_URL,
+      },
+      '/fsp/',
+      {
+        target: UAT_FORWARD_URL,
+      },
       '/htsc-product-base',
       { target: UAT_FORWARD_URL },
       '/jeip',

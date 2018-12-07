@@ -4,7 +4,7 @@
 */
 
 import requestUtils from './request';
-import { apiPrefix, fspPrefix, inHTSCDomain } from '../config/constants';
+import { apiPrefix, fspPrefix } from '../config/constants';
 import { emp, url as urlHelper, encode } from '../helper';
 
 const { request, logRequest, fspRequest } = requestUtils;
@@ -93,12 +93,8 @@ export default function createApi() {
      */
     sendLog(url, query = {}, options) {
       let data = JSON.stringify(query);
-      // 只在华泰域名下才编码
-      // 测试环境为了直观测试，不编码数据
-      if (inHTSCDomain) {
-        data = encode.base64(data);
-        data = encodeURIComponent(data);
-      }
+      data = encode.base64(data);
+      data = encodeURIComponent(data);
       return logRequest(
         url,
         {

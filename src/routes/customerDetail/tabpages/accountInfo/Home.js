@@ -2,7 +2,7 @@
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-06 17:28:12
+ * @Last Modified time: 2018-12-07 10:00:20
  */
 
 import React, { PureComponent } from 'react';
@@ -23,32 +23,32 @@ import styles from './home.less';
 
 // 转化时间范围
 function transformTime(key, format = 'YYYYMMDD') {
-  const today = moment().format(format);
+  const endDate = moment().subtract(1, 'days').format(format);
   switch (key) {
     case 'month':
       return {
         startDate: moment().subtract(1, 'months').format(format),
-        endDate: today,
+        endDate,
       };
     case 'season':
       return {
         startDate: moment().subtract(3, 'months').format(format),
-        endDate: today,
+        endDate,
       };
     case 'halfYear':
       return {
         startDate: moment().subtract(6, 'months').format(format),
-        endDate: today,
+        endDate,
       };
     case 'currentYear':
       return {
         startDate: moment().startOf('year').format(format),
-        endDate: today,
+        endDate,
       };
     default:
       return {
         startDate: moment().subtract(1, 'months').format(format),
-        endDate: today,
+        endDate,
       };
   }
 }
@@ -266,8 +266,6 @@ export default class Home extends PureComponent {
     super(props);
     this.state = {
       location: props.location,
-      // 是否打开负债详情的Modal
-      // debtDetailModalVisible: false,
       // 选中的时间范围
       time: timeList[0].key,
       // 选中的对比指标

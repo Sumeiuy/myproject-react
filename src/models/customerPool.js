@@ -1721,11 +1721,10 @@ export default {
         productList: payload,
       };
     },
-    clearSearchPersonList(state, action) {
-      const { payload } = action;
+    clearSearchPersonList(state) {
       return {
         ...state,
-        searchServerPersonList: payload,
+        searchServerPersonList: EMPTY_LIST,
       };
     },
     // 审批流程获取按钮成功
