@@ -63,12 +63,12 @@ const optionsMap = {
       dateKey: 'month',
     },
     {
-      key: '518004',
+      key: '518003',
       name: '上月',
       dateKey: 'lastMonth',
     },
     {
-      key: '518005',
+      key: '518003',
       name: '上上月',
       dateKey: 'beforeLastMonth',
     },

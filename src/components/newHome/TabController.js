@@ -195,8 +195,8 @@ export default class TabController extends PureComponent {
     const performanceTimeSelectProps = {
       useCustomerFilter: true,
       data: optionsMap.performanceCycleSelect,
-      dataMap: ['key', 'name'],
-      value: performanceCycleSelect || optionsMap.performanceCycleSelect[0].key,
+      dataMap: ['dateKey', 'name'],
+      value: performanceCycleSelect || optionsMap.performanceCycleSelect[0].dateKey,
       onChange: this.handleTimeSelectChange,
     };
     return (

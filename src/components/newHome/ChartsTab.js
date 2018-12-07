@@ -208,7 +208,7 @@ export default class ChartsTab extends PureComponent {
         requsetOrgId = this.loginOrgId;
       }
       const { performanceCycleSelect: selects } = optionsMap;
-      const currentSelect = _.find(selects, item => item.key === performanceCycleSelect)
+      const currentSelect = _.find(selects, item => item.dateKey === performanceCycleSelect)
         || selects[0];
       const duration = time.getDurationString(currentSelect.dateKey);
       const begin = duration.begin;
@@ -216,11 +216,11 @@ export default class ChartsTab extends PureComponent {
       getPerformanceIndicators({
         custType, // 客户范围类型
         orgId: requsetOrgId,
-        dateType: performanceCycleSelect || selects[0].key,
+        dateType: currentSelect.key,
         begin,
         end,
         dateStart: moment(begin).format('YYYY-MM-DD'),
-        dateEnd: moment(end).format('YYYY-MM-DD'),
+        dateEnd: moment(end).endOf('month').format('YYYY-MM-DD'),
       });
     }
   }
