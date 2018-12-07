@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-12-04 21:25:54
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-04 21:54:36
+ * @Last Modified time: 2018-12-06 13:41:42
  * @description 期末资产配置表格
  */
 import React from 'react';
@@ -34,5 +34,5 @@ export default function EndTermAssetTable(props) {
 
 EndTermAssetTable.propTypes = {
   // 表格数据
-  endTermAssetTableData: PropTypes.object.isRequired,
+  endTermAssetTableData: PropTypes.array.isRequired,
 };

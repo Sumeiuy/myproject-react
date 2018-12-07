@@ -2,6 +2,7 @@
   border: 1px solid #dfe4eb;
   border-top: 0;
   border-radius: 0 0 3px 3px;
+  padding: 0 15px;
   background: #fff;
 
   .attributionAnalysis {
@@ -63,6 +64,53 @@
         left: 0;
         top: 5px;
       }
+    }
+  }
+}
+
+.infoContainer {
+  padding: 0 30px;
+  text-align: center;
+
+  .infoSummary, .infoComputeMethod {
+    margin-top: 20px;
+  }
+
+  .name {
+    font-size: 14px;
+    color: #333;
+    font-weight: bold;
+  }
+
+  .infoSummary {
+    & > div {
+      p {
+        font-size: 12px;
+        color: #333;
+        line-height: 17px;
+        text-align: left;
+        margin-top: 10px;
+        &:nth-of-type(1) {
+          text-indent: 2em;
+        }
+        &:nth-of-type(2) {
+          text-indent: 2em;
+        }
+        &:nth-of-type(6) {
+          text-indent: 2em;
+        }
+      }
+    }
+  }
+
+  .infoComputeMethod {
+    p {
+      font-size: 12px;
+      color: #333;
+      line-height: 17px;
+      text-align: left;
+      margin-top: 10px;
+      text-indent: 2em;
     }
   }
 }

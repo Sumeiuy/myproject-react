@@ -2,12 +2,13 @@
  * @Author: zhangjun
  * @Date: 2018-11-22 14:49:12
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-27 13:30:37
+ * @Last Modified time: 2018-12-07 13:45:54
  * @description 资产变动表格
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-
+import _ from 'lodash';
+import IfWrap from '../../common/biz/IfWrap';
 import Table from '../../common/table';
 import { number } from '../../../helper';
 import styles from './assetChangeTable.less';
@@ -65,18 +66,20 @@ export default function AssetChangeTable(props) {
       render: text => (thousandFormat(text)),
     },
   ];
-  const { assetChangeList } = props;
+  const { assetChangeData } = props;
   return (
     <div className={styles.assetChangeTable}>
-      <Table
-        columns={assetChangeTableColumns}
-        dataSource={assetChangeList}
-        pagination={false}
-      />
+      <IfWrap isRender={!_.isEmpty(assetChangeData)}>
+        <Table
+          columns={assetChangeTableColumns}
+          dataSource={[assetChangeData]}
+          pagination={false}
+        />
+      </IfWrap>
     </div>
   );
 }
 
 AssetChangeTable.propTypes = {
-  assetChangeList: PropTypes.array.isRequired,
+  assetChangeData: PropTypes.object.isRequired,
 };

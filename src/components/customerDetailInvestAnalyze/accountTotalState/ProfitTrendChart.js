@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-25 11:31:40
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-05 11:14:16
+ * @Last Modified time: 2018-12-07 09:13:15
  * @description 账户收益走势图表
  */
 import React, { PureComponent } from 'react';
@@ -178,6 +178,7 @@ export default class ProfitTrendChart extends PureComponent {
             <IECharts
               option={option}
               style={{ height: '260px' }}
+              resizable
             />
             <div className={styles.profitTrendTips}>
               <div className={styles.label}>注：</div>

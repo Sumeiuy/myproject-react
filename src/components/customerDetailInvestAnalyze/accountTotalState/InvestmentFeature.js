@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-20 15:28:46
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-03 21:20:16
+ * @Last Modified time: 2018-12-07 13:42:33
  * @description 客户投资特征
  */
 import React, { PureComponent } from 'react';
@@ -15,6 +15,7 @@ import { Popover } from 'antd';
 import Icon from '../../common/Icon';
 import InvestmentFeatureLabel from './InvestmentFeatureLabel';
 import ProfitAbilityLevel from './ProfitAbilityLevel';
+import { data } from '../../../helper';
 import { profitAbilityLevelList } from '../config';
 
 import styles from './investmentFeature.less';
@@ -55,8 +56,8 @@ export default class InvestmentFeature extends PureComponent {
       profitAbility: {
         beatCustPercent,
         custAssetStage,
-        profitAbilityLevel,
-      },
+        profitAbilityLevel = 0,
+      } = {},
       investmentFeatureLabels,
     } = this.props;
     const levelDesc = this.getLevelDesc();
@@ -72,7 +73,7 @@ export default class InvestmentFeature extends PureComponent {
           <p className={styles.custAssetStage}>
             同资产段 (
             {custAssetStage}
-）客户
+            ）客户
           </p>
         </div>
         <div className={styles.profitAbilityLevel}>
@@ -99,7 +100,7 @@ export default class InvestmentFeature extends PureComponent {
           <div className={styles.labelContainer}>
             {
               _.map(investmentFeatureLabels, label => (
-                <InvestmentFeatureLabel key={label.id} labelData={label} />
+                <InvestmentFeatureLabel key={data.uuid()} labelData={label} />
               ))
             }
           </div>

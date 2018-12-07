@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-20 16:01:36
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-04 13:19:46
+ * @Last Modified time: 2018-12-07 13:25:50
  * @description 新版客户360详情下的账户信息Tab页面的model
  */
 import { detailInvestAnalyze as api } from '../../api';
@@ -18,7 +18,7 @@ export default {
     // 投资账户特征
     investmentFeatureLabels: EMPTY_ARRAY,
     // 账户资产变动
-    assetChangeList: EMPTY_ARRAY,
+    assetChangeData: EMPTY_OBJECT,
     // 账户资产变动图表数据
     assetChangeReportData: EMPTY_ARRAY,
     // 账户收益走势数据
@@ -52,7 +52,7 @@ export default {
       const { payload } = action;
       return {
         ...state,
-        assetChangeList: payload || EMPTY_ARRAY,
+        assetChangeData: payload || EMPTY_OBJECT,
       };
     },
     // 获取账户资产变动图表数据成功
