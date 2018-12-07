@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-20 15:16:31
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-06 21:46:14
+ * @Last Modified time: 2018-12-07 15:26:16
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -40,7 +40,7 @@ export default class InfoTitle extends PureComponent {
 
   // 显示信息提示弹窗
   @autobind
-  @logPV({ pathname: '/modal/openInfoTip', title: '打开$props.modalTitle信息提示' })
+  @logPV({ pathname: '/modal/openInfoTip', title: '打开信息提示弹窗' })
   handleShowModal() {
     this.setState({ modalVisible: true });
   }
