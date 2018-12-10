@@ -2,12 +2,13 @@
  * @Author: zuoguangzu
  * @Date: 2018-12-04 14:03:58
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-12-09 22:56:24
+ * @Last Modified time: 2018-12-10 14:29:36
  * @description 个股收益明细表格
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import classnames from 'classnames';
 import Table from '../../common/table';
 import Icon from '../../common/Icon';
 import {
@@ -43,18 +44,18 @@ function getColumns() {
       title: STOCKPERIOD_UPDOWN,
       dataIndex: 'stockPeriodUpDown',
       render: (item) => {
-        if (item >= 0) {
-          return (
-            <span className={styles.stockPeriodUp}>
-              {changeReturnValue(item)}
-              <Icon className={styles.upDownIcon} type="zhang" />
-            </span>
-          );
-        }
+        const stockPeriodUpDown = classnames({
+          [styles.stockPeriodUp]: item >= 0,
+          [styles.stockPeriodDown]: item < 0,
+        });
         return (
-          <span className={styles.stockPeriodDown}>
+          <span className={stockPeriodUpDown}>
             {changeReturnValue(item)}
-            <Icon className={styles.upDownIcon} type="die" />
+            {
+              item > 0
+                ? <Icon className={styles.upDownIcon} type="zhang" />
+                : <Icon className={styles.upDownIcon} type="die" />
+            }
           </span>
         );
       },
@@ -63,18 +64,18 @@ function getColumns() {
       title: SHAREHOLDING_YIELD,
       dataIndex: 'shareHoldingYield',
       render: (item) => {
-        if (item >= 0) {
-          return (
-            <span className={styles.shareHoldingYieldUp}>
-              {changeReturnValue(item)}
-              <Icon className={styles.upDownIcon} type="zhang" />
-            </span>
-          );
-        }
+        const shareHoldingYieldUpDown = classnames({
+          [styles.shareHoldingYieldUp]: item >= 0,
+          [styles.shareHoldingYieldDown]: item < 0,
+        });
         return (
-          <span className={styles.shareHoldingYieldDown}>
+          <span className={shareHoldingYieldUpDown}>
             {changeReturnValue(item)}
-            <Icon className={styles.upDownIcon} type="die" />
+            {
+              item > 0
+                ? <Icon className={styles.upDownIcon} type="zhang" />
+                : <Icon className={styles.upDownIcon} type="die" />
+            }
           </span>
         );
       },

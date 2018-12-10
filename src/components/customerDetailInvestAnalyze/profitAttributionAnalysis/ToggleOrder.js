@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-12-07 17:14:55
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-12-09 22:34:16
+ * @Last Modified time: 2018-12-10 14:50:50
  * @description 切换排序方式
  */
 
@@ -18,7 +18,7 @@ const DOWN_TEXT = '收益由低到高';
 
 export default class ToggleOrder extends PureComponent {
   static propTypes = {
-    onOrderChange: PropTypes.func.isRequired,
+    handleOrderChange: PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -29,20 +29,21 @@ export default class ToggleOrder extends PureComponent {
   }
 
   @autobind
-  orderToggle() {
+  toggleOrder() {
     const { isUp } = this.state;
-    const { onOrderChange } = this.props;
+    const { handleOrderChange } = this.props;
     this.setState({
       isUp: !isUp,
     });
+    // 排序（01：升序；02：降序）
     const orderType = isUp ? '01' : '02';
-    onOrderChange(orderType);
+    handleOrderChange(orderType);
   }
 
   render() {
     const { isUp } = this.state;
     return (
-      <div onClick={this.orderToggle} className={styles.order}>
+      <div onClick={this.toggleOrder} className={styles.order}>
         <span>{isUp ? UP_TEXT : DOWN_TEXT}</span>
         <img className={styles.orderIcon} src={isUp ? upIcon : downIcon} alt="排序方向" />
       </div>

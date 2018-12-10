@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-27 14:00:51
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-12-10 10:23:52
+ * @Last Modified time: 2018-12-10 14:49:26
  * @description 收益归因分析
  */
 import React, { PureComponent } from 'react';
@@ -49,7 +49,7 @@ export default class ProfitAttributionAnalysis extends PureComponent {
 
   // 切换排序
   @autobind
-  onOrderChange(value) {
+  handleOrderChange(value) {
     const {
       location: {
         query: {
@@ -127,11 +127,9 @@ export default class ProfitAttributionAnalysis extends PureComponent {
       },
     } = this.props;
     const incomeDetailChartData = _.map(stockInfo, 'accumulatedProfit');
-    const incomeDetailTableData = _.map(stockInfo, item => ({
-      stockName: item.stockName,
-      stockPeriodUpDown: item.stockPeriodUpDown,
-      shareHoldingYield: item.shareHoldingYield,
-    }));
+    const incomeDetailTableData = _.map(stockInfo, item => (
+      _.pick(item, ['stockName', 'stockPeriodUpDown', 'shareHoldingYield'])
+    ));
     const attributionSummaryData = this.getAttributionSummary();
     // 简介
     const infoSummaryData = this.getInfoList(ATTRIBUTION_SUMMARY_LIST);
@@ -178,7 +176,7 @@ export default class ProfitAttributionAnalysis extends PureComponent {
         <InfoTitle title="个股收益明细" />
         <div className={styles.incomeDetailsTable}>
           <ToggleOrder
-            onOrderChange={this.onOrderChange}
+            handleOrderChange={this.handleOrderChange}
           />
           <IncomeDetailTable
             IncomeTableData={incomeDetailTableData}

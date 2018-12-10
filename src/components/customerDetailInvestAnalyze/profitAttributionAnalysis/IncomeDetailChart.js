@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-12-05 11:29:05
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-12-07 15:50:07
+ * @Last Modified time: 2018-12-10 14:02:08
  * @description 个股收益明细图表
  */
 import React, { PureComponent } from 'react';
@@ -24,21 +24,12 @@ export default class IncomeDetailChart extends PureComponent {
     const { incomeChartData } = this.props;
     const incomeChartDataOrder = incomeChartData.reverse();
     const newIncomeChartData = _.map(incomeChartDataOrder, (item) => {
-      if (item > 0) {
-        return {
-          value: item,
-          label: {
-            normal: {
-              position: 'right'
-            }
-          }
-        };
-      }
+      const position = item > 0 ? 'right' : 'left';
       return {
         value: item,
         label: {
           normal: {
-            position: 'left'
+            position
           }
         }
       };
