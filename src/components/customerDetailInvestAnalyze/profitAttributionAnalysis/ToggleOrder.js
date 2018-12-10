@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-12-07 17:14:55
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-12-10 14:50:50
+ * @Last Modified time: 2018-12-10 18:02:18
  * @description 切换排序方式
  */
 
@@ -12,13 +12,14 @@ import { autobind } from 'core-decorators';
 import styles from './toggleOrder.less';
 import downIcon from '../../../../static/svg/asc.svg';
 import upIcon from '../../../../static/svg/desc.svg';
+import logable from '../../../decorators/logable';
 
 const UP_TEXT = '收益由高到低';
 const DOWN_TEXT = '收益由低到高';
 
 export default class ToggleOrder extends PureComponent {
   static propTypes = {
-    handleOrderChange: PropTypes.func.isRequired,
+    onOrderChange: PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -28,16 +29,21 @@ export default class ToggleOrder extends PureComponent {
     };
   }
 
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '排序切换',
+    },
+  })
   @autobind
   toggleOrder() {
     const { isUp } = this.state;
-    const { handleOrderChange } = this.props;
     this.setState({
       isUp: !isUp,
     });
     // 排序（01：升序；02：降序）
     const orderType = isUp ? '01' : '02';
-    handleOrderChange(orderType);
+    this.props.onOrderChange(orderType);
   }
 
   render() {

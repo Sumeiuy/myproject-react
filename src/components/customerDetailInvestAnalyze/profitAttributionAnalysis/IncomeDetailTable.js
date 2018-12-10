@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-12-04 14:03:58
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-12-10 14:29:36
+ * @Last Modified time: 2018-12-10 17:46:56
  * @description 个股收益明细表格
  */
 
@@ -51,11 +51,7 @@ function getColumns() {
         return (
           <span className={stockPeriodUpDown}>
             {changeReturnValue(item)}
-            {
-              item > 0
-                ? <Icon className={styles.upDownIcon} type="zhang" />
-                : <Icon className={styles.upDownIcon} type="die" />
-            }
+            <Icon className={styles.upDownIcon} type={item >= 0 ? 'zhang' : 'die'} />
           </span>
         );
       },
@@ -71,11 +67,7 @@ function getColumns() {
         return (
           <span className={shareHoldingYieldUpDown}>
             {changeReturnValue(item)}
-            {
-              item > 0
-                ? <Icon className={styles.upDownIcon} type="zhang" />
-                : <Icon className={styles.upDownIcon} type="die" />
-            }
+            <Icon className={styles.upDownIcon} type={item >= 0 ? 'zhang' : 'die'} />
           </span>
         );
       },

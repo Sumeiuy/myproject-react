@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-27 14:00:51
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-12-10 14:49:26
+ * @Last Modified time: 2018-12-10 17:53:54
  * @description 收益归因分析
  */
 import React, { PureComponent } from 'react';
@@ -126,7 +126,9 @@ export default class ProfitAttributionAnalysis extends PureComponent {
         page,
       },
     } = this.props;
+    // 累计盈利额数据
     const incomeDetailChartData = _.map(stockInfo, 'accumulatedProfit');
+    // 累计盈利额之外的数据，用于表格展示
     const incomeDetailTableData = _.map(stockInfo, item => (
       _.pick(item, ['stockName', 'stockPeriodUpDown', 'shareHoldingYield'])
     ));
@@ -176,7 +178,7 @@ export default class ProfitAttributionAnalysis extends PureComponent {
         <InfoTitle title="个股收益明细" />
         <div className={styles.incomeDetailsTable}>
           <ToggleOrder
-            handleOrderChange={this.handleOrderChange}
+            onOrderChange={this.handleOrderChange}
           />
           <IncomeDetailTable
             IncomeTableData={incomeDetailTableData}
