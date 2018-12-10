@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-27 14:00:51
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-12-05 09:59:03
+ * @Last Modified time: 2018-12-10 09:33:07
  * @description 收益归因分析
  */
 import React, { PureComponent } from 'react';
@@ -10,16 +10,16 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
+import ToggleOrder from './ToggleOrder';
 import CountPeriod from '../CountPeriod';
 import InfoTitle from '../InfoTitle';
 import AttributionTable from './AttributionTable';
 import AttributionChart from './AttributionChart';
-import IncomeDetailsTable from './IncomeDetailTable';
+import IncomeDetailTable from './IncomeDetailTable';
+import IncomeDetailChart from './IncomeDetailChart';
 import { data } from '../../../helper';
 import styles from './profitAttributionAnalysis.less';
 
-const DEFAULT_PAGENUM = 1;
-const DEFAULT_PAGESIZE = 10;
 export default class ProfitAttributionAnalysis extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -38,6 +38,23 @@ export default class ProfitAttributionAnalysis extends PureComponent {
     this.getAttributionAnalysis();
     // 获取个体收益明细
     this.getEachStockIncomeDetails();
+  }
+
+  // 切换排序
+  @autobind
+  onOrderChange(value) {
+    const {
+      location: {
+        query: {
+          custId,
+        }
+      },
+      getEachStockIncomeDetails,
+    } = this.props;
+    getEachStockIncomeDetails({
+      custId,
+      order: value,
+    });
   }
 
   // 获取brinson归因分析
@@ -61,12 +78,11 @@ export default class ProfitAttributionAnalysis extends PureComponent {
         query: {
           custId,
         }
-      }
+      },
+      getEachStockIncomeDetails,
     } = this.props;
-    this.props.getEachStockIncomeDetails({
+    getEachStockIncomeDetails({
       custId,
-      pageNum: DEFAULT_PAGENUM,
-      pageSize: DEFAULT_PAGESIZE,
     });
   }
 
@@ -92,8 +108,17 @@ export default class ProfitAttributionAnalysis extends PureComponent {
         attributionResult = [],
         attributionTrend = [],
       },
-      incomeDetailData,
+      incomeDetailData: {
+        stockInfo,
+        page,
+      },
     } = this.props;
+    const incomeDetailChartData = _.map(stockInfo, 'accumulatedProfit');
+    const incomeDetailTableData = _.map(stockInfo, item => ({
+      stockName: item.stockName,
+      stockPeriodUpDown: item.stockPeriodUpDown,
+      shareHoldingYield: item.shareHoldingYield,
+    }));
     const attributionSummaryData = this.getttributionSummary();
     return (
       <div className={styles.profitAttributionAnalysis}>
@@ -114,9 +139,29 @@ export default class ProfitAttributionAnalysis extends PureComponent {
           {attributionSummaryData}
         </div>
         <InfoTitle title="个股收益明细" />
-        <IncomeDetailsTable
-          incomeDetailData={incomeDetailData}
-        />
+        <div className={styles.incomeDetailsTable}>
+          <ToggleOrder
+            onOrderChange={this.onOrderChange}
+          />
+          <IncomeDetailTable
+            IncomeTableData={incomeDetailTableData}
+            page={page}
+          />
+          <IncomeDetailChart
+            incomeChartData={incomeDetailChartData}
+          />
+          <div className={styles.annotation}>
+            <div>
+              注：
+            </div>
+            <div>
+              <p>1. 股票期间涨跌报指统计期内基于股票面值的收益率，不含分红收益。</p>
+              <p>2. 持股收益率指报告期内客户在该股票上的累计收益率，不含分红收益。</p>
+              <p>3. 外币股票均转化为人民币计算。</p>
+              <p>4.个股收益明细图可切换排序方式，最多显示10条数据。</p>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
