@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-23 14:24:16
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-07 10:29:31
+ * @Last Modified time: 2018-12-10 14:54:52
  * @description 账户概览信息展示
  */
 import React from 'react';
@@ -39,13 +39,13 @@ export default function IndicatorCell(props) {
   let displayValue = value;
   if (valueType === 'money') {
     // 数字金额处理
-    displayValue = displayMoney(value);
+    displayValue = displayMoney(Number(value));
   } else if (valueType === 'percent') {
     // 百分比数字处理
-    displayValue = number.convertRate(value);
+    displayValue = number.convertRate(Number(value));
   } else if (valueType === 'permillage') {
     // 千分比数字处理
-    displayValue = number.convertPermillage(value);
+    displayValue = number.convertPermillage(Number(value));
   }
 
   /**
