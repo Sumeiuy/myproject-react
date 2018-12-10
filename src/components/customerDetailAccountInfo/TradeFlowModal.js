@@ -2,7 +2,7 @@
  * @Author: liqianwen
  * @Date: 2018-11-07 13:31:51
  * @Last Modified by: liqianwen
- * @Last Modified time: 2018-11-30 22:58:53
+ * @Last Modified time: 2018-12-10 21:12:53
  * @description 新版客户360详情的交易流水的弹出层
  */
 import React, { PureComponent } from 'react';
@@ -533,7 +533,7 @@ export default class TradeFlowModal extends PureComponent {
     },
   })
   handleFilterStandardPrdt(current) {
-    this.setState({ currentStandPrdtValue: current.value.prdtCode });
+    this.setState({ currentStandPrdtValue: [current.value.prdtCode, current.value.prdtName, current.value.prdtSortCode] });
     this.queryStandardTradeFlow({
       productCode: current.value.prdtCode,
     });
@@ -549,7 +549,7 @@ export default class TradeFlowModal extends PureComponent {
     },
   })
   handleFilterCreditPrdt(current) {
-    this.setState({ currentCreditPrdtValue: current.value.prdtCode });
+    this.setState({ currentCreditPrdtValue: [current.value.prdtCode, current.value.prdtName, current.value.prdtSortCode] });
     this.queryCreditTradeFlow({
       productCode: current.value.prdtCode,
     });
@@ -565,7 +565,7 @@ export default class TradeFlowModal extends PureComponent {
     },
   })
   handleFilterOptionPrdt(current) {
-    this.setState({ currentOptionPrdtValue: current.value.prdtCode });
+    this.setState({ currentOptionPrdtValue: [current.value.prdtCode, current.value.prdtName, current.value.prdtSortCode] });
     this.queryOptionTradeFlow({
       productCode: current.value.prdtCode,
     });
@@ -647,9 +647,30 @@ export default class TradeFlowModal extends PureComponent {
 
 // 修改产品下拉选项
 @autobind
-  getOptionItemValue({ value: { prdtCode, prdtName, prdtSortCode } }) {
-    if(!prdtSortCode){
+  getOptionItemValueStandard({ value: { prdtCode, prdtName, prdtSortCode } }) {
+    const {currentStandPrdtValue} = this.state;
+    this.renderOption(prdtCode, prdtName, prdtSortCode, currentStandPrdtValue);
+  }
+  // 修改产品下拉选项
+@autobind
+getOptionItemValueCredit({ value: { prdtCode, prdtName, prdtSortCode } }) {
+  const {currentCreditPrdtValue} = this.state;
+  this.renderOption(prdtCode, prdtName, prdtSortCode, currentCreditPrdtValue);
+}
+// 修改产品下拉选项
+@autobind
+  getOptionItemValueOption({ value: { prdtCode, prdtName, prdtSortCode } }) {
+    const {currentOptionPrdtValue} = this.state;
+    this.renderOption(prdtCode, prdtName, prdtSortCode, currentOptionPrdtValue);
+  }
+
+  @autobind
+  renderOption(prdtCode, prdtName, prdtSortCode,currentValue) {
+    if(!prdtCode){
       return <span key={prdtCode} title={prdtName}>{prdtName}</span>;
+    }
+    if(!prdtSortCode){
+      return <span key={prdtCode} title={prdtName}>{`${prdtName}(${currentValue[2]})`}</span>;
     }
     return <span key={prdtCode} title={prdtName}>{`${prdtName}(${prdtSortCode})`}</span>;
   }
@@ -766,11 +787,12 @@ export default class TradeFlowModal extends PureComponent {
                       dataMap={['prdtCode', 'prdtName']}
                       needItemObj
                       showSearch
+                      useLabelInValue
                       data={finProductList.list}
                       value={currentStandPrdtValue}
                       onInputChange={this.queryFinProductList}
                       onChange={this.handleFilterStandardPrdt}
-                      getOptionItemValue={this.getOptionItemValue}
+                      getOptionItemValue={this.getOptionItemValueStandard}
                     />
                   </div>
                   <div className={`${styles.filterArea} ${styles.lastFilter}`}>
@@ -845,11 +867,12 @@ export default class TradeFlowModal extends PureComponent {
                       dataMap={['prdtCode', 'prdtName']}
                       showSearch
                       needItemObj
+                      useLabelInValue
                       data={finProductList.list}
                       value={currentCreditPrdtValue}
                       onInputChange={this.queryFinProductList}
                       onChange={this.handleFilterCreditPrdt}
-                      getOptionItemValue={this.getOptionItemValue}
+                      getOptionItemValue={this.getOptionItemValueCredit}
                     />
                   </div>
                 </div>
@@ -895,11 +918,12 @@ export default class TradeFlowModal extends PureComponent {
                       dataMap={['prdtCode', 'prdtName']}
                       showSearch
                       needItemObj
+                      useLabelInValue
                       data={finProductList.list}
                       value={currentOptionPrdtValue}
                       onInputChange={this.queryFinProductList}
                       onChange={this.handleFilterOptionPrdt}
-                      getOptionItemValue={this.getOptionItemValue}
+                      getOptionItemValue={this.getOptionItemValueOption}
                     />
                   </div>
                 </div>
