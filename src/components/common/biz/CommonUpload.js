@@ -186,12 +186,12 @@ export default class CommonUpload extends PureComponent {
         }, uploadAttachment(data.attachment, data.attaches));
       } else {
         // 上传失败的返回值 MAG0005
-        this.setState({
+        this.setState(prevState => ({
           status: 'active',
-          fileList: this.state.oldFileList,
+          fileList: prevState.oldFileList,
           file: {},
           percent: 0,
-        });
+        }));
         message.error(uploadFile.response.msg);
       }
     }
@@ -223,13 +223,6 @@ export default class CommonUpload extends PureComponent {
       onFalseDelete();
     }
   }
-
-  // 空方法，用于日志上传
-  @logable({
-    type: 'Click',
-    payload: { name: '下载' }
-  })
-  handleDownloadClick() {}
 
   // 获取上传数据
   @autobind
@@ -267,9 +260,15 @@ export default class CommonUpload extends PureComponent {
     });
   }
 
+  // 空方法，用于日志上传
+  @logable({
+    type: 'Click',
+    payload: { name: '下载' }
+  })
+  handleDownloadClick() {}
+
   render() {
     const {
-      empId,
       fileList,
       percent,
       status,
@@ -297,7 +296,6 @@ export default class CommonUpload extends PureComponent {
       showUploadList: false,
       fileList,
     };
-    const downloadName = 'ceFileDownload2';
     let fileListElement;
     // 活动栏目是假删除,删除时第一个文件会设置isDelete属性为true，当isDelete是true时，不显示组件
     if (fileList && fileList.length) {
@@ -336,8 +334,9 @@ export default class CommonUpload extends PureComponent {
                       }
                       <em>
                         <a
-                          href={`${request.prefix}/file/${downloadName}?attachId=${item.attachId}&empId=${empId}&filename=${window.encodeURIComponent(item.name)}`}
+                          href={item.downloadURL}
                           onClick={this.handleDownloadClick}
+                          download
                         >
                           <Icon type="xiazai2" />
                         </a>
