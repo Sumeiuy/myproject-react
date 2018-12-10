@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-12-07 17:14:55
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-12-10 18:02:18
+ * @Last Modified time: 2018-12-10 18:42:05
  * @description 切换排序方式
  */
 
@@ -36,7 +36,7 @@ export default class ToggleOrder extends PureComponent {
     },
   })
   @autobind
-  toggleOrder() {
+  handleToggleOrder() {
     const { isUp } = this.state;
     this.setState({
       isUp: !isUp,
@@ -49,7 +49,7 @@ export default class ToggleOrder extends PureComponent {
   render() {
     const { isUp } = this.state;
     return (
-      <div onClick={this.toggleOrder} className={styles.order}>
+      <div onClick={this.handleToggleOrder} className={styles.order}>
         <span>{isUp ? UP_TEXT : DOWN_TEXT}</span>
         <img className={styles.orderIcon} src={isUp ? upIcon : downIcon} alt="排序方向" />
       </div>
