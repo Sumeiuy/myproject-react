@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-23 10:39:57
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-06 13:19:02
+ * @Last Modified time: 2018-12-07 12:47:15
  * @description 新版客户360详情底部概览信息
  */
 import React, { PureComponent } from 'react';
@@ -90,9 +90,9 @@ export default class AccountInfoTabs extends PureComponent {
   // 查询账户概览
   @autobind
   querySummary() {
-    const { location: { query: { custId } }, queryAccountSummary } = this.props;
+    const { location: { query: { custId } } } = this.props;
     if (!_.isEmpty(custId)) {
-      queryAccountSummary({ custId });
+      this.props.queryAccountSummary({ custId });
     }
   }
 
@@ -101,16 +101,30 @@ export default class AccountInfoTabs extends PureComponent {
   queryAccountInByType(accountType) {
     const { location: { query: { custId } } } = this.props;
     if (!_.isEmpty(custId)) {
+      // 查询账户信息
       this.props.queryAccountInfo({
         custId,
         accountType,
       });
     }
-    this.props.queryBusnTypeDict({
-      accountType: _.lowerCase(accountType),
-      queryType: 'accountChange',
-    });
+    // 每当切换Tab的时候，需要根据不同的账户类型优先查询下其业务类别
+    this.queryBusnTypeDictByAccountType(accountType);
   }
+
+  // 需要根据不同的账户类型优先查询下其业务类别
+  @autobind
+  queryBusnTypeDictByAccountType(accountType) {
+    // 因为这个业务类别字典不会改变，所以每一个账户下只需要查询一次
+    const { busnTypeDict } = this.props;
+    const hasNoCurerntTypeDict = _.isEmpty(_.get(busnTypeDict, _.lowerCase(accountType)));
+    if (hasNoCurerntTypeDict) {
+      this.props.queryBusnTypeDict({
+        accountType: _.lowerCase(accountType),
+        queryType: 'accountChange',
+      });
+    }
+  }
+
 
   // 查询接口
   @autobind
@@ -182,7 +196,7 @@ export default class AccountInfoTabs extends PureComponent {
                 custId={custId}
                 fundAccount={normalFundAccount}
                 stockAccount={normalStockAccount}
-                busnTypeDict={busnTypeDict}
+                busnTypeDict={busnTypeDict.normal || []}
                 accountChangeRes={normalAccountChange}
                 queryAccountChange={queryAccountChange}
               />
@@ -195,7 +209,7 @@ export default class AccountInfoTabs extends PureComponent {
                 custId={custId}
                 fundAccount={creditFundAccount}
                 stockAccount={creditStockAccount}
-                busnTypeDict={busnTypeDict}
+                busnTypeDict={busnTypeDict.credit || []}
                 accountChangeRes={creditAccountChange}
                 queryAccountChange={queryAccountChange}
               />
@@ -208,7 +222,7 @@ export default class AccountInfoTabs extends PureComponent {
                 custId={custId}
                 fundAccount={optionFundAccount}
                 stockAccount={optionStockAccount}
-                busnTypeDict={busnTypeDict}
+                busnTypeDict={busnTypeDict.option || []}
                 accountChangeRes={optionAccountChange}
                 queryAccountChange={queryAccountChange}
               />
