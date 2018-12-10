@@ -3,7 +3,7 @@
  * @Author: Liujianshu-K0240007
  * @Date: 2018-11-20 14:41:29
  * @Last Modified by: Liujianshu-K0240007
- * @Last Modified time: 2018-11-22 10:52:30
+ * @Last Modified time: 2018-12-05 14:11:32
  */
 
 import React, { PureComponent } from 'react';
@@ -16,6 +16,7 @@ import { dva } from '../../../../helper';
 import withRouter from '../../../../decorators/withRouter';
 import { logCommon } from '../../../../decorators/logable';
 import ProtocolTab from '../../../../components/customerDetailContractManage/ProtocolTab';
+import ContractTab from '../../../../components/customerDetailContractManage/ContractTab';
 import AgreementTab from '../../../../components/customerDetailContractManage/AgreementTab';
 import {
   DEFAULT_ACTIVE_TAB,
@@ -40,6 +41,16 @@ const effects = {
   deleteProtocol: 'contractManage/deleteProtocol',
   // 查询合同列表
   queryAgreementList: 'contractManage/queryAgreementList',
+  // 查询合约列表
+  queryContractList: 'contractManage/queryContractList',
+  // 查询条款列表
+  queryContractTerms: 'contractManage/queryContractTerms',
+  // 查询审批记录
+  queryApprovalHistory: 'contractManage/queryApprovalHistory',
+  // 查询附件信息
+  queryAttachmentList: 'contractManage/queryAttachmentList',
+  // 清除数据
+  clearData: 'contractManage/clearData',
 };
 
 const mapStateToProps = state => ({
@@ -60,6 +71,14 @@ const mapStateToProps = state => ({
   deleteData: state.contractManage.deleteData,
   // 合同列表数据
   agreementList: state.contractManage.agreementList,
+  // 合约列表
+  contractList: state.contractManage.contractList,
+  // 合约条款
+  contractTerms: state.contractManage.contractTerms,
+  // 审批历史
+  approvalHistory: state.contractManage.approvalHistory,
+  // 附件列表
+  attachmentList: state.contractManage.attachmentList,
 });
 
 const mapDispatchToProps = {
@@ -75,6 +94,16 @@ const mapDispatchToProps = {
   deleteProtocol: dispatch(effects.deleteProtocol, { forceFull: true }),
   // 获取合同列表
   queryAgreementList: dispatch(effects.queryAgreementList, { forceFull: true }),
+  // 查询合约列表
+  queryContractList: dispatch(effects.queryContractList, { forceFull: true }),
+  // 查询条款列表
+  queryContractTerms: dispatch(effects.queryContractTerms, { forceFull: true }),
+  // 查询审批记录
+  queryApprovalHistory: dispatch(effects.queryApprovalHistory, { forceFull: true }),
+  // 查询附件信息
+  queryAttachmentList: dispatch(effects.queryAttachmentList, { forceFull: true }),
+  // 清除数据
+  clearData: dispatch(effects.clearData, { forceFull: true }),
 };
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
@@ -96,6 +125,15 @@ export default class ContractManage extends PureComponent {
     deleteData: PropTypes.object.isRequired,
     queryAgreementList: PropTypes.func.isRequired,
     agreementList: PropTypes.object.isRequired,
+    queryContractList: PropTypes.func.isRequired,
+    contractList: PropTypes.object.isRequired,
+    queryContractTerms: PropTypes.func.isRequired,
+    contractTerms: PropTypes.object.isRequired,
+    queryApprovalHistory: PropTypes.func.isRequired,
+    approvalHistory: PropTypes.object.isRequired,
+    queryAttachmentList: PropTypes.func.isRequired,
+    attachmentList: PropTypes.object.isRequired,
+    clearData: PropTypes.func.isRequired,
   }
 
   static contextTypes = {
@@ -106,7 +144,6 @@ export default class ContractManage extends PureComponent {
     super(props);
     const { location: { query: { contractTabKey = DEFAULT_ACTIVE_TAB } } } = props;
     this.state = {
-      // 默认激活的Tab，协议
       activeTabKey: contractTabKey,
     };
   }
@@ -151,6 +188,15 @@ export default class ContractManage extends PureComponent {
       deleteData,
       queryAgreementList,
       agreementList,
+      queryContractList,
+      contractList,
+      queryContractTerms,
+      contractTerms,
+      queryApprovalHistory,
+      approvalHistory,
+      queryAttachmentList,
+      attachmentList,
+      clearData,
     } = this.props;
     return (
       <div className={styles.wrapper}>
@@ -158,6 +204,7 @@ export default class ContractManage extends PureComponent {
           <TabPane tab="协议" key="protocol">
             <div className={styles.tabPaneWrap}>
               <ProtocolTab
+                effects={effects}
                 location={location}
                 empInfo={empInfo}
                 custInfo={custInfo}
@@ -175,9 +222,27 @@ export default class ContractManage extends PureComponent {
               />
             </div>
           </TabPane>
+          <TabPane tab="合约" key="contract">
+            <div className={styles.tabPaneWrap}>
+              <ContractTab
+                effects={effects}
+                location={location}
+                data={contractList}
+                queryList={queryContractList}
+                queryContractTerms={queryContractTerms}
+                contractTerms={contractTerms}
+                queryApprovalHistory={queryApprovalHistory}
+                approvalHistory={approvalHistory}
+                queryAttachmentList={queryAttachmentList}
+                attachmentList={attachmentList}
+                clearData={clearData}
+              />
+            </div>
+          </TabPane>
           <TabPane tab="合同" key="agreement">
             <div className={styles.tabPaneWrap}>
               <AgreementTab
+                effects={effects}
                 location={location}
                 empInfo={empInfo}
                 data={agreementList}

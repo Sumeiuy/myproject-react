@@ -61,7 +61,7 @@ module.exports = {
       },
       prefix,
       {
-        target: UAT_FORWARD_URL,
+        target: SIT_FORWARD_URL,
       },
       '/fspa/log',
       {
