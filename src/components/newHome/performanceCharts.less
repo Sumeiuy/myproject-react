@@ -1,0 +1,222 @@
+@orange: #ff8008;
+@yellow:#ffd85f;
+@red: #e14511;
+
+.indexBox {
+  background: #f4f6f9;
+  .listItem {
+    padding: 0;
+    margin-bottom: 18px;
+    font-size: 12px;
+    color: #666;
+    .indicatorDetailWrap {
+      height: 204px;
+      padding: 10px 20px 0;
+      position: relative;
+      .mainIndicatorItem {
+        height: 16%;
+        font-size: 12px;
+        color: #666;
+        position: relative;
+        .indicatorText {
+          padding-bottom: 5px;
+          .indicatorValue {
+            font-size: 14px;
+            color: #333;
+            position: absolute;
+            right: 0;
+          }
+        }
+      }
+      .progress {
+        position: absolute;
+        width: 100%;
+        top: 15px;
+      }
+    }
+    .customerAndAssetWrap {
+      height: 204px;
+      padding: 0 20px;
+      .detail {
+        height: 33%;
+        width: 50%;
+        position: relative;
+        display: inline-block;
+        padding: 12px;
+        .value {
+          font-size: 18px;
+          color: #108ee9;
+        }
+        .name {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        .line {
+          position: absolute;
+          right: 0;
+          top: 20px;
+          width: 2px;
+          height: 21px;
+          border: 1px solid #a8b6d4;
+        }
+      }
+    }
+    .financialProductWrap {
+      height: 204px;
+      padding: 0 20px;
+      font-size: 12px;
+      color: #333;
+      .main {
+        padding: 10px 0;
+        .total {
+          display: inline-block;
+          text-align: right;
+          width: 50%;
+          font-size: 16px;
+        }
+        .product {
+          padding: 5px 10px;
+          .name {
+            color: #666;
+          }
+          .value {
+            color: #108ee9;
+          }
+        }
+        .product:hover {
+          background: #f3f9fd;
+        }
+      }
+      .innovationProduct {
+        padding-top: 13px;
+        border-top: 1px dashed #a8b6d4;
+        .value {
+          font-size: 16px;
+          color: #108ee9;
+        }
+      }
+      .name {
+        display: inline-block;
+        width: 50%;
+      }
+      .value {
+        display: inline-block;
+        width: 50%;
+        text-align: right;
+      }
+    }
+    .netIncomeWrap {
+      height: 204px;
+      padding: 20px 20px 0;
+      .incomeItem {
+        height: 33%;
+        font-size: 12px;
+        color: #666;
+        position: relative;
+        .incomeText {
+          padding-bottom: 5px;
+          .incomeValue {
+            font-size: 14px;
+            color: #333;
+            position: absolute;
+            right: 0;
+          }
+        }
+        .progress {
+          position: relative;
+          :global {
+            .ant-progress-bg {
+              border-radius: unset !important;
+            }
+          }
+          .downIcon {
+            font-size: 3px;
+            color: #459ff1;
+            position: absolute;
+            top: -7px;
+            left: 0;
+          }
+          .upIcon {
+            font-size: 3px;
+            color: #459ff1;
+            position: absolute;
+            bottom: -13px;
+            left: 0;
+          }
+        }
+      }
+    }
+    .serviceIndicatorWrap {
+      height: 204px;
+      padding: 13px 20px 0;
+      .serviceItem {
+        height: 33%;
+        position: relative;
+        padding: 7px 0;
+        border-top: 1px dashed #a8b6d4;
+        &:first-child {
+          border-top: unset;
+        }
+        .serviceText {
+          position: absolute;
+          width: 50%;
+          height: 100%;
+          left: 0;
+          .number {
+            font-size: 20px;
+            color: #108ee9;
+          }
+        }
+        .progress {
+          position: absolute;
+          width: 50%;
+          height: 100%;
+          right: 0;
+          top: 7px;
+          text-align: right;
+        }
+        .progress[color='orange'] {
+          :global {
+            .ant-progress-circle-path {
+              stroke: @orange !important;
+            }
+          }
+        }
+        .progress[color='yellow'] {
+          :global {
+            .ant-progress-circle-path {
+              stroke: @yellow !important;
+            }
+          }
+        }
+        .progress[color='red'] {
+          :global {
+            .ant-progress-circle-path {
+              stroke: @red !important;
+            }
+          }
+        }
+      }
+    }
+    .openAccountsWrap {
+      .labels {
+        .label {
+          padding-top: 10px;
+          display: inline-block;
+          width: 16%;
+          transform: rotate(-30deg);
+          color: #666;
+          white-space: nowrap;
+          text-align: center;
+          font-size: 12px;
+        }
+      }
+    }
+  }
+  :global {
+    .ant-col-8 > div {
+        background-color: #fff;
+    }
+  }
+}
