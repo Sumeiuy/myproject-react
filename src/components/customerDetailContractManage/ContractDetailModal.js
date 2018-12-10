@@ -167,6 +167,7 @@ export default class ContractDetailModal extends PureComponent {
                 id={id}
                 data={approvalHistory}
                 queryList={queryApprovalHistory}
+                effect={effects.queryApprovalHistory}
               />
             </TabPane>
             <TabPane

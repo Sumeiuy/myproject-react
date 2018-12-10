@@ -33,6 +33,7 @@ export default class ApprovalHistory extends PureComponent {
     id: PropTypes.string.isRequired,
     data: PropTypes.object.isRequired,
     queryList: PropTypes.func.isRequired,
+    effect: PropTypes.string.isRequired,
   }
 
   componentDidMount() {
@@ -75,6 +76,7 @@ export default class ApprovalHistory extends PureComponent {
   render() {
     const {
       data = EMPTY_OBJECT,
+      effect,
     } = this.props;
     const {
       list = EMPTY_LIST,
@@ -95,7 +97,11 @@ export default class ApprovalHistory extends PureComponent {
             {this.renderBtnGroup()}
           </RadioGroup>
         </div>
-        <IfTableWrap isRender={isRender} text="暂无审批历史信息">
+        <IfTableWrap
+          isRender={isRender}
+          effect={effect}
+          text="暂无审批历史信息"
+        >
           <ApproveList data={list} nowStep={nowStep} />
         </IfTableWrap>
       </div>
