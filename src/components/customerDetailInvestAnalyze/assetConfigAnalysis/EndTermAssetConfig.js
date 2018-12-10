@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-12-04 10:00:23
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-07 15:24:14
+ * @Last Modified time: 2018-12-08 21:26:17
  * @description 期末资产配置
  */
 import React, { PureComponent } from 'react';
@@ -62,10 +62,10 @@ export default class EndTermAssetConfig extends PureComponent {
   getEndTermAssetSummary() {
     const {
       endTermAssetConfigData: {
-        periodTotalProfit = 0,
-        maxCategory = '',
-        minCategory = '',
-        assetConfigRate = [],
+        periodTotalProfit,
+        maxCategory,
+        minCategory,
+        assetConfigRate,
       }
     } = this.props;
     const periodProfitText = `统计期内客户实现盈利${periodTotalProfit}万元，其中${maxCategory}类对盈利贡献最高，${minCategory}类收益最低。`;

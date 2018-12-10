@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-20 16:01:36
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-07 13:25:50
+ * @Last Modified time: 2018-12-08 21:24:44
  * @description 新版客户360详情下的账户信息Tab页面的model
  */
 import { detailInvestAnalyze as api } from '../../api';
@@ -28,7 +28,10 @@ export default {
     // 期末资产配置数据
     endTermAssetConfigData: EMPTY_OBJECT,
     // 资产配置变动走势
-    assetConfigTrendData: EMPTY_OBJECT,
+    assetConfigTrendData: {
+      assetConfigTrendSummary: {},
+      assetConfigTrendChart: [],
+    },
   },
   reducers: {
     // 获取客户盈利能力成功

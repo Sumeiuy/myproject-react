@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-12-05 13:03:49
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-07 14:38:49
+ * @Last Modified time: 2018-12-08 21:38:44
  * @description 资产配置变动走势
  */
 import React, { PureComponent } from 'react';
@@ -61,25 +61,29 @@ export default class AssetConfigTrend extends PureComponent {
   getAssetTrendSummary() {
     const {
       assetConfigTrendData: {
-        assetConfigTrendSummary: {
-          minRateCategory = '',
-          maxRateCategory = '',
-          maxChangeCategory = '',
-        } = {},
+        assetConfigTrendSummary,
       },
     } = this.props;
-    const assetRateText = `统计期内客户投资比例最高的是${maxRateCategory}，投资比例最低的是${minRateCategory}。`;
-    const assetChangeText = `统计期内${maxChangeCategory}资产持仓占比变化最大。`;
-    return (
-      <div>
-        <p key={data.uuid()}>
-          <span>{assetRateText}</span>
-        </p>
-        <p key={data.uuid()}>
-          <span>{assetChangeText}</span>
-        </p>
-      </div>
-    );
+    if (!_.isEmpty(assetConfigTrendSummary)) {
+      const {
+        minRateCategory,
+        maxRateCategory,
+        maxChangeCategory,
+      } = assetConfigTrendSummary;
+      const assetRateText = `统计期内客户投资比例最高的是${maxRateCategory}，投资比例最低的是${minRateCategory}。`;
+      const assetChangeText = `统计期内${maxChangeCategory}资产持仓占比变化最大。`;
+      return (
+        <div>
+          <p key={data.uuid()}>
+            <span>{assetRateText}</span>
+          </p>
+          <p key={data.uuid()}>
+            <span>{assetChangeText}</span>
+          </p>
+        </div>
+      );
+    }
+    return null;
   }
 
   // 更改资产分类
@@ -99,7 +103,7 @@ export default class AssetConfigTrend extends PureComponent {
   render() {
     const {
       assetConfigTrendData: {
-        assetConfigTrendChart = [],
+        assetConfigTrendChart,
       }
     } = this.props;
     const {

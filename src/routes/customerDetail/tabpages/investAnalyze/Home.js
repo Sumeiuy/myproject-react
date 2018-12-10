@@ -3,7 +3,7 @@
  * @Date: 2018-11-19 15:39:12
  * @Last Modified time: 2018-11-23 20:37:55
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-07 13:26:51
+ * @Last Modified time: 2018-12-08 17:15:58
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -13,6 +13,7 @@ import { Tabs } from 'antd';
 import AccountTotalState from '../../../../components/customerDetailInvestAnalyze/accountTotalState/AccountTotalState';
 import AssetConfigAnalysis from '../../../../components/customerDetailInvestAnalyze/assetConfigAnalysis/AssetConfigAnalysis';
 import ProfitAttributionAnalysis from '../../../../components/customerDetailInvestAnalyze/profitAttributionAnalysis/ProfitAttributionAnalysis';
+import WindControlAnalysis from '../../../../components/customerDetailInvestAnalyze/windControlAnalysis/WindControlAnalysis';
 import logable from '../../../../decorators/logable';
 import styles from './home.less';
 
@@ -149,7 +150,7 @@ export default class Home extends PureComponent {
             />
           </TabPane>
           <TabPane tab="风控能力分析" key="windControlAnalysis">
-            风控能力分析
+            <WindControlAnalysis />
           </TabPane>
         </Tabs>
       </div>

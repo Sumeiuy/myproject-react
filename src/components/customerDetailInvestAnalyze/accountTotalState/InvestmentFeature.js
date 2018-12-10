@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-20 15:28:46
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-07 13:42:33
+ * @Last Modified time: 2018-12-10 09:33:40
  * @description 客户投资特征
  */
 import React, { PureComponent } from 'react';
@@ -12,6 +12,7 @@ import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 
 import { Popover } from 'antd';
+import IfWrap from '../../common/biz/IfWrap';
 import Icon from '../../common/Icon';
 import InvestmentFeatureLabel from './InvestmentFeatureLabel';
 import ProfitAbilityLevel from './ProfitAbilityLevel';
@@ -56,8 +57,8 @@ export default class InvestmentFeature extends PureComponent {
       profitAbility: {
         beatCustPercent,
         custAssetStage,
-        profitAbilityLevel = 0,
-      } = {},
+        profitAbilityLevel,
+      },
       investmentFeatureLabels,
     } = this.props;
     const levelDesc = this.getLevelDesc();
@@ -71,9 +72,11 @@ export default class InvestmentFeature extends PureComponent {
             {beatCustPercent}
           </p>
           <p className={styles.custAssetStage}>
-            同资产段 (
-            {custAssetStage}
-            ）客户
+            <IfWrap isRender={!_.isEmpty(custAssetStage)}>
+              同资产段 (
+              {custAssetStage}
+              ）客户
+            </IfWrap>
           </p>
         </div>
         <div className={styles.profitAbilityLevel}>

@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-12-05 13:30:11
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-07 14:51:27
+ * @Last Modified time: 2018-12-08 23:07:55
  * @description 资产配置变动走势chart图
  */
 import React, { PureComponent } from 'react';
@@ -110,7 +110,10 @@ export default class AssetConfigTrendChart extends PureComponent {
       const { classifyName, assetAmount, rate } = item;
       return `
         <tr class="tableBody">
-          <td>${params[index].marker}${classifyName}</td>
+          <td>
+            ${params[index].marker}
+            ${classifyName}
+          </td>
           <td>${rate}%</td>
           <td>${thousandFormat(assetAmount)}</td>
         </tr>
@@ -124,12 +127,16 @@ export default class AssetConfigTrendChart extends PureComponent {
         <div class="echartTooltipTable">
           <table>
             <tr class="tableHeader">
-              <th>类型</th>
+              <th>
+                类型
+              </th>
               <th>占比</th>
               <th>资产量</th>
             </tr>
-            <tr class="tableBody">
-              <td>总资产</td>
+            <tr class="tableBody totalAsset">
+              <td>
+                总资产
+              </td>
               <td>${totalAssetAmountRate}%</td>
               <td>${thousandFormat(totalAssetAmount)}</td>
             </tr>

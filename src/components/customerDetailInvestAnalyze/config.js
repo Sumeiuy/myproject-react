@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-20 14:30:09
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-07 13:09:25
+ * @Last Modified time: 2018-12-07 17:19:07
  */
 
 import moment from 'moment';
@@ -191,18 +191,6 @@ const ATTRIBUTION_COMPUTE_METHOD_LIST = [
   （账户固收类产品权重-基准固收类产品权重）*中证全债指数+（账户现金类产品权重-基准现金类产品权重）*中证货币型基金指数，即Brison归因趋势。`,
 ];
 
-// 年化波动率简介
-const WAVERATE_SUMMARY_LIST = [
-  `年化波动率是账户收益的波动程度，是对资产收益率不确定性的衡量，从一定程度上可反应金融资产的风险水平。
-  年化波动率越高，表明该账户日收益率在统计期内波动越剧烈，账户资产收益率的不确定性就越强；波动率越低，
-  表明该账户日收益率在统计期波动越平缓，账户资产收益的确定性就越强。`,
-];
-
-// 年化波动率计算方法
-const WAVERATE_COMPUTE_METHOD_LIST = [
-  '计算波动率，即计算账户日收益率关于其均值的平均偏差（又称标准差），其中为统计期内每日日收益率的平均值；n为统计期总日期数。',
-];
-
 // 账户收益走势
 const ACCOUNT_PROFIT_TREND = '账户收益走势';
 // 账户收益走势简介
@@ -210,7 +198,6 @@ const PROFIT_TREND_SUMMARY = '账户日收益率用于衡量账户当日的收�
 // 账户收益走势计算方法
 const PROFIT_TREND_COMPUTE_METHOD1 = '账户日收益率=账户当日收益/（账户前一日日资产+当日净流入），当日净流入为负，则取零计算。';
 const PROFIT_TREND_COMPUTE_METHOD2 = '账户累计收益率=账户区间收益/（账户前一日日资产+ 账户区间的最大成本），其中最大成本为历史累计净流入最大值；当日净流入为负，则取零计算。';
-
 
 export {
   endDateOfLastMonth,
@@ -241,6 +228,4 @@ export {
   PROFIT_TREND_SUMMARY,
   PROFIT_TREND_COMPUTE_METHOD1,
   PROFIT_TREND_COMPUTE_METHOD2,
-  WAVERATE_SUMMARY_LIST,
-  WAVERATE_COMPUTE_METHOD_LIST,
 };
