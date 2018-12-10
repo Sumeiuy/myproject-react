@@ -2,10 +2,10 @@
  * @Author: zhangjun
  * @Date: 2018-12-05 13:30:11
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-08 23:07:55
+ * @Last Modified time: 2018-12-10 15:17:42
  * @description 资产配置变动走势chart图
  */
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
@@ -18,7 +18,7 @@ import styles from './assetConfigTrendChart.less';
 
 const { thousandFormat } = number;
 
-export default class AssetConfigTrendChart extends PureComponent {
+export default class AssetConfigTrendChart extends Component {
   static propTypes ={
     // 资产配置变动走势echart图数据
     assetConfigTrendChart: PropTypes.array.isRequired,
@@ -84,6 +84,8 @@ export default class AssetConfigTrendChart extends PureComponent {
         data: legendData,
         padding: 5,
         right: 0,
+        itemWidth: 8,
+        itemHeight: 8,
       },
       tooltip: {
         ...tooltip,
@@ -155,7 +157,10 @@ export default class AssetConfigTrendChart extends PureComponent {
     const option = this.getChartOption();
     return (
       <div className={styles.assetConfigTrendChart}>
-        <IfWrap isRender={!_.isEmpty(assetConfigTrendChart)}>
+        <IfWrap
+          isRender={!_.isEmpty(assetConfigTrendChart)}
+          isUsePlaceholderImage
+        >
           <IECharts
             option={option}
             style={{

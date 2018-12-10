@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-12-07 17:07:07
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-08 17:41:25
+ * @Last Modified time: 2018-12-10 16:26:15
  * @description 风控能力分析
  */
 import React, { PureComponent } from 'react';
@@ -92,11 +92,11 @@ export default class WindControlAnalysis extends PureComponent {
           <div className={styles.name}>{COMPUTE_METHOD}</div>
           <p className={styles.computeMethod}>
             {SHARP_RATE_COMPUTE_METHOD1}
-            <Icon type="gongshi3" className={styles.formula} />
+            <Icon type="gongshi3" className={styles.sharpFormula1} />
             {SHARP_RATE_COMPUTE_METHOD2}
             <Icon type="gongshi2" className={styles.formula} />
             {SHARP_RATE_COMPUTE_METHOD3}
-            <Icon type="gongshi5" className={styles.formula} />
+            <Icon type="gongshi4" className={styles.sharpFormula1} />
             {SHARP_RATE_COMPUTE_METHOD4}
           </p>
           <div className={styles.formulaContainer}>
