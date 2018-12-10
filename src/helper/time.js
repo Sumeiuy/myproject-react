@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 10:13:53
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-12 14:01:08
+ * @Last Modified time: 2018-12-07 13:36:33
  * @description 此处存放与时间相关的公用方法
  */
 import moment from 'moment';
@@ -89,6 +89,39 @@ const time = {
     };
     return duration;
   },
+  /**
+   *计算出时间段的起始时间以及结束时间
+   */
+  transformTime(key, format = 'YYYYMMDD') {
+    const today = moment().format(format);
+    switch (key) {
+      case 'month':
+        return {
+          startDate: moment().subtract(1, 'months').format(format),
+          endDate: today,
+        };
+      case 'season':
+        return {
+          startDate: moment().subtract(3, 'months').format(format),
+          endDate: today,
+        };
+      case 'halfYear':
+        return {
+          startDate: moment().subtract(6, 'months').format(format),
+          endDate: today,
+        };
+      case 'currentYear':
+        return {
+          startDate: moment().startOf('year').format(format),
+          endDate: today,
+        };
+      default:
+        return {
+          startDate: moment().subtract(1, 'months').format(format),
+          endDate: today,
+        };
+    }
+  }
 };
 
 export default time;
