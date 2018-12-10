@@ -1,61 +1,28 @@
 /*
  * @Author: liqianwen
  * @Date: 2018-11-07 13:31:51
- * @Last Modified by: liqianwen
- * @Last Modified time: 2018-12-03 21:27:18
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-12-10 14:54:28
  * @description 新版客户360详情的交易流水的弹出层
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import {
-  Button, Tabs, Table, Radio
-} from 'antd';
-import moment from 'moment';
-import DateRangePick from 'lego-react-date/src';
 import _ from 'lodash';
-
-import { SingleFilter, SingleFilterWithSearch } from 'lego-react-filter/src';
-import TreeFilter from 'lego-tree-filter/src';
-import { data, number } from '../../helper';
+import {
+  Button, Tabs
+} from 'antd';
 import logable, { logCommon } from '../../decorators/logable';
 import Modal from '../common/biz/CommonModal';
-import DateFilter from '../common/htFilter/dateFilter';
-import Pagination from '../common/Pagination';
-import IfTableWrap from '../common/IfTableWrap';
-import Tooltip from '../common/Tooltip';
-import {
-  STANDARD_TRADE_FLOW_COLUMNS,
-  CREDIT_TRADE_FLOW_COLUMNS,
-  OPTION_TRADE_FLOW_COLUMNS,
-  CAPITAL_CHANGE_COLUMNS,
-  STANDARD_TRADE_FLOW_TABLE_SCROLL,
-  CREDIT_TRADE_FLOW_TABLE_SCROLL,
-  OPTION_TRADE_FLOW_TABLE_SCROLL,
-  TRADE_FLOW_TABS,
-} from './config';
+import NormalTradeFlow from './tradeFlow/NormalTradeFlow';
+import CreditTradeFlow from './tradeFlow/CreditTradeFlow';
+import OptionTradeFlow from './tradeFlow/OptionTradeFlow';
+import CapitalChange from './tradeFlow/CapitalChange';
+import { TRADE_FLOW_TABS } from './config';
 
 import styles from './tradeFlowModal.less';
 
-const NODATA_HINT = '客户暂无资金变动信息';
-const NODATA_STANDARD = '暂无普通账户交易历史信息';
-const NODATA_CREDIT = '暂无信用账户交易历史信息';
-const NODATA_OPTION = '暂无期权账户交易历史信息';
 const TabPane = Tabs.TabPane;
-const RadioGroup = Radio.Group;
-
-// 默认查询日期半年
-const DEFAULT_START_DATE = moment().subtract(6, 'months');
-const DEFAULT_END_DATE = moment().subtract(1, 'day');
-// 接口请求查询日期的格式
-const DATE_FORMATE_API = 'YYYY-MM-DD';
-const EMPTY_OBJECT = {};
-const EMPTY_LIST = [];
-const today = moment().format(DATE_FORMATE_API);
-// 六个月的天数
-const SIX_MONTH_DAYS = 180;
-// 六个月之前的那天日期
-const beforeSixDate = moment().subtract(SIX_MONTH_DAYS - 1, 'days');
 
 export default class TradeFlowModal extends PureComponent {
   static propTypes = {
@@ -63,13 +30,15 @@ export default class TradeFlowModal extends PureComponent {
     // 关闭弹出层
     onClose: PropTypes.func.isRequired,
     // 查询交易流水的api集合函数
-    querytradeFlow: PropTypes.func.isRequired,
-    // 业务类别
-    busnTypeDict: PropTypes.object.isRequired,
+    tradeFlowApi: PropTypes.object.isRequired,
+    // 交易流水的普通账户、信用账户下的业务类别
+    tradeFlowBusnTypeDict: PropTypes.object.isRequired,
+    // 资金账户下的交易流水的普通账户、信用账户下的业务类别
+    tradeFlowCapitalBusnTypeDict: PropTypes.object.isRequired,
     // 产品代码
     finProductList: PropTypes.object.isRequired,
     // 全产品目录
-    productCatalogTree: PropTypes.object.isRequired,
+    productCatalogTree: PropTypes.array.isRequired,
     // 普通账户交易流水
     standardTradeFlowRes: PropTypes.object.isRequired,
     // 信用账户交易流水
@@ -82,99 +51,64 @@ export default class TradeFlowModal extends PureComponent {
 
   constructor(props) {
     super(props);
-    const defaultStartDateString = DEFAULT_START_DATE.format(DATE_FORMATE_API);
-    const defaultEndDateString = DEFAULT_END_DATE.format(DATE_FORMATE_API);
     this.state = {
       // 当前激活的交易流水
-      activeTabKey: 'standardAccountTrade',
-      standardStartDate: defaultStartDateString,
-      standardEndDate: defaultEndDateString,
-      creditStartDate: defaultStartDateString,
-      creditEndDate: defaultEndDateString,
-      optionStartDate: defaultStartDateString,
-      optionEndDate: defaultEndDateString,
-      capitalStartDate: defaultStartDateString,
-      capitalEndDate: defaultEndDateString,
-      // 普通账户
-      currentStandBusnTypeValue: '', // 选择的业务类别
-      currentStandPrdtValue: '', // 选择的产品代码
-      currentAllPrdtMenuValue: '', // 选择的产品代码,
-      // 信用账户
-      currentCreditBusnTypeValue: '', // 选择的业务类别
-      currentCreditPrdtValue: '', // 选择的产品代码
-      // 期权账户
-      currentOptionPrdtValue: '', // 选择的产品代码
-      // 资金变动
-      currentCapitalBusnTypeValue: '', // 选择的业务类别
-      accountTypeRadio: 'normal', // 选择的账户类型
+      activeTabKey: 'normal',
     };
   }
 
   componentDidMount() {
-    this.queryBusnTypeDict({ accountType: 'normal' });
+    // 初始化的时候查询下普通账户的业务列表
+    this.queryBusnTypeList();
+    // 初始化获取普通账户的全产品目录
     this.queryProductCatalogTree();
-    this.queryStandardTradeFlow();
   }
 
-  // 查询业务类型
+  // 查询资金变动的业务类别列表
   @autobind
-  queryBusnTypeDict(params = {}) {
-    const { location: { query: { custId } } } = this.props;
-    // type 值用于到Home页面中区分调用哪个具体api接口
-    this.props.querytradeFlow({
-      type: 'busnType',
-      custId,
-      queryType: 'tradeFlow',
-      ...params
-    });
+  queryCapitalBusnTypeList(param) {
+    this.props.tradeFlowApi.queryBusnTypeForCapital(param);
   }
 
-  // 查询产品代码
+  // 查询普通账户、信用账户、期权账户的业务类别
   @autobind
-  queryFinProductList(value = '') {
-    const { location: { query: { custId } } } = this.props;
-    if (!_.isEmpty(value)) {
-      this.props.querytradeFlow({
-        type: 'finProduct',
-        custId,
-        keyWord: value,
+  queryBusnTypeList() {
+    const { tradeFlowBusnTypeDict } = this.props;
+    const { activeTabKey } = this.state;
+    if (
+      activeTabKey !== 'capitalChange'
+      && _.isEmpty(tradeFlowBusnTypeDict[activeTabKey])
+    ) {
+      // 如果是非资金账户变动，则需要查询下各个账户类型下的业务类型列表是否存在，不存在则查询
+      this.props.tradeFlowApi.queryBusnType({
+        accountType: activeTabKey,
+        queryType: 'tradeFlow',
       });
     }
+  }
+
+  // 查询普通账户、信用账户、期权账户的产品代码下拉框
+  @autobind
+  queryProductCodeList(query) {
+    return this.props.tradeFlowApi.queryProductCodeList(query);
   }
 
   // 查询全产品目录树
   @autobind
   queryProductCatalogTree() {
-    const { location: { query: { custId } } } = this.props;
-    // type 值用于到Home页面中区分调用哪个具体api接口
-    this.props.querytradeFlow({
-      type: 'productTree',
-      custId,
-    });
+    const { productCatalogTree } = this.props;
+    if (_.isEmpty(productCatalogTree)) {
+      // 如果不存在全产品目录树，再查询获取，因为这个不会变，只要查一次就行
+      this.props.tradeFlowApi.queryProductCatalogTree();
+    }
   }
 
   // 查询普通账户交易流水
   @autobind
   queryStandardTradeFlow(params) {
     const { location: { query: { custId } } } = this.props;
-    const {
-      standardStartDate,
-      standardEndDate,
-      currentStandBusnTypeValue,
-      currentStandPrdtValue,
-      currentAllPrdtMenuValue
-    } = this.state;
-    // type 值用于到Home页面中区分调用哪个具体api接口
-    this.props.querytradeFlow({
-      type: 'standard',
+    this.props.tradeFlowApi.queryStandardTradeFlow({
       custId,
-      startDate: standardStartDate,
-      endDate: standardEndDate,
-      bussinessType: currentStandBusnTypeValue,
-      productCode: currentStandPrdtValue,
-      allProductMenu: currentAllPrdtMenuValue,
-      pageSize: 10,
-      pageNum: 1,
       ...params,
     });
   }
@@ -183,22 +117,8 @@ export default class TradeFlowModal extends PureComponent {
   @autobind
   queryCreditTradeFlow(params) {
     const { location: { query: { custId } } } = this.props;
-    const {
-      creditStartDate,
-      creditEndDate,
-      currentCreditPrdtValue,
-      currentCreditBusnTypeValue,
-    } = this.state;
-    // type 值用于到Home页面中区分调用哪个具体api接口
-    this.props.querytradeFlow({
-      type: 'credit',
+    this.props.tradeFlowApi.queryCreditTradeFlow({
       custId,
-      startDate: creditStartDate,
-      endDate: creditEndDate,
-      bussinessType: currentCreditBusnTypeValue,
-      productCode: currentCreditPrdtValue,
-      pageNum: 1,
-      pageSize: 10,
       ...params,
     });
   }
@@ -207,57 +127,21 @@ export default class TradeFlowModal extends PureComponent {
   @autobind
   queryOptionTradeFlow(params) {
     const { location: { query: { custId } } } = this.props;
-    const {
-      optionStartDate,
-      optionEndDate,
-      currentOptionPrdtValue,
-    } = this.state;
-    // type 值用于到Home页面中区分调用哪个具体api接口
-    this.props.querytradeFlow({
-      type: 'option',
+    this.props.tradeFlowApi.queryOptionTradeFlow({
       custId,
-      startDate: optionStartDate,
-      endDate: optionEndDate,
-      productCode: currentOptionPrdtValue,
-      pageNum: 1,
-      pageSize: 10,
       ...params,
     });
   }
 
-    // 查询资金变动交易流水
-    @autobind
+  // 查询资金变动交易流水
+  @autobind
   queryCapitalTradeFlow(params) {
     const { location: { query: { custId } } } = this.props;
-    const {
-      capitalStartDate,
-      capitalEndDate,
-      accountTypeRadio,
-      currentCapitalBusnTypeValue
-    } = this.state;
-      // type 值用于到Home页面中区分调用哪个具体api接口
-    this.props.querytradeFlow({
-      type: 'capital',
+    this.props.tradeFlowApi.queryCapitalTradeFlow({
       custId,
-      startDate: capitalStartDate,
-      endDate: capitalEndDate,
-      bussinessType: currentCapitalBusnTypeValue,
-      accountType: accountTypeRadio,
-      pageNum: 1,
-      pageSize: 10,
       ...params,
     });
   }
-
-  // 将接口返回的分页器数据转换成分页器组件的props
-  @autobind
-    getPage(page = {}) {
-      return {
-        pageSize: 10,
-        current: page.pageNum || 1,
-        total: page.totalCount || 0,
-      };
-    }
 
   @autobind
   @logable({
@@ -270,7 +154,7 @@ export default class TradeFlowModal extends PureComponent {
 
   @autobind
   handleTabChange(activeTabKey) {
-    this.setState({ activeTabKey });
+    this.setState({ activeTabKey }, this.queryBusnTypeList);
     // 需要记录切换日志
     logCommon({
       type: 'Click',
@@ -279,737 +163,73 @@ export default class TradeFlowModal extends PureComponent {
         value: TRADE_FLOW_TABS[activeTabKey],
       },
     });
-    // 切换tab页时调用方法刷数据，tab不同，对应的accountType也不同，切换tab的时候分别获取对应的业务类别数据和当前tab下的交易流水列表
-    if (activeTabKey === 'standardAccountTrade') {
-      // 普通账户历史交易
-      this.queryBusnTypeDict({ accountType: 'normal' });
-      this.queryStandardTradeFlow();
-    } else if (activeTabKey === 'creditAccountTrade') {
-      // 信用账户历史交易
-      this.queryBusnTypeDict({ accountType: 'credit' });
-      this.queryCreditTradeFlow();
-    } else if (activeTabKey === 'capitalChange') {
-      // 资金变动
-      this.queryBusnTypeDict({
-        accountType: this.state.accountTypeRadio,
-        queryType: 'moneyChange',
-      });
-      this.queryCapitalTradeFlow();
-    } else {
-      // 期权账户历史交易
-      this.queryOptionTradeFlow();
-    }
   }
 
-  // 切换普通账户页码
-  @autobind
-  @logable({
-    type: 'Click',
-    payload: {
-      name: '切换普通账户页码',
-      value: '$args[0]'
-    },
-  })
-  handleStandardPageChange(pageNum) {
-    this.queryStandardTradeFlow({
-      pageNum,
-    });
+  render() {
+    const { activeTabKey } = this.state;
+    const {
+      location,
+      tradeFlowBusnTypeDict,
+      productCatalogTree,
+      standardTradeFlowRes,
+      creditTradeFlowRes,
+      optionTradeFlowRes,
+      capitalChangeFlowRes,
+      tradeFlowCapitalBusnTypeDict,
+    } = this.props;
+    // 弹出层的自定义关闭按钮
+    const closeBtn = [(
+      <Button key="tradeFlowModalCloseBtn" onClick={this.handleModalClose}>关闭</Button>
+    )];
+
+    return (
+      <Modal
+        visible
+        size="large"
+        maskClosable={false}
+        modalKey="cust360DetailTradeFlowModal"
+        closeModal={this.handleModalClose}
+        title="交易流水"
+        selfBtnGroup={closeBtn}
+      >
+        <div className={styles.tradeFlowWrap}>
+          <Tabs onChange={this.handleTabChange} activeKey={activeTabKey} animated={false}>
+            <TabPane tab="普通账户历史交易" key="normal">
+              <NormalTradeFlow
+                location={location}
+                busnTypeList={tradeFlowBusnTypeDict.normal || []}
+                productCatalogTree={productCatalogTree}
+                tradeFlow={standardTradeFlowRes}
+                queryStandardTradeFlow={this.queryStandardTradeFlow}
+                queryProductCodeList={this.queryProductCodeList}
+              />
+            </TabPane>
+            <TabPane tab="信用账户历史交易" key="credit">
+              <CreditTradeFlow
+                tradeFlow={creditTradeFlowRes}
+                busnTypeList={tradeFlowBusnTypeDict.credit || []}
+                queryCreditTradeFlow={this.queryCreditTradeFlow}
+                queryProductCodeList={this.queryProductCodeList}
+              />
+            </TabPane>
+            <TabPane tab="期权账户历史交易" key="option">
+              <OptionTradeFlow
+                tradeFlow={optionTradeFlowRes}
+                queryOptionTradeFlow={this.queryOptionTradeFlow}
+                queryProductCodeList={this.queryProductCodeList}
+              />
+            </TabPane>
+            <TabPane tab="资金变动" key="capitalChange">
+              <CapitalChange
+                busnType={tradeFlowCapitalBusnTypeDict}
+                capitalData={capitalChangeFlowRes}
+                queryBusnTypeList={this.queryCapitalBusnTypeList}
+                queryCapitalTradeFlow={this.queryCapitalTradeFlow}
+              />
+            </TabPane>
+          </Tabs>
+        </div>
+      </Modal>
+    );
   }
-
-  // 切换信用账户页码
-  @autobind
-  @logable({
-    type: 'Click',
-    payload: {
-      name: '切换信用账户页码',
-      value: '$args[0]'
-    },
-  })
-  handleCreditPageChange(pageNum) {
-    this.queryCreditTradeFlow({
-      pageNum,
-    });
-  }
-
-  // 切换期权账户页码
-  @autobind
-  @logable({
-    type: 'Click',
-    payload: {
-      name: '切换期权账户页码',
-      value: '$args[0]'
-    },
-  })
-  handleOptionPageChange(pageNum) {
-    this.queryOptionTradeFlow({
-      pageNum,
-    });
-  }
-
-  // 切换资金变动页码
-  @autobind
-  @logable({
-    type: 'Click',
-    payload: {
-      name: '切换资金变动页码',
-      value: '$args[0]'
-    },
-  })
-  handleCapitalPageChange(pageNum) {
-    this.queryCapitalTradeFlow({
-      pageNum,
-    });
-  }
-
-  // 普通账户选择起止日期
-  @autobind
-  @logable({
-    type: 'DropdownSelect',
-    payload: {
-      name: '查询日期',
-      value: '$args[0].value',
-    },
-  })
-  handleChangeStandardDate(date) {
-    this.setState({
-      standardStartDate: date.value[0],
-      standardEndDate: date.value[1],
-    });
-    this.queryStandardTradeFlow({
-      startDate: date.value[0],
-      endDate: date.value[1],
-    });
-  }
-
-  // 信用账户选择起止日期
-  @autobind
-  @logable({
-    type: 'DropdownSelect',
-    payload: {
-      name: '查询日期',
-      value: '$args[0].value',
-    },
-  })
-  handleChangeCreditDate(date) {
-    this.setState({
-      creditStartDate: date.value[0],
-      creditEndDate: date.value[1],
-    });
-    this.queryCreditTradeFlow({
-      startDate: date.value[0],
-      endDate: date.value[1],
-    });
-  }
-
-  // 期权账户选择起止日期
-  @autobind
-  @logable({
-    type: 'DropdownSelect',
-    payload: {
-      name: '查询日期',
-      value: '$args[0].value',
-    },
-  })
-  handleChangeOptionDate(date) {
-    this.setState({
-      optionStartDate: date.value[0],
-      optionEndDate: date.value[1],
-    });
-    this.queryOptionTradeFlow({
-      startDate: date.value[0],
-      endDate: date.value[1],
-    });
-  }
-
-  // 当初始化时，需求要求日期组件需要有初始值
-  // 开始值是六个月前，结束值是今天
-  // 这是可筛选的最大范围
-  @autobind
-  getDefaultDate(startDate, endDate) {
-    const defaultStartDate = startDate || beforeSixDate;
-    const defaultEndDate = endDate || today;
-    return {
-      defaultStartDate,
-      defaultEndDate,
-    };
-  }
-
-  // 资金变动选择起止时间
-  @autobind
-  @logable({
-    type: 'DropdownSelect',
-    payload: {
-      name: '查询日期',
-      min: '$args[0]',
-      max: '$args[1]',
-    },
-  })
-  handleChangeCapitalDate(date) {
-    const [startDate, endDate] = date.value;
-    const { capitalStartDate, capitalEndDate } = this.state;
-    // 如果时间没有发生改变, 直接return
-    if (startDate === capitalStartDate
-      && endDate === capitalEndDate) {
-      return;
-    }
-    this.setState({
-      capitalStartDate: startDate,
-      capitalEndDate: endDate,
-    });
-    this.queryCapitalTradeFlow({
-      startDate,
-      endDate,
-    });
-  }
-
-  // 普通账户选择业务类别
-  @autobind
-  @logable({
-    type: 'DropdownSelect',
-    payload: {
-      name: '业务类别',
-      value: '$args[0].value',
-    },
-  })
-  handleFilterStandardBussinessType(current) {
-    this.setState({ currentStandBusnTypeValue: current.value });
-    this.queryStandardTradeFlow({
-      bussinessType: current.value,
-    });
-  }
-
-  // 信用账户选择业务类别
-  @autobind
-  @logable({
-    type: 'DropdownSelect',
-    payload: {
-      name: '业务类别',
-      value: '$args[0].value',
-    },
-  })
-  handleFilterCreditBussinessType(current) {
-    this.setState({ currentCreditBusnTypeValue: current.value });
-    this.queryCreditTradeFlow({
-      bussinessType: current.value,
-    });
-  }
-
-  // 资金变动选择业务类别
-  @autobind
-  @logable({
-    type: 'DropdownSelect',
-    payload: {
-      name: '业务类别',
-      value: '$args[0].value',
-    },
-  })
-  handleFilterCapitalBussinessType(current) {
-    this.setState({ currentCapitalBusnTypeValue: current.value });
-    this.queryCapitalTradeFlow({
-      bussinessType: current.value,
-    });
-  }
-
-  // 资金变动选择帐户类型,因为资金流水的业务类别和帐户类型有联动关系，这里需要再重新获取业务类别数据
-  @autobind
-  @logable({
-    type: 'Click',
-    payload: {
-      name: '账户类型',
-      value: '$args[0].target.value'
-    },
-  })
-  handleAccountTypeRadioChange(e) {
-    const { value } = e.target;
-    this.setState({
-      accountTypeRadio: value,
-      currentCapitalBusnTypeValue: '',
-    });
-    this.queryBusnTypeDict({
-      accountType: value,
-      queryType: 'moneyChange',
-    });
-    this.queryCapitalTradeFlow({
-      accountType: value,
-      bussinessType: '',
-    });
-  }
-
-  // 普通账户选择产品代码
-  @autobind
-  @logable({
-    type: 'DropdownSelect',
-    payload: {
-      name: '产品代码',
-      value: '$args[0].value.prdtCode',
-    },
-  })
-  handleFilterStandardPrdt(current) {
-    this.setState({ currentStandPrdtValue: current.value.prdtCode });
-    this.queryStandardTradeFlow({
-      productCode: current.value.prdtCode,
-    });
-  }
-
-  // 信用账户选择产品代码
-  @autobind
-  @logable({
-    type: 'DropdownSelect',
-    payload: {
-      name: '产品代码',
-      value: '$args[0].value.prdtCode',
-    },
-  })
-  handleFilterCreditPrdt(current) {
-    this.setState({ currentCreditPrdtValue: current.value.prdtCode });
-    this.queryCreditTradeFlow({
-      productCode: current.value.prdtCode,
-    });
-  }
-
-  // 期权账户选择产品代码
-  @autobind
-  @logable({
-    type: 'DropdownSelect',
-    payload: {
-      name: '产品代码',
-      value: '$args[0].value.prdtCode',
-    },
-  })
-  handleFilterOptionPrdt(current) {
-    this.setState({ currentOptionPrdtValue: current.value.prdtCode });
-    this.queryOptionTradeFlow({
-      productCode: current.value.prdtCode,
-    });
-  }
-
-  // 选择全产品目录
-  @autobind
-  @logable({
-    type: 'DropdownSelect',
-    payload: {
-      name: '全产品目录树',
-      value: '$args[0]',
-    },
-  })
-  handleFilterTree(current) {
-    this.setState({ currentAllPrdtMenuValue: current.join(',') });
-    this.queryStandardTradeFlow({
-      allProductMenu: current.join(','),
-    });
-  }
-
-  // 修改数据金额所在的column
-  @autobind
-  updateMoneyColumn(column) {
-    const { isNumber, isAmount, ...restColumn } = column;
-    return {
-      ...restColumn,
-      render(text, record) {
-        if (_.isNull(text)) {
-          return '-';
-        }
-        if (record.flag) {
-          // 表示空数据
-          return '';
-        }
-        // 比如可用数量，不需要保留两位小数
-        if (isAmount) {
-          return number.thousandFormat(text, false);
-        }
-        // 数字金额等需要保留2位小数
-        if (isNumber) {
-          return number.thousandFormat(number.toFixed(text), false);
-        }
-        return text;
-      },
-    };
-  }
-
-  // 修改部分列的显示
-  @autobind
-  transformColumnsData(columns) {
-    return _.map(columns, (column) => {
-      const {
-        isNumber = false, isAmount = false, dataIndex
-      } = column;
-      if (isNumber || isAmount) {
-        return this.updateMoneyColumn(column);
-      }
-      if (dataIndex === 'serviceIndication') {
-        return {
-          ...column,
-          render: content => (
-            <span>
-              <Tooltip title={content}>{content}</Tooltip>
-            </span>
-          )
-        };
-      }
-      if (dataIndex === 'productName' || dataIndex === 'optionContractName') {
-        return {
-          ...column,
-          render: content => (
-            <Tooltip title={content} placement="bottomLeft">
-              <div>{content}</div>
-            </Tooltip>
-          )
-        };
-      }
-      return column;
-    });
-  }
-
-// 修改产品下拉选项
-@autobind
-  getOptionItemValue({ value: { prdtCode, prdtName, prdtSortCode } }) {
-    if (!prdtSortCode) {
-      return <span key={prdtCode} title={prdtName}>{prdtName}</span>;
-    }
-    return <span key={prdtCode} title={prdtName}>{`${prdtName}(${prdtSortCode})`}</span>;
-  }
-
-render() {
-  const {
-    activeTabKey,
-    standardStartDate,
-    standardEndDate,
-    currentStandBusnTypeValue,
-    currentStandPrdtValue,
-    creditStartDate,
-    creditEndDate,
-    currentCreditBusnTypeValue,
-    currentCreditPrdtValue,
-    optionStartDate,
-    optionEndDate,
-    currentOptionPrdtValue,
-    capitalStartDate,
-    capitalEndDate,
-    currentCapitalBusnTypeValue,
-    accountTypeRadio,
-  } = this.state;
-  const {
-    busnTypeDict,
-    finProductList,
-    productCatalogTree,
-    standardTradeFlowRes,
-    creditTradeFlowRes,
-    optionTradeFlowRes,
-    capitalChangeFlowRes: {
-      list = EMPTY_LIST,
-      page = EMPTY_OBJECT,
-    },
-  } = this.props;
-    // 判断有没有普通账户流水数据
-  const isRenderStandard = !_.isEmpty(standardTradeFlowRes.list);
-  // 补足普通账户流水数据
-  const standardData = data.padEmptyDataForList(standardTradeFlowRes.list);
-  // 修改普通账户Table 的 columns
-  const standardTradeColumns = this.transformColumnsData(STANDARD_TRADE_FLOW_COLUMNS);
-  // 获取普通账户表格的分页器信息
-  const standardPage = this.getPage(standardTradeFlowRes.page);
-  // 判断有没有信用账户流水数据
-  const isRenderCredit = !_.isEmpty(creditTradeFlowRes.list);
-  const creditData = data.padEmptyDataForList(creditTradeFlowRes.list);
-  const creditTradeColumns = this.transformColumnsData(CREDIT_TRADE_FLOW_COLUMNS);
-  const creditPage = this.getPage(creditTradeFlowRes.page);
-  // 判断有没有期权账户流水数据
-  const isRenderOption = !_.isEmpty(optionTradeFlowRes.list);
-  const optionData = data.padEmptyDataForList(optionTradeFlowRes.list);
-  const optionTradeColumns = this.transformColumnsData(OPTION_TRADE_FLOW_COLUMNS);
-  const optionPage = this.getPage(optionTradeFlowRes.page);
-  // 资金变动表格信息 ,没有数据时展示占位图标，有数据但少于十条，用空白行补全；
-  const capitalData = data.padEmptyDataForList(list);
-  const capitalChangeColumns = this.transformColumnsData(CAPITAL_CHANGE_COLUMNS);
-  const capitalPage = this.getPage(page);
-  const isRender = !_.isEmpty(list);
-  // 弹出层的自定义关闭按钮
-  const closeBtn = [(
-    <Button onClick={this.handleModalClose}>关闭</Button>
-  )];
-  const {
-    defaultStartDate,
-    defaultEndDate,
-  } = this.getDefaultDate(capitalStartDate, capitalEndDate);
-
-  return (
-    <Modal
-      visible
-      size="large"
-      maskClosable={false}
-      modalKey="cust360DetailTradeFlowModal"
-      closeModal={this.handleModalClose}
-      title="交易流水"
-      selfBtnGroup={closeBtn}
-    >
-      <div className={styles.tradeFlowWrap}>
-        <Tabs onChange={this.handleTabChange} activeKey={activeTabKey} animated={false}>
-          <TabPane tab="普通账户历史交易" key="standardAccountTrade">
-            <div className={styles.tabPaneWrap}>
-              <div className={`${styles.header} clearfix`}>
-                <div className={styles.filterArea}>
-                  <DateFilter
-                    filterName="查询日期"
-                    initialStartDate={DEFAULT_START_DATE}
-                    value={[standardStartDate, standardEndDate]}
-                    onChange={this.handleChangeStandardDate}
-                    disabledCurrentEnd={false}
-                  />
-                </div>
-                <div className={styles.filterArea}>
-                  <SingleFilterWithSearch
-                    filterName="业务类别"
-                    filterId="bussinessType"
-                    value={currentStandBusnTypeValue}
-                    data={busnTypeDict.list}
-                    placeholder="请输入业务类别"
-                    dropdownStyle={{
-                      maxHeight: 324,
-                      overflowY: 'auto',
-                      width: 252,
-                    }}
-                    onChange={this.handleFilterStandardBussinessType}
-                  />
-                </div>
-                <div className={`${styles.filterArea} ${styles.filterSpecial}`}>
-                  <SingleFilter
-                    filterName="产品代码"
-                    filterId="productCode"
-                    placeholder="请输入产品代码或产品名称"
-                    dropdownStyle={{
-                      maxHeight: 324,
-                      overflowY: 'auto',
-                      width: 252,
-                    }}
-                    dataMap={['prdtCode', 'prdtName']}
-                    needItemObj
-                    showSearch
-                    data={finProductList.list}
-                    value={currentStandPrdtValue}
-                    onInputChange={this.queryFinProductList}
-                    onChange={this.handleFilterStandardPrdt}
-                    getOptionItemValue={this.getOptionItemValue}
-                  />
-                </div>
-                <div className={`${styles.filterArea} ${styles.lastFilter}`}>
-                  <TreeFilter
-                    dropdownClassName={styles.allProductMenuTree}
-                    filterName="全产品目录"
-                    filterId="allProductMenuTree"
-                      // placeholder="请输入全产品目录"
-                    dropdownStyle={{ zIndex: 1000 }}
-                    treeData={productCatalogTree.allProductMenuTree}
-                    multiple
-                    showSearch
-                    treeCheckable
-                    onChange={this.handleFilterTree}
-                  />
-                </div>
-              </div>
-              <IfTableWrap
-                isRender={isRenderStandard}
-                text={NODATA_STANDARD}
-                effect="detailAccountInfo/queryStandardTradeFlow"
-              >
-                <div className={styles.body}>
-                  <Table
-                    pagination={false}
-                    dataSource={standardData}
-                    columns={standardTradeColumns}
-                    className={styles.tradeFlowTable}
-                    scroll={STANDARD_TRADE_FLOW_TABLE_SCROLL}
-                  />
-                </div>
-                <Pagination
-                  {...standardPage}
-                  onChange={this.handleStandardPageChange}
-                />
-              </IfTableWrap>
-            </div>
-          </TabPane>
-          <TabPane tab="信用账户历史交易" key="creditAccountTrade">
-            <div className={styles.tabPaneWrap}>
-              <div className={`${styles.header} clearfix`}>
-                <div className={styles.filterArea}>
-                  <DateFilter
-                    filterName="查询日期"
-                    initialStartDate={DEFAULT_START_DATE}
-                    value={[creditStartDate, creditEndDate]}
-                    onChange={this.handleChangeCreditDate}
-                    disabledCurrentEnd={false}
-                  />
-                </div>
-                <div className={styles.filterArea}>
-                  <SingleFilterWithSearch
-                    filterName="业务类别"
-                    filterId="bussinessType"
-                    value={currentCreditBusnTypeValue}
-                    data={busnTypeDict.list}
-                    placeholder="请输入业务类别"
-                    dropdownStyle={{
-                      maxHeight: 324,
-                      overflowY: 'auto',
-                      width: 252,
-                    }}
-                    onChange={this.handleFilterCreditBussinessType}
-                  />
-                </div>
-                <div className={styles.filterArea}>
-                  <SingleFilter
-                    filterName="产品代码"
-                    filterId="productCode"
-                    placeholder="请输入产品代码或产品名称"
-                    dropdownStyle={{
-                      maxHeight: 324,
-                      overflowY: 'auto',
-                      width: 252,
-                    }}
-                    dataMap={['prdtCode', 'prdtName']}
-                    showSearch
-                    needItemObj
-                    data={finProductList.list}
-                    value={currentCreditPrdtValue}
-                    onInputChange={this.queryFinProductList}
-                    onChange={this.handleFilterCreditPrdt}
-                    getOptionItemValue={this.getOptionItemValue}
-                  />
-                </div>
-              </div>
-              <IfTableWrap
-                isRender={isRenderCredit}
-                text={NODATA_CREDIT}
-                effect="detailAccountInfo/queryCreditTradeFlow"
-              >
-                <div className={styles.body}>
-                  <Table
-                    pagination={false}
-                    dataSource={creditData}
-                    columns={creditTradeColumns}
-                    className={styles.tradeFlowTable}
-                    scroll={CREDIT_TRADE_FLOW_TABLE_SCROLL}
-                  />
-                </div>
-                <Pagination
-                  {...creditPage}
-                  onChange={this.handleCreditPageChange}
-                />
-              </IfTableWrap>
-            </div>
-          </TabPane>
-          <TabPane tab="期权账户历史交易" key="optionAccountTrade">
-            <div className={styles.tabPaneWrap}>
-              <div className={`${styles.header} clearfix`}>
-                <div className={styles.filterArea}>
-                  <DateFilter
-                    filterName="查询日期"
-                    initialStartDate={DEFAULT_START_DATE}
-                    value={[optionStartDate, optionEndDate]}
-                    onChange={this.handleChangeOptionDate}
-                    disabledCurrentEnd={false}
-                  />
-                </div>
-                <div className={styles.filterArea}>
-                  <SingleFilter
-                    filterName="产品代码"
-                    filterId="productCode"
-                    placeholder="请输入产品代码或产品名称"
-                    dropdownStyle={{
-                      maxHeight: 324,
-                      overflowY: 'auto',
-                      width: 252,
-                    }}
-                    dataMap={['prdtCode', 'prdtName']}
-                    showSearch
-                    needItemObj
-                    data={finProductList.list}
-                    value={currentOptionPrdtValue}
-                    onInputChange={this.queryFinProductList}
-                    onChange={this.handleFilterOptionPrdt}
-                    getOptionItemValue={this.getOptionItemValue}
-                  />
-                </div>
-              </div>
-              <IfTableWrap
-                isRender={isRenderOption}
-                text={NODATA_OPTION}
-                effect="detailAccountInfo/queryOptionTradeFlow"
-              >
-                <div className={styles.body}>
-                  <Table
-                    pagination={false}
-                    dataSource={optionData}
-                    columns={optionTradeColumns}
-                    className={styles.tradeFlowTable}
-                    scroll={OPTION_TRADE_FLOW_TABLE_SCROLL}
-                  />
-                </div>
-                <Pagination
-                  {...optionPage}
-                  onChange={this.handleOptionPageChange}
-                />
-              </IfTableWrap>
-            </div>
-          </TabPane>
-          <TabPane tab="资金变动" key="capitalChange">
-            <div className={styles.tabPaneWrap}>
-              <div className={`${styles.header} clearfix`}>
-                <div className={styles.filterArea}>
-                  <DateRangePick
-                    type="date"
-                    filterId="filterDate"
-                    filterName="查询日期"
-                    filterValue={[defaultStartDate, defaultEndDate]}
-                    onChange={this.handleChangeCapitalDate}
-                    disabledRange={SIX_MONTH_DAYS}
-                  />
-                </div>
-                <div className={styles.filterArea}>
-                  <span className={styles.label}>账户类型:</span>
-                  <RadioGroup
-                    onChange={this.handleAccountTypeRadioChange}
-                    value={accountTypeRadio}
-                    className={styles.radioGroup}
-                  >
-                    <Radio className={styles.accountTypeRadio} value="normal">普通</Radio>
-                    <Radio className={styles.accountTypeRadio} value="credit">信用</Radio>
-                    <Radio className={styles.accountTypeRadio} value="option">期权</Radio>
-                  </RadioGroup>
-                </div>
-                <div className={styles.filterArea}>
-                  <SingleFilterWithSearch
-                    filterName="业务类别"
-                    filterId="bussinessType"
-                    value={currentCapitalBusnTypeValue}
-                    data={busnTypeDict.list}
-                    placeholder="请输入业务类别"
-                    dropdownStyle={{
-                      maxHeight: 324,
-                      overflowY: 'auto',
-                      width: 252,
-                    }}
-                    onChange={this.handleFilterCapitalBussinessType}
-                  />
-                </div>
-              </div>
-              <IfTableWrap isRender={isRender} text={NODATA_HINT}>
-                <div className={styles.body}>
-                  <Table
-                    pagination={false}
-                    dataSource={capitalData}
-                    columns={capitalChangeColumns}
-                    className={styles.tradeFlowTable}
-                  />
-                </div>
-                <Pagination
-                  {...capitalPage}
-                  onChange={this.handleCapitalPageChange}
-                />
-              </IfTableWrap>
-            </div>
-          </TabPane>
-        </Tabs>
-      </div>
-    </Modal>
-  );
-}
 }

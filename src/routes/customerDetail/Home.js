@@ -1,8 +1,8 @@
 /**
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
-  * @Last Modified by: sunweibin
-  * @Last Modified time: 2018-12-04 09:59:05
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-12-07 11:47:09
  */
 
 import React, { PureComponent } from 'react';
@@ -11,7 +11,7 @@ import { autobind } from 'core-decorators';
 import { Tabs } from 'antd';
 
 import withRouter from '../../decorators/withRouter';
-import AccountInfo from './tabpages/accountInfo/Home';
+import AccountInfo from './tabpages/accountInfo/connectedHome';
 import BreadCrumb from '../../components/customerDetail/Breadcrumb';
 import SummaryInfo from '../../components/customerDetail/SummaryInfo';
 import CustomerBasicInfo from '../../components/customerDetail/CustomerBasicInfo';
@@ -148,10 +148,15 @@ export default class Home extends PureComponent {
   }
 
   // 获取客户360页面当前的tabKey
-  getActiveTabKey() {
-    const { location: { query: { custDetailTabKey } } } = this.props;
-    // 默认显示客户信息tab
-    return custDetailTabKey || 'accountInfo';
+  getActiveTabKey(accountInfoTabPermission) {
+    const { location: { query: { activeTabKey } } } = this.props;
+    // 初次进入客户360时，如果没有指定tab，则默认展示用户有权限看到的第一个tab
+    if (!activeTabKey && !accountInfoTabPermission) {
+      // 用户可以看到的第一个tab是客户属性
+      return CUSTOMER_INFO_TAB_KEY;
+    }
+    // 有权限默认显示账户户信息tab
+    return activeTabKey || ACCOUNT_INFO_TAB_KEY;
   }
 
   // 切换客户360详情页的Tab
@@ -180,11 +185,6 @@ export default class Home extends PureComponent {
 
   render() {
     const {
-      location: {
-        query: {
-          activeTabKey = ACCOUNT_INFO_TAB_KEY,
-        },
-      },
       location,
       summaryInfo,
       moreLabelInfo,
@@ -294,6 +294,8 @@ export default class Home extends PureComponent {
       </TabPane>
     );
 
+    const currentActiveTabkey = this.getActiveTabKey(accountInfoTabPermission);
+
     return (
       <div className={styles.container}>
         <div className={styles.breadCrumb}><BreadCrumb {...breadCrumbProps} /></div>
@@ -317,7 +319,7 @@ export default class Home extends PureComponent {
         </div>
         <div className={styles.tabContainer}>
           <Tabs
-            activeKey={activeTabKey}
+            activeKey={currentActiveTabkey}
             className={styles.tab}
             onChange={this.handleTabChange}
             animated={false}

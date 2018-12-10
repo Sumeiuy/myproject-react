@@ -5,6 +5,8 @@
  * @Last Modified time: 2018-06-15 11:02:18
  * @description 此处存放与校验相关的公用方法(非直接与正则表达式相关)
  */
+
+import isNumber from 'lodash/isNumber';
 import {
   chinese,
   cellPhone,
@@ -106,6 +108,12 @@ const check = {
   isOnlyAlphabetAndNumber(v) {
     return onlyAlphabetAndNumber.test(v);
   },
+  /**
+   * 判断一个数值类型的返回值是否有效
+   */
+  isNumberEmpty(v) {
+    return !isNumber(v) || Number.isNaN(v);
+  }
 };
 
 export default check;
@@ -121,4 +129,5 @@ export const {
   is18gitiIDCardCode,
   is15gitiIDCardCode,
   isOnlyAlphabetAndNumber,
+  isNumberEmpty,
 } = check;

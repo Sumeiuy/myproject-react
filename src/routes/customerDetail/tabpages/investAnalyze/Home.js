@@ -3,7 +3,7 @@
  * @Date: 2018-11-19 15:39:12
  * @Last Modified time: 2018-11-23 20:37:55
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-04 13:45:33
+ * @Last Modified time: 2018-12-08 17:15:58
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -13,6 +13,7 @@ import { Tabs } from 'antd';
 import AccountTotalState from '../../../../components/customerDetailInvestAnalyze/accountTotalState/AccountTotalState';
 import AssetConfigAnalysis from '../../../../components/customerDetailInvestAnalyze/assetConfigAnalysis/AssetConfigAnalysis';
 import ProfitAttributionAnalysis from '../../../../components/customerDetailInvestAnalyze/profitAttributionAnalysis/ProfitAttributionAnalysis';
+import WindControlAnalysis from '../../../../components/customerDetailInvestAnalyze/windControlAnalysis/WindControlAnalysis';
 import logable from '../../../../decorators/logable';
 import styles from './home.less';
 
@@ -32,7 +33,7 @@ export default class Home extends PureComponent {
     // 获取账户资产变动
     getAssetChangeState: PropTypes.func.isRequired,
     // 账户资产变动
-    assetChangeList: PropTypes.array.isRequired,
+    assetChangeData: PropTypes.object.isRequired,
     // 获取账户资产变动图表
     getAssetChangeReport: PropTypes.func.isRequired,
     // 账户资产变动图表数据
@@ -102,7 +103,7 @@ export default class Home extends PureComponent {
       investmentFeatureLabels,
       getInvestmentFeatureLabels,
       getAssetChangeState,
-      assetChangeList,
+      assetChangeData,
       getAssetChangeReport,
       assetChangeReportData,
       getProfitTrendReport,
@@ -125,7 +126,7 @@ export default class Home extends PureComponent {
               investmentFeatureLabels={investmentFeatureLabels}
               getInvestmentFeatureLabels={getInvestmentFeatureLabels}
               getAssetChangeState={getAssetChangeState}
-              assetChangeList={assetChangeList}
+              assetChangeData={assetChangeData}
               getAssetChangeReport={getAssetChangeReport}
               assetChangeReportData={assetChangeReportData}
               getProfitTrendReport={getProfitTrendReport}
@@ -148,7 +149,9 @@ export default class Home extends PureComponent {
               getAttributionAnalysis={getAttributionAnalysis}
             />
           </TabPane>
-          <TabPane tab="风控能力分析" key="windControlAbilityAnalysis">风控能力分析</TabPane>
+          <TabPane tab="风控能力分析" key="windControlAnalysis">
+            <WindControlAnalysis />
+          </TabPane>
         </Tabs>
       </div>
     );

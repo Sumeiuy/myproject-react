@@ -2,13 +2,14 @@
  * @Author: zuoguangzu
  * @Date: 2018-11-23 20:28:58
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-05 10:53:02
+ * @Last Modified time: 2018-12-05 17:11:17
  * @description 资产配置
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import CountPeriod from '../CountPeriod';
 import EndTermAssetConfig from './EndTermAssetConfig';
+import AssetConfigTrend from './AssetConfigTrend';
 import styles from './assetConfigAnalysis.less';
 
 export default class AssetConfigAnalysis extends PureComponent {
@@ -28,7 +29,9 @@ export default class AssetConfigAnalysis extends PureComponent {
     const {
       location,
       getEndTermAssetConfig,
-      endTermAssetConfigData
+      endTermAssetConfigData,
+      getAssetConfigTrend,
+      assetConfigTrendData,
     } = this.props;
     return (
       <div className={styles.assetConfigAnalysis}>
@@ -37,6 +40,11 @@ export default class AssetConfigAnalysis extends PureComponent {
           location={location}
           getEndTermAssetConfig={getEndTermAssetConfig}
           endTermAssetConfigData={endTermAssetConfigData}
+        />
+        <AssetConfigTrend
+          location={location}
+          getAssetConfigTrend={getAssetConfigTrend}
+          assetConfigTrendData={assetConfigTrendData}
         />
       </div>
     );

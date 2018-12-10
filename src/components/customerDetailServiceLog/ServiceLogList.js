@@ -21,7 +21,7 @@ import styles from './serviceLogList.less';
 const Panel = Collapse.Panel;
 
 export default class ServiceLogList extends PureComponent {
-  static propsType = {
+  static propTypes = {
     serviceLogList: PropTypes.array,
     filesList: PropTypes.array,
     executeTypes: PropTypes.array.isRequired,
@@ -216,7 +216,7 @@ export default class ServiceLogList extends PureComponent {
           accordion
         >
           {
-            _.map(item.logList, item => this.renderTimePane(item, defaultActiveKey))
+            _.map(item.logList, log => this.renderTimePane(log, defaultActiveKey))
           }
         </Collapse>
       </Panel>

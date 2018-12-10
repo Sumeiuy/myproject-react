@@ -10,6 +10,7 @@ import PropTypes from 'prop-types';
 import { Tabs } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import moment from 'moment';
 import { optionsMap } from '../../config';
 import {
   CUST_MANAGER,
@@ -21,6 +22,7 @@ import { emp, time, permission } from '../../helper';
 import { transformDateTypeToDate } from '../customerPool/helper';
 import { PerformanceIndicators } from '../customerPool/home';
 import AnalysisCharts from './AnalysisCharts';
+import PerformanceCharts from './PerformanceCharts';
 import TabController from './TabController';
 import logable from '../../decorators/logable';
 import styles from './chartsTab.less';
@@ -52,9 +54,6 @@ export default class ChartsTab extends PureComponent {
 
   constructor(props) {
     super(props);
-    this.state = {
-      location: props.location,
-    };
     // 初始化当前登录用户的orgId
     this.loginOrgId = emp.getOrgId();
     // HTSC 首页指标查询
@@ -63,6 +62,8 @@ export default class ChartsTab extends PureComponent {
 
   componentDidMount() {
     this.requstIndicator(this.props);
+    // 投顾绩效的时间筛选不同，拆分单独请求
+    this.requestPerformanceIndicators();
   }
 
   componentDidUpdate(prevProps) {
@@ -75,11 +76,19 @@ export default class ChartsTab extends PureComponent {
     } = prevProps;
 
     // 时间或者组织机构树变化
-    // 重新请求绩效指标数据和净创收数据
+    // 重新请求客户分析和经营指标数据
     if (prevQuery.orgId !== nextQuery.orgId
       || prevQuery.cycleSelect !== nextQuery.cycleSelect) {
       // 请求指标数据
       this.requstIndicator(this.props);
+    }
+
+    // 时间或者组织机构树变化
+    // 重新请求投顾绩效数据
+    if (prevQuery.orgId !== nextQuery.orgId
+      || prevQuery.performanceCycleSelect !== nextQuery.performanceCycleSelect) {
+      // 请求指标数据
+      this.requestPerformanceIndicators();
     }
   }
 
@@ -154,13 +163,10 @@ export default class ChartsTab extends PureComponent {
     begin, end, orgId, cycleSelect, custType
   }) {
     const {
-      getPerformanceIndicators,
       getCustAnalyticsIndicators,
       getManagerIndicators,
       getCustCount,
-      empInfo = {},
     } = this.props;
-    const { tgQyFlag = false } = empInfo.empInfo || {};
     const cycleDate = transformDateTypeToDate(cycleSelect);
     const param = {
       custType, // 客户范围类型
@@ -176,9 +182,46 @@ export default class ChartsTab extends PureComponent {
     getManagerIndicators({ ...param, end, begin });
     // 客户分析
     getCustAnalyticsIndicators({ ...param, end, begin });
+  }
+
+  @autobind
+  requestPerformanceIndicators() {
+    const {
+      location: {
+        query: {
+          performanceCycleSelect, // 与cycleSelect区分，只针对投顾绩效
+          orgId,
+        },
+      },
+      empInfo = {},
+      getPerformanceIndicators,
+    } = this.props;
+    const { tgQyFlag = false } = empInfo.empInfo || {};
+
     // 查看投顾绩效开关:empinfo返回的权限指标字段（tgQyFlag：bool）
     if (tgQyFlag) {
-      getPerformanceIndicators({ ...param, end, begin });
+      const custType = this.getCustType(orgId);
+      let requsetOrgId;
+      if (orgId) {
+        requsetOrgId = orgId !== MAIN_MAGEGER_ID ? orgId : '';
+      } else if (this.hasIndexViewPermission) {
+        requsetOrgId = this.loginOrgId;
+      }
+      const { performanceCycleSelect: selects } = optionsMap;
+      const currentSelect = _.find(selects, item => item.dateKey === performanceCycleSelect)
+        || selects[0];
+      const duration = time.getDurationString(currentSelect.dateKey);
+      const begin = duration.begin;
+      const end = duration.end;
+      getPerformanceIndicators({
+        custType, // 客户范围类型
+        orgId: requsetOrgId,
+        dateType: currentSelect.key,
+        begin,
+        end,
+        dateStart: moment(begin).format('YYYY-MM-DD'),
+        dateEnd: moment(end).endOf('month').format('YYYY-MM-DD'),
+      });
     }
   }
 
@@ -259,13 +302,8 @@ export default class ChartsTab extends PureComponent {
         {
           tgQyFlag ? (
             <TabPane tab="投顾绩效" key="performance">
-              <PerformanceIndicators
+              <PerformanceCharts
                 indicators={performanceIndicators}
-                location={location}
-                cycle={cycle}
-                custCount={custCount}
-                category="performance"
-                isNewHome
               />
             </TabPane>
           ) : null

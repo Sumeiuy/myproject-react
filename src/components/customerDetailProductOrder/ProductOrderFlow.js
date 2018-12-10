@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-20 10:31:29
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-30 10:54:17
+ * @LastEditTime: 2018-12-07 17:07:34
  * @Description: 服务订单流水
  */
 
@@ -29,7 +29,7 @@ import styles from './productOrderFlow.less';
 const NODATA_HINT = '客户暂无服务订单信息';
 
 export default class ProductOrderFlow extends PureComponent {
-  static propsTypes = {
+  static propTypes = {
     productListBySearch: PropTypes.array.isRequired,
     serviceOrderFlow: PropTypes.object.isRequired,
     onProductOrderFlowChange: PropTypes.func.isRequired,
@@ -181,7 +181,7 @@ export default class ProductOrderFlow extends PureComponent {
     return _.map(columns, (column) => {
       let newColumn;
       switch (column.dataIndex) {
-        case 'orderNumber':
+        case 'orderNumber': {
           const renderNum = id => (
             <a onClick={() => this.handleOrderNumberClicked(id)}>{id}</a>
           );
@@ -190,7 +190,8 @@ export default class ProductOrderFlow extends PureComponent {
             render: renderNum,
           };
           break;
-        case 'createTime':
+        }
+        case 'createTime': {
           const renderFunc = (date) => {
             const timeStr = moment(date).format(DATE_FORMATE_STR);
             const timeStrDetail = moment(date).format(DATE_FORMATE_STR_DETAIL);
@@ -205,6 +206,7 @@ export default class ProductOrderFlow extends PureComponent {
             render: renderFunc,
           };
           break;
+        }
         case 'executiveCondition':
           newColumn = {
             ...column,

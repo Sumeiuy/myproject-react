@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-23 17:18:23
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-30 14:47:32
+ * @Last Modified time: 2018-12-07 13:26:07
  * @description 账户详情
  */
 
@@ -19,6 +19,7 @@ import {
   STOCK_ACCOUNT_TABLE_COLUMNS,
   ACCOUNT_CHANGE_TABLE_COLUMNS
 } from './accountDetailConfig';
+import { COMMON_DROPDOWN_STYLE } from './config';
 import logable from '../../decorators/logable';
 import { number } from '../../helper';
 import Pagination from '../common/Pagination';
@@ -40,9 +41,9 @@ export default class AccountDetail extends PureComponent {
     // 证券账户
     stockAccount: PropTypes.array,
     // 经纪客户Id
-    custId: PropTypes.string,
+    custId: PropTypes.string.isRequired,
     // 业务类别
-    busnTypeDict: PropTypes.object.isRequired,
+    busnTypeDict: PropTypes.array.isRequired,
     // 账户类型
     type: PropTypes.string.isRequired,
     // 查询账户变动
@@ -58,18 +59,31 @@ export default class AccountDetail extends PureComponent {
 
   constructor(props) {
     super(props);
-    const defaultStartDateString = DEFAULT_START_DATE.format(DATE_FORMATE_API);
-    const defaultEndDateString = DEFAULT_END_DATE.format(DATE_FORMATE_API);
+    const startDate = DEFAULT_START_DATE.format(DATE_FORMATE_API);
+    const endDate = DEFAULT_END_DATE.format(DATE_FORMATE_API);
     this.state = {
-      startDate: defaultStartDateString, // 开始时间
-      endDate: defaultEndDateString, // 结束时间
-      bussinessType: '', // 选择的业务类别
+      // 账户变动的查询开始时间
+      startDate,
+      // 账户变动的查询结束时间
+      endDate,
+      // 账户变动选择的业务类别
+      bussinessType: '',
       pageNum: 1,
     };
   }
 
   componentDidMount() {
     this.getAccountChange();
+  }
+
+  // 将接口返回的分页器数据转换成分页器组件的props
+  @autobind
+  getPage(page = {}) {
+    return {
+      pageSize: 10,
+      current: page.pageNum || 1,
+      total: page.totalCount || 0,
+    };
   }
 
   // 获取账户变动数据
@@ -181,117 +195,103 @@ export default class AccountDetail extends PureComponent {
     });
   }
 
-   // 将接口返回的分页器数据转换成分页器组件的props
-   @autobind
-  getPage(page = {}) {
-    return {
-      pageSize: 10,
-      current: page.pageNum || 1,
-      total: page.totalCount || 0,
-    };
+  render() {
+    const {
+      fundAccount,
+      stockAccount,
+      busnTypeDict,
+      accountChangeRes: {
+        list = [],
+        page = {},
+      },
+    } = this.props;
+    const {
+      startDate,
+      endDate,
+      bussinessType,
+    } = this.state;
+    // 获取分页的页数
+    const isRender = !_.isEmpty(list);
+    const accountChangePage = this.getPage(page);
+    // 修改证券账户表格的columns
+    const stockAccountColumns = this.getStockTableColumns(STOCK_ACCOUNT_TABLE_COLUMNS);
+    // 修改账户变动中表格columns
+    const accountChangeColumns = this.getStockTableColumns(ACCOUNT_CHANGE_TABLE_COLUMNS);
+
+    return (
+      <div className={styles.accountDetailWrap}>
+        <div className={styles.accountBlock}>
+          <div className={styles.header}>
+            <div className={styles.title}>资金账户</div>
+          </div>
+          <div className={styles.accountTable}>
+            <IfTableWrap isRender={!_.isEmpty(fundAccount)} text="暂无资金账户">
+              <Table
+                pagination={false}
+                className={styles.tableBorder}
+                dataSource={fundAccount}
+                columns={FUND_ACCOUNT_TABLE_COLUMNS}
+              />
+            </IfTableWrap>
+          </div>
+        </div>
+        <div className={styles.accountBlock}>
+          <div className={styles.header}>
+            <div className={styles.title}>证券账户</div>
+          </div>
+          <div className={styles.accountTable}>
+            <IfTableWrap isRender={!_.isEmpty(stockAccount)} text="暂无证券账户">
+              <Table
+                pagination={false}
+                className={styles.tableBorder}
+                dataSource={stockAccount}
+                columns={stockAccountColumns}
+              />
+            </IfTableWrap>
+          </div>
+        </div>
+        <div className={styles.accountBlock}>
+          <div className={styles.header}>
+            <div className={styles.title}>账户变动</div>
+          </div>
+          <div className={styles.filterTab}>
+            <div className={styles.filterArea}>
+              <DateFilter
+                filterName="查询日期"
+                initialStartDate={DEFAULT_START_DATE}
+                value={[startDate, endDate]}
+                onChange={this.handleDateChange}
+                disabledCurrentEnd={false}
+              />
+            </div>
+            <div className={styles.filterArea}>
+              <SingleFilterWithSearch
+                filterName="业务类别"
+                filterId="bussinessType"
+                value={bussinessType}
+                data={busnTypeDict}
+                placeholder="请输入业务类别"
+                dropdownStyle={COMMON_DROPDOWN_STYLE}
+                onChange={this.handleFilterBussinessType}
+              />
+            </div>
+          </div>
+          <IfTableWrap isRender={isRender} text="暂无账户变动信息">
+            <div className={styles.accountTable}>
+              <Table
+                pagination={false}
+                className={styles.tableBorder}
+                dataSource={list}
+                columns={accountChangeColumns}
+              />
+            </div>
+            <Pagination
+              {...accountChangePage}
+              onChange={this.handlePageChange}
+            />
+          </IfTableWrap>
+        </div>
+      </div>
+    );
   }
-
-   render() {
-     const {
-       fundAccount,
-       stockAccount,
-       busnTypeDict,
-       accountChangeRes: {
-         list = [],
-         page = {},
-       },
-     } = this.props;
-     const {
-       startDate,
-       endDate,
-       bussinessType,
-     } = this.state;
-     // 获取分页的页数
-     const isRender = !_.isEmpty(list);
-     const accountChangePage = this.getPage(page);
-     // 修改证券账户表格的columns
-     const stockAccountColumns = this.getStockTableColumns(STOCK_ACCOUNT_TABLE_COLUMNS);
-     // 修改账户变动中表格columns
-     const accountChangeColumns = this.getStockTableColumns(ACCOUNT_CHANGE_TABLE_COLUMNS);
-
-     return (
-       <div className={styles.accountDetailWrap}>
-         <div className={styles.accountBlock}>
-           <div className={styles.header}>
-             <div className={styles.title}>资金账户</div>
-           </div>
-           <div className={styles.accountTable}>
-             <IfTableWrap isRender={!_.isEmpty(fundAccount)} text="暂无资金账户">
-               <Table
-                 pagination={false}
-                 className={styles.tableBorder}
-                 dataSource={fundAccount}
-                 columns={FUND_ACCOUNT_TABLE_COLUMNS}
-               />
-             </IfTableWrap>
-           </div>
-         </div>
-         <div className={styles.accountBlock}>
-           <div className={styles.header}>
-             <div className={styles.title}>证券账户</div>
-           </div>
-           <div className={styles.accountTable}>
-             <IfTableWrap isRender={!_.isEmpty(stockAccount)} text="暂无证券账户">
-               <Table
-                 pagination={false}
-                 className={styles.tableBorder}
-                 dataSource={stockAccount}
-                 columns={stockAccountColumns}
-               />
-             </IfTableWrap>
-           </div>
-         </div>
-         <div className={styles.accountBlock}>
-           <div className={styles.header}>
-             <div className={styles.title}>账户变动</div>
-           </div>
-           <div className={styles.filterTab}>
-             <div className={styles.filterArea}>
-               <DateFilter
-                 filterName="查询日期"
-                 initialStartDate={DEFAULT_START_DATE}
-                 value={[startDate, endDate]}
-                 onChange={this.handleDateChange}
-                 disabledCurrentEnd={false}
-               />
-             </div>
-             <div className={styles.filterArea}>
-               <SingleFilterWithSearch
-                 filterName="业务类别"
-                 filterId="bussinessType"
-                 value={bussinessType}
-                 data={busnTypeDict.list}
-                 placeholder="请输入业务类别"
-                 dropdownStyle={{
-                   maxHeight: 324,
-                   overflowY: 'auto',
-                   width: 252,
-                 }}
-                 onChange={this.handleFilterBussinessType}
-               />
-             </div>
-           </div>
-           <IfTableWrap isRender={isRender} text="暂无账户变动信息">
-             <div className={styles.accountTable}>
-               <Table
-                 pagination={false}
-                 className={styles.tableBorder}
-                 dataSource={list}
-                 columns={accountChangeColumns}
-               />
-             </div>
-             <Pagination
-               {...accountChangePage}
-               onChange={this.handlePageChange}
-             />
-           </IfTableWrap>
-         </div>
-       </div>
-     );
-   }
 }
