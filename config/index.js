@@ -11,8 +11,6 @@ var UAT_FORWARD_URL = 'http://168.61.8.82:5086';
 var SIT_FORWARD_URL = 'http://168.61.8.81:5087';
 // DOClever的接口mock地址
 var MOCK_FORWARD_URL = 'http://168.61.8.81:5090';
-// 新版客户360详情下客户画像的访问地址
-var CUST_PROFIT_DEV_URL = 'http://168.61.125.20:8080';
 
 
 function generateProxy(proxyList) {
@@ -57,6 +55,10 @@ module.exports = {
       { target: UAT_FORWARD_URL },
       '/fspa/phone',
       { target: UAT_FORWARD_URL },
+      prefix + '/groovynoauth/fsp/cust/custdetail/queryAssetIndexData',
+      { target: SIT_FORWARD_URL },
+      prefix + '/groovynoauth/fsp/cust/custdetail/assetDistribution',
+      { target: SIT_FORWARD_URL },
       prefix,
       { target: UAT_FORWARD_URL },
       '/fspa/log',
@@ -72,7 +74,7 @@ module.exports = {
       '/jeip',
       { target: UAT_FORWARD_URL },
       '/yt/',
-      { target: CUST_PROFIT_DEV_URL },
+      { target: UAT_FORWARD_URL },
     ]),
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README
