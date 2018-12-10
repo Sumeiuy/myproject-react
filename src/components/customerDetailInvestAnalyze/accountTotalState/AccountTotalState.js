@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-19 16:37:18
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-26 13:52:35
+ * @Last Modified time: 2018-12-07 13:27:14
  * @description 账户总体情况
  */
 import React, { PureComponent } from 'react';
@@ -15,6 +15,14 @@ import InvestmentFeature from './InvestmentFeature';
 import AssetChangeTable from './AssetChangeTable';
 import AssetChangeChart from './AssetChangeChart';
 import ProfitTrendChart from './ProfitTrendChart';
+import {
+  SUMMARY,
+  COMPUTE_METHOD,
+  ACCOUNT_PROFIT_TREND,
+  PROFIT_TREND_SUMMARY,
+  PROFIT_TREND_COMPUTE_METHOD1,
+  PROFIT_TREND_COMPUTE_METHOD2,
+} from '../config';
 import styles from './accountTotalState.less';
 
 export default class AccountTotalState extends PureComponent {
@@ -31,7 +39,7 @@ export default class AccountTotalState extends PureComponent {
     // 获取账户资产变动
     getAssetChangeState: PropTypes.func.isRequired,
     // 账户资产变动
-    assetChangeList: PropTypes.array.isRequired,
+    assetChangeData: PropTypes.object.isRequired,
     // 获取账户资产变动图表
     getAssetChangeReport: PropTypes.func.isRequired,
     // 账户资产变动图表数据
@@ -124,7 +132,7 @@ export default class AccountTotalState extends PureComponent {
     const {
       profitAbility,
       investmentFeatureLabels,
-      assetChangeList,
+      assetChangeData,
       assetChangeReportData,
       profitTrendData,
     } = this.props;
@@ -138,12 +146,34 @@ export default class AccountTotalState extends PureComponent {
         />
         <InfoTitle title="客户资产变动情况" />
         <AssetChangeTable
-          assetChangeList={assetChangeList}
+          assetChangeData={assetChangeData}
         />
         <AssetChangeChart
           assetChangeReportData={assetChangeReportData}
         />
-        <InfoTitle title="账户收益走势" />
+        <InfoTitle
+          title={ACCOUNT_PROFIT_TREND}
+          isNeedTip
+          modalTitle={ACCOUNT_PROFIT_TREND}
+        >
+          <div className={styles.infoContainer}>
+            <div className={styles.infoSummary}>
+              <div className={styles.name}>{SUMMARY}</div>
+              <p className={styles.summary}>
+                {PROFIT_TREND_SUMMARY}
+              </p>
+            </div>
+            <div className={styles.infoComputeMethod}>
+              <div className={styles.name}>{COMPUTE_METHOD}</div>
+              <div className={styles.computeMethod}>
+                <p className={styles.computeMethod1}>
+                  {PROFIT_TREND_COMPUTE_METHOD1}
+                </p>
+                <p className={styles.computeMethod2}>{PROFIT_TREND_COMPUTE_METHOD2}</p>
+              </div>
+            </div>
+          </div>
+        </InfoTitle>
         <ProfitTrendChart
           profitTrendData={profitTrendData}
         />
