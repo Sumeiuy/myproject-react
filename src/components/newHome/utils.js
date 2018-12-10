@@ -103,7 +103,7 @@ function getCustClassChartData(data) {
             unit: item.newUnit,
           };
         }
-        return `${params.data.name} ${params.name}：${formatData.value}${formatData.unit}`;
+        return `${showText}${params.data.name}${params.name}：${formatData.value}${formatData.unit}`;
       }
     },
     xAxis: {
