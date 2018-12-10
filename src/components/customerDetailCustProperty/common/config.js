@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 19:41:38
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-03 11:14:10
+ * @Last Modified time: 2018-12-04 17:22:05
  * @description 机构客户联系方式配置项
  */
 // 机构客户电话信息表格columns
@@ -150,4 +150,16 @@ export const SOURCE_CODE = {
   zonggui: '102014',
   // 95597
   callCenter: '102091',
+};
+
+// 需要格式校验的Code值
+export const FORMART_CODE = {
+  // 联系方式为手机
+  mobile: '104123',
+  // 家庭电话
+  homeline: '104121',
+  // 办公电话
+  officeline: '104120',
+  // email
+  email: '104124',
 };

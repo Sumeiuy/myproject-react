@@ -14,6 +14,8 @@ import { ALL_SERVE_SOURCE } from '../routes/customerPool/config';
 // 首页客户可用标签分页的页码和每页条数
 const INITIAL_CUSTLABEL_PAGENO = 1;
 const INITIAL_CUSTLABEL_PAGESIZE = 20;
+// 我的待办默认pageSize
+const MY_TODO_PAGESIZE = 10000;
 
 function matchRouteAndexec(pathname, params, routeCallbackObj) {
   _.forOwn(routeCallbackObj, (value, key) => {
@@ -267,6 +269,10 @@ export default {
               dispatch({
                 type: 'getToDoList',
                 loading: true,
+                payload: {
+                  pageNum: INITIAL_PAGE_NUM,
+                  pageSize: MY_TODO_PAGESIZE,
+                }
               });
             }
           },
@@ -318,9 +324,9 @@ export default {
         payload: response,
       });
     },
-    // 代办流程任务列表
-    * getToDoList({ }, { call, put }) {  //eslint-disable-line
-      const response = yield call(api.getToDoList);
+    // 待办流程任务列表
+    * getToDoList({ payload }, { call, put }) {
+      const response = yield call(api.getToDoList, payload);
       yield put({
         type: 'getToDoListSuccess',
         payload: response,
@@ -967,15 +973,21 @@ export default {
           list: resultData.object || {},
         };
       }
-      const allSightingTelescopeFilters = yield select(state => state.customerPool.allSightingTelescopeFilters);
+      const allSightingTelescopeFilters = yield select(
+        state => state.customerPool.allSightingTelescopeFilters
+      );
 
       const { sightingTelescopeList } = payload;
       let resultData = [];
 
-      const reqestSightingTelescopes = _.filter(sightingTelescopeList, key => !_.some(allSightingTelescopeFilters, item => item.key === key));
+      const reqestSightingTelescopes = _.filter(
+        sightingTelescopeList, key => !_.some(allSightingTelescopeFilters, item => item.key === key)
+      );
 
       if (!_.isEmpty(reqestSightingTelescopes)) {
-        resultData = yield _.map(reqestSightingTelescopes, key => getFiltersOfSightingTelescopewithKey(key));
+        resultData = yield _.map(
+          reqestSightingTelescopes, key => getFiltersOfSightingTelescopewithKey(key)
+        );
       }
       resultData = allSightingTelescopeFilters.concat(resultData);
       yield put({
@@ -1709,11 +1721,10 @@ export default {
         productList: payload,
       };
     },
-    clearSearchPersonList(state, action) {
-      const { payload } = action;
+    clearSearchPersonList(state) {
       return {
         ...state,
-        searchServerPersonList: payload,
+        searchServerPersonList: EMPTY_LIST,
       };
     },
     // 审批流程获取按钮成功

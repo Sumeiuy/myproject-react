@@ -51,7 +51,7 @@ export default class MoreKeyLabelsModal extends Component {
       <Modal
         modalKey="custKeyLabelMoreModal"
         visible
-        title="客户标签"
+        title="客户匹配标签"
         needBtn={false}
         closeModal={onClose}
       >
@@ -64,10 +64,16 @@ export default class MoreKeyLabelsModal extends Component {
             tabBarGutter={5}
           >
             <TabPane tab="自定义标签" key="definedLabels">
-              <KeyLabelsTable labels={definedLabels} />
+              <KeyLabelsTable
+                labels={definedLabels}
+                placeholder="还没有为该客户设置自定义标签"
+              />
             </TabPane>
             <TabPane tab="大数据标签" key="bigdataLabels">
-              <KeyLabelsTable labels={bigDataLabels} />
+              <KeyLabelsTable
+                labels={bigDataLabels}
+                placeholder="该客户暂无大数据标签"
+              />
             </TabPane>
           </Tabs>
         </div>

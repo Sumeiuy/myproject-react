@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-23 09:51:00
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-29 19:51:13
+ * @LastEditTime: 2018-12-07 16:57:36
  * @Description: 服务订单流水详情
  */
 
@@ -26,7 +26,7 @@ const TabPane = Tabs.TabPane;
 const DEFAULT_SHOW_VALUE = '--';
 
 export default class ProductOrderDetail extends PureComponent {
-  static propsTypes = {
+  static propTypes = {
     visible: PropTypes.bool.isRequired,
     orderNumber: PropTypes.string.isRequired,
     onClose: PropTypes.func.isRequired,

@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 10:23:58
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-03 13:52:24
+ * @Last Modified time: 2018-12-05 16:13:45
  * @description 此处存放通用的数据格式/类型处理的方法
  */
 import _ from 'lodash';
@@ -99,16 +99,16 @@ const data = {
   /**
    *
    * 给数组data补足时使用空行数据补足，用于在表格上默认显示几行
-   * @param {Array} data 原始数据
+   * @param {Array} list 原始数据
    * @param {number} [padNum=10]
    */
-  padEmptyDataForList(data = [], padNum = 10) {
-    const size = _.size(data);
+  padEmptyDataForList(list = [], padNum = 10) {
+    const size = _.size(list);
     if (size >= padNum) {
-      return data;
+      return list;
     }
     let emptyRowNum = padNum - size;
-    const newData = [...data];
+    const newData = [...list];
     while (emptyRowNum > 0) {
       const uuid = this.uuid();
       newData.push({
@@ -176,7 +176,7 @@ const data = {
    * @return {String} dot.origin 如果被截取了，则为原始值
    */
   dotdotdot(str, length) {
-    if (!_.isString(str)|| _.isEmpty(str)) {
+    if (!_.isString(str) || _.isEmpty(str)) {
       return {
         isSubstr: false,
         value: str,
@@ -186,7 +186,7 @@ const data = {
     if (str.length > length) {
       return {
         isSubstr: true,
-        value: str.substr(0, length) + '...',
+        value: `${str.substr(0, length)}...`,
         origin: str,
       };
     }

@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-11-21 09:35:09
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-11-28 20:59:19
+ * @LastEditTime: 2018-12-07 17:06:41
  * @Description: 交易订单流水
  */
 
@@ -27,7 +27,7 @@ import styles from './tradeOrderFlow.less';
 const NODATA_HINT = '客户暂无交易订单信息';
 
 export default class TradeOrderFlow extends PureComponent {
-  static propsType = {
+  static propTypes = {
     tradeOrderFlowData: PropTypes.object.isRequired,
     onTradeOrderFlowChange: PropTypes.func.isRequired,
   };
@@ -80,7 +80,7 @@ export default class TradeOrderFlow extends PureComponent {
             )
           };
           break;
-        case 'orderTime':
+        case 'orderTime': {
           const renderFunc = (date) => {
             const timeStr = moment(date).format(DATE_FORMATE_STR);
             const timeStrDetail = moment(date).format(DATE_FORMATE_STR_DETAIL);
@@ -95,6 +95,7 @@ export default class TradeOrderFlow extends PureComponent {
             render: renderFunc,
           };
           break;
+        }
         default:
           newColumn = {
             ...column,

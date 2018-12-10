@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 16:14:23
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-30 11:57:04
+ * @Last Modified time: 2018-12-04 17:19:39
  * @description 添加个人客户电话信息联系方式的Form
  */
 import React, { PureComponent } from 'react';
@@ -13,9 +13,14 @@ import {
 } from 'antd';
 import _ from 'lodash';
 
+import { regxp } from '../../../helper';
 import logable from '../../../decorators/logable';
 import { FORM_STYLE, SOURCE_CODE } from '../common/config';
-import { isCreateContact } from '../common/utils';
+import {
+  isCreateContact,
+  isCellPhone,
+  isLandline,
+} from '../common/utils';
 import styles from '../contactForm.less';
 
 const Option = Select.Option;
@@ -51,6 +56,7 @@ export default class PerPhoneContactForm extends PureComponent {
     } = data;
     this.state = {
       // 是否主要,因为无论新建还是修改主要均为N
+      // eslint-disable-next-line
       mainFlag: 'N',
       // 号码：
       tellphoneNumber: isCreate ? '' : phoneNumber,
@@ -61,6 +67,26 @@ export default class PerPhoneContactForm extends PureComponent {
     };
   }
 
+  // 校验号码
+  @autobind
+  validateTellPhoneNumber(rule, value, callback) {
+    const contactWayCode = this.props.form.getFieldValue('contactWayCode');
+    const newInput = _.trim(value);
+    if (!_.isEmpty(contactWayCode) && !_.isEmpty(newInput)) {
+      // 如果选择的是手机号码
+      if (isCellPhone(contactWayCode) && !regxp.cellPhone.test(newInput)) {
+        callback('手机号码格式部正确');
+      } else if (isLandline(contactWayCode) && !regxp.tellPhone.test(newInput)) {
+        callback('电话格式不正确');
+      } else {
+        callback();
+      }
+    } else {
+      // 必须要调用
+      callback();
+    }
+  }
+
   @autobind
   @logable({
     type: 'Click',
@@ -69,7 +95,7 @@ export default class PerPhoneContactForm extends PureComponent {
       value: '$args[0]',
     },
   })
-  handlePerPhonesContactWaySelectChange(contactWayCode) {
+  handlePerPhonesContactWaySelectChange() {
     // 此方法专门用来记录日志的
   }
 
@@ -128,12 +154,16 @@ export default class PerPhoneContactForm extends PureComponent {
             <div className={styles.formItem}>
               <div className={styles.itemLable}>
                 <span className={styles.requried}>*</span>
-号码：
+                号码：
               </div>
               <div className={styles.valueArea}>
                 <FormItem>
                   {getFieldDecorator('tellphoneNumber', {
-                    rules: [{ required: true, message: '请输入号码' }],
+                    rules: [
+                      { required: true, message: '请输入号码' },
+                      { validator: this.validateTellPhoneNumber },
+                      { whitespace: true, message: '头尾不能有空格' },
+                    ],
                     initialValue: tellphoneNumber,
                   })(
                     <Input style={FORM_STYLE} />,
@@ -148,7 +178,7 @@ export default class PerPhoneContactForm extends PureComponent {
             <div className={styles.formItem}>
               <div className={styles.itemLable}>
                 <span className={styles.requried}>*</span>
-来源：
+                来源：
               </div>
               <div className={styles.valueArea}>
                 <FormItem>
@@ -171,7 +201,7 @@ export default class PerPhoneContactForm extends PureComponent {
             <div className={styles.formItem}>
               <div className={styles.itemLable}>
                 <span className={styles.requried}>*</span>
-联系方式：
+                联系方式：
               </div>
               <div className={styles.valueArea}>
                 <FormItem>

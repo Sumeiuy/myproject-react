@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-20 16:01:36
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-12-04 19:49:28
+ * @Last Modified time: 2018-12-10 10:17:10
  * @description 新版客户360详情下的账户信息Tab页面的model
  */
 import { detailInvestAnalyze as api } from '../../api';
@@ -27,6 +27,10 @@ export default {
     attributionData: EMPTY_OBJECT,
     // 个股收益明细数据
     incomeDetailData: EMPTY_ARRAY,
+    // 期末资产配置数据
+    endTermAssetConfigData: EMPTY_OBJECT,
+    // 资产配置变动走势
+    assetConfigTrendData: EMPTY_OBJECT,
   },
   reducers: {
     // 获取客户盈利能力成功
@@ -85,6 +89,22 @@ export default {
         incomeDetailData: payload || EMPTY_ARRAY,
       };
     },
+    // 获取期末资产配置数据成功
+    getEndTermAssetConfigSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        endTermAssetConfigData: payload || EMPTY_OBJECT,
+      };
+    },
+    // 获取资产配置变动走势数据成功
+    getAssetConfigTrendSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        assetConfigTrendData: payload || EMPTY_OBJECT,
+      };
+    },
   },
   effects: {
     // 获取客户盈利能力
@@ -140,6 +160,22 @@ export default {
       const { resultData } = yield call(api.queryEachStockIncomeDetails, payload);
       yield put({
         type: 'getEachStockIncomeDetailsSuccess',
+        payload: resultData,
+      });
+    },
+    // 获取期末资产配置数据
+    * getEndTermAssetConfig({ payload }, { call, put }) {
+      const { resultData } = yield call(api.queryEndTermAssetConfig, payload);
+      yield put({
+        type: 'getEndTermAssetConfigSuccess',
+        payload: resultData,
+      });
+    },
+    // 获取资产配置变动走势
+    * getAssetConfigTrend({ payload }, { call, put }) {
+      const { resultData } = yield call(api.queryAssetConfigTrend, payload);
+      yield put({
+        type: 'getAssetConfigTrendSuccess',
         payload: resultData,
       });
     },

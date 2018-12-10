@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 19:02:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-30 15:05:12
+ * @Last Modified time: 2018-12-04 17:19:42
  * @description 添加个人客户地址信息联系方式的Form
  */
 import React, { PureComponent } from 'react';
@@ -13,6 +13,7 @@ import {
   Row, Col, Select, Input, Form
 } from 'antd';
 
+import { regxp } from '../../../helper';
 import logable from '../../../decorators/logable';
 import { FORM_STYLE, SOURCE_CODE } from '../common/config';
 import { isCreateContact } from '../common/utils';
@@ -56,9 +57,10 @@ export default class PerAddressContactForm extends PureComponent {
 
     this.state = {
       // 是否主要,因为无论新建还是修改主要均为N
+      // eslint-disable-next-line
       mainFlag: 'N',
       // 地址类型
-      addressType: isCreate ? '' : addressTypeCode,
+      addressTypeCode: isCreate ? '' : addressTypeCode,
       // 地址
       address: isCreate ? '' : address,
       // 邮政编码
@@ -111,7 +113,7 @@ export default class PerAddressContactForm extends PureComponent {
       value: '$args[0]',
     },
   })
-  handleAddresTypeChange(addressType) {
+  handleAddresTypeChange() {
     // 记录日志用
   }
 
@@ -140,7 +142,7 @@ export default class PerAddressContactForm extends PureComponent {
       value: '$args[0]',
     },
   })
-  handleCityChange(cityCode) {
+  handleCityChange() {
     // 记录日志用
   }
 
@@ -180,7 +182,7 @@ export default class PerAddressContactForm extends PureComponent {
   render() {
     const { getFieldDecorator } = this.props.form;
     const {
-      addressType,
+      addressTypeCode,
       address,
       zipCode,
       country,
@@ -217,16 +219,16 @@ export default class PerAddressContactForm extends PureComponent {
             <div className={styles.formItem}>
               <div className={styles.itemLable}>
                 <span className={styles.requried}>*</span>
-地址类型：
+                地址类型：
               </div>
               <div className={styles.valueArea}>
                 <FormItem>
                   {
                     getFieldDecorator(
-                      'addressType',
+                      'addressTypeCode',
                       {
                         rules: [{ required: true, message: '请选择地址类型' }],
-                        initialValue: addressType,
+                        initialValue: addressTypeCode,
                       }
                     )(
                       <Select
@@ -247,12 +249,15 @@ export default class PerAddressContactForm extends PureComponent {
             <div className={styles.formItem}>
               <div className={styles.itemLable}>
                 <span className={styles.requried}>*</span>
-地址：
+                地址：
               </div>
               <div className={styles.valueArea}>
                 <FormItem>
                   {getFieldDecorator('address', {
-                    rules: [{ required: true, message: '请填写地址' }],
+                    rules: [
+                      { required: true, message: '请填写地址' },
+                      { whitespace: true, message: '头尾不能有空格' },
+                    ],
                     initialValue: address,
                   })(
                     <Input style={FORM_STYLE} />,
@@ -265,12 +270,16 @@ export default class PerAddressContactForm extends PureComponent {
             <div className={styles.formItem}>
               <div className={styles.itemLable}>
                 <span className={styles.requried}>*</span>
-邮政编码：
+                邮政编码：
               </div>
               <div className={styles.valueArea}>
                 <FormItem>
                   {getFieldDecorator('zipCode', {
-                    rules: [{ required: true, message: '请填写邮政编码' }],
+                    rules: [
+                      { required: true, message: '请填写邮政编码' },
+                      { pattern: regxp.zipCode, message: '邮政编码格式不正确' },
+                      { whitespace: true, message: '头尾不能有空格' },
+                    ],
                     initialValue: zipCode,
                   })(
                     <Input style={FORM_STYLE} />,
@@ -299,7 +308,7 @@ export default class PerAddressContactForm extends PureComponent {
             <div className={styles.formItem}>
               <div className={styles.itemLable}>
                 <span className={styles.requried}>*</span>
-省/(直辖)市：
+                省/(直辖)市：
               </div>
               <div className={styles.valueArea}>
                 <FormItem>
@@ -329,7 +338,7 @@ export default class PerAddressContactForm extends PureComponent {
             <div className={styles.formItem}>
               <div className={styles.itemLable}>
                 <span className={styles.requried}>*</span>
-城市：
+                城市：
               </div>
               <div className={styles.valueArea}>
                 <FormItem>
@@ -357,7 +366,7 @@ export default class PerAddressContactForm extends PureComponent {
             <div className={styles.formItem}>
               <div className={styles.itemLable}>
                 <span className={styles.requried}>*</span>
-来源：
+                来源：
               </div>
               <div className={styles.valueArea}>
                 <FormItem>

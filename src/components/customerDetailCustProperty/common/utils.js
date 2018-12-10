@@ -2,12 +2,12 @@
  * @Author: sunweibin
  * @Date: 2018-11-26 17:13:06
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-03 11:15:15
+ * @Last Modified time: 2018-12-04 17:22:28
  * @description 辅助函数
  */
 import _ from 'lodash';
 
-import { SOURCE_CODE } from './config';
+import { SOURCE_CODE, FORMART_CODE } from './config';
 
 // 判断是否来自综柜、财富通、95597渠道的都不允许修改
 export function isFromNoSupportUpdateSource(code) {
@@ -46,4 +46,17 @@ export function hasMainMobile(data) {
 // 如果没有主电子邮件记录，则新建电子邮件时报“请客户先通过线上自助或线下临柜的方式维护主要邮箱””。
 export function hasMainEmail(data) {
   return !!_.find(data, item => item.contactWayCode === CONTACT_CODE.email && item.mainFlag === 'Y');
+}
+
+// 判断是否选择的是联系方式是手机号码
+export function isCellPhone(code) {
+  return FORMART_CODE.mobile === code;
+}
+// 判断是否固定电话
+export function isLandline(code) {
+  return FORMART_CODE.officeline === code || FORMART_CODE.homeline === code;
+}
+// 判断是否Email
+export function isEmail(code) {
+  return FORMART_CODE.email === code;
 }

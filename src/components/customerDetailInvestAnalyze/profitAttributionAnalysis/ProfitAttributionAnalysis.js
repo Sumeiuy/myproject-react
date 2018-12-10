@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-27 14:00:51
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-12-10 09:33:07
+ * @Last Modified time: 2018-12-10 09:54:35
  * @description 收益归因分析
  */
 import React, { PureComponent } from 'react';
@@ -88,7 +88,7 @@ export default class ProfitAttributionAnalysis extends PureComponent {
 
   // 获取brinson归因描述
   @autobind
-  getttributionSummary() {
+  getAttributionSummary() {
     const {
       attributionData: {
         attributionSummary = [],

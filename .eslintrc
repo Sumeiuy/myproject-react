@@ -9,6 +9,8 @@
   ],
   "rules": {
     "semi": [2],
+    "no-unused-vars": [1],
+    "react/jsx-one-expression-per-line": [0],
     "no-trailing-spaces": [2],
     "eol-last": [2],
     "eqeqeq": [2],
@@ -28,11 +30,26 @@
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
     "react/forbid-prop-types": [1, { "forbid": ["any"] }],
     "react/no-unused-prop-types": [0],
-    "react/sort-comp": [1],
+    "react/sort-comp": [1, {
+      "order": [
+        "static-methods",
+        "instance-variables",
+        "lifecycle",
+        "everything-else",
+        "rendering"
+      ],
+      "groups": {
+        "rendering": [
+          "/^render.+$/",
+          "render"
+        ]
+      }
+    }],
     "react/prefer-stateless-function": [0],
     "react/no-danger": [0],
-    "react/destructuring-assignment": [0],
+    "react/destructuring-assignment": [0],   
     "jsx-a11y/no-static-element-interactions": [0],
+    "jsx-a11y/no-noninteractive-element-interactions": [0],
     "jsx-a11y/anchor-is-valid": [0],
     "jsx-a11y/click-events-have-key-events": [0],
     "sensors/actions-add-sensors-log": [0],

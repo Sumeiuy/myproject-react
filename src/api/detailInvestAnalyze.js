@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-20 15:53:09
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-12-04 19:35:30
+ * @Last Modified time: 2018-12-10 09:40:55
  * @Description: 客户360-投资能力分析相关api
  */
 export default function detailInvestAnalyze(api) {
@@ -21,5 +21,9 @@ export default function detailInvestAnalyze(api) {
     queryAttributionAnalysis: query => api.post('/groovynoauth/fsp/cust/custdetail/investment/queryAttributionAnalysis', query),
     // 获取个股收益明细
     queryEachStockIncomeDetails: query => api.post('/groovynoauth/fsp/cust/custdetail/investment/queryEachStockIncomeDetails', query),
+    // 获取期末资产配置数据
+    queryEndTermAssetConfig: query => api.post('/groovynoauth/fsp/cust/custdetail/investment/queryEndTermAssetConfig', query),
+    // 获取资产配置变动走势
+    queryAssetConfigTrend: query => api.post('/groovynoauth/fsp/cust/custdetail/investment/queryAssetConfigTrend', query),
   };
 }

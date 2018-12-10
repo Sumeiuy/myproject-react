@@ -1,8 +1,8 @@
 /*
  * @Author: sunweibin
  * @Date: 2018-10-11 18:37:20
- * @Last Modified by: liqianwen
- * @Last Modified time: 2018-11-30 22:59:50
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-12-06 16:42:53
  * @description 新版客户360详情的账户信息Tab下页面的配置项
  */
 
@@ -112,9 +112,12 @@ export const TRADE_FLOW_TABS = {
   capitalChange: '资金变动',
 };
 
-export const STOCK_HISTORY_HOLDING_TABLE_SCROLL = { x: 2000 };
+// 历史持仓的表格的滚动props
+export const STOCK_HISTORY_HOLDING_TABLE_SCROLL = { x: 1900 };
 export const PRODUCT_HISTORY_HOLDING_TABLE_SCROLL = { x: 2000 };
-export const OPTION_HISTORY_HOLDING_TABLE_SCROLL = { x: 2500 };
+export const OPTION_HISTORY_HOLDING_TABLE_SCROLL = { x: 2200 };
+
+// 交易流水三个表格的滚动props
 export const STANDARD_TRADE_FLOW_TABLE_SCROLL = { x: 2100 };
 export const CREDIT_TRADE_FLOW_TABLE_SCROLL = { x: 1800 };
 export const OPTION_TRADE_FLOW_TABLE_SCROLL = { x: 2500 };
@@ -128,7 +131,7 @@ export const STOCK_HISTORY_HOLDING_COLUMNS = [
     title: '类型',
   },
   {
-    width: 160,
+    width: 140,
     key: 'industry',
     dataIndex: 'industry',
     title: '所属行业',
@@ -137,6 +140,7 @@ export const STOCK_HISTORY_HOLDING_COLUMNS = [
     key: 'name',
     dataIndex: 'name',
     title: '名称',
+    width: 160,
   },
   {
     width: 80,
@@ -216,13 +220,13 @@ export const STOCK_HISTORY_HOLDING_COLUMNS = [
 // 产品历史持仓表格显示的columns
 export const PRODUCT_HISTORY_HOLDING_COLUMNS = [
   {
-    width: 120,
+    width: 140,
     title: '产品大类',
     key: 'firstType',
     dataIndex: 'firstType',
   },
   {
-    width: 160,
+    width: 150,
     title: '产品二级类别',
     key: 'secondType',
     dataIndex: 'secondType',
@@ -231,9 +235,10 @@ export const PRODUCT_HISTORY_HOLDING_COLUMNS = [
     title: '名称',
     key: 'name',
     dataIndex: 'name',
+    width: 240,
   },
   {
-    width: 80,
+    width: 90,
     title: '产品代码',
     key: 'code',
     dataIndex: 'code',
@@ -290,7 +295,7 @@ export const PRODUCT_HISTORY_HOLDING_COLUMNS = [
     dataIndex: 'holdDate',
   },
   {
-    width: 140,
+    width: 120,
     title: '持仓占比',
     key: 'holdPercent',
     dataIndex: 'holdPercent',
@@ -301,43 +306,43 @@ export const PRODUCT_HISTORY_HOLDING_COLUMNS = [
 // 期权历史持仓表格显示的columns
 export const OPTION_HISTORY_HOLDING_COLUMNS = [
   {
-    width: 120,
+    width: 100,
     title: '类别',
     key: 'type',
     dataIndex: 'type',
   },
   {
-    width: 200,
+    width: 150,
     title: '期权名称',
     key: 'optionName',
     dataIndex: 'optionName',
   },
   {
-    width: 100,
+    width: 90,
     title: '期权代码',
     key: 'optionCode',
     dataIndex: 'optionCode',
   },
   {
-    width: 140,
+    width: 150,
     title: '期权种类',
     key: 'optionKind',
     dataIndex: 'optionKind',
   },
   {
-    width: 80,
+    width: 90,
     title: '证劵代码',
     key: 'stockCode',
     dataIndex: 'stockCode',
   },
   {
-    width: 140,
+    width: 160,
     title: '证券类别',
     key: 'stockKind',
     dataIndex: 'stockKind',
   },
   {
-    width: 160,
+    width: 100,
     title: '权益持仓类别',
     key: 'rightsHoldingType',
     dataIndex: 'rightsHoldingType',
@@ -395,7 +400,7 @@ export const OPTION_HISTORY_HOLDING_COLUMNS = [
     dataIndex: 'holdEndDate',
   },
   {
-    width: 140,
+    width: 120,
     title: '持仓占比',
     key: 'holdPercent',
     dataIndex: 'holdPercent',
@@ -769,6 +774,13 @@ export const CAPITAL_CHANGE_COLUMNS = [
   },
 ];
 
+function renderRealTimeColumn(text) {
+  if (text === 'null' || text === null) {
+    return '';
+  }
+  return text;
+}
+
 // 证券实时持仓columns
 export const STOCK_REALTIME_COLUMNS = [
   {
@@ -776,14 +788,14 @@ export const STOCK_REALTIME_COLUMNS = [
     dataIndex: 'productCode',
     key: 'productCode',
     className: 'productCode',
-    render: (text, record) => (text === 'null' ? '' : text),
+    render: renderRealTimeColumn,
   },
   {
     title: '产品名称',
     dataIndex: 'productName',
     key: 'productName',
     className: 'productCode',
-    render: (text, record) => (text === 'null' ? '' : text),
+    render: renderRealTimeColumn,
   },
   {
     title: '持仓数',
@@ -791,7 +803,7 @@ export const STOCK_REALTIME_COLUMNS = [
     key: 'holdingNumber',
     align: 'right',
     className: 'dataInterval',
-    render: (text, record) => (text === 'null' ? '' : text),
+    render: renderRealTimeColumn,
   },
   {
     title: '可用数',
@@ -799,7 +811,7 @@ export const STOCK_REALTIME_COLUMNS = [
     key: 'availableNumber',
     align: 'right',
     className: 'dataInterval',
-    render: (text, record) => (text === 'null' ? '' : text),
+    render: renderRealTimeColumn,
   },
   {
     title: '成本',
@@ -807,7 +819,7 @@ export const STOCK_REALTIME_COLUMNS = [
     key: 'cost',
     align: 'right',
     className: 'dataInterval',
-    render: (text, record) => (text === 'null' ? '' : text),
+    render: renderRealTimeColumn,
   },
   {
     title: '现价',
@@ -815,7 +827,7 @@ export const STOCK_REALTIME_COLUMNS = [
     key: 'presentPrice',
     align: 'right',
     className: 'dataInterval',
-    render: (text, record) => (text === 'null' ? '' : text),
+    render: renderRealTimeColumn,
   },
   {
     title: '市值',
@@ -823,7 +835,7 @@ export const STOCK_REALTIME_COLUMNS = [
     key: 'marketValue',
     align: 'right',
     className: 'dataInterval',
-    render: (text, record) => (text === 'null' ? '' : text),
+    render: renderRealTimeColumn,
   },
   {
     title: '盈亏',
@@ -831,14 +843,14 @@ export const STOCK_REALTIME_COLUMNS = [
     key: 'profitAndLoss',
     align: 'right',
     className: 'dataInterval',
-    render: (text, record) => (text === 'null' ? '' : text),
+    render: renderRealTimeColumn,
   },
   {
     title: '货币类型',
     dataIndex: 'currencyType',
     key: 'currencyType',
     className: 'currencyType',
-    render: (text, record) => (text === 'null' ? '' : text),
+    render: renderRealTimeColumn,
   },
 ];
 // 产品实时持仓columns
@@ -848,14 +860,14 @@ export const PRODUCT_REALTIME_COLUMNS = [
     dataIndex: 'productCode',
     key: 'productCode',
     className: 'productCode',
-    render: (text, record) => (text === 'null' ? '' : text),
+    render: renderRealTimeColumn,
   },
   {
     title: '产品名称',
     dataIndex: 'productName',
     key: 'productName',
     className: 'productName',
-    render: (text, record) => (text === 'null' ? '' : text),
+    render: renderRealTimeColumn,
   },
   {
     title: '份额',
@@ -863,7 +875,7 @@ export const PRODUCT_REALTIME_COLUMNS = [
     key: 'share',
     align: 'right',
     className: 'share',
-    render: (text, record) => (text === 'null' ? '' : text),
+    render: renderRealTimeColumn,
   },
   {
     title: '收益率/净值',
@@ -871,7 +883,7 @@ export const PRODUCT_REALTIME_COLUMNS = [
     key: 'netWorth',
     align: 'right',
     className: 'netWorth',
-    render: (text, record) => (text === 'null' ? '' : text),
+    render: renderRealTimeColumn,
   },
   {
     title: '市值',
@@ -879,7 +891,7 @@ export const PRODUCT_REALTIME_COLUMNS = [
     key: 'marketValue',
     align: 'right',
     className: 'marketValue',
-    render: (text, record) => (text === 'null' ? '' : text),
+    render: renderRealTimeColumn,
   },
   {
     title: '盈亏',
@@ -887,14 +899,14 @@ export const PRODUCT_REALTIME_COLUMNS = [
     key: 'profitAndLoss',
     align: 'right',
     className: 'profitAndLoss',
-    render: (text, record) => (text === 'null' ? '' : text),
+    render: renderRealTimeColumn,
   },
   {
     title: '货币类型',
     dataIndex: 'currencyType',
     key: 'currencyType',
     className: 'currencyType',
-    render: (text, record) => (text === 'null' ? '' : text),
+    render: renderRealTimeColumn,
   },
 ];
 

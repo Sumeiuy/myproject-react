@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-27 16:21:53
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-12-04 19:51:04
+ * @Last Modified time: 2018-12-10 10:07:01
  * @Description: 客户360-投资能力分析相关effect,mapStateToProps,mapDispatchToProps
  */
 import { connect } from 'dva';
@@ -27,6 +27,10 @@ const effects = {
   getAttributionAnalysis: 'detailInvestAnalyze/getAttributionAnalysis',
   // 获取个体收益明细结果
   getEachStockIncomeDetails: 'detailInvestAnalyze/getEachStockIncomeDetails',
+  // 获取期末资产配置数据
+  getEndTermAssetConfig: 'detailInvestAnalyze/getEndTermAssetConfig',
+  // 获取资产配置变动走势
+  getAssetConfigTrend: 'detailInvestAnalyze/getAssetConfigTrend',
 };
 
 const mapStateToProps = state => ({
@@ -44,6 +48,10 @@ const mapStateToProps = state => ({
   attributionData: state.detailInvestAnalyze.attributionData,
   // 个体收益明细数据
   incomeDetailData: state.detailInvestAnalyze.incomeDetailData,
+  // 期末资产配置数据
+  endTermAssetConfigData: state.detailInvestAnalyze.endTermAssetConfigData,
+  // 资产配置变动走势数据
+  assetConfigTrendData: state.detailInvestAnalyze.assetConfigTrendData,
 });
 
 const mapDispatchToProps = {
@@ -61,6 +69,10 @@ const mapDispatchToProps = {
   getAttributionAnalysis: effect(effects.getAttributionAnalysis, { forceFull: true }),
   // 获取个体收益明细
   getEachStockIncomeDetails: effect(effects.getEachStockIncomeDetails, { forceFull: true }),
+  // 获取期末资产配置数据
+  getEndTermAssetConfig: effect(effects.getEndTermAssetConfig, { forceFull: true }),
+  // 获取资产配置变动走势
+  getAssetConfigTrend: effect(effects.getAssetConfigTrend, { forceFull: true }),
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);
