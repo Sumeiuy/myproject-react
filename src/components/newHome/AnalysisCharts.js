@@ -53,7 +53,7 @@ const chartTitles = [
 // 资产分布的数据源
 let totAsetData = [
   {
-    name: '[1000, +∞)万元',
+    name: '资产在1000~+∞(不含)万元',
     filterName: '总资产',
     filterId: 'totAset',
     value: 0,
@@ -63,7 +63,7 @@ let totAsetData = [
     },
   },
   {
-    name: '[500, 1000)万元',
+    name: '资产在500~1000(不含)万元',
     filterName: '总资产',
     filterId: 'totAset',
     value: 0,
@@ -73,7 +73,7 @@ let totAsetData = [
     },
   },
   {
-    name: '[100, 500)万元',
+    name: '资产在100~500(不含)万元',
     filterName: '总资产',
     filterId: 'totAset',
     value: 0,
@@ -83,7 +83,7 @@ let totAsetData = [
     },
   },
   {
-    name: '[30, 100)万元',
+    name: '资产在30~100(不含)万元',
     filterName: '总资产',
     filterId: 'totAset',
     value: 0,
@@ -93,7 +93,7 @@ let totAsetData = [
     },
   },
   {
-    name: '[0, 30)万元',
+    name: '资产在0~30(不含)万元',
     filterName: '总资产',
     filterId: 'totAset',
     value: 0,
@@ -132,6 +132,11 @@ const positionDistribution = [
   },
 ];
 
+// 机构树选择为-我的客户
+const MY_CUSTOMER = 'msm';
+const DEFAULT_SHOW_TEXT = '所在部门';
+const MY_CUSTOMER_TEXT = '名下';
+
 export default class PerformanceIndicators extends PureComponent {
   static contextTypes = {
     push: PropTypes.func.isRequired,
@@ -143,16 +148,25 @@ export default class PerformanceIndicators extends PureComponent {
     location: PropTypes.object.isRequired,
   }
 
-  // 获取客户性质，客户类型的tooltip内容
-  @autobind
-  getTooltipContent(item) {
-    const assetData = transformItemUnit(item.asset);
-    return (
-      <div>
-        <div>客户数：{number.thousandFormat(item.custNum)}人</div>
-        <div>托管资产：{assetData.newItem}{assetData.newUnit}</div>
-      </div>
-    );
+  static getDerivedStateFromProps(nextProps) {
+    const { location: { query: nextQuery } } = nextProps;
+    const { orgId: nextOrgId = '' } = nextQuery;
+
+    if (nextOrgId === MY_CUSTOMER) {
+      return {
+        showText: MY_CUSTOMER_TEXT,
+      };
+    }
+    return {
+      showText: DEFAULT_SHOW_TEXT,
+    };
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      showText: DEFAULT_SHOW_TEXT,
+    };
   }
 
   @autobind
@@ -257,7 +271,11 @@ export default class PerformanceIndicators extends PureComponent {
 
   // 客户类型图表
   renderCustClassChart() {
-    const { dataSource, option } = getCustClassChartData(this.props.indicators);
+    const { showText } = this.state;
+    const { dataSource, option } = getCustClassChartData({
+      ...this.props.indicators,
+      showText,
+    });
     return (
       <ChartContiner dataSource={chartTitles[0]}>
         <IECharts
@@ -282,8 +300,8 @@ export default class PerformanceIndicators extends PureComponent {
                 />
                 <Tooltip
                   placement="top"
-                  title={`${item.name}客户`}
-                  content={this.getTooltipContent(item)}
+                  title={showText}
+                  content={this.renderToolTip(item)}
                 >
                   <span className={styles.legendLabel}>{item.name}</span>
                 </Tooltip>
@@ -297,7 +315,11 @@ export default class PerformanceIndicators extends PureComponent {
 
   // 客户性质图表
   renderCustomTypeChart() {
-    const { dataSource, option } = getCustomTypeChartData(this.props.indicators);
+    const { showText } = this.state;
+    const { dataSource, option } = getCustomTypeChartData({
+      ...this.props.indicators,
+      showText,
+    });
     return (
       <ChartContiner dataSource={chartTitles[1]}>
         <IECharts
@@ -322,8 +344,8 @@ export default class PerformanceIndicators extends PureComponent {
                 />
                 <Tooltip
                   placement="top"
-                  title={`${item.name}客户`}
-                  content={this.getTooltipContent(item)}
+                  title={showText}
+                  content={this.renderToolTip(item)}
                 >
                   <span className={styles.legendLabel}>{item.name}</span>
                 </Tooltip>
@@ -512,6 +534,36 @@ export default class PerformanceIndicators extends PureComponent {
           resizable
         />
       </ChartContiner>
+    );
+  }
+
+  // 获取客户性质，客户类型的tooltip内容
+  @autobind
+  renderToolTip(item) {
+    const {
+      showAssetRate = '',
+      showCustNumRate = '',
+    } = item;
+    const assetData = transformItemUnit(item.asset);
+    const showCustNumLabel = showCustNumRate ? `，占比${showCustNumRate}` : '';
+    const showAssetLabel = showAssetRate ? `，占比${showAssetRate}` : '';
+    return (
+      <div>
+        <div>
+          {item.name}
+          客户：
+          {number.thousandFormat(item.custNum)}
+          人
+          {showCustNumLabel}
+        </div>
+        <div>
+          {item.name}
+          客户托管总资产：
+          {assetData.newItem}
+          {assetData.newUnit}
+          {showAssetLabel}
+        </div>
+      </div>
     );
   }
 

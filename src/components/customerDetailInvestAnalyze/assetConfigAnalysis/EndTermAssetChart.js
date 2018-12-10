@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-12-04 14:16:41
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-06 13:37:09
+ * @Last Modified time: 2018-12-10 14:55:00
  * @description 期末资产配置雷达图
  */
 import React, { PureComponent } from 'react';
@@ -72,7 +72,10 @@ export default class EndTermAssetChart extends PureComponent {
     const option = this.getChartOption();
     return (
       <div className={styles.endTermAssetChart}>
-        <IfWrap isRender={!_.isEmpty(endTermAssetTableData)}>
+        <IfWrap
+          isRender={!_.isEmpty(endTermAssetTableData)}
+          isUsePlaceholderImage
+        >
           <IECharts
             option={option}
             style={{

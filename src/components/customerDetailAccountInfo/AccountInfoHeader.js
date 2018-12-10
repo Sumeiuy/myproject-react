@@ -1,8 +1,8 @@
 /*
  * @Author: wangyikai
  * @Date: 2018-10-11 14:05:51
- * @Last Modified by: liqianwen
- * @Last Modified time: 2018-12-04 13:39:09
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-12-10 13:06:54
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -43,13 +43,13 @@ export default class AccountInfoHeader extends PureComponent {
     // 期权历史持仓明细数据
     optionHistoryHolding: PropTypes.object.isRequired,
     // 查询交易流水的api集合函数
-    querytradeFlow: PropTypes.func.isRequired,
-    // 业务类别
-    busnTypeDict: PropTypes.object.isRequired,
-    // 产品代码
-    finProductList: PropTypes.object.isRequired,
+    tradeFlowApi: PropTypes.object.isRequired,
+    // 交易流水普通账户、信用账户下的业务类别
+    tradeFlowBusnTypeDict: PropTypes.object.isRequired,
+    // 交易流水资金变动的下普通账户、信用账户、期权账户的业务类别
+    tradeFlowCapitalBusnTypeDict: PropTypes.object.isRequired,
     // 全产品目录
-    productCatalogTree: PropTypes.object.isRequired,
+    productCatalogTree: PropTypes.array.isRequired,
     // 普通账户交易流水
     standardTradeFlowRes: PropTypes.object.isRequired,
     // 信用账户交易流水
@@ -184,9 +184,9 @@ export default class AccountInfoHeader extends PureComponent {
       productHistoryHolding,
       optionHistoryHolding,
       getSecuritiesHolding,
-      querytradeFlow,
-      busnTypeDict,
-      finProductList,
+      tradeFlowApi,
+      tradeFlowBusnTypeDict,
+      tradeFlowCapitalBusnTypeDict,
       productCatalogTree,
       standardTradeFlowRes,
       creditTradeFlowRes,
@@ -234,9 +234,9 @@ export default class AccountInfoHeader extends PureComponent {
           <TradeFlowModal
             location={location}
             onClose={this.handleTradeFlowModalClose}
-            querytradeFlow={querytradeFlow}
-            busnTypeDict={busnTypeDict}
-            finProductList={finProductList}
+            tradeFlowApi={tradeFlowApi}
+            tradeFlowBusnTypeDict={tradeFlowBusnTypeDict}
+            tradeFlowCapitalBusnTypeDict={tradeFlowCapitalBusnTypeDict}
             productCatalogTree={productCatalogTree}
             standardTradeFlowRes={standardTradeFlowRes}
             creditTradeFlowRes={creditTradeFlowRes}

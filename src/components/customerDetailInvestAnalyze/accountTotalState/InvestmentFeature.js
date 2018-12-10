@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-20 15:28:46
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-10 09:33:40
+ * @Last Modified time: 2018-12-10 13:22:09
  * @description 客户投资特征
  */
 import React, { PureComponent } from 'react';
@@ -91,9 +91,11 @@ export default class InvestmentFeature extends PureComponent {
             </Popover>
           </div>
           <div className={styles.levelWrapper}>
-            <ProfitAbilityLevel
-              profitAbilityLevel={profitAbilityLevel}
-            />
+            <IfWrap isRender={_.isNumber(profitAbilityLevel)}>
+              <ProfitAbilityLevel
+                profitAbilityLevel={profitAbilityLevel}
+              />
+            </IfWrap>
           </div>
         </div>
         <div className={styles.investmentFeatureLabel}>

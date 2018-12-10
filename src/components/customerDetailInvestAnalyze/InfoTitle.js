@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-20 15:16:31
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-08 15:22:17
+ * @Last Modified time: 2018-12-10 10:18:21
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -81,6 +81,7 @@ export default class InfoTitle extends PureComponent {
           wrapClassName={styles.infoModal}
           modalKey="infoTipModal"
           closeModal={this.handleCloseModal}
+          maskClosable={false}
         >
           {children}
         </CommonModal>
