@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-12-04 11:09:01
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-05 12:08:37
+ * @Last Modified time: 2018-12-07 15:06:16
  */
 
 // 按大类资产分布
@@ -75,7 +75,7 @@ const TABLE_COLUMNS = [
   {
     title: '产品种类',
     dataIndex: 'classifyName',
-    width: 110,
+    width: 130,
   },
   {
     title: '持仓金额 (万元)',
@@ -100,6 +100,62 @@ const END_TERM_ASSET_TIP = [
   '5.点击上图右上角可以切换资产分类方式。',
 ];
 
+// 资产配置变动走势提示
+const ASSET_TREND_TIP = [
+  '1.上图为统计期内各类别资产持仓占比变化情况。',
+  '2.点击上图右上角可切换资产分类方式。',
+];
+
+// 折线图通用配置项
+const CHART_LINE_OPTIONS = {
+  grid: {
+    left: 10,
+    right: 10,
+    top: 40,
+    bottom: 0,
+    containLabel: true,
+  },
+  xAxis: {
+    type: 'category',
+    axisTick: {
+      show: false,
+    },
+    axisLabel: {
+      color: '#666',
+      fontSize: 12,
+      interval: 30,
+    },
+  },
+  yAxis: {
+    type: 'value',
+    axisLine: {
+      show: false,
+    },
+    axisTick: {
+      show: false,
+    },
+    splitLine: {
+      lineStyle: {
+        color: '#ccc',
+        type: 'dotted',
+      }
+    },
+    axisLabel: {
+      color: '#666',
+      fontSize: 12,
+    },
+  },
+  smooth: true,
+  tooltip: {
+    trigger: 'axis',
+    backgroundColor: 'rgba(2, 22, 55, 0.8)',
+    padding: 10,
+    textStyle: {
+      fontSize: 12,
+    },
+  },
+};
+
 export {
   LARGE_CLASS_ASSET,
   ASSET_CLASSIFY_LIST,
@@ -107,4 +163,6 @@ export {
   CHART_SERIES_OPTIONS,
   TABLE_COLUMNS,
   END_TERM_ASSET_TIP,
+  ASSET_TREND_TIP,
+  CHART_LINE_OPTIONS,
 };

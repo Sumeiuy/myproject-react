@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-12-04 10:00:23
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-05 12:09:03
+ * @Last Modified time: 2018-12-08 21:26:17
  * @description 期末资产配置
  */
 import React, { PureComponent } from 'react';
@@ -14,6 +14,7 @@ import EndTermAssetChart from './EndTermAssetChart';
 import EndTermAssetTable from './EndTermAssetTable';
 import Summary from '../Summary';
 import { data } from '../../../helper';
+import IfWrap from '../../common/biz/IfWrap';
 import { END_TERM_ASSET_TIP, LARGE_CLASS_ASSET } from './config';
 import logable from '../../../decorators/logable';
 import styles from './endTermAssetConfig.less';
@@ -25,20 +26,12 @@ export default class EndTermAssetConfig extends PureComponent {
     getEndTermAssetConfig: PropTypes.func.isRequired,
     // 期末资产配置数据
     endTermAssetConfigData: PropTypes.object.isRequired,
-    // 期间总收益
-    periodTotalProfit: PropTypes.number.isRequired,
-    // 期间收益贡献度最大类别
-    maxCategory: PropTypes.string.isRequired,
-    // 期间收益贡献度最小类别
-    minCategory: PropTypes.string.isRequired,
-    // 客户资产配置占比排序
-    assetConfigRate: PropTypes.array.isRequired,
   }
 
   constructor(props) {
     super(props);
     this.state = {
-      classify: LARGE_CLASS_ASSET,
+      classifyType: LARGE_CLASS_ASSET,
     };
   }
 
@@ -57,10 +50,10 @@ export default class EndTermAssetConfig extends PureComponent {
         }
       }
     } = this.props;
-    const { classify } = this.state;
+    const { classifyType } = this.state;
     this.props.getEndTermAssetConfig({
       custId,
-      classify,
+      classifyType,
     });
   }
 
@@ -72,7 +65,7 @@ export default class EndTermAssetConfig extends PureComponent {
         periodTotalProfit,
         maxCategory,
         minCategory,
-        assetConfigRate = [],
+        assetConfigRate,
       }
     } = this.props;
     const periodProfitText = `统计期内客户实现盈利${periodTotalProfit}万元，其中${maxCategory}类对盈利贡献最高，${minCategory}类收益最低。`;
@@ -103,21 +96,21 @@ export default class EndTermAssetConfig extends PureComponent {
       value: '$args[0].value',
     }
   })
-  handleClassifyChange(option) {
+  handleClassifyTypeChange(option) {
     const { value } = option;
-    this.setState({ classify: value }, this.getEndTermAssetConfig);
+    this.setState({ classifyType: value }, this.getEndTermAssetConfig);
   }
 
   render() {
     const {
       endTermAssetConfigData: {
         endTermAssetTableData = [],
-        totalAsset,
-        liabilities,
+        totalAsset = 0,
+        liabilities = 0,
       }
     } = this.props;
     const {
-      classify
+      classifyType,
     } = this.state;
     // 期末资产配置提示
     const endTermAssetTipData = _.map(END_TERM_ASSET_TIP, item => <p key={data.uuid()}>{item}</p>);
@@ -127,30 +120,32 @@ export default class EndTermAssetConfig extends PureComponent {
       <div className={styles.endTermAssetConfig}>
         <AssetConfigHeader
           title="期末资产配置"
-          classify={classify}
-          onChange={this.handleClassifyChange}
+          classifyType={classifyType}
+          onChange={this.handleClassifyTypeChange}
         />
-        <div className={styles.endTermAssetContainer}>
-          <div className={styles.endTermAssetChartBox}>
-            <EndTermAssetChart
-              endTermAssetTableData={endTermAssetTableData}
-              totalAsset={totalAsset}
-              liabilities={liabilities}
-            />
-            <EndTermAssetTable
-              endTermAssetTableData={endTermAssetTableData}
-            />
-          </div>
-          <div className={styles.endTermAssetTips}>
-            <div className={styles.label}>注：</div>
-            <div className={styles.value}>
-              {endTermAssetTipData}
+        <IfWrap isRender={!_.isEmpty(endTermAssetTableData)}>
+          <div className={styles.endTermAssetContainer}>
+            <div className={styles.endTermAssetChartBox}>
+              <EndTermAssetChart
+                endTermAssetTableData={endTermAssetTableData}
+                totalAsset={totalAsset}
+                liabilities={liabilities}
+              />
+              <EndTermAssetTable
+                endTermAssetTableData={endTermAssetTableData}
+              />
             </div>
+            <div className={styles.endTermAssetTips}>
+              <div className={styles.label}>注：</div>
+              <div className={styles.value}>
+                {endTermAssetTipData}
+              </div>
+            </div>
+            <Summary>
+              {endTermAssetSummaryData}
+            </Summary>
           </div>
-          <Summary>
-            {endTermAssetSummaryData}
-          </Summary>
-        </div>
+        </IfWrap>
       </div>
     );
   }
