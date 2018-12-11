@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-12-06 17:29:40
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-11 09:55:55
+ * @Last Modified time: 2018-12-11 11:57:15
  * @description 交易流水中的普通账户历史交易Tab组件
  */
 import React, { PureComponent } from 'react';
@@ -57,7 +57,7 @@ export default class NormalTradeFlow extends PureComponent {
       // 业务类型
       bussinessType: '',
       // 产品代码
-      productCode: [],
+      productCode: ['', '', ''],
       // 全产品目录
       allProductMenu: '',
       // 产品代码下来框选项

@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-12-05 14:04:02
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-07 10:28:57
+ * @Last Modified time: 2018-12-11 11:55:03
  * @description 新版的概要信息展示组件
  */
 import React from 'react';
@@ -41,8 +41,9 @@ export default function Cell(props) {
     description = '',
   } = indicator;
   if (compareTip) {
-    const isAllZero = value === 0 && lastValue === 0;
-    const ascRateEqualO = lastValue !== 0 && calcSameTimeRate(value, lastValue) === 0;
+    const isAllZero = Number(value) === 0 && Number(lastValue) === 0;
+    const ascRateEqualO = Number(lastValue) !== 0
+      && calcSameTimeRate(Number(value), Number(lastValue)) === 0;
     showCompareTip = !(ascRateEqualO || isAllZero);
   }
   /**
@@ -51,13 +52,13 @@ export default function Cell(props) {
   let content = value;
   if (valueType === 'money') {
     // 处理金额
-    content = displayMoney(value);
+    content = displayMoney(Number(value));
   } else if (valueType === 'percent') {
     // 处理百分比
-    content = number.convertRate(value);
+    content = number.convertRate(Number(value));
   } else if (valueType === 'permillage') {
     // 处理千分比
-    content = number.convertPermillage(value);
+    content = number.convertPermillage(Number(value));
   }
 
   /**
