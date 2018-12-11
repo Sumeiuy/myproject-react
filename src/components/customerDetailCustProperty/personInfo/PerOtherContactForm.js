@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 19:10:24
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-04 17:23:32
+ * @Last Modified time: 2018-12-11 16:33:01
  * @description 个人客户添加其他信息
  */
 
@@ -58,7 +58,7 @@ export default class PerOtherContactForm extends PureComponent {
       // 号码：
       contactWayValue: isCreate ? '' : contactText,
       // 来源
-      sourceCode: isCreate ? SOURCE_CODE.ocrm : sourceCode,
+      sourceCode: isCreate ? SOURCE_CODE.finance : sourceCode,
       // 联系方式
       contactWayCode: isCreate ? '' : contactWayCode,
     };

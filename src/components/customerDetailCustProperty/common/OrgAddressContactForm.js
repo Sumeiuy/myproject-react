@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 19:02:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-05 17:40:47
+ * @Last Modified time: 2018-12-11 16:32:36
  * @description 添加机构客户地址信息联系方式的Form
  */
 import React, { PureComponent } from 'react';
@@ -72,7 +72,7 @@ export default class OrgAddressContactForm extends PureComponent {
       // 城市
       cityCode: isCreate ? '' : cityCode,
       // 来源
-      sourceCode: isCreate ? SOURCE_CODE.ocrm : sourceCode,
+      sourceCode: isCreate ? SOURCE_CODE.finance : sourceCode,
     };
   }
 
