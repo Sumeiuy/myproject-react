@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 19:36:22
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-05 17:02:01
+ * @Last Modified time: 2018-12-11 11:36:46
  * @description 机构客户添加联系方式Modal
  */
 
@@ -236,6 +236,7 @@ export default class ContactWayModal extends PureComponent {
       editData,
       contactType,
     } = this.state;
+    const { custBasic: { isMainEmp } } = this.context;
     // 有无电话信息数据
     const hasNoPhoneInfo = _.isEmpty(data.tellphoneInfo);
     // 有无地址信息
@@ -253,15 +254,17 @@ export default class ContactWayModal extends PureComponent {
         closeModal={this.handleContactWayClose}
       >
         <div className={styles.contactWayWrap}>
-          <div className={styles.addContactWay}>
-            <Button
-              type="primary"
-              icon="plus"
-              onClick={this.handleAddContactClick}
-            >
-              添加联系方式
-            </Button>
-          </div>
+          <IfWrap isRender={isMainEmp}>
+            <div className={styles.addContactWay}>
+              <Button
+                type="primary"
+                icon="plus"
+                onClick={this.handleAddContactClick}
+              >
+                添加联系方式
+              </Button>
+            </div>
+          </IfWrap>
           <div className={styles.block}>
             <div className={styles.header}>电话信息</div>
             <div className={styles.tableInfo}>

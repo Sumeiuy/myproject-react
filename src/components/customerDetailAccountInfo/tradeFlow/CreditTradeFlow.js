@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-12-07 14:57:51
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-11 10:05:39
+ * @Last Modified time: 2018-12-11 11:57:16
  * @description 交易流水信用账户历史记录
  */
 import React, { PureComponent } from 'react';
@@ -55,7 +55,7 @@ export default class CreditTradeFlow extends PureComponent {
       // 业务类型
       bussinessType: '',
       // 产品代码
-      productCode: [],
+      productCode: ['', '', ''],
       // 产品代码下拉框选项列表
       productCodeList: [],
     };
