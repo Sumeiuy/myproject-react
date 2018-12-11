@@ -2,13 +2,12 @@
  * @Author: sunweibin
  * @Date: 2018-12-07 14:57:51
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-10 13:27:18
+ * @Last Modified time: 2018-12-11 11:57:16
  * @description 交易流水信用账户历史记录
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-// import moment from 'moment';
 import _ from 'lodash';
 import { Table } from 'antd';
 import { SingleFilter, SingleFilterWithSearch } from 'lego-react-filter/src';
@@ -56,7 +55,7 @@ export default class CreditTradeFlow extends PureComponent {
       // 业务类型
       bussinessType: '',
       // 产品代码
-      productCode: '',
+      productCode: ['', '', ''],
       // 产品代码下拉框选项列表
       productCodeList: [],
     };
@@ -73,11 +72,7 @@ export default class CreditTradeFlow extends PureComponent {
   // 修改产品下拉选项
   @autobind
   getOptionItemValue({ value: { prdtCode, prdtName, prdtSortCode } }) {
-    let optionValue = `${prdtName}(${prdtSortCode})`;
-    if (!prdtSortCode) {
-      optionValue = prdtName;
-    }
-    return (<span key={prdtCode} title={prdtName}>{optionValue}</span>);
+    return this.renderOption(prdtCode, prdtName, prdtSortCode);
   }
 
   // 获取信用账户交易流水的Column配置
@@ -218,8 +213,9 @@ export default class CreditTradeFlow extends PureComponent {
     },
   })
   handleProductCodeSelect(current) {
+    const { prdtCode, prdtName, prdtSortCode } = current.value;
     this.setState({
-      productCode: current.value.prdtCode,
+      productCode: [prdtCode, prdtName, prdtSortCode],
     }, this.queryCreditTradeFlow);
   }
 
@@ -233,6 +229,19 @@ export default class CreditTradeFlow extends PureComponent {
         this.setState({ productCodeList });
       });
     }
+  }
+
+  @autobind
+  renderOption(prdtCode, prdtName, prdtSortCode) {
+    const { productCode } = this.state;
+    let displayName = `${prdtName}(${prdtSortCode})`;
+    if (!prdtCode) {
+      displayName = prdtName;
+    }
+    if (!prdtSortCode) {
+      displayName = `${prdtName}(${productCode[2]})`;
+    }
+    return <span key={prdtCode} title={prdtName}>{displayName}</span>;
   }
 
   render() {
@@ -287,6 +296,7 @@ export default class CreditTradeFlow extends PureComponent {
               dataMap={['prdtCode', 'prdtName']}
               showSearch
               needItemObj
+              useLabelInValue
               data={productCodeList}
               value={productCode}
               onInputChange={this.handleProductCodeSearch}

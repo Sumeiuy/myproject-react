@@ -2,7 +2,7 @@
  * @Author: liqianwen
  * @Date: 2018-11-07 13:31:51
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-10 14:54:28
+ * @Last Modified time: 2018-12-11 09:54:11
  * @description 新版客户360详情的交易流水的弹出层
  */
 import React, { PureComponent } from 'react';

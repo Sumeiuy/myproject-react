@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-26 13:58:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-04 17:31:44
+ * @Last Modified time: 2018-12-11 11:36:56
  * @description 联系方式弹框-个人客户联系方式修改
  */
 import React, { Component } from 'react';
@@ -326,6 +326,7 @@ export default class ContactWayModal extends Component {
       editData,
       contactType,
     } = this.state;
+    const { custBasic: { isMainEmp } } = this.context;
     // 有无电话信息数据
     const hasNoPhoneInfo = _.isEmpty(data.tellphoneInfo);
     // 有无地址信息
@@ -344,15 +345,17 @@ export default class ContactWayModal extends Component {
         closeModal={this.handleContactWayClose}
       >
         <div className={styles.contactWayWrap}>
-          <div className={styles.addContactWay}>
-            <Button
-              type="primary"
-              icon="plus"
-              onClick={this.handleAddContactClick}
-            >
-              添加联系方式
-            </Button>
-          </div>
+          <IfWrap isRender={isMainEmp}>
+            <div className={styles.addContactWay}>
+              <Button
+                type="primary"
+                icon="plus"
+                onClick={this.handleAddContactClick}
+              >
+                添加联系方式
+              </Button>
+            </div>
+          </IfWrap>
           <div className={styles.block}>
             <div className={styles.header}>电话信息</div>
             <div className={styles.switchArea}>
