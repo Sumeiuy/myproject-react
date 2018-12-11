@@ -23,6 +23,7 @@ import styles from './approvalHistory.less';
 const EMPTY_PARAM = '暂无';
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
+// 页面 tab 默认值，订购
 const DEFAULT_TYPE = APPROVAL_HISTORY_TYPE[0].key;
 
 const RadioButton = Radio.Button;
@@ -37,15 +38,14 @@ export default class ApprovalHistory extends PureComponent {
   }
 
   componentDidMount() {
-    const type = DEFAULT_TYPE;
-    this.queryHistoryList(type);
+    this.queryHistoryList(DEFAULT_TYPE);
   }
 
   @autobind
   handleTypeChange(e) {
     const type = e.target.value;
     this.queryHistoryList(type);
-    const logText = _.filter(APPROVAL_HISTORY_TYPE, o => o.key === type);
+    const logText = _.find(APPROVAL_HISTORY_TYPE, o => o.key === type) || EMPTY_OBJECT;
     logCommon({
       type: 'ButtonClick',
       payload: {

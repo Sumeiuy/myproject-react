@@ -109,16 +109,23 @@ export default class ContractTab extends PureComponent {
 
   @autobind
   getContractColumns() {
-    const newList = [...CONTRACT_COLUMNS];
-    // 编号
-    const idColumn = _.find(newList, o => o.key === KEY_ID);
-    idColumn.render = text => this.renderIdColumn(text);
-    // 创建时间
-    const timeColumn = _.find(newList, o => o.key === KEY_CREATE_TIME);
-    timeColumn.render = text => this.renderTimeTooltipColumn(text);
-    // 创建者
-    const creatorColumn = _.find(newList, o => o.key === KEY_CREATOR_NAME);
-    creatorColumn.render = (text, record) => this.renderCreatorColumn(text, record);
+    return (_.map(CONTRACT_COLUMNS, (item) => {
+      const newItem = { ...item };
+      switch (newItem.key) {
+        case KEY_ID:
+          newItem.render = text => this.renderIdColumn(text);
+          break;
+        case KEY_CREATE_TIME:
+          newItem.render = text => this.renderTimeTooltipColumn(text);
+          break;
+        case KEY_CREATOR_NAME:
+          newItem.render = (text, record) => this.renderCreatorColumn(text, record);
+          break;
+        default:
+          break;
+      }
+      return newItem;
+    }));
   }
 
   // 关闭弹窗
@@ -168,10 +175,7 @@ export default class ContractTab extends PureComponent {
 
   @autobind
   renderIdColumn(text) {
-    const idClass = classnames({
-      [styles.ellipsis]: true,
-      [styles.idWrap]: true,
-    });
+    const idClass = classnames([styles.ellipsis, styles.idWrap]);
     return (
       <Tooltip title={text}>
         <div
