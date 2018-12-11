@@ -113,10 +113,10 @@ export default class AgreementTab extends PureComponent {
       name = '',
       ptyId = '',
     } = record;
-    const filterAgreement = _.filter(AGREEMENT_LIST, o => o.name === name);
+    const filterAgreement = _.find(AGREEMENT_LIST, o => o.name === name) || EMPTY_OBJECT;
     const query = {
       'iv-user': login,
-      menuId: filterAgreement[0].menuId || '',
+      menuId: filterAgreement.menuId || '',
       pty_id: ptyId,
     };
     const url = `/acrmbi/login?${urlHelper.stringify(query)}`;
