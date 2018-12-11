@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-12-07 17:14:27
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-11 10:05:12
+ * @Last Modified time: 2018-12-11 11:57:04
  * @description 期权账户交易流水
  */
 import React, { PureComponent } from 'react';
@@ -52,7 +52,7 @@ export default class OptionTradeFlow extends PureComponent {
       startDate,
       endDate,
       // 产品代码
-      productCode: [],
+      productCode: ['', '', ''],
       // 产品代码下拉框选项列表
       productCodeList: [],
     };
