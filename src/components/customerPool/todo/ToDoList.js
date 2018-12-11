@@ -19,6 +19,7 @@ import emptyImg from './img/empty.png';
 
 const systemCode = '102330'; // 系统代码（理财服务平台为102330）
 const USER_INFO_APPROVE = '投顾信息维护审核流程'; // 用户基本信息审核标识;
+const SOURCE_FLAG = 'service_center'; // 业务中心审核标识;
 
 export default class ToDoList extends PureComponent {
   static propTypes = {
@@ -56,6 +57,7 @@ export default class ToDoList extends PureComponent {
             rel="noopener noreferrer"
             title={item.id}
             data={recode.id}
+            newData={recode.applyId} // 洗钱高风险业务使用applyId
             onClick={this.handleOpenNewPage}
           >
             {item.text}
@@ -133,6 +135,16 @@ export default class ToDoList extends PureComponent {
   }
 
   @autobind
+  openHighRishEdit(applyId, originator) {
+    window.open(`/bpc/standalone.html#/bpc/highrisk/edit?requestId=${applyId}&empId=${originator}`);
+  }
+
+  @autobind
+  openHighRishApproval(applyId, originator) {
+    window.open(`/fspa/spy/approval/html/highRiskMoneyLaunderingApproval.html&requestId=${applyId}&empId=${originator}`);
+  }
+
+  @autobind
   @logable({
     type: 'ViewItem',
     payload: {
@@ -143,11 +155,13 @@ export default class ToDoList extends PureComponent {
     const { data, getTaskBasicInfo, clearCreateTaskData } = this.props;
     const tardetLab = e.target;
     const flowId = tardetLab.getAttribute('data');
+    const requestId = tardetLab.getAttribute('newData');
     const flowData = _.find(data, ['id', Number(flowId)]);
+    const newFlowData = _.find(data, ['applyId', requestId]);
     // 判断是否被驳回任务，进行不同页面跳转
     // 后台无法返回状态码，只能判断文字
     clearCreateTaskData(RETURN_TASK_FROM_TODOLIST);
-    if (flowData.stepName === '待发起人修改或终止') {
+    if (flowData && flowData.stepName === '待发起人修改或终止') {
       this.setState({
         flowId: flowData.flowId,
       });
@@ -156,8 +170,14 @@ export default class ToDoList extends PureComponent {
         flowId: flowData.flowId,
         systemCode,
       }).then(this.handleSuccess);
-    } else if (flowData.flowClass === USER_INFO_APPROVE) {
+    } else if (flowData && flowData.flowClass === USER_INFO_APPROVE) {
       this.toApproveUserInfo(flowData.flowId);
+    } else if (newFlowData.stepName === '驳回修改') {
+      const { applyId, originator } = newFlowData;
+      this.openHighRishEdit(applyId, originator);
+    } else if (newFlowData && newFlowData.sourceFlag === SOURCE_FLAG) {
+      const { applyId, originator } = newFlowData;
+      this.openHighRishApproval(applyId, originator);
     } else {
       // 跳转到审批页面
       window.open(`${flowData.dispatchUri}&workFlowName=${encodeURI(flowData.flowClass)}`);
