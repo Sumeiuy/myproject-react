@@ -282,8 +282,13 @@
       </div>
     </div>
   </div>
+  <div id="process_env" style="display: none"><%= htmlWebpackPlugin.options.DEBUG %></div>
   <script src="/fspa/spy/screenshot/js/feedback.js"></script>
   <script>
+    var process_env_element = document.getElementById('process_env');
+    if(process_env_element) {
+      var IS_NODE_DEBUGGER = process_env_element.innerText === 'debugger';
+    }
     var home_share_var = {};
     var openAuditPage = function (dispatchUri, flowName) {
       window.open(location.protocol + "//" + location.host + dispatchUri + "&workFlowName=" + encodeURI(flowName));

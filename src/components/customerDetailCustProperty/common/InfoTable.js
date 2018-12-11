@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-26 16:44:23
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-11 11:33:06
+ * @Last Modified time: 2018-12-11 19:56:16
  * @description 联系方式使用的Table
  */
 import React from 'react';
@@ -23,6 +23,7 @@ function InfoTable(props) {
     isMainEmp,
     onEditClick,
     onDelClick,
+    className,
   } = props;
   // 新增需求，如果是非主服务经理的人，看不到操作一栏
   if (!isMainEmp) {
@@ -59,6 +60,7 @@ function InfoTable(props) {
   return (
     <div className={styles.infoTable}>
       <Table
+        className={className}
         pagination={false}
         dataSource={dataSource}
         columns={newColumns}
@@ -76,6 +78,12 @@ InfoTable.propTypes = {
   onDelClick: PropTypes.func.isRequired,
   // 点击编辑图标回调
   onEditClick: PropTypes.func.isRequired,
+  // 类名
+  className: PropTypes.string,
+};
+
+InfoTable.defaultProps = {
+  className: '',
 };
 
 export default InfoTable;

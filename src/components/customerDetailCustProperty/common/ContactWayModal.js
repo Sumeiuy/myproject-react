@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 19:36:22
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-11 11:36:46
+ * @Last Modified time: 2018-12-11 20:01:37
  * @description 机构客户添加联系方式Modal
  */
 
@@ -12,12 +12,14 @@ import { autobind } from 'core-decorators';
 import { Button } from 'antd';
 import _ from 'lodash';
 
+import { data as dataHelper } from '../../../helper';
 import confirm from '../../common/confirm_';
 import Table from './InfoTable';
 import IFNoData from './IfNoData';
 import logable from '../../../decorators/logable';
 import Modal from '../../common/biz/CommonModal';
 import IfWrap from '../../common/biz/IfWrap';
+import ToolTip from '../../common/Tooltip';
 import AddOrgContactWayModal from './AddOrgContactWayModal';
 import EditContactWayModal from './EditContactWayModal';
 import {
@@ -77,18 +79,77 @@ export default class ContactWayModal extends PureComponent {
         || dataIndex === 'landline'
         || dataIndex === 'email'
       ) {
-        return {
-          ...column,
-          render(text) {
-            if (!_.isEmpty(text) && _.hasIn(text, 'value')) {
-              return text.value || '';
-            }
-            return '';
-          },
-        };
+        return this.updateContactValueColumn(column);
+      }
+      if (dataIndex === 'contractType') {
+        // 机构客户联系人支持最多展示8个字符
+        return this.updateWordColumn(column, 7);
+      }
+      if (dataIndex === 'name') {
+        // 机构客户联系人支持最多展示8个字符
+        return this.updateWordColumn(column, 4);
+      }
+      if (dataIndex === 'duty') {
+        // 机构客户联系人支持最多展示8个字符
+        return this.updateWordColumn(column, 5);
       }
       return column;
     });
+  }
+
+  // 机构客户的手机信息、固定电话、电子邮件传递过来的数据是一个对象，我们展示他的value
+  @autobind
+  updateContactValueColumn(column) {
+    const { dataIndex } = column;
+    if (dataIndex === 'email') {
+      // 如果是email,则需要超长部分点点点
+      return {
+        ...column,
+        render(text) {
+          if (!_.isEmpty(text) && _.hasIn(text, 'value')) {
+            const { isSubstr, value, origin } = dataHelper.dotdotdot(text.value || '', 13);
+            if (isSubstr) {
+              return (
+                <ToolTip title={origin}>
+                  <div className={styles.textEllipse}>{value}</div>
+                </ToolTip>
+              );
+            }
+            return (<div className={styles.textEllipse}>{value}</div>);
+          }
+          return '';
+        }
+      };
+    }
+    return {
+      ...column,
+      render(text) {
+        if (!_.isEmpty(text) && _.hasIn(text, 'value')) {
+          return text.value || '';
+        }
+        return '';
+      },
+    };
+  }
+
+  // 修改纯文本展示，超过length部分...并且悬浮显示全部信息
+  @autobind
+  updateWordColumn(column, length) {
+    return {
+      ...column,
+      render(text) {
+        if (_.isEmpty(text)) {
+          return '';
+        }
+        const { isSubstr, value, origin } = dataHelper.dotdotdot(text, length);
+        if (isSubstr) {
+          return (
+            <ToolTip title={origin}>{value}</ToolTip>
+          );
+        }
+        return origin;
+      },
+    };
   }
 
   // 刷新数据
@@ -270,6 +331,7 @@ export default class ContactWayModal extends PureComponent {
             <div className={styles.tableInfo}>
               <IFNoData title="电话信息" isRender={hasNoPhoneInfo}>
                 <Table
+                  className={styles.orgPhoneTable}
                   columns={orgPhoneColumns}
                   dataSource={data.tellphoneInfo}
                   isMainEmp={this.isMainEmp}
