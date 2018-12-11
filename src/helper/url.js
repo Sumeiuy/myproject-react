@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-11-22 11:14:36
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-12 12:01:42
+ * @Last Modified by: liqianwen
+ * @Last Modified time: 2018-12-11 17:37:57
  * @description 此处存放与url数据相关的通用方法
  */
 import qs from 'query-string';
@@ -59,6 +59,16 @@ const url = {
    */
   backRoutePathList(pathname, matchPath = '') {
     return pathname.substring(matchPath.length).match(matchPathList) || [];
+  },
+
+  /**
+   * 将url中参数替换成对应的值
+   * @param {String} url  url字符串，approval?a={a}&b={b}
+   * @param {Object} params
+   */
+  replaceUrl(urlString, params) {
+    const { pathname, query } = url.parseUrl(urlString);
+    return `${pathname}?${url.stringify({ ...query, ...params })}`;
   },
 
   // 从url query上解析出filter对象

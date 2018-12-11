@@ -13,10 +13,12 @@ import {
   RETURN_TASK_FROM_TODOLIST,
 } from '../../../config/createTaskEntry';
 import { openRctTab } from '../../../utils';
-import styles from './toDoList.less';
 import logable from '../../../decorators/logable';
 import emptyImg from './img/empty.png';
-import { linkType } from './config';
+import { linkTypeList } from './config';
+import { url as urlHelper } from '../../../helper';
+
+import styles from './toDoList.less';
 
 const systemCode = '102330'; // 系统代码（理财服务平台为102330）
 const USER_INFO_APPROVE = '投顾信息维护审核流程'; // 用户基本信息审核标识;
@@ -134,24 +136,31 @@ export default class ToDoList extends PureComponent {
 
 
   @autobind
-  handleOpenpages(record) {
+  handleOpenPages(record) {
     const {
       sourceFlag = '',
       stepName = '',
       applyId,
       originator,
     } = record;
+    const targetData = {
+      requestId: applyId,
+      empId: originator,
+    };
     if (stepName === '驳回修改') {
-      window.open(`/bpc/standalone.html#/bpc/highrisk/edit?requestId=${applyId}&empId=${originator}`);
+      const url = (_.filter(linkTypeList, item => item.type === sourceFlag))[0].rejectUrl;
+      const targetUrl = urlHelper.replaceUrl(url, targetData);
+      window.open(targetUrl);
     } else {
-      const url = (_.filter(linkType, o => o.type === sourceFlag))[0].approvalUrl;
-      window.open(`/fspa/spy${url}?requestId=${applyId}&empId=${originator}`);
+      const url = (_.filter(linkTypeList, item => item.type === sourceFlag))[0].approvalUrl;
+      const targetUrl = urlHelper.replaceUrl(url, targetData);
+      window.open(targetUrl);
     }
   }
 
 
   @autobind
-  handleOpenOldpages(record) {
+  handleOpenOldPages(record) {
     const { getTaskBasicInfo } = this.props;
     if (record && record.stepName === '待发起人修改或终止') {
       this.setState({
@@ -187,10 +196,10 @@ export default class ToDoList extends PureComponent {
     clearCreateTaskData(RETURN_TASK_FROM_TODOLIST);
     if (sourceFlag) {
       // 如果存在sourceFlag，为特殊跳转，统一处理
-      this.handleOpenpages(record);
+      this.handleOpenPages(record);
     } else {
       // 跳转到后端返回的url
-      this.handleOpenOldpages(record);
+      this.handleOpenOldPages(record);
     }
   }
 

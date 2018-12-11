@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-11-08 14:56:43
  * @Last Modified by: liqianwen
- * @Last Modified time: 2018-12-11 14:21:57
+ * @Last Modified time: 2018-12-11 18:18:20
  */
 
 import moment from 'moment';
@@ -26,10 +26,11 @@ const typeOption = [
     value: '投顾个性化信息',
   },
 ];
-const linkType = [
+const linkTypeList = [
   {
     type: 'service_center',
-    approvalUrl: '/approval/html/highRiskMoneyLaunderingApproval.html'
+    rejectUrl: '/bpc/standalone.html#/bpc/highrisk/edit?',
+    approvalUrl: '/fspa/spy/approval/html/highRiskMoneyLaunderingApproval.html?'
   }
 ];
 
@@ -37,5 +38,5 @@ export {
   defaultStartTime,
   defaultEndTime,
   typeOption,
-  linkType,
+  linkTypeList,
 };
