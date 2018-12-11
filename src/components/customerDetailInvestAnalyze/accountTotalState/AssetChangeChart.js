@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-23 09:25:41
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-11 22:43:32
+ * @Last Modified time: 2018-12-11 22:51:01
  * @description 资产变动报表
  */
 import React, { PureComponent } from 'react';
@@ -85,9 +85,6 @@ export default class AssetChangeChart extends PureComponent {
   // echart渲染完，默认需要显示资金投入最大的toopTip
   @autobind
   handleReady(instance) {
-    instance.on('mouseover', () => {
-      console.warn('111');
-    });
     const { assetChangeReportData } = this.props;
     // 资金投入数据
     const fundInvestData = _.map(assetChangeReportData, item => _.toNumber(item.inflowFund));
