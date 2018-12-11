@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-12-07 17:14:55
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-12-10 18:42:05
+ * @Last Modified time: 2018-12-11 11:17:34
  * @description 切换排序方式
  */
 
@@ -29,13 +29,14 @@ export default class ToggleOrder extends PureComponent {
     };
   }
 
+  // 排序切换
+  @autobind
   @logable({
     type: 'Click',
     payload: {
       name: '排序切换',
     },
   })
-  @autobind
   handleToggleOrder() {
     const { isUp } = this.state;
     this.setState({

@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-12-05 11:29:05
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-12-10 18:21:52
+ * @Last Modified time: 2018-12-11 11:21:44
  * @description 个股收益明细图表
  */
 import React from 'react';
@@ -13,9 +13,8 @@ import IECharts from '../../IECharts';
 import styles from './incomeDetailChart.less';
 
 // 图表配置项
-function getChartOption() {
-  const { incomeChartData } = this.props;
-  const incomeChartDataOrder = incomeChartData.reverse();
+function getChartOption(value) {
+  const incomeChartDataOrder = value.reverse();
   // 累计盈利额大于等于0时候数字展示在右边，小于0展示在左边
   const newIncomeChartData = _.map(incomeChartDataOrder, item => ({
     value: item,
@@ -80,10 +79,11 @@ function getChartOption() {
   return option;
 }
 export default function IncomeDetailChart(props) {
+  const { incomeChartData } = props;
   return (
     <div className={styles.incomeDetailChart}>
       <IECharts
-        option={getChartOption()}
+        option={getChartOption(incomeChartData)}
         style={{
           height: '438px',
         }}

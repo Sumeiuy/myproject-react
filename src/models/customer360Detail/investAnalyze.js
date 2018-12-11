@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-20 16:01:36
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-12-10 10:26:05
+ * @Last Modified time: 2018-12-11 10:52:30
  * @description 新版客户360详情下的账户信息Tab页面的model
  */
 import { detailInvestAnalyze as api } from '../../api';
@@ -26,7 +26,7 @@ export default {
     // brinson归因数据
     attributionData: EMPTY_OBJECT,
     // 个股收益明细数据
-    incomeDetailData: EMPTY_ARRAY,
+    incomeDetailData: EMPTY_OBJECT,
     // 期末资产配置数据
     endTermAssetConfigData: EMPTY_OBJECT,
     // 资产配置变动走势
@@ -89,7 +89,7 @@ export default {
       const { payload } = action;
       return {
         ...state,
-        incomeDetailData: payload || EMPTY_ARRAY,
+        incomeDetailData: payload || EMPTY_OBJECT,
       };
     },
     // 获取期末资产配置数据成功
