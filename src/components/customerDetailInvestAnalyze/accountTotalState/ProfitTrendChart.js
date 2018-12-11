@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-25 11:31:40
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-10 15:17:23
+ * @Last Modified time: 2018-12-11 15:09:32
  * @description 账户收益走势图表
  */
 import React, { PureComponent } from 'react';
@@ -145,6 +145,29 @@ export default class ProfitTrendChart extends PureComponent {
     `;
   }
 
+  // echart渲染完，默认需要显示资金投入最大的toopTip
+  @autobind
+  handleReady(instance) {
+    const {
+      profitTrendData: {
+        profitTrendChartData = [],
+      }
+    } = this.props;
+    // 账户日收益率数据
+    const accountDailyRateData = filterData(profitTrendChartData, 'accountDailyRate');
+    // 账户日收益率最大的dataIndex
+    const dataIndex = _.findIndex(accountDailyRateData,
+      item => (item === _.max(accountDailyRateData)));
+    // 显示series是资金投入，数据是dataIndex的toolTip
+    setTimeout(() => {
+      instance.dispatchAction({
+        type: 'showTip',
+        seriesIndex: 0,
+        dataIndex,
+      });
+    }, 0);
+  }
+
   render() {
     const {
       profitTrendData: {
@@ -193,6 +216,7 @@ export default class ProfitTrendChart extends PureComponent {
               option={option}
               style={{ height: '260px' }}
               resizable
+              onReady={this.handleReady}
             />
             <div className={styles.profitTrendTips}>
               <div className={styles.label}>注：</div>

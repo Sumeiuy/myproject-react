@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-12-05 13:30:11
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-10 15:17:42
+ * @Last Modified time: 2018-12-11 16:25:25
  * @description 资产配置变动走势chart图
  */
 import React, { Component } from 'react';
@@ -10,7 +10,6 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import IECharts from '../../IECharts';
-import IfWrap from '../../common/biz/IfWrap';
 import { CHART_LINE_OPTIONS } from './config';
 import { filterXAxisDate } from '../utils';
 import { number } from '../../../helper';
@@ -21,7 +20,11 @@ const { thousandFormat } = number;
 export default class AssetConfigTrendChart extends Component {
   static propTypes ={
     // 资产配置变动走势echart图数据
-    assetConfigTrendChart: PropTypes.array.isRequired,
+    assetConfigTrendChart: PropTypes.array,
+  }
+
+  static defaultProps = {
+    assetConfigTrendChart: [],
   }
 
   // 获取每个Serie数据
@@ -110,13 +113,14 @@ export default class AssetConfigTrendChart extends Component {
     // 每类资产的资产量
     const assetClassifyElement = _.map(assetClassifyList, (item, index) => {
       const { classifyName, assetAmount, rate } = item;
+      const rateText = totalAssetAmount !== 0 ? `${rate}%` : '--';
       return `
         <tr class="tableBody">
           <td>
             ${params[index].marker}
             ${classifyName}
           </td>
-          <td>${rate}%</td>
+          <td>${rateText}</td>
           <td>${thousandFormat(assetAmount)}</td>
         </tr>
       `;
@@ -149,26 +153,39 @@ export default class AssetConfigTrendChart extends Component {
     `;
   }
 
+  // echart渲染完，默认需要显示资金投入最大的toopTip
+  @autobind
+  handleReady(instance) {
+    const { assetConfigTrendChart } = this.props;
+    // 总资产数组
+    const totalAssetAmountData = _.map(assetConfigTrendChart,
+      item => _.toNumber(item.totalAssetAmount));
+    // 总资产最大的dataIndex
+    const dataIndex = _.findIndex(totalAssetAmountData,
+      item => (item === _.max(totalAssetAmountData)));
+    // 数据是dataIndex的toolTip
+    setTimeout(() => {
+      instance.dispatchAction({
+        type: 'showTip',
+        seriesIndex: 0,
+        dataIndex,
+      });
+    }, 0);
+  }
+
   render() {
-    const {
-      assetConfigTrendChart,
-    } = this.props;
     // echart图表配置项
     const option = this.getChartOption();
     return (
       <div className={styles.assetConfigTrendChart}>
-        <IfWrap
-          isRender={!_.isEmpty(assetConfigTrendChart)}
-          isUsePlaceholderImage
-        >
-          <IECharts
-            option={option}
-            style={{
-              height: '366px',
-            }}
-            resizable
-          />
-        </IfWrap>
+        <IECharts
+          option={option}
+          style={{
+            height: '366px',
+          }}
+          resizable
+          onReady={this.handleReady}
+        />
       </div>
     );
   }

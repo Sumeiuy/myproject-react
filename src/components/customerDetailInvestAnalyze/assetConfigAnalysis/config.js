@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-12-04 11:09:01
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-07 15:06:16
+ * @Last Modified time: 2018-12-11 14:15:17
  */
 
 // 按大类资产分布
@@ -155,6 +155,8 @@ const CHART_LINE_OPTIONS = {
     },
   },
 };
+// 当客户配置资产仅有一类时, 描述文档
+const ASSET_CONFIG_RATE_TEXT= '客户资产过于集中配置，建议后期参考华泰证券资产配置方案，优化各类资产配置权重，提高风险调整后收益比。';
 
 export {
   LARGE_CLASS_ASSET,
@@ -165,4 +167,5 @@ export {
   END_TERM_ASSET_TIP,
   ASSET_TREND_TIP,
   CHART_LINE_OPTIONS,
+  ASSET_CONFIG_RATE_TEXT,
 };

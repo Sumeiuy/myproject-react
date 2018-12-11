@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-12-04 21:25:54
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-10 16:49:31
+ * @Last Modified time: 2018-12-11 13:30:22
  * @description 期末资产配置表格
  */
 import React from 'react';
@@ -10,7 +10,6 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import Table from '../../common/table';
 import { TABLE_COLUMNS } from './config';
-import IfTableWrap from '../../common/IfTableWrap';
 import styles from './endTermAssetTable.less';
 
 export default function EndTermAssetTable(props) {
@@ -24,18 +23,20 @@ export default function EndTermAssetTable(props) {
   ));
   return (
     <div className={styles.endTermAssetTable}>
-      <IfTableWrap isRender={!_.isEmpty(endTermAssetTableData)}>
-        <Table
-          columns={TABLE_COLUMNS}
-          dataSource={dataSource}
-          pagination={false}
-        />
-      </IfTableWrap>
+      <Table
+        columns={TABLE_COLUMNS}
+        dataSource={dataSource}
+        pagination={false}
+      />
     </div>
   );
 }
 
 EndTermAssetTable.propTypes = {
   // 表格数据
-  endTermAssetTableData: PropTypes.array.isRequired,
+  endTermAssetTableData: PropTypes.array,
+};
+
+EndTermAssetTable.defaultProps = {
+  endTermAssetTableData: [],
 };

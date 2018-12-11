@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-12-04 10:00:23
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-08 21:26:17
+ * @Last Modified time: 2018-12-11 14:21:14
  * @description 期末资产配置
  */
 import React, { PureComponent } from 'react';
@@ -15,7 +15,7 @@ import EndTermAssetTable from './EndTermAssetTable';
 import Summary from '../Summary';
 import { data } from '../../../helper';
 import IfWrap from '../../common/biz/IfWrap';
-import { END_TERM_ASSET_TIP, LARGE_CLASS_ASSET } from './config';
+import { END_TERM_ASSET_TIP, LARGE_CLASS_ASSET, ASSET_CONFIG_RATE_TEXT } from './config';
 import logable from '../../../decorators/logable';
 import styles from './endTermAssetConfig.less';
 
@@ -68,15 +68,18 @@ export default class EndTermAssetConfig extends PureComponent {
         assetConfigRate,
       }
     } = this.props;
-    const periodProfitText = `统计期内客户实现盈利${periodTotalProfit}万元，其中${maxCategory}类对盈利贡献最高，${minCategory}类收益最低。`;
+    let periodProfitText = `统计期内客户实现盈利${periodTotalProfit}万元，其中${maxCategory}类对盈利贡献最高，${minCategory}类收益最低。`;
     let assetConfigRateText = '';
     if (_.isArray(assetConfigRate) && !_.isEmpty(assetConfigRate)) {
       // assetConfigRate数据后端返回的是一个数组，需要转化成字符串
       const assetConfigRateStr = _.join(assetConfigRate, '、');
-      if (assetConfigRate.length >= 3) {
-        assetConfigRateText = `客户资产配置占比由高到低依次为${assetConfigRateStr}。客户有一定的资产配置理念，后期可参考华泰证券资产配置方案，优化各类资产配置权重，提高风险调整后收益比。`;
-      } else {
+      if (assetConfigRate.length === 1) {
+        periodProfitText = `统计期内客户实现盈利${periodTotalProfit}万元`;
+        assetConfigRateText = ASSET_CONFIG_RATE_TEXT;
+      } else if (assetConfigRate.length === 2) {
         assetConfigRateText = `客户资产配置占比由高到低依次为${assetConfigRateStr}。客户资产过于集中配置，建议后期参考华泰证券资产配置方案，优化各类资产配置权重，提高风险调整后收益比。`;
+      } else {
+        assetConfigRateText = `客户资产配置占比由高到低依次为${assetConfigRateStr}。客户有一定的资产配置理念，后期可参考华泰证券资产配置方案，优化各类资产配置权重，提高风险调整后收益比。`;
       }
     }
     return (
@@ -123,7 +126,10 @@ export default class EndTermAssetConfig extends PureComponent {
           classifyType={classifyType}
           onChange={this.handleClassifyTypeChange}
         />
-        <IfWrap isRender={!_.isEmpty(endTermAssetTableData)}>
+        <IfWrap
+          isRender={!_.isEmpty(endTermAssetTableData)}
+          isUsePlaceholderImage
+        >
           <div className={styles.endTermAssetContainer}>
             <div className={styles.endTermAssetChartBox}>
               <EndTermAssetChart
