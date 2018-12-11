@@ -10,6 +10,7 @@
   "scripts": {
     "dll": "webpack --progress --colors --config ./build/webpack.dll.conf.js",
     "dev": "node build/dev-server.js",
+    "dev:test": "node build/dev-server.js DEBUG=1",
     "start": "npm run dll && npm run dev",
     "build": "node --max_old_space_size=8192 build/build.js",
     "unit": "karma start test/unit/karma.conf.js --single-run",
