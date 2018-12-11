@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-12-07 17:14:27
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-10 14:39:55
+ * @Last Modified time: 2018-12-11 09:56:54
  * @description 期权账户交易流水
  */
 import React, { PureComponent } from 'react';
@@ -69,11 +69,7 @@ export default class OptionTradeFlow extends PureComponent {
   // 修改产品下拉选项
   @autobind
   getOptionItemValue({ value: { prdtCode, prdtName, prdtSortCode } }) {
-    let optionValue = `${prdtName}(${prdtSortCode})`;
-    if (!prdtSortCode) {
-      optionValue = prdtName;
-    }
-    return (<span key={prdtCode} title={prdtName}>{optionValue}</span>);
+    return this.renderOption(prdtCode, prdtName, prdtSortCode);
   }
 
   // 获取信用账户交易流水的Column配置
@@ -225,6 +221,19 @@ export default class OptionTradeFlow extends PureComponent {
     this.queryOptionTradeFlow(pageNum);
   }
 
+  @autobind
+  renderOption(prdtCode, prdtName, prdtSortCode) {
+    const { productCode } = this.state;
+    let displayName = `${prdtName}(${prdtSortCode})`;
+    if (!prdtCode) {
+      displayName = prdtName;
+    }
+    if (!prdtSortCode) {
+      displayName = `${prdtName}(${productCode[2]})`;
+    }
+    return <span key={prdtCode} title={prdtName}>{displayName}</span>;
+  }
+
   render() {
     const {
       startDate,
@@ -266,6 +275,7 @@ export default class OptionTradeFlow extends PureComponent {
               dataMap={['prdtCode', 'prdtName']}
               showSearch
               needItemObj
+              useLabelInValue
               data={productCodeList}
               value={productCode}
               onInputChange={this.handleProductCodeSearch}
