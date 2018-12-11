@@ -156,7 +156,7 @@ const CHART_LINE_OPTIONS = {
   },
 };
 // 当客户配置资产仅有一类时, 描述文档
-const ASSET_CONFIG_RATE_TEXT= '客户资产过于集中配置，建议后期参考华泰证券资产配置方案，优化各类资产配置权重，提高风险调整后收益比。';
+const ASSET_CONFIG_RATE_TEXT = '客户资产过于集中配置，建议后期参考华泰证券资产配置方案，优化各类资产配置权重，提高风险调整后收益比。';
 
 export {
   LARGE_CLASS_ASSET,

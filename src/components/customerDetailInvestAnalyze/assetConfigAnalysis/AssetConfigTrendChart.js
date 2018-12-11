@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-12-05 13:30:11
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-11 16:25:25
+ * @Last Modified time: 2018-12-11 22:43:40
  * @description 资产配置变动走势chart图
  */
 import React, { Component } from 'react';
@@ -10,6 +10,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import IECharts from '../../IECharts';
+import IfWrap from '../../common/biz/IfWrap';
 import { CHART_LINE_OPTIONS } from './config';
 import { filterXAxisDate } from '../utils';
 import { number } from '../../../helper';
@@ -25,6 +26,13 @@ export default class AssetConfigTrendChart extends Component {
 
   static defaultProps = {
     assetConfigTrendChart: [],
+  }
+
+  componentDidUpdate(prevProps) {
+    const { assetConfigTrendChart } = this.props;
+    if (prevProps.assetConfigTrendChart !== assetConfigTrendChart) {
+      this.handleShowTip();
+    }
   }
 
   // 获取每个Serie数据
@@ -110,6 +118,8 @@ export default class AssetConfigTrendChart extends Component {
     // 当前y轴所有资产分类的数据
     const currentAssetData = assetConfigTrendChart[dataIndex];
     const { assetClassifyList, totalAssetAmount, totalAssetAmountRate } = currentAssetData;
+    // 总资产占比
+    const totalAssetAmountRateText = totalAssetAmount !== 0 ? `${totalAssetAmountRate}%` : '--';
     // 每类资产的资产量
     const assetClassifyElement = _.map(assetClassifyList, (item, index) => {
       const { classifyName, assetAmount, rate } = item;
@@ -143,7 +153,7 @@ export default class AssetConfigTrendChart extends Component {
               <td>
                 总资产
               </td>
-              <td>${totalAssetAmountRate}%</td>
+              <td>${totalAssetAmountRateText}</td>
               <td>${thousandFormat(totalAssetAmount)}</td>
             </tr>
             ${assetClassifyElementList}
@@ -156,6 +166,12 @@ export default class AssetConfigTrendChart extends Component {
   // echart渲染完，默认需要显示资金投入最大的toopTip
   @autobind
   handleReady(instance) {
+    this.instance = instance;
+    this.handleShowTip();
+  }
+
+  @autobind
+  handleShowTip() {
     const { assetConfigTrendChart } = this.props;
     // 总资产数组
     const totalAssetAmountData = _.map(assetConfigTrendChart,
@@ -164,28 +180,35 @@ export default class AssetConfigTrendChart extends Component {
     const dataIndex = _.findIndex(totalAssetAmountData,
       item => (item === _.max(totalAssetAmountData)));
     // 数据是dataIndex的toolTip
+    // 图表所有数据加载完成，调用dispatchAction方法显示浮层提示框
+    // 参考网址：https://blog.csdn.net/u013558749/article/details/83826672
     setTimeout(() => {
-      instance.dispatchAction({
-        type: 'showTip',
-        seriesIndex: 0,
-        dataIndex,
-      });
+      if (this.instance) {
+        this.instance.dispatchAction({
+          type: 'showTip',
+          seriesIndex: 0,
+          dataIndex,
+        });
+      }
     }, 0);
   }
 
   render() {
+    const { assetConfigTrendChart } = this.props;
     // echart图表配置项
     const option = this.getChartOption();
     return (
       <div className={styles.assetConfigTrendChart}>
-        <IECharts
-          option={option}
-          style={{
-            height: '366px',
-          }}
-          resizable
-          onReady={this.handleReady}
-        />
+        <IfWrap isRender={!_.isEmpty(assetConfigTrendChart)}>
+          <IECharts
+            onReady={this.handleReady}
+            option={option}
+            style={{
+              height: '366px',
+            }}
+            resizable
+          />
+        </IfWrap>
       </div>
     );
   }

@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-25 11:31:40
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-11 15:09:32
+ * @Last Modified time: 2018-12-11 22:43:08
  * @description 账户收益走势图表
  */
 import React, { PureComponent } from 'react';
@@ -159,6 +159,8 @@ export default class ProfitTrendChart extends PureComponent {
     const dataIndex = _.findIndex(accountDailyRateData,
       item => (item === _.max(accountDailyRateData)));
     // 显示series是资金投入，数据是dataIndex的toolTip
+    // 图表所有数据加载完成，调用dispatchAction方法显示浮层提示框
+    // 参考网址：https://blog.csdn.net/u013558749/article/details/83826672
     setTimeout(() => {
       instance.dispatchAction({
         type: 'showTip',

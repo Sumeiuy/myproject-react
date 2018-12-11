@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-23 09:25:41
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-11 15:09:19
+ * @Last Modified time: 2018-12-11 22:43:32
  * @description 资产变动报表
  */
 import React, { PureComponent } from 'react';
@@ -85,12 +85,17 @@ export default class AssetChangeChart extends PureComponent {
   // echart渲染完，默认需要显示资金投入最大的toopTip
   @autobind
   handleReady(instance) {
+    instance.on('mouseover', () => {
+      console.warn('111');
+    });
     const { assetChangeReportData } = this.props;
     // 资金投入数据
     const fundInvestData = _.map(assetChangeReportData, item => _.toNumber(item.inflowFund));
     // 资金投入最大的dataIndex
     const dataIndex = _.findIndex(fundInvestData, item => (item === _.max(fundInvestData)));
     // 显示series是资金投入，数据是dataIndex的toolTip
+    // 图表所有数据加载完成，调用dispatchAction方法显示浮层提示框
+    // 参考网址：https://blog.csdn.net/u013558749/article/details/83826672
     setTimeout(() => {
       instance.dispatchAction({
         type: 'showTip',
