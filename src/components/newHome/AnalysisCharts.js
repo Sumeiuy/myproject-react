@@ -404,7 +404,7 @@ export default class PerformanceIndicators extends PureComponent {
             value: number.thousandFormat(params.data.value),
             unit: '人',
           };
-          return `${params.data.name} 客户数：${data.value}${data.unit}`;
+          return `${params.data.name}客户：${data.value}${data.unit}`;
         },
       },
       xAxis: {

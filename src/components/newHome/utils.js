@@ -96,14 +96,16 @@ function getCustClassChartData(data) {
           value: number.thousandFormat(params.data.custNum),
           unit: '人',
         };
+        let showParamsName = params.name;
         if (params.name === '托管总资产') {
+          showParamsName = `客户${params.name}`;
           const item = transformItemUnit(params.data.asset);
           formatData = {
             value: item.newItem,
             unit: item.newUnit,
           };
         }
-        return `${showText}${params.data.name}${params.name}：${formatData.value}${formatData.unit}`;
+        return `${showText}${params.data.name}${showParamsName}：${formatData.value}${formatData.unit}`;
       }
     },
     xAxis: {
@@ -300,7 +302,9 @@ function getCustomTypeChartData(data) {
           unit: '人',
           showPercent: params.data.showCustNumRate || '0%',
         };
+        let showParamsName = params.name;
         if (params.name === '托管总资产') {
+          showParamsName = `客户${params.name}`;
           const item = transformItemUnit(params.data.asset);
           formatData = {
             value: item.newItem,
@@ -309,7 +313,7 @@ function getCustomTypeChartData(data) {
           };
         }
         return `
-          ${showText}${params.data.name}${params.name}：${formatData.value}${formatData.unit}，占比${formatData.showPercent}
+          ${showText}${params.data.name}${showParamsName}：${formatData.value}${formatData.unit}，占比${formatData.showPercent}
         `;
       }
     },
@@ -516,7 +520,7 @@ function getMaxCostRateChartData(data) {
           value: number.thousandFormat(params.data.value),
           unit: '人',
         };
-        return `${params.data.name} 客户数：${formatData.value}${formatData.unit}`;
+        return `${params.data.name}客户：${formatData.value}${formatData.unit}`;
       }
     },
     xAxis: [
@@ -721,7 +725,7 @@ function getPftAmtChartData(data) {
           value: number.thousandFormat(params.data.value),
           unit: '人',
         };
-        return `${params.data.name} 客户数：${formatData.value}${formatData.unit}`;
+        return `${params.data.name}客户：${formatData.value}${formatData.unit}`;
       }
     },
     xAxis: [
