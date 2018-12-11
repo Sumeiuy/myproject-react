@@ -16,10 +16,10 @@ import { openRctTab } from '../../../utils';
 import styles from './toDoList.less';
 import logable from '../../../decorators/logable';
 import emptyImg from './img/empty.png';
+import { linkType } from './config';
 
 const systemCode = '102330'; // 系统代码（理财服务平台为102330）
 const USER_INFO_APPROVE = '投顾信息维护审核流程'; // 用户基本信息审核标识;
-const SOURCE_FLAG = 'service_center'; // 业务中心审核标识;
 
 export default class ToDoList extends PureComponent {
   static propTypes = {
@@ -50,15 +50,13 @@ export default class ToDoList extends PureComponent {
         title: '任务名称',
         dataIndex: 'task',
         key: 'task',
-        render: (item, recode) => (
+        render: (item, record) => (
           <a
             className={styles.title}
             target="_blank"
             rel="noopener noreferrer"
             title={item.id}
-            data={recode.id}
-            newData={recode.applyId} // 洗钱高风险业务使用applyId
-            onClick={this.handleOpenNewPage}
+            onClick={() => this.handleOpenNewPage(record)}
           >
             {item.text}
           </a>
@@ -68,25 +66,25 @@ export default class ToDoList extends PureComponent {
         title: '当前步骤',
         dataIndex: 'stepName',
         key: 'stepName',
-        render: (item, recode) => (<span className={styles.stepName}>{recode.stepName}</span>),
+        render: (item, record) => (<span className={styles.stepName}>{record.stepName}</span>),
       },
       {
         title: '提交人工号',
         dataIndex: 'originator',
         key: 'originator',
-        render: (item, recode) => (<span className={styles.orgId}>{recode.originator}</span>),
+        render: (item, record) => (<span className={styles.orgId}>{record.originator}</span>),
       },
       {
         title: '提交人姓名',
         dataIndex: 'originatorName',
         key: 'originatorName',
-        render: (item, recode) => (<span className={styles.orgName}>{recode.originatorName}</span>),
+        render: (item, record) => (<span className={styles.orgName}>{record.originatorName}</span>),
       },
       {
         title: '提交日期',
         dataIndex: 'applyDate',
         key: 'applyDate',
-        render: (item, recode) => (<span className={styles.submitDate}>{recode.applyDate}</span>),
+        render: (item, record) => (<span className={styles.submitDate}>{record.applyDate}</span>),
       },
     ];
   }
@@ -134,14 +132,42 @@ export default class ToDoList extends PureComponent {
     });
   }
 
-  @autobind
-  openHighRishEdit(applyId, originator) {
-    window.open(`/bpc/standalone.html#/bpc/highrisk/edit?requestId=${applyId}&empId=${originator}`);
-  }
 
   @autobind
-  openHighRishApproval(applyId, originator) {
-    window.open(`/fspa/spy/approval/html/highRiskMoneyLaunderingApproval.html&requestId=${applyId}&empId=${originator}`);
+  handleOpenpages(record) {
+    const {
+      sourceFlag = '',
+      stepName = '',
+      applyId,
+      originator,
+    } = record;
+    if (stepName === '驳回修改') {
+      window.open(`/bpc/standalone.html#/bpc/highrisk/edit?requestId=${applyId}&empId=${originator}`);
+    } else {
+      const url = (_.filter(linkType, o => o.type === sourceFlag))[0].approvalUrl;
+      window.open(`/fspa/spy${url}?requestId=${applyId}&empId=${originator}`);
+    }
+  }
+
+
+  @autobind
+  handleOpenOldpages(record) {
+    const { getTaskBasicInfo } = this.props;
+    if (record && record.stepName === '待发起人修改或终止') {
+      this.setState({
+        flowId: record.flowId,
+      });
+      // 请求任务基本信息，跳转到编辑页面
+      getTaskBasicInfo({
+        flowId: record.flowId,
+        systemCode,
+      }).then(this.handleSuccess);
+    } else if (record && record.flowClass === USER_INFO_APPROVE) {
+      this.toApproveUserInfo(record.flowId);
+    } else {
+      // 跳转到审批页面
+      window.open(`${record.dispatchUri}&workFlowName=${encodeURI(record.flowClass)}`);
+    }
   }
 
   @autobind
@@ -151,36 +177,20 @@ export default class ToDoList extends PureComponent {
       name: '任务名称',
     },
   })
-  handleOpenNewPage(e) {
-    const { data, getTaskBasicInfo, clearCreateTaskData } = this.props;
-    const tardetLab = e.target;
-    const flowId = tardetLab.getAttribute('data');
-    const requestId = tardetLab.getAttribute('newData');
-    const flowData = _.find(data, ['id', Number(flowId)]);
-    const newFlowData = _.find(data, ['applyId', requestId]);
+  handleOpenNewPage(record) {
+    const {
+      sourceFlag = ''
+    } = record;
+    const { clearCreateTaskData } = this.props;
     // 判断是否被驳回任务，进行不同页面跳转
     // 后台无法返回状态码，只能判断文字
     clearCreateTaskData(RETURN_TASK_FROM_TODOLIST);
-    if (flowData && flowData.stepName === '待发起人修改或终止') {
-      this.setState({
-        flowId: flowData.flowId,
-      });
-      // 请求任务基本信息，跳转到编辑页面
-      getTaskBasicInfo({
-        flowId: flowData.flowId,
-        systemCode,
-      }).then(this.handleSuccess);
-    } else if (flowData && flowData.flowClass === USER_INFO_APPROVE) {
-      this.toApproveUserInfo(flowData.flowId);
-    } else if (newFlowData.stepName === '驳回修改') {
-      const { applyId, originator } = newFlowData;
-      this.openHighRishEdit(applyId, originator);
-    } else if (newFlowData && newFlowData.sourceFlag === SOURCE_FLAG) {
-      const { applyId, originator } = newFlowData;
-      this.openHighRishApproval(applyId, originator);
+    if (sourceFlag) {
+      // 如果存在sourceFlag，为特殊跳转，统一处理
+      this.handleOpenpages(record);
     } else {
-      // 跳转到审批页面
-      window.open(`${flowData.dispatchUri}&workFlowName=${encodeURI(flowData.flowClass)}`);
+      // 跳转到后端返回的url
+      this.handleOpenOldpages(record);
     }
   }
 

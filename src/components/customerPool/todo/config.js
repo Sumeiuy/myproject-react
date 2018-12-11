@@ -1,8 +1,8 @@
 /*
  * @Author: zuoguangzu
  * @Date: 2018-11-08 14:56:43
- * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-27 14:36:37
+ * @Last Modified by: liqianwen
+ * @Last Modified time: 2018-12-11 14:21:57
  */
 
 import moment from 'moment';
@@ -26,9 +26,16 @@ const typeOption = [
     value: '投顾个性化信息',
   },
 ];
+const linkType = [
+  {
+    type: 'service_center',
+    approvalUrl: '/approval/html/highRiskMoneyLaunderingApproval.html'
+  }
+];
 
 export {
   defaultStartTime,
   defaultEndTime,
   typeOption,
+  linkType,
 };
