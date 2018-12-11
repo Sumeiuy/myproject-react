@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 19:36:22
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-11 11:36:46
+ * @Last Modified time: 2018-12-11 17:20:49
  * @description 机构客户添加联系方式Modal
  */
 
@@ -12,18 +12,21 @@ import { autobind } from 'core-decorators';
 import { Button } from 'antd';
 import _ from 'lodash';
 
+import { data as dataHelper } from '../../../helper';
 import confirm from '../../common/confirm_';
 import Table from './InfoTable';
 import IFNoData from './IfNoData';
 import logable from '../../../decorators/logable';
 import Modal from '../../common/biz/CommonModal';
 import IfWrap from '../../common/biz/IfWrap';
+import ToolTip from '../../common/Tooltip';
 import AddOrgContactWayModal from './AddOrgContactWayModal';
 import EditContactWayModal from './EditContactWayModal';
 import {
   ORG_PHONE_COLUMNS,
   ORG_ADDRESS_COLUMNS,
 } from './config';
+import { displayEmpty } from './utils';
 
 import styles from './contactWayModal.less';
 
@@ -77,18 +80,48 @@ export default class ContactWayModal extends PureComponent {
         || dataIndex === 'landline'
         || dataIndex === 'email'
       ) {
-        return {
-          ...column,
-          render(text) {
-            if (!_.isEmpty(text) && _.hasIn(text, 'value')) {
-              return text.value || '';
-            }
-            return '';
-          },
-        };
+        return this.updateContactValueColumn(column);
+      }
+      if (dataIndex === 'contractType') {
+        // 机构客户联系人支持最多展示8个字符
+        return this.updateWordColumn(column, 7);
       }
       return column;
     });
+  }
+
+  // 机构客户的手机信息、固定电话、电子邮件传递过来的数据是一个对象，我们展示他的value
+  @autobind
+  updateContactValueColumn(column) {
+    return {
+      ...column,
+      render(text) {
+        if (!_.isEmpty(text) && _.hasIn(text, 'value')) {
+          return text.value || '';
+        }
+        return '';
+      },
+    };
+  }
+
+  // 修改纯文本展示，超过length部分...并且悬浮显示全部信息
+  @autobind
+  updateWordColumn(column, length) {
+    return {
+      ...column,
+      render(text) {
+        if (_.isEmpty(text)) {
+          return displayEmpty(text);
+        }
+        const { isSubstr, value, origin } = dataHelper.dotdotdot(text, length);
+        if (isSubstr) {
+          return (
+            <ToolTip title={origin}>{value}</ToolTip>
+          );
+        }
+        return origin;
+      },
+    };
   }
 
   // 刷新数据

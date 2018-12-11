@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-05 13:31:51
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-05 11:44:08
+ * @Last Modified time: 2018-12-11 16:39:26
  * @description 新版客户360详情的历史持仓的弹出层
  */
 import React, { PureComponent } from 'react';
@@ -420,6 +420,10 @@ export default class HistoryHoldingModal extends PureComponent {
       if (dataIndex === 'secondType') {
         // 产品二级分类
         return this.updateTableWordsColumn(column, 8);
+      }
+      if (dataIndex === 'dividendWay') {
+        // 分红方式
+        return this.updateTableWordsColumn(column, 5);
       }
       return column;
     });

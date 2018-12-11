@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 19:41:38
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-04 17:22:05
+ * @Last Modified time: 2018-12-11 16:32:23
  * @description 机构客户联系方式配置项
  */
 // 机构客户电话信息表格columns
@@ -140,6 +140,8 @@ export const MODAL_TITLES = {
 
 // 来源Code
 export const SOURCE_CODE = {
+  // 理财平台Code
+  finance: '102330',
   // ORCM来源的Code
   ocrm: '102030',
   // 客户服务中心
