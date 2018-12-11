@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-19 11:11:19
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-11 15:42:17
+ * @Last Modified time: 2018-12-11 15:50:06
  * @description 多功能复合编辑框
  */
 
@@ -311,7 +311,10 @@ export default class OmniComplexEditor extends PureComponent {
     if (this.isSelectMode()) {
       const { selectState } = this.state;
       const {
-        selectProps, options, optionTextKey, optionValueKey
+        selectProps,
+        options,
+        optionTextKey,
+        optionValueKey,
       } = this.props;
       const restProps = _.pick(selectProps, ['onChange', 'open', 'showArrow']);
       return (

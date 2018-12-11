@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性-个人客户基本信息
  * @Date: 2018-11-07 14:33:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-11 15:39:09
+ * @Last Modified time: 2018-12-11 15:50:41
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -153,7 +153,8 @@ export default class BasicInfo extends PureComponent {
         msg: '数据不能为空',
       };
     }
-    if (_.size(value) > 100) {
+    const hobbyMaxLength = 100;
+    if (_.size(value) > hobbyMaxLength) {
       return {
         validate: false,
         msg: '字符不能超过100个字符',
