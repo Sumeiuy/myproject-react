@@ -147,17 +147,22 @@ export default class ToDoList extends PureComponent {
       requestId: applyId,
       empId: originator,
     };
+    const linkTypeItem = _.find(linkTypeList, item => item.type === sourceFlag);
     if (stepName === '驳回修改') {
-      const url = (_.filter(linkTypeList, item => item.type === sourceFlag))[0].rejectUrl;
-      const targetUrl = urlHelper.replaceUrl(url, targetData);
-      window.open(targetUrl);
+      const url = linkTypeItem.rejectUrl || '';
+      this.doOpenNewPage(url, targetData);
     } else {
-      const url = (_.filter(linkTypeList, item => item.type === sourceFlag))[0].approvalUrl;
-      const targetUrl = urlHelper.replaceUrl(url, targetData);
-      window.open(targetUrl);
+      const url = linkTypeItem.approvalUrl || '';
+      this.doOpenNewPage(url, targetData);
     }
   }
 
+  // 打开页面
+  @autobind
+  doOpenNewPage(url, targetData) {
+    const targetUrl = urlHelper.replace(url, targetData);
+    window.open(targetUrl);
+  }
 
   @autobind
   handleOpenOldPages(record) {

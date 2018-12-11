@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 11:14:36
  * @Last Modified by: liqianwen
- * @Last Modified time: 2018-12-11 17:37:57
+ * @Last Modified time: 2018-12-11 19:52:37
  * @description 此处存放与url数据相关的通用方法
  */
 import qs from 'query-string';
@@ -66,9 +66,11 @@ const url = {
    * @param {String} url  url字符串，approval?a={a}&b={b}
    * @param {Object} params
    */
-  replaceUrl(urlString, params) {
-    const { pathname, query } = url.parseUrl(urlString);
-    return `${pathname}?${url.stringify({ ...query, ...params })}`;
+  replace(urlString, params) {
+    if (urlString) {
+      return urlString.replace(/\{(.+?)\}/g, (a, key) => params[key]);
+    }
+    return false;
   },
 
   // 从url query上解析出filter对象

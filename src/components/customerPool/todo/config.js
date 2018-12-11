@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-11-08 14:56:43
  * @Last Modified by: liqianwen
- * @Last Modified time: 2018-12-11 18:18:20
+ * @Last Modified time: 2018-12-11 19:29:05
  */
 
 import moment from 'moment';
@@ -29,8 +29,8 @@ const typeOption = [
 const linkTypeList = [
   {
     type: 'service_center',
-    rejectUrl: '/bpc/standalone.html#/bpc/highrisk/edit?',
-    approvalUrl: '/fspa/spy/approval/html/highRiskMoneyLaunderingApproval.html?'
+    rejectUrl: '/bpc/standalone.html#/bpc/highrisk/edit?requestId={requestId}&empId={empId}',
+    approvalUrl: '/fspa/spy/approval/html/highRiskMoneyLaunderingApproval.html?requestId={requestId}&empId={empId}'
   }
 ];
 
