@@ -148,24 +148,40 @@ export default class PerformanceIndicators extends PureComponent {
     location: PropTypes.object.isRequired,
   }
 
-  static getDerivedStateFromProps(nextProps) {
-    const { location: { query: nextQuery } } = nextProps;
-    const { orgId: nextOrgId = '' } = nextQuery;
-
-    if (nextOrgId === MY_CUSTOMER) {
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const { location: { query: nextQuery }, location } = nextProps;
+    const { location: { query: prevQuery } } = prevState;
+    const { orgId: nextOrgId } = nextQuery;
+    // url是否发生变化
+    const isQueryChange = _.isEqual(nextQuery, prevQuery);
+    if (!isQueryChange) {
+      if (nextOrgId === MY_CUSTOMER) {
+        return {
+          location,
+          showText: MY_CUSTOMER_TEXT,
+        };
+      }
       return {
-        showText: MY_CUSTOMER_TEXT,
+        location,
+        showText: DEFAULT_SHOW_TEXT,
       };
     }
-    return {
-      showText: DEFAULT_SHOW_TEXT,
-    };
+    return null;
   }
 
   constructor(props) {
     super(props);
+    const {
+      location,
+      location: {
+        query: {
+          orgId = '',
+        },
+      },
+    } = props;
     this.state = {
-      showText: DEFAULT_SHOW_TEXT,
+      location,
+      showText: orgId === MY_CUSTOMER ? MY_CUSTOMER_TEXT : DEFAULT_SHOW_TEXT,
     };
   }
 
