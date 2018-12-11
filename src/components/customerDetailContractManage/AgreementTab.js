@@ -23,7 +23,7 @@ import {
   AGREEMENT_LIST,
   DEFAULT_TEXT,
 } from './config';
-import styles from './protocolTab.less';
+import styles from './agreementTab.less';
 
 const KEY_ID = 'id';
 const KEY_NAME = 'name';
@@ -100,6 +100,31 @@ export default class AgreementTab extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: { name: '合同内容' },
+  })
+  handleJumpAgreementReport(record) {
+    const {
+      empInfo: { empInfo = EMPTY_OBJECT },
+    } = this.props;
+    const { login = '' } = empInfo;
+    const {
+      name = '',
+      ptyId = '',
+    } = record;
+    const filterAgreement = _.filter(AGREEMENT_LIST, o => o.name === name);
+    const query = {
+      'iv-user': login,
+      menuId: filterAgreement[0].menuId || '',
+      pty_id: ptyId,
+    };
+    const url = `/acrmbi/login?${urlHelper.stringify(query)}`;
+    const w = window.open('about:blank');
+    w.location.href = url;
+  }
+
+  @autobind
   renderTooltipColumn(text) {
     if (!_.isEmpty(text)) {
       return (
@@ -138,31 +163,6 @@ export default class AgreementTab extends PureComponent {
     return DEFAULT_TEXT;
   }
 
-  @autobind
-  @logable({
-    type: 'ViewItem',
-    payload: { name: '合同内容' },
-  })
-  handleJumpAgreementReport(record) {
-    const {
-      empInfo: { empInfo = EMPTY_OBJECT },
-    } = this.props;
-    const { login = '' } = empInfo;
-    const {
-      name = '',
-      ptyId = '',
-    } = record;
-    const filterAgreement = _.filter(AGREEMENT_LIST, o => o.name === name);
-    const query = {
-      'iv-user': login,
-      menuId: filterAgreement[0].menuId || '',
-      pty_id: ptyId,
-    };
-    const url = `/acrmbi/login?${urlHelper.stringify(query)}`;
-    const w = window.open('about:blank');
-    w.location.href = url;
-  }
-
   render() {
     const {
       data: { list = EMPTY_ARRAY },
@@ -170,7 +170,7 @@ export default class AgreementTab extends PureComponent {
     const titleList = this.getProtocolColumns(AGREEMENT_COLUMNS);
     const isRender = !_.isEmpty(list);
     return (
-      <div className={styles.protocolTab}>
+      <div className={styles.agreementTab}>
         <IfTableWrap isRender={isRender} text="暂无合同信息">
           <Table
             columns={titleList}
