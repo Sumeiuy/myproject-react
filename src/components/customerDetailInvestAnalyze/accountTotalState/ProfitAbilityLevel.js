@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-21 09:21:54
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-21 17:02:38
+ * @Last Modified time: 2018-12-08 21:17:48
  * @description 盈利能力等级
  */
 import React from 'react';
@@ -40,5 +40,9 @@ export default function ProfitAbilityLevel(props) {
 }
 
 ProfitAbilityLevel.propTypes = {
-  profitAbilityLevel: PropTypes.number.isRequired,
+  profitAbilityLevel: PropTypes.number,
+};
+
+ProfitAbilityLevel.defaultProps = {
+  profitAbilityLevel: 0,
 };

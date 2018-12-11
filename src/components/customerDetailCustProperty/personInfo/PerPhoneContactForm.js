@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 16:14:23
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-04 17:19:39
+ * @Last Modified time: 2018-12-11 16:33:05
  * @description 添加个人客户电话信息联系方式的Form
  */
 import React, { PureComponent } from 'react';
@@ -61,7 +61,7 @@ export default class PerPhoneContactForm extends PureComponent {
       // 号码：
       tellphoneNumber: isCreate ? '' : phoneNumber,
       // 来源
-      sourceCode: isCreate ? SOURCE_CODE.ocrm : sourceCode,
+      sourceCode: isCreate ? SOURCE_CODE.finance : sourceCode,
       // 联系方式
       contactWayCode: isCreate ? '' : contactWayCode,
     };

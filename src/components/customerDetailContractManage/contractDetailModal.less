@@ -1,0 +1,31 @@
+.detailModal {
+  :global {
+    .ant-modal-title {
+      line-height: 20px;
+    }
+    .ant-modal-footer {
+      button {
+        height: 30px;
+        font-size: 14px;
+        &:first-child {
+          float: right;
+          margin-left: 10px;
+        }
+      }
+    }
+  }
+  .modalContent {
+    margin: 0 30px;
+    :global {
+      .ant-tabs-tab,
+      .ant-tabs-tab-active {
+        font-size: 14px;
+        color: #333;
+        line-height: 18px;
+      }
+      .ant-tabs-tab-active {
+        font-weight: bold;
+      }
+    }
+  }
+}

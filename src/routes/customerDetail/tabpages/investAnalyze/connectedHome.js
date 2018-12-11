@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-27 16:21:53
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-04 13:22:57
+ * @Last Modified time: 2018-12-07 13:28:49
  * @Description: 客户360-投资能力分析相关effect,mapStateToProps,mapDispatchToProps
  */
 import { connect } from 'dva';
@@ -37,7 +37,7 @@ const mapStateToProps = state => ({
   // 投资账户特征
   investmentFeatureLabels: state.detailInvestAnalyze.investmentFeatureLabels,
   // 账户资产变动
-  assetChangeList: state.detailInvestAnalyze.assetChangeList,
+  assetChangeData: state.detailInvestAnalyze.assetChangeData,
   // 账户资产变动图表数据
   assetChangeReportData: state.detailInvestAnalyze.assetChangeReportData,
   // 账户收益走势图表数据

@@ -3,7 +3,7 @@
  * @Author: Liujianshu-K0240007
  * @Date: 2018-11-21 16:39:44
  * @Last Modified by: Liujianshu-K0240007
- * @Last Modified time: 2018-11-22 13:35:06
+ * @Last Modified time: 2018-12-05 13:51:54
  */
 
 import { detailContractManage as api } from '../../api';
@@ -25,6 +25,14 @@ export default {
     deleteData: EMPTY_OBJECT,
     // 合同列表
     agreementList: EMPTY_OBJECT,
+    // 合约列表
+    contractList: EMPTY_OBJECT,
+    // 合约条款
+    contractTerms: EMPTY_OBJECT,
+    // 审批历史
+    approvalHistory: EMPTY_OBJECT,
+    // 附件列表
+    attachmentList: EMPTY_OBJECT,
   },
   reducers: {
     queryProtocolListSuccess(state, action) {
@@ -67,6 +75,42 @@ export default {
       return {
         ...state,
         agreementList: payload,
+      };
+    },
+    queryContractListSuccess(state, action) {
+      const { payload = EMPTY_OBJECT } = action;
+      return {
+        ...state,
+        contractList: payload,
+      };
+    },
+    queryContractTermsSuccess(state, action) {
+      const { payload = EMPTY_OBJECT } = action;
+      return {
+        ...state,
+        contractTerms: payload,
+      };
+    },
+    queryApprovalHistorySuccess(state, action) {
+      const { payload = EMPTY_OBJECT } = action;
+      return {
+        ...state,
+        approvalHistory: payload,
+      };
+    },
+    queryAttachmentListSuccess(state, action) {
+      const { payload = EMPTY_OBJECT } = action;
+      return {
+        ...state,
+        attachmentList: payload,
+      };
+    },
+    // 清除数据
+    clearData(state, action) {
+      const { payload = {} } = action;
+      return {
+        ...state,
+        ...payload,
       };
     },
   },
@@ -116,6 +160,38 @@ export default {
       const { resultData } = yield call(api.queryAgreementList, payload);
       yield put({
         type: 'queryAgreementListSuccess',
+        payload: resultData,
+      });
+    },
+    // 查询合约列表
+    * queryContractList({ payload }, { put, call }) {
+      const { resultData } = yield call(api.queryContractList, payload);
+      yield put({
+        type: 'queryContractListSuccess',
+        payload: resultData,
+      });
+    },
+    // 查询条款列表
+    * queryContractTerms({ payload }, { put, call }) {
+      const { resultData } = yield call(api.queryContractTerms, payload);
+      yield put({
+        type: 'queryContractTermsSuccess',
+        payload: resultData,
+      });
+    },
+    // 查询审批历史
+    * queryApprovalHistory({ payload }, { put, call }) {
+      const { resultData } = yield call(api.queryApprovalHistory, payload);
+      yield put({
+        type: 'queryApprovalHistorySuccess',
+        payload: resultData,
+      });
+    },
+    // 查询附件列表
+    * queryAttachmentList({ payload }, { put, call }) {
+      const { resultData } = yield call(api.queryAttachmentList, payload);
+      yield put({
+        type: 'queryAttachmentListSuccess',
         payload: resultData,
       });
     },

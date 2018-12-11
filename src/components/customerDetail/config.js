@@ -3,10 +3,10 @@
  * @Description: Description
  * @Date: 2018-11-23 11:03:14
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-03 16:58:40
+ * @Last Modified time: 2018-12-07 10:28:14
  */
-
-
+// TABS的top位置值，后面切换到某个Tab时需要将页面滚动至335的位置
+export const TAB_POSITION_TOP = 335;
 // 账户信息
 export const ACCOUNT_INFO_TAB_KEY = 'accountInfo';
 // 客户属性

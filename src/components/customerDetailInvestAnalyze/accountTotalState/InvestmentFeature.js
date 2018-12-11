@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-20 15:28:46
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-03 21:20:16
+ * @Last Modified time: 2018-12-10 13:22:09
  * @description 客户投资特征
  */
 import React, { PureComponent } from 'react';
@@ -12,9 +12,11 @@ import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 
 import { Popover } from 'antd';
+import IfWrap from '../../common/biz/IfWrap';
 import Icon from '../../common/Icon';
 import InvestmentFeatureLabel from './InvestmentFeatureLabel';
 import ProfitAbilityLevel from './ProfitAbilityLevel';
+import { data } from '../../../helper';
 import { profitAbilityLevelList } from '../config';
 
 import styles from './investmentFeature.less';
@@ -70,9 +72,11 @@ export default class InvestmentFeature extends PureComponent {
             {beatCustPercent}
           </p>
           <p className={styles.custAssetStage}>
-            同资产段 (
-            {custAssetStage}
-）客户
+            <IfWrap isRender={!_.isEmpty(custAssetStage)}>
+              同资产段 (
+              {custAssetStage}
+              ）客户
+            </IfWrap>
           </p>
         </div>
         <div className={styles.profitAbilityLevel}>
@@ -87,9 +91,11 @@ export default class InvestmentFeature extends PureComponent {
             </Popover>
           </div>
           <div className={styles.levelWrapper}>
-            <ProfitAbilityLevel
-              profitAbilityLevel={profitAbilityLevel}
-            />
+            <IfWrap isRender={_.isNumber(profitAbilityLevel)}>
+              <ProfitAbilityLevel
+                profitAbilityLevel={profitAbilityLevel}
+              />
+            </IfWrap>
           </div>
         </div>
         <div className={styles.investmentFeatureLabel}>
@@ -99,7 +105,7 @@ export default class InvestmentFeature extends PureComponent {
           <div className={styles.labelContainer}>
             {
               _.map(investmentFeatureLabels, label => (
-                <InvestmentFeatureLabel key={label.id} labelData={label} />
+                <InvestmentFeatureLabel key={data.uuid()} labelData={label} />
               ))
             }
           </div>

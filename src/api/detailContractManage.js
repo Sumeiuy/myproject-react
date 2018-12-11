@@ -3,7 +3,7 @@
  * @Author: Liujianshu-K0240007
  * @Date: 2018-11-21 15:57:25
  * @Last Modified by: Liujianshu-K0240007
- * @Last Modified time: 2018-11-21 16:32:02
+ * @Last Modified time: 2018-12-04 13:39:36
  */
 
 export default function detailContractManage(api) {
@@ -20,5 +20,13 @@ export default function detailContractManage(api) {
     deleteProtocol: query => api.post('/groovynoauth/fsp/cust/contract/deleteProtocol', query),
     // 查询合同列表
     queryAgreementList: query => api.post('/groovynoauth/fsp/cust/contract/queryAgreementList', query),
+    // 查询合约列表
+    queryContractList: query => api.post('/groovynoauth/fsp/cust/contract/queryContractList', query),
+    // 查询条款列表
+    queryContractTerms: query => api.post('/groovynoauth/fsp/cust/contract/queryContractTerms', query),
+    // 查询审批历史
+    queryApprovalHistory: query => api.post('/groovynoauth/fsp/cust/contract/queryApprovalHistory', query),
+    // 查询附件列表
+    queryAttachmentList: query => api.post('/groovynoauth/fsp/cust/contract/queryAttachmentList', query),
   };
 }

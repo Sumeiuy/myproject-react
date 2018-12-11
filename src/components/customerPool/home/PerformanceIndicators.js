@@ -178,7 +178,7 @@ export default class PerformanceIndicators extends PureComponent {
 
   @autobind
   handleHSRateClick(instance) {
-    instance.on('click', (arg) => {
+    instance.on('click', () => {
       this.aggregationToList();
     });
   }
@@ -261,6 +261,76 @@ export default class PerformanceIndicators extends PureComponent {
       { key: 'jingchuangshou', headLine: '净创收', data: this.filterFalsityArray(pureIcomeData) }, // 净创收指标块
       { key: 'fuwuzhibiao', headLine: '服务指标', data: this.filterFalsityArray(serviceIndicatorData) }, // 服务指标
     ];
+  }
+
+  // 服务指标（投顾绩效）下钻
+  @autobind
+  @logable({
+    type: 'DrillDown',
+    payload: {
+      name: '服务指标',
+      subtype: '$args[2]',
+      value: '$args[1]',
+    }
+  })
+  toList(dataIndex) {
+    const { push } = this.context;
+    const {
+      cycle,
+      location,
+    } = this.props;
+    const modalTypeList = homeModelType[SOURCE_SERVICER];
+    const type = modalTypeList[dataIndex];
+    if (type) {
+      const param = {
+        source: SOURCE_SERVICER,
+        cycle,
+        push,
+        location,
+        type,
+      };
+      linkTo(param);
+    }
+  }
+
+  @autobind
+  handleServiceToListClick(instance, originData) {
+    instance.on('click', (arg) => {
+      const { dataIndex } = arg;
+      this.toList(dataIndex, originData[dataIndex].value || 0, originData[dataIndex].name);
+      logCommon({
+        type: 'DrillDown',
+        payload: {
+          name: '服务指标',
+          subtype: originData[dataIndex].name,
+          value: arg.value,
+        },
+      });
+    });
+  }
+
+  @autobind
+  @logable({
+    type: 'DrillDown',
+    payload: {
+      name: '沪深归集率',
+      subtype: '沪深归集率',
+      value: '$args[1]',
+    }
+  })
+  aggregationToList() {
+    const { push } = this.context;
+    const {
+      cycle,
+      location,
+    } = this.props;
+    const param = {
+      source: 'aggregationRate',
+      cycle,
+      push,
+      location,
+    };
+    linkTo(param);
   }
 
   @autobind
@@ -359,30 +429,6 @@ export default class PerformanceIndicators extends PureComponent {
     );
   }
 
-  @autobind
-  @logable({
-    type: 'DrillDown',
-    payload: {
-      name: '沪深归集率',
-      subtype: '沪深归集率',
-      value: '$args[1]',
-    }
-  })
-  aggregationToList() {
-    const { push } = this.context;
-    const {
-      cycle,
-      location,
-    } = this.props;
-    const param = {
-      source: 'aggregationRate',
-      cycle,
-      push,
-      location,
-    };
-    linkTo(param);
-  }
-
   // 沪深归集率
   renderHSRateIndicators(param) {
     const { value = '' } = param.data[0] || {};
@@ -453,52 +499,6 @@ export default class PerformanceIndicators extends PureComponent {
         </RectFrame>
       </Col>
     );
-  }
-
-  @autobind
-  handleServiceToListClick(instance, originData) {
-    instance.on('click', (arg) => {
-      const { dataIndex } = arg;
-      this.toList(dataIndex, originData[dataIndex].value || 0, originData[dataIndex].name);
-      logCommon({
-        type: 'DrillDown',
-        payload: {
-          name: '服务指标',
-          subtype: originData[dataIndex].name,
-          value: arg.value,
-        },
-      });
-    });
-  }
-
-  // 服务指标（投顾绩效）下钻
-  @autobind
-  @logable({
-    type: 'DrillDown',
-    payload: {
-      name: '服务指标',
-      subtype: '$args[2]',
-      value: '$args[1]',
-    }
-  })
-  toList(dataIndex) {
-    const { push } = this.context;
-    const {
-      cycle,
-      location,
-    } = this.props;
-    const modalTypeList = homeModelType[SOURCE_SERVICER];
-    const type = modalTypeList[dataIndex];
-    if (type) {
-      const param = {
-        source: SOURCE_SERVICER,
-        cycle,
-        push,
-        location,
-        type,
-      };
-      linkTo(param);
-    }
   }
 
   // 服务指标（投顾绩效）

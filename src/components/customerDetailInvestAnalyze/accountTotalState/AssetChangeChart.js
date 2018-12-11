@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-23 09:25:41
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-03 21:20:53
+ * @Last Modified time: 2018-12-10 11:14:32
  * @description 资产变动报表
  */
 import React, { PureComponent } from 'react';
@@ -90,7 +90,10 @@ export default class AssetChangeChart extends PureComponent {
     const assetChangeTipData = _.map(assetChangeChartTip, item => <p key={data.uuid()}>{item}</p>);
     return (
       <div className={styles.assetChangeChart}>
-        <IfWrap isRender={!_.isEmpty(assetChangeReportData)}>
+        <IfWrap
+          isRender={!_.isEmpty(assetChangeReportData)}
+          isUsePlaceholderImage
+        >
           <div className={styles.chartBox}>
             <div className={styles.chartlegend}>
               <div className={styles.column}>
@@ -103,6 +106,7 @@ export default class AssetChangeChart extends PureComponent {
             <IECharts
               option={option}
               style={{ height: '260px' }}
+              resizable
             />
             <div className={styles.assetChangeTips}>
               <div className={styles.label}>注：</div>

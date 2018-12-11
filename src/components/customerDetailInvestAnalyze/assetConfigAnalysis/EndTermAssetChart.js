@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-12-04 14:16:41
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-05 11:05:35
+ * @Last Modified time: 2018-12-10 14:55:00
  * @description 期末资产配置雷达图
  */
 import React, { PureComponent } from 'react';
@@ -18,11 +18,11 @@ import styles from './endTermAssetChart.less';
 export default class EndTermAssetChart extends PureComponent {
   static propTypes = {
     // 雷达图表数据
-    endTermAssetTableData: PropTypes.object.isRequired,
+    endTermAssetTableData: PropTypes.array.isRequired,
     // 总资产
-    totalAsset: PropTypes.string.isRequired,
+    totalAsset: PropTypes.number.isRequired,
     // 负债
-    liabilities: PropTypes.string.isRequired,
+    liabilities: PropTypes.number.isRequired,
   }
 
   // 获取雷达图配置项
@@ -72,7 +72,10 @@ export default class EndTermAssetChart extends PureComponent {
     const option = this.getChartOption();
     return (
       <div className={styles.endTermAssetChart}>
-        <IfWrap isRender={!_.isEmpty(endTermAssetTableData)}>
+        <IfWrap
+          isRender={!_.isEmpty(endTermAssetTableData)}
+          isUsePlaceholderImage
+        >
           <IECharts
             option={option}
             style={{

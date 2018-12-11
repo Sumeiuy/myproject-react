@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 19:41:38
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-04 17:22:05
+ * @Last Modified time: 2018-12-11 19:40:49
  * @description 机构客户联系方式配置项
  */
 // 机构客户电话信息表格columns
@@ -11,42 +11,49 @@ export const ORG_PHONE_COLUMNS = [
     key: 'mainFlag',
     dataIndex: 'mainFlag',
     title: '主要',
-    width: 80,
+    width: 60,
   },
   {
     key: 'contractType',
     dataIndex: 'contractType',
     title: '联系人类型',
+    width: 160,
   },
   {
     key: 'name',
     dataIndex: 'name',
     title: '姓名',
+    width: 90,
   },
   {
     key: 'certificateType',
     dataIndex: 'certificateType',
     title: '证件类型',
+    width: 140,
   },
   {
     key: 'cretificateNo',
     dataIndex: 'cretificateNo',
     title: '证件号码',
+    width: 180,
   },
   {
     key: 'duty',
     dataIndex: 'duty',
     title: '职务',
+    width: 120,
   },
   {
     key: 'mobile',
     dataIndex: 'mobile',
     title: '手机号码',
+    width: 130,
   },
   {
     key: 'landline',
     dataIndex: 'landline',
     title: '固定电话',
+    width: 140,
   },
   {
     key: 'email',
@@ -57,7 +64,7 @@ export const ORG_PHONE_COLUMNS = [
     key: 'operate',
     dataIndex: 'operate',
     title: '操作',
-    width: 100,
+    width: 70,
   },
 ];
 // 机构客户地址信息表格columns
@@ -107,7 +114,7 @@ export const ORG_ADDRESS_COLUMNS = [
     key: 'operate',
     dataIndex: 'operate',
     title: '操作',
-    width: 100,
+    width: 70,
   },
 ];
 // 个人客户|机构客户添加联系方式的Tabs
@@ -140,6 +147,8 @@ export const MODAL_TITLES = {
 
 // 来源Code
 export const SOURCE_CODE = {
+  // 理财平台Code
+  finance: '102330',
   // ORCM来源的Code
   ocrm: '102030',
   // 客户服务中心

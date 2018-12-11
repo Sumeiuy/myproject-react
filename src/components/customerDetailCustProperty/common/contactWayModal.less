@@ -44,8 +44,48 @@
         }
       }
     }
+
+    .orgPhoneTable {
+      :global {
+        .ant-table-tbody > tr > td {
+          height: 38px;
+          padding: 10px 0 10px 10px !important;
+          white-space: nowrap;
+          line-height: 18px;
+          font-size: 14px;
+          color: #333;
+
+          &:last-child {
+            padding-right: 10px !important;
+          }
+          &:first-child {
+            padding-left: 20px !important;
+          }
+        }
+        .ant-table-thead > tr > th {
+          padding: 10px 0 10px 10px !important;
+          white-space: nowrap;
+          font-size: 14px;
+          font-weight: bold;
+          color: #666;
+          &:last-child {
+            padding-right: 10px !important;
+          }
+          &:first-child {
+            padding-left: 20px !important;
+          }
+        }
+      }
+    }
   }
 }
 .editContactModalWrap {
   padding: 15px 30px;
+}
+.textEllipse {
+  display: inline-block;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

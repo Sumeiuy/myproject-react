@@ -61,17 +61,11 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: generateProxy([
       '/finereport/ReportServer', // 报表中心
-      {
-        target: UAT_FORWARD_URL,
-      },
+      { target: UAT_FORWARD_URL },
       '/fspa/phone',
-      {
-        target: UAT_FORWARD_URL,
-      },
+      { target: UAT_FORWARD_URL },
       prefix,
-      {
-        target: UAT_FORWARD_URL,
-      },
+      { target: UAT_FORWARD_URL },
       '/fspa/log',
       {
         target: UAT_FORWARD_URL,
@@ -89,9 +83,9 @@ module.exports = {
         target: UAT_FORWARD_URL,
       },
       '/jeip',
-      {
-        target: UAT_FORWARD_URL,
-      },
+      { target: UAT_FORWARD_URL },
+      '/yt/',
+      { target: UAT_FORWARD_URL },
     ]),
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README
