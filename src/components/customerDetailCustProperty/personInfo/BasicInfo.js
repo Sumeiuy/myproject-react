@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性-个人客户基本信息
  * @Date: 2018-11-07 14:33:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-29 15:48:36
+ * @Last Modified time: 2018-12-11 15:50:41
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -101,7 +101,7 @@ export default class BasicInfo extends PureComponent {
         msg: '数据不能为空',
       };
     }
-    if (_.isNumber(_.trim(value))) {
+    if (!_.isNumber(value)) {
       return {
         validate: false,
         msg: '子女数量必须是数字',
@@ -151,6 +151,13 @@ export default class BasicInfo extends PureComponent {
       return {
         validate: false,
         msg: '数据不能为空',
+      };
+    }
+    const hobbyMaxLength = 100;
+    if (_.size(value) > hobbyMaxLength) {
+      return {
+        validate: false,
+        msg: '字符不能超过100个字符',
       };
     }
     return {
@@ -330,6 +337,7 @@ export default class BasicInfo extends PureComponent {
                     value={data.hobby || ''}
                     displayValue={data.hobby || DEFAULT_VALUE}
                     checkable
+                    showTitle
                     onCheck={this.checkHobby}
                     onSuccess={this.refreshCustProperty}
                   />
