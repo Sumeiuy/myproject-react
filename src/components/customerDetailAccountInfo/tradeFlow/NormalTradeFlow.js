@@ -204,7 +204,7 @@ export default class NormalTradeFlow extends PureComponent {
       value: '$args[0].value.prdtCode',
     },
   })
-  handleFilterStandardPrdt(current) {
+  handleProductCodeSelect(current) {
     const { prdtCode, prdtName, prdtSortCode } = current.value;
     this.setState({
       productCode: [prdtCode, prdtName, prdtSortCode],
@@ -323,7 +323,7 @@ export default class NormalTradeFlow extends PureComponent {
               data={productCodeList}
               value={productCode}
               onInputChange={this.handleProductCodeSearch}
-              onChange={this.handleFilterStandardPrdt}
+              onChange={this.handleProductCodeSelect}
               getOptionItemValue={this.getOptionItemValue}
             />
           </div>

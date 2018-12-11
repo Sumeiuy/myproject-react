@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-12-07 14:57:51
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-11 10:02:32
+ * @Last Modified time: 2018-12-11 10:05:39
  * @description 交易流水信用账户历史记录
  */
 import React, { PureComponent } from 'react';
@@ -213,8 +213,9 @@ export default class CreditTradeFlow extends PureComponent {
     },
   })
   handleProductCodeSelect(current) {
+    const { prdtCode, prdtName, prdtSortCode } = current.value;
     this.setState({
-      productCode: current.value.prdtCode,
+      productCode: [prdtCode, prdtName, prdtSortCode],
     }, this.queryCreditTradeFlow);
   }
 
