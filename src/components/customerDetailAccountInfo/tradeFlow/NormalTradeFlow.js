@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-12-06 17:29:40
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-10 13:45:54
+ * @Last Modified time: 2018-12-11 11:57:15
  * @description 交易流水中的普通账户历史交易Tab组件
  */
 import React, { PureComponent } from 'react';
@@ -57,7 +57,7 @@ export default class NormalTradeFlow extends PureComponent {
       // 业务类型
       bussinessType: '',
       // 产品代码
-      productCode: '',
+      productCode: ['', '', ''],
       // 全产品目录
       allProductMenu: '',
       // 产品代码下来框选项
@@ -105,11 +105,7 @@ export default class NormalTradeFlow extends PureComponent {
   // 修改产品下拉选项
   @autobind
   getOptionItemValue({ value: { prdtCode, prdtName, prdtSortCode } }) {
-    let optionValue = `${prdtName}(${prdtSortCode})`;
-    if (!prdtSortCode) {
-      optionValue = prdtName;
-    }
-    return (<span key={prdtCode} title={prdtName}>{optionValue}</span>);
+    return this.renderOption(prdtCode, prdtName, prdtSortCode);
   }
 
   // 修改纯文本展示，超过length部分...并且悬浮显示全部信息
@@ -208,9 +204,10 @@ export default class NormalTradeFlow extends PureComponent {
       value: '$args[0].value.prdtCode',
     },
   })
-  handleFilterStandardPrdt(current) {
+  handleProductCodeSelect(current) {
+    const { prdtCode, prdtName, prdtSortCode } = current.value;
     this.setState({
-      productCode: current.value.prdtCode,
+      productCode: [prdtCode, prdtName, prdtSortCode],
     }, this.queryStandardTradeFlow);
   }
 
@@ -253,6 +250,19 @@ export default class NormalTradeFlow extends PureComponent {
         this.setState({ productCodeList });
       });
     }
+  }
+
+  @autobind
+  renderOption(prdtCode, prdtName, prdtSortCode) {
+    const { productCode } = this.state;
+    let displayName = `${prdtName}(${prdtSortCode})`;
+    if (!prdtCode) {
+      displayName = prdtName;
+    }
+    if (!prdtSortCode) {
+      displayName = `${prdtName}(${productCode[2]})`;
+    }
+    return <span key={prdtCode} title={prdtName}>{displayName}</span>;
   }
 
   render() {
@@ -309,10 +319,11 @@ export default class NormalTradeFlow extends PureComponent {
               dataMap={['prdtCode', 'prdtName']}
               needItemObj
               showSearch
+              useLabelInValue
               data={productCodeList}
               value={productCode}
               onInputChange={this.handleProductCodeSearch}
-              onChange={this.handleFilterStandardPrdt}
+              onChange={this.handleProductCodeSelect}
               getOptionItemValue={this.getOptionItemValue}
             />
           </div>

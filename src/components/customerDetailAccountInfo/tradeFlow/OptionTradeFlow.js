@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-12-07 17:14:27
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-10 14:39:55
+ * @Last Modified time: 2018-12-11 11:57:04
  * @description 期权账户交易流水
  */
 import React, { PureComponent } from 'react';
@@ -52,7 +52,7 @@ export default class OptionTradeFlow extends PureComponent {
       startDate,
       endDate,
       // 产品代码
-      productCode: '',
+      productCode: ['', '', ''],
       // 产品代码下拉框选项列表
       productCodeList: [],
     };
@@ -69,11 +69,7 @@ export default class OptionTradeFlow extends PureComponent {
   // 修改产品下拉选项
   @autobind
   getOptionItemValue({ value: { prdtCode, prdtName, prdtSortCode } }) {
-    let optionValue = `${prdtName}(${prdtSortCode})`;
-    if (!prdtSortCode) {
-      optionValue = prdtName;
-    }
-    return (<span key={prdtCode} title={prdtName}>{optionValue}</span>);
+    return this.renderOption(prdtCode, prdtName, prdtSortCode);
   }
 
   // 获取信用账户交易流水的Column配置
@@ -195,8 +191,9 @@ export default class OptionTradeFlow extends PureComponent {
     },
   })
   handleProductCodeSelect(current) {
+    const { prdtCode, prdtName, prdtSortCode } = current.value;
     this.setState({
-      productCode: current.value.prdtCode,
+      productCode: [prdtCode, prdtName, prdtSortCode],
     }, this.queryOptionTradeFlow);
   }
 
@@ -223,6 +220,19 @@ export default class OptionTradeFlow extends PureComponent {
   })
   handlePageChange(pageNum) {
     this.queryOptionTradeFlow(pageNum);
+  }
+
+  @autobind
+  renderOption(prdtCode, prdtName, prdtSortCode) {
+    const { productCode } = this.state;
+    let displayName = `${prdtName}(${prdtSortCode})`;
+    if (!prdtCode) {
+      displayName = prdtName;
+    }
+    if (!prdtSortCode) {
+      displayName = `${prdtName}(${productCode[2]})`;
+    }
+    return <span key={prdtCode} title={prdtName}>{displayName}</span>;
   }
 
   render() {
@@ -266,6 +276,7 @@ export default class OptionTradeFlow extends PureComponent {
               dataMap={['prdtCode', 'prdtName']}
               showSearch
               needItemObj
+              useLabelInValue
               data={productCodeList}
               value={productCode}
               onInputChange={this.handleProductCodeSearch}
