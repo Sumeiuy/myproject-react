@@ -3,13 +3,12 @@
  * @Description: 客户360-客户属性-个人客户联系方式
  * @Date: 2018-11-07 14:33:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-10 16:57:25
+ * @Last Modified time: 2018-12-11 10:16:26
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { Icon } from 'antd';
 
 import IFWrap from '../../common/biz/IfWrap';
 import ContactWayModal from './ContactWayModal';
@@ -215,22 +214,17 @@ export default class ContactWay extends PureComponent {
       delContact,
     } = this.props;
     const { personalContactWayModal } = this.state;
-    // 是否主服务经理
-    const { custBasic: { isMainEmp } } = this.context;
 
     return (
       <div className={styles.contactWayBox}>
         <div className={styles.title}>
           联系方式
-          {/** 只有主服务经理才可以进入编辑谭宽 */}
-          <IFWrap isRender={isMainEmp}>
-            <span
-              className={styles.contactWayEdit}
-              onClick={this.handleContactWayEditClick}
-            >
-              <Icon type="edit" />
-            </span>
-          </IFWrap>
+          <span
+            className={styles.contactWayEdit}
+            onClick={this.handleContactWayEditClick}
+          >
+            更多
+          </span>
         </div>
         <div className={styles.infoItemBox}>
           <InfoItem
