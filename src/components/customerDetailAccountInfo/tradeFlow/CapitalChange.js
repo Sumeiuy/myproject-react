@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-12-07 17:40:15
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-10 14:36:02
+ * @Last Modified time: 2018-12-11 17:04:44
  * @description 交易流水资金变动
  */
 
@@ -149,7 +149,7 @@ export default class CapitalChange extends PureComponent {
       ...restColumn,
       render(text, record) {
         if (_.isNull(text) || record.flag) {
-          return this.displayEmpty(text, record);
+          return displayEmpty(text, record);
         }
         // 比如可用数量，不需要保留两位小数
         if (isAmount) {
