@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性-(普通机构, 产品机构)客户联系方式
  * @Date: 2018-11-07 14:33:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-04 17:56:55
+ * @Last Modified time: 2018-12-11 12:04:02
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -54,10 +54,6 @@ export default class ContactWay extends PureComponent {
     // 用于修改后刷新客户属性数据
     queryCustomerProperty: PropTypes.func.isRequired,
   }
-
-  static contextTypes = {
-    custBasic: PropTypes.object.isRequired,
-  };
 
   constructor(props) {
     super(props);
@@ -188,22 +184,17 @@ export default class ContactWay extends PureComponent {
       updateOrgAddress,
       updateOrgPhone,
     } = this.props;
-    // 是否主服务经理
-    const { custBasic: { isMainEmp } } = this.context;
 
     return (
       <div className={styles.contactWayBox}>
         <div className={styles.title}>
           联系方式
-          {/** 只有主服务经理才可以进入编辑谭宽 */}
-          <IFWrap isRender={isMainEmp}>
-            <span
-              className={styles.contactWayEdit}
-              onClick={this.handleContactWayEditClick}
-            >
-              <Icon type="edit" />
-            </span>
-          </IFWrap>
+          <span
+            className={styles.contactWayEdit}
+            onClick={this.handleContactWayEditClick}
+          >
+            更多
+          </span>
         </div>
         <div className={styles.infoItemBox}>
           <InfoItem

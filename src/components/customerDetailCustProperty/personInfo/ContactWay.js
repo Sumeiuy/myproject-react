@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性-个人客户联系方式
  * @Date: 2018-11-07 14:33:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-11 10:16:26
+ * @Last Modified time: 2018-12-11 12:04:33
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -73,10 +73,6 @@ export default class ContactWay extends PureComponent {
     noMessage: false,
     noCall: false,
   }
-
-  static contextTypes = {
-    custBasic: PropTypes.object.isRequired,
-  };
 
   constructor(props) {
     super(props);
