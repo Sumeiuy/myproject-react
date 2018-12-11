@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-12-04 13:54:08
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-12-06 17:51:59
+ * @LastEditTime: 2018-12-11 18:09:36
  * @Description: 首页-投顾绩效-图表
  */
 
@@ -15,9 +15,6 @@ import {
 import _ from 'lodash';
 import ChartContiner from './ChartContainer';
 import Icon from '../common/Icon';
-import {
-  formatByBorders,
-} from '../../helper/number';
 import IECharts from '../IECharts';
 import Tooltip from '../common/Tooltip';
 import {
@@ -127,22 +124,20 @@ export default class PerformanceCharts extends PureComponent {
   // 金融产品
   renderFinancialProduct(indicators) {
     const financialProducts = getValueByResponse(indicators, FINANCIAL_PRODUCT_CONFIG);
-    const zdcxPrdt = _.find(financialProducts, { key: 'zdcxPrdt' });
-    const commonProducts = _.filter(financialProducts, product => product.key !== 'zdcxPrdt');
-    const totalValue = _.every(commonProducts, { formatedValue: EMPTY_VALUE })
-      ? EMPTY_VALUE
-      : _.sumBy(commonProducts, 'value');
-    const totalDescription = '公募基金、紫金产品、OTC、私募基金销量合计';
+    const zdcxPrdt = _.find(financialProducts, { key: 'zdcxPrdt' }); // 重点创新产品
+    const allPrdtBuyAmt = _.find(financialProducts, { key: 'allPrdtBuyAmt' }); // 销量总计
+    const commonProducts = _.filter(financialProducts,
+      product => product.key !== 'zdcxPrdt' && product.key !== 'allPrdtBuyAmt');
     return (
       <ChartContiner dataSource={{ title: '金融产品' }}>
         <div className={styles.financialProductWrap}>
           <div className={styles.main}>
             <div>
               <span className={styles.name}>
-                <Tooltip title={totalDescription} placement="top">销量合计</Tooltip>
+                <Tooltip title={allPrdtBuyAmt.description} placement="top">{allPrdtBuyAmt.name}</Tooltip>
               </span>
               <span className={styles.total}>
-                {formatByBorders({ num: totalValue })}
+                {allPrdtBuyAmt.formatedValue}
               </span>
             </div>
             {

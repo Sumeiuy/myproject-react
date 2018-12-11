@@ -25,6 +25,7 @@ import AnalysisCharts from './AnalysisCharts';
 import PerformanceCharts from './PerformanceCharts';
 import TabController from './TabController';
 import logable from '../../decorators/logable';
+import IfWrap from '../common/biz/IfWrap';
 import styles from './chartsTab.less';
 
 const TabPane = Tabs.TabPane;
@@ -289,25 +290,25 @@ export default class ChartsTab extends PureComponent {
             cycle={cycle}
           />
         </TabPane>
-        <TabPane tab="经营指标" key="manage">
-          <PerformanceIndicators
-            custCount={custCount}
-            indicators={managerIndicators}
-            location={location}
-            cycle={cycle}
-            category="manager"
-            isNewHome
-          />
-        </TabPane>
-        {
-          tgQyFlag ? (
-            <TabPane tab="投顾绩效" key="performance">
-              <PerformanceCharts
-                indicators={performanceIndicators}
-              />
-            </TabPane>
-          ) : null
-        }
+        <IfWrap isRender={permission.hasTkMampPermission()}>
+          <TabPane tab="经营指标" key="manage">
+            <PerformanceIndicators
+              custCount={custCount}
+              indicators={managerIndicators}
+              location={location}
+              cycle={cycle}
+              category="manager"
+              isNewHome
+            />
+          </TabPane>
+        </IfWrap>
+        <IfWrap isRender={tgQyFlag}>
+          <TabPane tab="投顾绩效" key="performance">
+            <PerformanceCharts
+              indicators={performanceIndicators}
+            />
+          </TabPane>
+        </IfWrap>
       </Tabs>
     );
   }
