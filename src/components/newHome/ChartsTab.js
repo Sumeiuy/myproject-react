@@ -290,25 +290,33 @@ export default class ChartsTab extends PureComponent {
             cycle={cycle}
           />
         </TabPane>
-        <IfWrap isRender={permission.hasTkMampPermission()}>
-          <TabPane tab="经营指标" key="manage">
-            <PerformanceIndicators
-              custCount={custCount}
-              indicators={managerIndicators}
-              location={location}
-              cycle={cycle}
-              category="manager"
-              isNewHome
-            />
-          </TabPane>
-        </IfWrap>
-        <IfWrap isRender={tgQyFlag}>
-          <TabPane tab="投顾绩效" key="performance">
-            <PerformanceCharts
-              indicators={performanceIndicators}
-            />
-          </TabPane>
-        </IfWrap>
+        {
+          permission.hasTkMampPermission()
+            ? (
+              <TabPane tab="经营指标" key="manage">
+                <PerformanceIndicators
+                  custCount={custCount}
+                  indicators={managerIndicators}
+                  location={location}
+                  cycle={cycle}
+                  category="manager"
+                  isNewHome
+                />
+              </TabPane>
+            )
+            : null
+        }
+        {
+          tgQyFlag
+            ? (
+              <TabPane tab="投顾绩效" key="performance">
+                <PerformanceCharts
+                  indicators={performanceIndicators}
+                />
+              </TabPane>
+            )
+            : null
+        }
       </Tabs>
     );
   }
