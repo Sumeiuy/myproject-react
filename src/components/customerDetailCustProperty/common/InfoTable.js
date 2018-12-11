@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-26 16:44:23
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-05 10:41:18
+ * @Last Modified time: 2018-12-11 11:33:06
  * @description 联系方式使用的Table
  */
 import React from 'react';
@@ -17,9 +17,17 @@ import styles from './infoTable.less';
 
 function InfoTable(props) {
   // 给表格添加操作列内容
+  let { columns } = props;
   const {
-    dataSource, columns, isMainEmp, onEditClick, onDelClick
+    dataSource,
+    isMainEmp,
+    onEditClick,
+    onDelClick,
   } = props;
+  // 新增需求，如果是非主服务经理的人，看不到操作一栏
+  if (!isMainEmp) {
+    columns = _.filter(columns, item => item.dataIndex !== 'operate');
+  }
   const newColumns = _.map(columns, (column) => {
     const { dataIndex } = column;
     if (dataIndex === 'operate') {

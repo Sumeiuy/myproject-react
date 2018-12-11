@@ -16,15 +16,12 @@ export default function AttachmentList(props) {
     data = {},
   } = props;
   const { list = [] } = data;
-  console.warn('list', list);
   return (
-    <div>
-      <CommonUpload
-        attachmentList={list}
-        edit={false}
-        attachment=""
-      />
-    </div>
+    <CommonUpload
+      attachmentList={list}
+      edit={false}
+      attachment=""
+    />
   );
 }
 
