@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 19:36:22
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-11 17:49:21
+ * @Last Modified time: 2018-12-11 19:40:37
  * @description 机构客户添加联系方式Modal
  */
 
@@ -85,6 +85,14 @@ export default class ContactWayModal extends PureComponent {
         // 机构客户联系人支持最多展示8个字符
         return this.updateWordColumn(column, 7);
       }
+      if (dataIndex === 'name') {
+        // 机构客户联系人支持最多展示8个字符
+        return this.updateWordColumn(column, 4);
+      }
+      if (dataIndex === 'duty') {
+        // 机构客户联系人支持最多展示8个字符
+        return this.updateWordColumn(column, 5);
+      }
       return column;
     });
   }
@@ -92,6 +100,19 @@ export default class ContactWayModal extends PureComponent {
   // 机构客户的手机信息、固定电话、电子邮件传递过来的数据是一个对象，我们展示他的value
   @autobind
   updateContactValueColumn(column) {
+    const { dataIndex } = column;
+    if (dataIndex === 'email') {
+      // 如果是email,则需要超长部分点点点，但是宽度是不固定的，所以只能使用title
+      return {
+        ...column,
+        render(text) {
+          if (!_.isEmpty(text) && _.hasIn(text, 'value')) {
+            return (<div className={styles.textEllipse}>{text.value || ''}</div>);
+          }
+          return '';
+        }
+      };
+    }
     return {
       ...column,
       render(text) {
@@ -302,6 +323,7 @@ export default class ContactWayModal extends PureComponent {
             <div className={styles.tableInfo}>
               <IFNoData title="电话信息" isRender={hasNoPhoneInfo}>
                 <Table
+                  className={styles.orgPhoneTable}
                   columns={orgPhoneColumns}
                   dataSource={data.tellphoneInfo}
                   isMainEmp={this.isMainEmp}
