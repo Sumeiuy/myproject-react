@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 19:36:22
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-11 19:40:37
+ * @Last Modified time: 2018-12-11 20:01:37
  * @description 机构客户添加联系方式Modal
  */
 
@@ -102,12 +102,20 @@ export default class ContactWayModal extends PureComponent {
   updateContactValueColumn(column) {
     const { dataIndex } = column;
     if (dataIndex === 'email') {
-      // 如果是email,则需要超长部分点点点，但是宽度是不固定的，所以只能使用title
+      // 如果是email,则需要超长部分点点点
       return {
         ...column,
         render(text) {
           if (!_.isEmpty(text) && _.hasIn(text, 'value')) {
-            return (<div className={styles.textEllipse}>{text.value || ''}</div>);
+            const { isSubstr, value, origin } = dataHelper.dotdotdot(text.value || '', 13);
+            if (isSubstr) {
+              return (
+                <ToolTip title={origin}>
+                  <div className={styles.textEllipse}>{value}</div>
+                </ToolTip>
+              );
+            }
+            return (<div className={styles.textEllipse}>{value}</div>);
           }
           return '';
         }
