@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-12-04 14:03:58
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-12-11 16:54:14
+ * @Last Modified time: 2018-12-11 20:38:19
  * @description 个股收益明细表格
  */
 
@@ -48,17 +48,18 @@ function getColumns() {
     {
       dataIndex: 'stockName',
       width: 300,
+      render: item => (<span className={styles.stockName}>{item}</span>)
     },
     {
       title: ACCUMULATED_PROFIT,
       dataIndex: 'accumulatedProfit',
       width: 550,
     },
-    {
-      title: STOCKPERIOD_UPDOWN,
-      dataIndex: 'stockPeriodUpDown',
-      render: item => getItem(item),
-    },
+    // {
+    //   title: STOCKPERIOD_UPDOWN,
+    //   dataIndex: 'stockPeriodUpDown',
+    //   render: item => getItem(item),
+    // },
     {
       title: SHAREHOLDING_YIELD,
       dataIndex: 'shareHoldingYield',
@@ -71,7 +72,7 @@ function getColumns() {
 export default function IncomeDetailTable(props) {
   const { IncomeTableData } = props;
   return (
-    <div className={styles.attributionTable}>
+    <div className={styles.incomeDetailTable}>
       <Table
         columns={getColumns()}
         dataSource={IncomeTableData}

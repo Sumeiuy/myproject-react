@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-27 14:00:51
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-12-11 15:39:30
+ * @Last Modified time: 2018-12-11 19:50:27
  * @description 收益归因分析
  */
 import React, { PureComponent } from 'react';
@@ -90,6 +90,7 @@ export default class ProfitAttributionAnalysis extends PureComponent {
     } = this.props;
     getEachStockIncomeDetails({
       custId,
+      order: '01',
     });
   }
 

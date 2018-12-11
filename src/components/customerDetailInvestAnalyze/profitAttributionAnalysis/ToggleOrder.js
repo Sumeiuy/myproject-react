@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-12-07 17:14:55
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-12-11 11:17:34
+ * @Last Modified time: 2018-12-11 18:51:18
  * @description 切换排序方式
  */
 
@@ -39,9 +39,9 @@ export default class ToggleOrder extends PureComponent {
   })
   handleToggleOrder() {
     const { isUp } = this.state;
-    this.setState({
-      isUp: !isUp,
-    });
+    this.setState(prevState => ({
+      isUp: !prevState.isUp,
+    }));
     // 排序（01：升序；02：降序）
     const orderType = isUp ? '01' : '02';
     this.props.onOrderChange(orderType);
