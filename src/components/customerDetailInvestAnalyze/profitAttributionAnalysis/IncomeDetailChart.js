@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-12-05 11:29:05
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-12-11 11:21:44
+ * @Last Modified time: 2018-12-11 16:35:53
  * @description 个股收益明细图表
  */
 import React from 'react';
@@ -63,13 +63,7 @@ function getChartOption(value) {
         },
         itemStyle: {
           normal: {
-            color: (item) => {
-              const colorList = ['#ed3e1e', '#50a116'];
-              if (item.value >= 0) {
-                return colorList[0];
-              }
-              return colorList[1];
-            }
+            color: item => (item.value >= 0 ? '#ed3e1e' : '#50a116')
           }
         },
         data: newIncomeChartData,

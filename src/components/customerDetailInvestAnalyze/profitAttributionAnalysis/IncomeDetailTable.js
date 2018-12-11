@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-12-04 14:03:58
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-12-10 17:46:56
+ * @Last Modified time: 2018-12-11 16:54:14
  * @description 个股收益明细表格
  */
 
@@ -27,6 +27,20 @@ function changeReturnValue(value) {
   return `${value}%`;
 }
 
+// 获取股票期间涨跌和持股收益率元素
+function getItem(item) {
+  const itemUpDown = classnames({
+    [styles.itemUp]: item >= 0,
+    [styles.itemDown]: item < 0,
+  });
+  return (
+    <span className={itemUpDown}>
+      {changeReturnValue(item)}
+      <Icon className={styles.upDownIcon} type={item >= 0 ? 'zhang' : 'die'} />
+    </span>
+  );
+}
+
 // 获取表格列
 function getColumns() {
   // 个股收益明细表格列
@@ -43,34 +57,12 @@ function getColumns() {
     {
       title: STOCKPERIOD_UPDOWN,
       dataIndex: 'stockPeriodUpDown',
-      render: (item) => {
-        const stockPeriodUpDown = classnames({
-          [styles.stockPeriodUp]: item >= 0,
-          [styles.stockPeriodDown]: item < 0,
-        });
-        return (
-          <span className={stockPeriodUpDown}>
-            {changeReturnValue(item)}
-            <Icon className={styles.upDownIcon} type={item >= 0 ? 'zhang' : 'die'} />
-          </span>
-        );
-      },
+      render: item => getItem(item),
     },
     {
       title: SHAREHOLDING_YIELD,
       dataIndex: 'shareHoldingYield',
-      render: (item) => {
-        const shareHoldingYieldUpDown = classnames({
-          [styles.shareHoldingYieldUp]: item >= 0,
-          [styles.shareHoldingYieldDown]: item < 0,
-        });
-        return (
-          <span className={shareHoldingYieldUpDown}>
-            {changeReturnValue(item)}
-            <Icon className={styles.upDownIcon} type={item >= 0 ? 'zhang' : 'die'} />
-          </span>
-        );
-      },
+      render: item => getItem(item),
     },
   ];
   return incomeDetailTableColumns;
