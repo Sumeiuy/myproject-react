@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 19:36:22
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-11 17:20:49
+ * @Last Modified time: 2018-12-11 17:49:21
  * @description 机构客户添加联系方式Modal
  */
 
@@ -26,7 +26,6 @@ import {
   ORG_PHONE_COLUMNS,
   ORG_ADDRESS_COLUMNS,
 } from './config';
-import { displayEmpty } from './utils';
 
 import styles from './contactWayModal.less';
 
@@ -111,7 +110,7 @@ export default class ContactWayModal extends PureComponent {
       ...column,
       render(text) {
         if (_.isEmpty(text)) {
-          return displayEmpty(text);
+          return '';
         }
         const { isSubstr, value, origin } = dataHelper.dotdotdot(text, length);
         if (isSubstr) {

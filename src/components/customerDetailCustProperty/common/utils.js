@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-26 17:13:06
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-11 17:17:51
+ * @Last Modified time: 2018-12-11 17:50:31
  * @description 辅助函数
  */
 import _ from 'lodash';
@@ -59,11 +59,4 @@ export function isLandline(code) {
 // 判断是否Email
 export function isEmail(code) {
   return FORMART_CODE.email === code;
-}
-// 针对表格中空数字列的展示
-export function displayEmpty(text) {
-  if (_.isEmpty(text)) {
-    return '-';
-  }
-  return '';
 }
