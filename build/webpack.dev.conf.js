@@ -100,7 +100,6 @@ module.exports = merge(baseWebpackConfig, {
       template: 'newIndex.html',
       chunks: ['newIndex'],
       inject: true,
-      DEBUG: isDebugMode() ? 'debugger' : '', 
     }),
     new webpack.DllReferencePlugin({
       context: __dirname,

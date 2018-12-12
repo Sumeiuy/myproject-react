@@ -301,7 +301,7 @@ export default class MultiUpload extends PureComponent {
                       }
                       <em>
                         <a
-                          href={item.downloadURL}
+                          href={`${request.URL_PREFIX}${item.downloadURL}`}
                           onClick={this.handleDownloadClick}
                           download
                         >

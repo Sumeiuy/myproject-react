@@ -18,10 +18,6 @@ function isDebugMode() {
   return false;
 }
 
-// 本地与后端联调时，需要除去/fspa前缀
-var prefix = isDebugMode() ? '/mcrm/api' : '/fspa/mcrm/api';
-
-
 function generateProxy(proxyList) {
   var result = {};
   var len = proxyList.length;
@@ -64,8 +60,11 @@ module.exports = {
       { target: UAT_FORWARD_URL },
       '/fspa/phone',
       { target: UAT_FORWARD_URL },
-      prefix,
-      { target: UAT_FORWARD_URL },
+      '/fspa/mcrm/api',
+      {
+        target: isDebugMode() ? LOCAL_FORWARD_URL: UAT_FORWARD_URL,
+        pathRewrite: isDebugMode() ? { '^/fspa': '' } : null,
+      },
       '/fspa/log',
       {
         target: UAT_FORWARD_URL,

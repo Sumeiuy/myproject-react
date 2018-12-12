@@ -23,7 +23,7 @@ import {
   AGREEMENT_LIST,
   DEFAULT_TEXT,
 } from './config';
-import styles from './protocolTab.less';
+import styles from './agreementTab.less';
 
 const KEY_ID = 'id';
 const KEY_NAME = 'name';
@@ -100,6 +100,15 @@ export default class AgreementTab extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: { name: '合同内容' },
+  })
+  handleJumpAgreementReport() {
+    // 神策日志
+  }
+
+  @autobind
   renderTooltipColumn(text) {
     if (!_.isEmpty(text)) {
       return (
@@ -130,7 +139,7 @@ export default class AgreementTab extends PureComponent {
       return (
         <div className={styles.ellipsis}>
           <Tooltip title={text}>
-            <a onClick={() => this.handleJumpAgreementReport(record)}>{text}</a>
+            {this.renderContentLink(text, record)}
           </Tooltip>
         </div>
       );
@@ -139,11 +148,7 @@ export default class AgreementTab extends PureComponent {
   }
 
   @autobind
-  @logable({
-    type: 'ViewItem',
-    payload: { name: '合同内容' },
-  })
-  handleJumpAgreementReport(record) {
+  renderContentLink(text, record) {
     const {
       empInfo: { empInfo = EMPTY_OBJECT },
     } = this.props;
@@ -152,15 +157,23 @@ export default class AgreementTab extends PureComponent {
       name = '',
       ptyId = '',
     } = record;
-    const filterAgreement = _.filter(AGREEMENT_LIST, o => o.name === name);
+    const filterAgreement = _.find(AGREEMENT_LIST, o => o.name === name) || EMPTY_OBJECT;
     const query = {
       'iv-user': login,
-      menuId: filterAgreement[0].menuId || '',
+      menuId: filterAgreement.menuId || '',
       pty_id: ptyId,
     };
     const url = `/acrmbi/login?${urlHelper.stringify(query)}`;
-    const w = window.open('about:blank');
-    w.location.href = url;
+    return (
+      <a
+        href={url}
+        target="_blank"
+        rel="noreferrer noopener"
+        onClick={this.handleJumpAgreementReport}
+      >
+        {text}
+      </a>
+    );
   }
 
   render() {
@@ -170,7 +183,7 @@ export default class AgreementTab extends PureComponent {
     const titleList = this.getProtocolColumns(AGREEMENT_COLUMNS);
     const isRender = !_.isEmpty(list);
     return (
-      <div className={styles.protocolTab}>
+      <div className={styles.agreementTab}>
         <IfTableWrap isRender={isRender} text="暂无合同信息">
           <Table
             columns={titleList}
