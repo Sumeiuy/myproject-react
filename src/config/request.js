@@ -14,6 +14,7 @@ const exported = {
   fspPrefix,
   prefix: process.env.REMOVE_PREFIX === true ? '/mcrm/api' : '/fspa/mcrm/api',
   ERROR_SEPARATOR: '$%^#%^#$^%#%$#',
+  URL_PREFIX: process.env.REMOVE_PREFIX === true ? '' : '/fspa',
 };
 
 export default exported;
@@ -24,4 +25,5 @@ export const {
   apiPrefix,
   prefix,
   ERROR_SEPARATOR,
+  URL_PREFIX,
 } = exported;

@@ -15,7 +15,7 @@ import _ from 'lodash';
 import { connect } from 'dva';
 
 import Button from '../Button';
-import { request, constants } from '../../../config';
+import { request } from '../../../config';
 import { emp, dva } from '../../../helper';
 import styles from './multiUploader.less';
 import Icon from '../Icon';
@@ -301,7 +301,7 @@ export default class MultiUpload extends PureComponent {
                       }
                       <em>
                         <a
-                          href={`${constants.URL_PREFIX}${item.downloadURL}`}
+                          href={`${request.URL_PREFIX}${item.downloadURL}`}
                           onClick={this.handleDownloadClick}
                           download
                         >
