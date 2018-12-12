@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-12-07 14:57:51
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-11 11:57:16
+ * @Last Modified time: 2018-12-11 17:05:09
  * @description 交易流水信用账户历史记录
  */
 import React, { PureComponent } from 'react';
@@ -132,7 +132,7 @@ export default class CreditTradeFlow extends PureComponent {
       ...restColumn,
       render(text, record) {
         if (_.isNull(text) || record.flag) {
-          return this.displayEmpty(text, record);
+          return displayEmpty(text, record);
         }
         // 比如可用数量，不需要保留两位小数
         if (isAmount) {

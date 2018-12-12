@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-12-06 09:32:56
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-12-06 18:41:42
+ * @LastEditTime: 2018-12-11 18:09:55
  * @Description: 图表相关的配置选项
  */
 
@@ -84,6 +84,11 @@ const CUSTOMER_AND_ASSET_CONFIG = [
 
 // 金融产品
 const FINANCIAL_PRODUCT_CONFIG = [
+  {
+    name: '销量合计',
+    key: 'allPrdtBuyAmt',
+    isAsset: true,
+  },
   {
     name: '公募基金',
     key: 'kfTranAmt',

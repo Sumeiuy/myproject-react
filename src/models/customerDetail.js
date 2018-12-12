@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-09 15:38:02
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-05 13:25:15
+ * @Last Modified time: 2018-12-11 16:47:13
  * @description 新版客户360详情的model
  */
 import _ from 'lodash';
@@ -98,7 +98,7 @@ export default {
       const newResultData = _.mapValues(
         resultData,
         (item, key) => {
-          let firstItem = { key: '', value: '请选择' };
+          let firstItem = { key: '', value: '--请选择--' };
           // 证件类型的需要添加 不限 选项，其他添加 请选择选项
           if (key === 'certTypeList') {
             firstItem = { key: '', value: '不限' };
@@ -116,7 +116,7 @@ export default {
       const { resultData } = yield call(api.queryProvinceCity, payload);
       const newResultData = _.mapValues(
         resultData,
-        item => ([{ key: '', value: '请选择' }, ...item]),
+        item => ([{ key: '', value: '--请选择--' }, ...item]),
       );
       return newResultData;
     },

@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-12-04 14:16:41
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-10 14:55:00
+ * @Last Modified time: 2018-12-11 13:27:50
  * @description 期末资产配置雷达图
  */
 import React, { PureComponent } from 'react';
@@ -18,11 +18,17 @@ import styles from './endTermAssetChart.less';
 export default class EndTermAssetChart extends PureComponent {
   static propTypes = {
     // 雷达图表数据
-    endTermAssetTableData: PropTypes.array.isRequired,
+    endTermAssetTableData: PropTypes.array,
     // 总资产
-    totalAsset: PropTypes.number.isRequired,
+    totalAsset: PropTypes.number,
     // 负债
-    liabilities: PropTypes.number.isRequired,
+    liabilities: PropTypes.number,
+  }
+
+  static defaultProps = {
+    endTermAssetTableData: [],
+    totalAsset: 0,
+    liabilities: 0,
   }
 
   // 获取雷达图配置项
@@ -65,37 +71,31 @@ export default class EndTermAssetChart extends PureComponent {
 
   render() {
     const {
-      endTermAssetTableData,
       totalAsset,
       liabilities,
     } = this.props;
     const option = this.getChartOption();
     return (
       <div className={styles.endTermAssetChart}>
-        <IfWrap
-          isRender={!_.isEmpty(endTermAssetTableData)}
-          isUsePlaceholderImage
-        >
-          <IECharts
-            option={option}
-            style={{
-              height: '240px',
-            }}
-            resizable
-          />
-          <div className={styles.assetExplain}>
-            <p>
-              总资产
-              <span>{totalAsset}</span>
-              万元
-            </p>
-            <p>
-              负债
-              <span>{liabilities}</span>
-              万元
-            </p>
-          </div>
-        </IfWrap>
+        <IECharts
+          option={option}
+          style={{
+            height: '240px',
+          }}
+          resizable
+        />
+        <div className={styles.assetExplain}>
+          <p>
+            总资产
+            <span>{totalAsset}</span>
+            万元
+          </p>
+          <p>
+            负债
+            <span>{liabilities}</span>
+            万元
+          </p>
+        </div>
       </div>
     );
   }

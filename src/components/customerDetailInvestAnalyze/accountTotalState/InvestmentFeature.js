@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-20 15:28:46
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-10 13:22:09
+ * @Last Modified time: 2018-12-11 10:52:12
  * @description 客户投资特征
  */
 import React, { PureComponent } from 'react';
@@ -39,7 +39,7 @@ export default class InvestmentFeature extends PureComponent {
       const { levelName, levelDesc, levelClassName } = level;
       const levelLabelCls = classnames([styles.levelLabel, styles[levelClassName]]);
       return (
-        <div className={styles.levelDesc}>
+        <div className={styles.levelDesc} key={data.uuid()}>
           <span className={levelLabelCls}>{levelName}</span>
           <span className={styles.levelValue}>{levelDesc}</span>
         </div>

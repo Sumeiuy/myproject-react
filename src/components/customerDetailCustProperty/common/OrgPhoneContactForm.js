@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 20:29:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-05 13:20:40
+ * @Last Modified time: 2018-12-11 16:32:55
  * @description 添加机构客户电话信息Form
  */
 import React, { PureComponent } from 'react';
@@ -77,7 +77,7 @@ export default class OrgPhoneContactForm extends PureComponent {
       // 电子邮件，因为ecif那边传递过来修改需要传递电子邮件为一个对象
       emailValue: isCreate ? '' : this.getContactValue(email),
       // 来源
-      sourceCode: isCreate ? SOURCE_CODE.ocrm : sourceCode,
+      sourceCode: isCreate ? SOURCE_CODE.finance : sourceCode,
     };
   }
 

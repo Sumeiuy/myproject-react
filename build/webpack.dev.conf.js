@@ -17,6 +17,13 @@ if (config.dev.enableHMR) {
   })
 }
 
+function isDebugMode() {
+  if (process.argv[2] && process.argv[2].indexOf('DEBUG') > -1) {
+    return true;
+  }
+  return false;
+}
+
 var cssLoaders = utils.getCSSLoaders({
   disableCSSModules: !config.cssModules,
   sourceMap: config.dev.cssSourceMap
