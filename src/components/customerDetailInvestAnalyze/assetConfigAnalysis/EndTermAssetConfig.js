@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-12-04 10:00:23
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-11 14:21:14
+ * @Last Modified time: 2018-12-12 12:22:49
  * @description 期末资产配置
  */
 import React, { PureComponent } from 'react';
@@ -62,19 +62,30 @@ export default class EndTermAssetConfig extends PureComponent {
   getEndTermAssetSummary() {
     const {
       endTermAssetConfigData: {
+        endTermAssetTableData,
         periodTotalProfit,
         maxCategory,
         minCategory,
         assetConfigRate,
       }
     } = this.props;
+    // 总资产量
+    let totalAmount = 0;
+    // 后端返回的数据都是number类型，配置权重需要展示成百分数形式
+    _.map(endTermAssetTableData, (item) => {
+      totalAmount += item.holdAmount;
+    });
     let periodProfitText = `统计期内客户实现盈利${periodTotalProfit}万元，其中${maxCategory}类对盈利贡献最高，${minCategory}类收益最低。`;
+    // 总资产量为0时显示的统计期内说明
+    if (totalAmount === 0) {
+      periodProfitText = `统计期内客户实现盈利${periodTotalProfit}万元。`;
+    }
     let assetConfigRateText = '';
     if (_.isArray(assetConfigRate) && !_.isEmpty(assetConfigRate)) {
       // assetConfigRate数据后端返回的是一个数组，需要转化成字符串
       const assetConfigRateStr = _.join(assetConfigRate, '、');
       if (assetConfigRate.length === 1) {
-        periodProfitText = `统计期内客户实现盈利${periodTotalProfit}万元`;
+        periodProfitText = `统计期内客户实现盈利${periodTotalProfit}万元。`;
         assetConfigRateText = ASSET_CONFIG_RATE_TEXT;
       } else if (assetConfigRate.length === 2) {
         assetConfigRateText = `客户资产配置占比由高到低依次为${assetConfigRateStr}。客户资产过于集中配置，建议后期参考华泰证券资产配置方案，优化各类资产配置权重，提高风险调整后收益比。`;
@@ -85,7 +96,9 @@ export default class EndTermAssetConfig extends PureComponent {
     return (
       <div>
         <p><span>{periodProfitText}</span></p>
-        <p><span>{assetConfigRateText}</span></p>
+        <IfWrap isRender={!_.isEmpty(assetConfigRateText)}>
+          <p><span>{assetConfigRateText}</span></p>
+        </IfWrap>
       </div>
     );
   }
