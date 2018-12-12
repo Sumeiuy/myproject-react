@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-25 11:31:40
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-05 11:14:16
+ * @Last Modified time: 2018-12-11 22:43:08
  * @description 账户收益走势图表
  */
 import React, { PureComponent } from 'react';
@@ -45,17 +45,28 @@ export default class ProfitTrendChart extends PureComponent {
     // 账户日收益率数据
     const accountDailyRateData = filterData(profitTrendChartData, 'accountDailyRate');
     // 沪深300日收益率数据
-    const HS300DailyRateData = filterData(profitTrendChartData, 'HS300DailyRate');
+    const hs300DailyRateData = filterData(profitTrendChartData, 'hs300DailyRate');
     // 账户累计收益率数据
     const accountCumulativeRateData = filterData(profitTrendChartData, 'accountCumulativeRate');
     // 沪深300累计收益率数据
-    const HS300CumulativeRateData = filterData(profitTrendChartData, 'HS300CumulativeRate');
-    const { xAxis, tooltip } = chartOption;
+    const hs300CumulativeRateData = filterData(profitTrendChartData, 'hs300CumulativeRate');
+    const {
+      xAxis,
+      tooltip,
+      yAxis,
+    } = chartOption;
     const option = {
       ...chartOption,
       xAxis: {
         ...xAxis,
         data: xAxisData,
+      },
+      yAxis: {
+        ...yAxis,
+        axisLabel: {
+          ...yAxis.axisLabel,
+          formatter: '{value}%',
+        },
       },
       color: ['#485a7b', '#fe5f03', '#485a7b', '#fe5f03'],
       tooltip: {
@@ -73,7 +84,7 @@ export default class ProfitTrendChart extends PureComponent {
           name: HS300_DAILY_RATE,
           type: 'bar',
           symbol: 'none',
-          data: HS300DailyRateData,
+          data: hs300DailyRateData,
         },
         {
           name: ACCOUNT_CUMULATIVE_RATE,
@@ -85,7 +96,7 @@ export default class ProfitTrendChart extends PureComponent {
           name: HS300_CUMULATIVE_RATE,
           type: 'line',
           symbol: 'none',
-          data: HS300CumulativeRateData,
+          data: hs300CumulativeRateData,
         },
       ],
     };
@@ -98,13 +109,13 @@ export default class ProfitTrendChart extends PureComponent {
     const {
       profitTrendData: {
         accountCumulativeRate,
-        HS300CumulativeRate,
+        hs300CumulativeRate,
       }
     } = this.props;
-    let summaryText = `统计期内客，客户该账户累计收益率为${accountCumulativeRate}%，基准（沪深300指数）同期收益率为${HS300CumulativeRate}%，`;
+    let summaryText = `统计期内客，客户该账户累计收益率为${accountCumulativeRate}%，基准（沪深300指数）同期收益率为${hs300CumulativeRate}%，`;
     if (_.isNumber(accountCumulativeRate)
-      && _.isNumber(HS300CumulativeRate)
-      && accountCumulativeRate < HS300CumulativeRate
+      && _.isNumber(hs300CumulativeRate)
+      && accountCumulativeRate < hs300CumulativeRate
     ) {
       summaryText = `${summaryText}${NOT_EXCESS_BENEFIT_TEXT}`;
     } else {
@@ -134,6 +145,31 @@ export default class ProfitTrendChart extends PureComponent {
     `;
   }
 
+  // echart渲染完，默认需要显示资金投入最大的toopTip
+  @autobind
+  handleReady(instance) {
+    const {
+      profitTrendData: {
+        profitTrendChartData = [],
+      }
+    } = this.props;
+    // 账户日收益率数据
+    const accountDailyRateData = filterData(profitTrendChartData, 'accountDailyRate');
+    // 账户日收益率最大的dataIndex
+    const dataIndex = _.findIndex(accountDailyRateData,
+      item => (item === _.max(accountDailyRateData)));
+    // 显示series是资金投入，数据是dataIndex的toolTip
+    // 图表所有数据加载完成，调用dispatchAction方法显示浮层提示框
+    // 参考网址：https://blog.csdn.net/u013558749/article/details/83826672
+    setTimeout(() => {
+      instance.dispatchAction({
+        type: 'showTip',
+        seriesIndex: 0,
+        dataIndex,
+      });
+    }, 0);
+  }
+
   render() {
     const {
       profitTrendData: {
@@ -144,11 +180,11 @@ export default class ProfitTrendChart extends PureComponent {
     // 账户日收益率样式
     const accountDailyRateCls = classnames([styles.value, styles.accountDailyRateValue]);
     // 沪深300日收益率样式
-    const HS300DailyRateCls = classnames([styles.value, styles.HS300DailyRateValue]);
+    const hs300DailyRateCls = classnames([styles.value, styles.hs300DailyRateValue]);
     // 账户累计收益率样式
     const accountCumulativeRateCls = classnames([styles.value, styles.accountCumulativeRateValue]);
     // 沪深300累计收益率样式
-    const HS300CumulativeRateCls = classnames([styles.value, styles.HS300CumulativeRateValue]);
+    const hs300CumulativeRateCls = classnames([styles.value, styles.hs300CumulativeRateValue]);
     // 账户收益走势图提示
     const profitTrendTipData = _.map(profitTrendChartTip, item => <p key={data.uuid()}>{item}</p>);
     // 图表配置项
@@ -159,25 +195,30 @@ export default class ProfitTrendChart extends PureComponent {
     const timeRateText = `报告期内，${timeRate}%的时间段客户投资收益战胜基准。`;
     return (
       <div className={styles.profitTrendChart}>
-        <IfWrap isRender={!_.isEmpty(profitTrendChartData)}>
+        <IfWrap
+          isRender={!_.isEmpty(profitTrendChartData)}
+          isUsePlaceholderImage
+        >
           <div className={styles.chartBox}>
             <div className={styles.chartlegend}>
               <div className={styles.column}>
                 <span className={accountDailyRateCls}>{ACCOUNT_DAILY_RATE}</span>
               </div>
               <div className={styles.column}>
-                <span className={HS300DailyRateCls}>{HS300_DAILY_RATE}</span>
+                <span className={hs300DailyRateCls}>{HS300_DAILY_RATE}</span>
               </div>
               <div className={styles.column}>
                 <span className={accountCumulativeRateCls}>{ACCOUNT_CUMULATIVE_RATE}</span>
               </div>
               <div className={styles.column}>
-                <span className={HS300CumulativeRateCls}>{HS300_CUMULATIVE_RATE}</span>
+                <span className={hs300CumulativeRateCls}>{HS300_CUMULATIVE_RATE}</span>
               </div>
             </div>
             <IECharts
               option={option}
               style={{ height: '260px' }}
+              resizable
+              onReady={this.handleReady}
             />
             <div className={styles.profitTrendTips}>
               <div className={styles.label}>注：</div>

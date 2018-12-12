@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-12-04 10:52:33
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-04 20:44:07
+ * @Last Modified time: 2018-12-07 13:59:46
  * @description 资产配置头部
  */
 import React, { PureComponent } from 'react';
@@ -16,7 +16,7 @@ export default class AssetConfigHeader extends PureComponent {
   static propTypes = {
     title: PropTypes.string.isRequired,
     // 资产分类
-    classify: PropTypes.string.isRequired,
+    classifyType: PropTypes.string.isRequired,
     // 资产分类数据变化
     onChange: PropTypes.func.isRequired,
   }
@@ -24,7 +24,7 @@ export default class AssetConfigHeader extends PureComponent {
   render() {
     const {
       title,
-      classify,
+      classifyType,
       onChange,
     } = this.props;
     return (
@@ -35,7 +35,7 @@ export default class AssetConfigHeader extends PureComponent {
             useCustomerFilter
             dataMap={['value', 'label']}
             data={ASSET_CLASSIFY_LIST}
-            value={classify}
+            value={classifyType}
             onChange={onChange}
           />
         </div>

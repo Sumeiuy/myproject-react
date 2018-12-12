@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-19 11:11:19
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-29 15:46:39
+ * @Last Modified time: 2018-12-11 15:50:06
  * @description 多功能复合编辑框
  */
 
@@ -65,16 +65,16 @@ export default class OmniComplexEditor extends PureComponent {
     onCheck: PropTypes.func,
     // 需要自定义数据校验
     checkable: PropTypes.bool,
+    // 判断是否需要在超长字符串的时候需要展示完整文字的提示
+    showTitle: PropTypes.bool,
   }
 
   static defaultProps = {
+    mode: 'default',
     editable: true,
     style: {},
-    children: null,
-    editorId: '',
     displayValue: '',
     value: '',
-    loading: false,
     onEditOK: _.noop,
     onSuccess: _.noop,
     options: [],
@@ -83,6 +83,7 @@ export default class OmniComplexEditor extends PureComponent {
     checkable: false,
     optionValueKey: 'key',
     optionTextKey: 'value',
+    showTitle: false,
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -149,35 +150,6 @@ export default class OmniComplexEditor extends PureComponent {
     }
   }
 
-  // 获取编辑器实际使用的表单元素
-  @autobind
-  renderEditroNodeByMode() {
-    if (this.isSelectMode()) {
-      const { selectState } = this.state;
-      const {
-        selectProps, options, optionTextKey, optionValueKey
-      } = this.props;
-      const restProps = _.pick(selectProps, ['onChange', 'open', 'showArrow']);
-      return (
-        <Select
-          showArrow={false}
-          open={selectState}
-          onChange={this.handleSelectChange}
-          {...restProps}
-        >
-          {_.map(options, option => (
-            <Option
-              key={option[optionValueKey]}
-              value={option[optionValueKey]}
-            >
-              {option[optionTextKey]}
-            </Option>))}
-        </Select>
-      );
-    }
-    return (<Input autoComplete="off" onChange={this.handleInputChange} />);
-  }
-
   // 判断是否是Select
   @autobind
   isSelectMode() {
@@ -210,7 +182,7 @@ export default class OmniComplexEditor extends PureComponent {
       value: '$args[0]',
     },
   })
-  handleSelectChange(value) {
+  handleSelectChange() {
     this.closeSelectDropdown();
     this.setState({ validateResult: DEFAULT_VALIDATE });
   }
@@ -318,22 +290,64 @@ export default class OmniComplexEditor extends PureComponent {
     payload: { name: '编辑图标' },
   })
   handleEditWrapperClick(e) {
-    console.warn('111111');
     const { form, editorId, editable } = this.props;
     if (!editable) {
       return;
     }
-    console.warn('2222');
     const editor = form.getFieldInstance(editorId);
     if (editor.focus) {
       editor.focus();
     }
-    console.warn('333333');
     this.enterEditState();
     // 阻止React合成事件传播
     e.stopPropagation();
     // 阻止原生事件传播
     e.nativeEvent.stopImmediatePropagation();
+  }
+
+  // 获取编辑器实际使用的表单元素
+  @autobind
+  renderEditroNodeByMode() {
+    if (this.isSelectMode()) {
+      const { selectState } = this.state;
+      const {
+        selectProps,
+        options,
+        optionTextKey,
+        optionValueKey,
+      } = this.props;
+      const restProps = _.pick(selectProps, ['onChange', 'open', 'showArrow']);
+      return (
+        <Select
+          showArrow={false}
+          open={selectState}
+          onChange={this.handleSelectChange}
+          {...restProps}
+        >
+          {_.map(options, option => (
+            <Option
+              key={option[optionValueKey]}
+              value={option[optionValueKey]}
+            >
+              {option[optionTextKey]}
+            </Option>))}
+        </Select>
+      );
+    }
+    return (<Input autoComplete="off" onChange={this.handleInputChange} />);
+  }
+
+  // 渲染原始值展示
+  @autobind
+  renderOriginValueNode() {
+    const { showTile } = this.props;
+    const { originalValue } = this.state;
+    let titleProp = {};
+    // 如果需要显示title,并且值不为空，以及不是默认无数据值的情况下显示title
+    if (showTile && !_.isEmpty(originalValue) && originalValue !== '--') {
+      titleProp = { title: originalValue };
+    }
+    return (<div className={styles.editContent} {...titleProp}>{originalValue}</div>);
   }
 
   render() {
@@ -395,7 +409,7 @@ export default class OmniComplexEditor extends PureComponent {
           ref={this.editorContentRef}
           onClick={this.handleEditorContentClick}
         >
-          <div className={styles.editContent}>{originalValue}</div>
+          <div className={styles.editContent} title={originalValue}>{originalValue}</div>
           <Form className={editorFormCls}>
             <FormItem>
               { getFieldDecorator(editorId, { initialValue: editorValue })(editorNode) }

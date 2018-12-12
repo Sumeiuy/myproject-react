@@ -1,31 +1,9 @@
 /*
+ * @Description: 公共上传附件
  * @Author: LiuJianShu
  * @Date: 2017-09-22 15:02:49
  * @Last Modified by: zhangjun
  * @Last Modified time: 2018-11-15 11:03:53
- */
-/**
- * 常用说明
- * 参数             类型         说明
- * attaches         string      附件列表
- * attachment       boolean     上传附件必须的 ID
- * fileRemove       function    删除附件
- * 其他参数与 Antd.Modal 相同，具体见下方链接
- * https://ant.design/components/upload-cn/
- * 示例
- <CommonUpload
-   attaches: [{
-      creator: '002332',
-      attachId: '{6795CB98-B0CD-4CEC-8677-3B0B9298B209}',
-      name: '新建文本文档 (3).txt',
-      size: '0',
-      createTime: '2017/09/12 13:37:45',
-      downloadURL: '',
-      realDownloadURL: '',
-    }],
-    attachment: 'dkdjk-ieidop-kldlkd-bndnbjd',
-    fileRemove: this.fileRemove,
-  />
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -37,13 +15,12 @@ import moment from 'moment';
 import _ from 'lodash';
 import { connect } from 'dva';
 import Button from '../Button';
-import { request } from '../../../config';
+import { request, constants } from '../../../config';
 import { emp } from '../../../helper';
 import styles from './commonUpload.less';
 import Icon from '../Icon';
 import logable from '../../../decorators/logable';
 
-// const EMPTY_OBJECT = {};
 const fetchDataFunction = (globalLoading, type) => query => ({
   type,
   payload: query || {},
@@ -186,12 +163,12 @@ export default class CommonUpload extends PureComponent {
         }, uploadAttachment(data.attachment, data.attaches));
       } else {
         // 上传失败的返回值 MAG0005
-        this.setState({
+        this.setState(prevState => ({
           status: 'active',
-          fileList: this.state.oldFileList,
+          fileList: prevState.oldFileList,
           file: {},
           percent: 0,
-        });
+        }));
         message.error(uploadFile.response.msg);
       }
     }
@@ -223,13 +200,6 @@ export default class CommonUpload extends PureComponent {
       onFalseDelete();
     }
   }
-
-  // 空方法，用于日志上传
-  @logable({
-    type: 'Click',
-    payload: { name: '下载' }
-  })
-  handleDownloadClick() {}
 
   // 获取上传数据
   @autobind
@@ -267,9 +237,15 @@ export default class CommonUpload extends PureComponent {
     });
   }
 
+  // 空方法，用于日志上传
+  @logable({
+    type: 'Click',
+    payload: { name: '下载' }
+  })
+  handleDownloadClick() {}
+
   render() {
     const {
-      empId,
       fileList,
       percent,
       status,
@@ -297,7 +273,6 @@ export default class CommonUpload extends PureComponent {
       showUploadList: false,
       fileList,
     };
-    const downloadName = 'ceFileDownload2';
     let fileListElement;
     // 活动栏目是假删除,删除时第一个文件会设置isDelete属性为true，当isDelete是true时，不显示组件
     if (fileList && fileList.length) {
@@ -336,8 +311,9 @@ export default class CommonUpload extends PureComponent {
                       }
                       <em>
                         <a
-                          href={`${request.prefix}/file/${downloadName}?attachId=${item.attachId}&empId=${empId}&filename=${window.encodeURIComponent(item.name)}`}
+                          href={`${constants.URL_PREFIX}${item.downloadURL}`}
                           onClick={this.handleDownloadClick}
+                          download
                         >
                           <Icon type="xiazai2" />
                         </a>

@@ -3,9 +3,10 @@
  * @Author: Liujianshu-K0240007
  * @Date: 2018-11-20 16:25:46
  * @Last Modified by: Liujianshu-K0240007
- * @Last Modified time: 2018-11-22 09:47:22
+ * @Last Modified time: 2018-12-05 14:37:55
  */
 import _ from 'lodash';
+import moment from 'moment';
 
 // 进入页面的 默认 tab
 export const DEFAULT_ACTIVE_TAB = 'protocol';
@@ -18,12 +19,34 @@ export const FORMAT_TIME_ALL = 'YYYY-MM-DD HH:mm:ss';
 
 export const DEFAULT_TEXT = '--';
 
-// tab 选项
+// 合约管理 tab 选项
 export const CONTRACT_MANAGE_TABS = {
   protocol: '协议',
   contract: '合约',
   agreement: '合同',
 };
+
+// 合约详情 tab 选项
+export const CONTRACT_DETAIL_TABS = {
+  terms: '合约条款',
+  history: '审批历史',
+  attachment: '附件',
+};
+
+export const CONTRACT_DETAIL_TABS_LIST = [
+  {
+    name: '合约条条款',
+    key: 'terms',
+  },
+  {
+    name: '审批历史',
+    key: 'history',
+  },
+  {
+    name: '附件',
+    key: 'attachment',
+  },
+];
 
 // 非投顾协议的子类型
 // 紫金快车道协议、套利软件、高速通道协议
@@ -47,7 +70,20 @@ export const AGREEMENT_TYPE_MAP = {
 // 账户服务费模式
 export const CHARGING_MODE_CODE = 'T30200';
 
+// 投顾协议 type
 export const TOUGU_SUBTYPE = 'TG Agreement';
+
+// 审批历史的 btngroup
+export const APPROVAL_HISTORY_TYPE = [
+  {
+    key: 'subscription',
+    name: '订购',
+  },
+  {
+    key: 'unsubscribe',
+    name: '退订',
+  },
+];
 
 // 协议表格的 columns
 export const PROTOCOL_COLUMNS = [
@@ -172,11 +208,13 @@ export const CONTRACT_COLUMNS = [
     key: 'startTime',
     dataIndex: 'startTime',
     title: '开始日期',
+    render: text => (_.isEmpty(text) ? DEFAULT_TEXT : moment(text).format(FORMAT_TIME)),
   },
   {
     key: 'endTime',
     dataIndex: 'endTime',
     title: '结束日期',
+    render: text => (_.isEmpty(text) ? DEFAULT_TEXT : moment(text).format(FORMAT_TIME)),
   },
   {
     key: 'status',
@@ -206,19 +244,19 @@ export const AGREEMENT_COLUMNS = [
     key: 'id',
     dataIndex: 'id',
     title: '合同编号',
-    width: 120,
+    width: 100,
   },
   {
     key: 'name',
     dataIndex: 'name',
     title: '合同名称',
-    width: 110,
+    width: 100,
   },
   {
     key: 'amount',
     dataIndex: 'amount',
     title: '合同金额(万元)',
-    width: 105,
+    width: 110,
     align: 'right',
     render: text => (_.isNumber(text) ? text : DEFAULT_TEXT),
   },
@@ -227,19 +265,19 @@ export const AGREEMENT_COLUMNS = [
     dataIndex: 'statusCode',
     title: '合同状态',
     render: text => AGREEMENT_TYPE_MAP[text] || DEFAULT_TEXT,
-    width: 70,
+    width: 100,
   },
   {
     key: 'startTime',
     dataIndex: 'startTime',
     title: '生效时间',
-    width: 84,
+    width: 100,
   },
   {
     key: 'endTime',
     dataIndex: 'endTime',
     title: '结束时间',
-    width: 84,
+    width: 100,
   },
   {
     key: 'content',
@@ -251,6 +289,25 @@ export const AGREEMENT_COLUMNS = [
     key: 'remark',
     dataIndex: 'remark',
     title: '备注',
-    width: 198,
+    width: 190,
+  },
+];
+
+// 合约条款表格的 columns
+export const TERMS_COLUMNS = [
+  {
+    key: 'name',
+    dataIndex: 'name',
+    title: '条款名称',
+  },
+  {
+    key: 'parameter',
+    dataIndex: 'parameter',
+    title: '明细参数',
+  },
+  {
+    key: 'value',
+    dataIndex: 'value',
+    title: '值',
   },
 ];

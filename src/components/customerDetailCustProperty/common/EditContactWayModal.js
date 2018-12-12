@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-28 10:55:01
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-05 11:18:56
+ * @Last Modified time: 2018-12-11 10:44:28
  * @description 客户属性中个人客户|机构客户的电话信息、地址信息、其他信息的编辑弹框
  */
 import React, { PureComponent } from 'react';
@@ -108,7 +108,7 @@ export default class EditContactWayModal extends PureComponent {
   checkPerPhoneForSubmit() {
     const phoneForm = this.getPerPhoneForm();
     // 校验完成后调用提交回调
-    phoneForm.validateFields((err, values) => {
+    phoneForm.validateFields({ force: true }, (err, values) => {
       if (!err) {
         this.handleContactSubmit('phone', values);
       }
@@ -120,7 +120,7 @@ export default class EditContactWayModal extends PureComponent {
   checkPerAddressForSubmit() {
     const addressForm = this.getPerAddressForm();
     // 校验完成后调用提交回调
-    addressForm.validateFields((err, values) => {
+    addressForm.validateFields({ force: true }, (err, values) => {
       if (!err) {
         this.handleContactSubmit('address', values);
       }
@@ -132,7 +132,7 @@ export default class EditContactWayModal extends PureComponent {
   checkPerOtherForSubmit() {
     const otherForm = this.getPerOtherForm();
     // 校验完成后调用提交回调
-    otherForm.validateFields((err, values) => {
+    otherForm.validateFields({ force: true }, (err, values) => {
       if (!err) {
         this.handleContactSubmit('other', values);
       }
@@ -145,11 +145,14 @@ export default class EditContactWayModal extends PureComponent {
     const { data: { mobile, email, landline } } = this.props;
     const phoneForm = this.getOrgPhoneForm();
     // 校验完成后调用提交回调
-    phoneForm.validateFields((err, values) => {
+    phoneForm.validateFields({ force: true }, (err, values) => {
       if (!err) {
         // 此处需要针对手机信息，固定电话、邮箱做特殊处理
         const {
-          emailValue, landlineValue, mobileValue, ...restValue
+          emailValue,
+          landlineValue,
+          mobileValue,
+          ...restValue
         } = values;
         // 新增的时候需要将这三个值转换成对象,因为后端的接口需要这样弄,
         // 因为机构客户的联系人信息有多个手机信息、固定电话、邮箱
@@ -185,7 +188,7 @@ export default class EditContactWayModal extends PureComponent {
   checkOrgAddressForSubmit() {
     const addressForm = this.getOrgAddressForm();
     // 校验完成后调用提交回调
-    addressForm.validateFields((err, values) => {
+    addressForm.validateFields({ force: true }, (err, values) => {
       if (!err) {
         this.handleContactSubmit('address', values);
       }

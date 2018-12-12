@@ -25,7 +25,7 @@ const columnOverlayStyle = {
 };
 
 export default class ActivityColumnCarousel extends Component {
-  static propsTypes = {
+  static propTypes = {
     activityColumnList: PropTypes.array.isRequired,
   }
 
@@ -94,7 +94,7 @@ export default class ActivityColumnCarousel extends Component {
     const { activityColumnList } = this.props;
     const activityColumnListData = _.map(activityColumnList, (item) => {
       const {
-        attaches, link, description, url
+        attaches, link, description, url: itemUrl
       } = item;
       const { name } = attaches[0];
       return (
@@ -103,7 +103,7 @@ export default class ActivityColumnCarousel extends Component {
             overlayStyle={columnOverlayStyle}
             title={description}
           >
-            <img src={url} alt={name} />
+            <img src={itemUrl} alt={name} />
           </Tooltip>
         </div>
       );

@@ -15,7 +15,7 @@ import _ from 'lodash';
 import { connect } from 'dva';
 
 import Button from '../Button';
-import { request } from '../../../config';
+import { request, constants } from '../../../config';
 import { emp, dva } from '../../../helper';
 import styles from './multiUploader.less';
 import Icon from '../Icon';
@@ -151,13 +151,12 @@ export default class MultiUpload extends PureComponent {
           uploadCallback(type, data.attachment);
         });
       } else {
-        // 上传失败的返回值 MAG0005
-        this.setState({
+        this.setState(prevState => ({
           status: 'active',
-          fileList: this.state.oldFileList,
+          fileList: prevState.oldFileList,
           file: {},
           percent: 0,
-        });
+        }));
         message.error(uploadFile.response.msg);
       }
     }
@@ -262,7 +261,7 @@ export default class MultiUpload extends PureComponent {
         <Upload {...uploadProps} {...this.props}>
           <Button className={styles.commonUploadBtn}>
             <Icon type="fujian1" />
-上传附件
+            上传附件
           </Button>
         </Upload>
       )
@@ -302,8 +301,9 @@ export default class MultiUpload extends PureComponent {
                       }
                       <em>
                         <a
-                          href={`${request.prefix}/file/ceFileDownload2?attachId=${item.attachId}&empId=${empId}&filename=${item.name}`}
+                          href={`${constants.URL_PREFIX}${item.downloadURL}`}
                           onClick={this.handleDownloadClick}
+                          download
                         >
                           <Icon type="xiazai2" />
                         </a>

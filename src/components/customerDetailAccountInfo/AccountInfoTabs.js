@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-23 10:39:57
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-24 13:31:58
+ * @Last Modified time: 2018-12-07 12:47:15
  * @description 新版客户360详情底部概览信息
  */
 import React, { PureComponent } from 'react';
@@ -40,11 +40,35 @@ export default class AccountInfoTabs extends PureComponent {
     accountChangeRes: PropTypes.object.isRequired,
   }
 
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const {
+      location: {
+        query: { custId: nextId },
+      },
+    } = nextProps;
+    const { custId } = prevState;
+    if (nextId !== custId && !_.isEmpty(nextId)) {
+      // 如果切换了用户，则需要将Tab切换到账户概览，并且查询下数据
+      return {
+        custId: nextId,
+        activeTabKey: 'accountSummary',
+      };
+    }
+    return null;
+  }
+
   constructor(props) {
     super(props);
+    const {
+      location: {
+        query: { custId },
+      },
+    } = props;
     this.state = {
       // 默认激活的Tab，为账户概览
       activeTabKey: 'accountSummary',
+      // 保存客户ID
+      custId,
     };
   }
 
@@ -58,7 +82,7 @@ export default class AccountInfoTabs extends PureComponent {
     const { location: { query: { custId: prevId } } } = prevProps;
     if (nextId !== prevId && !_.isEmpty(nextId)) {
       // 如果切换了用户，则需要将Tab切换到账户概览，并且查询下数据
-      this.setState({ activeTabKey: 'accountSummary' });
+      // state变化移动到getDerivedStateFromProps函数中处理
       this.querySummary();
     }
   }
@@ -66,9 +90,9 @@ export default class AccountInfoTabs extends PureComponent {
   // 查询账户概览
   @autobind
   querySummary() {
-    const { location: { query: { custId } }, queryAccountSummary } = this.props;
+    const { location: { query: { custId } } } = this.props;
     if (!_.isEmpty(custId)) {
-      queryAccountSummary({ custId });
+      this.props.queryAccountSummary({ custId });
     }
   }
 
@@ -77,16 +101,30 @@ export default class AccountInfoTabs extends PureComponent {
   queryAccountInByType(accountType) {
     const { location: { query: { custId } } } = this.props;
     if (!_.isEmpty(custId)) {
+      // 查询账户信息
       this.props.queryAccountInfo({
         custId,
         accountType,
       });
     }
-    this.props.queryBusnTypeDict({
-      accountType: _.lowerCase(accountType),
-      queryType: 'accountChange',
-    });
+    // 每当切换Tab的时候，需要根据不同的账户类型优先查询下其业务类别
+    this.queryBusnTypeDictByAccountType(accountType);
   }
+
+  // 需要根据不同的账户类型优先查询下其业务类别
+  @autobind
+  queryBusnTypeDictByAccountType(accountType) {
+    // 因为这个业务类别字典不会改变，所以每一个账户下只需要查询一次
+    const { busnTypeDict } = this.props;
+    const hasNoCurerntTypeDict = _.isEmpty(_.get(busnTypeDict, _.lowerCase(accountType)));
+    if (hasNoCurerntTypeDict) {
+      this.props.queryBusnTypeDict({
+        accountType: _.lowerCase(accountType),
+        queryType: 'accountChange',
+      });
+    }
+  }
+
 
   // 查询接口
   @autobind
@@ -158,7 +196,7 @@ export default class AccountInfoTabs extends PureComponent {
                 custId={custId}
                 fundAccount={normalFundAccount}
                 stockAccount={normalStockAccount}
-                busnTypeDict={busnTypeDict}
+                busnTypeDict={busnTypeDict.normal || []}
                 accountChangeRes={normalAccountChange}
                 queryAccountChange={queryAccountChange}
               />
@@ -171,7 +209,7 @@ export default class AccountInfoTabs extends PureComponent {
                 custId={custId}
                 fundAccount={creditFundAccount}
                 stockAccount={creditStockAccount}
-                busnTypeDict={busnTypeDict}
+                busnTypeDict={busnTypeDict.credit || []}
                 accountChangeRes={creditAccountChange}
                 queryAccountChange={queryAccountChange}
               />
@@ -184,7 +222,7 @@ export default class AccountInfoTabs extends PureComponent {
                 custId={custId}
                 fundAccount={optionFundAccount}
                 stockAccount={optionStockAccount}
-                busnTypeDict={busnTypeDict}
+                busnTypeDict={busnTypeDict.option || []}
                 accountChangeRes={optionAccountChange}
                 queryAccountChange={queryAccountChange}
               />

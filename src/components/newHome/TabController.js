@@ -13,6 +13,7 @@ import { SingleFilter } from 'lego-react-filter/src';
 import logable from '../../decorators/logable';
 import CustRange from '../customerPool/list/manageFilter/CustFilter';
 import { MAIN_MAGEGER_ID } from '../../routes/customerPool/config';
+import { optionsMap } from '../../config';
 import styles from './tabController.less';
 
 export default class TabController extends PureComponent {
@@ -61,6 +62,7 @@ export default class TabController extends PureComponent {
           }
           return true;
         }
+        return true;
       });
 
       if (currentDepartment) {
@@ -149,16 +151,32 @@ export default class TabController extends PureComponent {
   handleTimeSelectChange(item) {
     const { replace, location: { pathname, query } } = this.props;
     const selectValue = item.value;
-    replace({
-      pathname,
-      query: {
-        ...query,
-        cycleSelect: selectValue,
-      },
-    });
+    if (query.activeKey === 'performance') {
+      replace({
+        pathname,
+        query: {
+          ...query,
+          performanceCycleSelect: selectValue,
+        },
+      });
+    } else {
+      replace({
+        pathname,
+        query: {
+          ...query,
+          cycleSelect: selectValue,
+        },
+      });
+    }
   }
 
   render() {
+    const {
+      query: {
+        activeKey,
+        performanceCycleSelect,
+      }
+    } = this.props.location;
     const custRangeProps = {
       defaultFirst: true,
       custRange: this.custRange,
@@ -173,6 +191,14 @@ export default class TabController extends PureComponent {
       value: this.getCurrentTime(),
       onChange: this.handleTimeSelectChange,
     };
+    // 投顾绩效时间选择属性
+    const performanceTimeSelectProps = {
+      useCustomerFilter: true,
+      data: optionsMap.performanceCycleSelect,
+      dataMap: ['dateKey', 'name'],
+      value: performanceCycleSelect || optionsMap.performanceCycleSelect[0].dateKey,
+      onChange: this.handleTimeSelectChange,
+    };
     return (
       <div className={styles.tabControllerContainer}>
         <div className={styles.custRangeContainer}>
@@ -180,7 +206,11 @@ export default class TabController extends PureComponent {
         </div>
         <div className={styles.divider} />
         <div className={styles.timeSelectContainer}>
-          <SingleFilter {...timeSelectProps} />
+          {
+            activeKey !== 'performance'
+              ? <SingleFilter {...timeSelectProps} />
+              : <SingleFilter {...performanceTimeSelectProps} />
+          }
         </div>
       </div>
     );

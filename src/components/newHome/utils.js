@@ -9,8 +9,19 @@ import _ from 'lodash';
 import { transformItemUnit } from '../chartRealTime/FixNumber';
 import { number } from '../../helper';
 
+const NAME_TGZZC = '托管总资产';
+// 计算除数并转换成百分比显示
+function calcPercent(x = 0, y = 0) {
+  let result = 0;
+  if (Number(y) === 0) {
+    return result;
+  }
+  result = ((x / y) * 100).toFixed(0);
+  return `${result}%`;
+}
 // 客户类型
 function getCustClassChartData(data) {
+  const showText = data.showText || '';
   const dataSource = [
     {
       name: '零售',
@@ -52,14 +63,18 @@ function getCustClassChartData(data) {
     dataSource[0].custNumRate = 50;
     dataSource[1].custNumRate = 50;
   } else {
-    dataSource[0].custNumRate = Math.floor((dataSource[0].custNum / (dataSource[0].custNum + dataSource[1].custNum)) * 100);
+    dataSource[0].custNumRate = Math.floor(
+      (dataSource[0].custNum / (dataSource[0].custNum + dataSource[1].custNum)) * 100
+    );
     dataSource[1].custNumRate = 100 - dataSource[0].custNumRate;
   }
   if (dataSource[0].asset + dataSource[1].asset === 0) {
     dataSource[0].assetRate = 50;
     dataSource[1].assetRate = 50;
   } else {
-    dataSource[0].assetRate = Math.floor((dataSource[0].asset / (dataSource[0].asset + dataSource[1].asset)) * 100);
+    dataSource[0].assetRate = Math.floor(
+      (dataSource[0].asset / (dataSource[0].asset + dataSource[1].asset)) * 100
+    );
     dataSource[1].assetRate = 100 - dataSource[0].assetRate;
   }
   const option = {
@@ -78,23 +93,25 @@ function getCustClassChartData(data) {
         fontSize: 12,
       },
       formatter: (params) => {
-        let data = {
+        let formatData = {
           value: number.thousandFormat(params.data.custNum),
           unit: '人',
         };
-        if (params.name === '托管资产') {
+        let showParamsName = params.name;
+        if (params.name === NAME_TGZZC) {
+          showParamsName = `客户${params.name}`;
           const item = transformItemUnit(params.data.asset);
-          data = {
+          formatData = {
             value: item.newItem,
             unit: item.newUnit,
           };
         }
-        return `${params.data.name} ${params.name}：${data.value}${data.unit}`;
+        return `${showText}${params.data.name}${showParamsName}：${formatData.value}${formatData.unit}`;
       }
     },
     xAxis: {
       type: 'category',
-      data: ['客户数', '托管资产'],
+      data: ['客户', NAME_TGZZC],
       axisTick: {
         show: false
       },
@@ -168,6 +185,7 @@ function getCustClassChartData(data) {
 
 // 客户性质
 function getCustomTypeChartData(data) {
+  const showText = data.showText || '';
   const dataSource = [
     {
       name: '个人',
@@ -227,7 +245,13 @@ function getCustomTypeChartData(data) {
     dataSource[0].custNumRate = 33.33;
     dataSource[1].custNumRate = 33.33;
     dataSource[2].custNumRate = 33.34;
+    dataSource[0].showCustNumRate = 0;
+    dataSource[1].showCustNumRate = 0;
+    dataSource[2].showCustNumRate = 0;
   } else {
+    dataSource[0].showCustNumRate = calcPercent(dataSource[0].custNum, custNumSum);
+    dataSource[1].showCustNumRate = calcPercent(dataSource[1].custNum, custNumSum);
+    dataSource[2].showCustNumRate = calcPercent(dataSource[2].custNum, custNumSum);
     dataSource[0].custNumRate = Math.floor((dataSource[0].custNum / custNumSum) * 100);
     dataSource[1].custNumRate = Math.floor((dataSource[1].custNum / custNumSum) * 100);
     if (dataSource[1].custNumRate === 0 && dataSource[0].custNumRate !== 100) {
@@ -241,7 +265,13 @@ function getCustomTypeChartData(data) {
     dataSource[0].assetRate = 33.33;
     dataSource[1].assetRate = 33.33;
     dataSource[2].assetRate = 33.34;
+    dataSource[0].showAssetRate = 0;
+    dataSource[1].showAssetRate = 0;
+    dataSource[2].showAssetRate = 0;
   } else {
+    dataSource[0].showAssetRate = calcPercent(dataSource[0].asset, assetSum);
+    dataSource[1].showAssetRate = calcPercent(dataSource[1].asset, assetSum);
+    dataSource[2].showAssetRate = calcPercent(dataSource[2].asset, assetSum);
     dataSource[0].assetRate = Math.floor((dataSource[0].asset / assetSum) * 100);
     dataSource[1].assetRate = Math.floor((dataSource[1].asset / assetSum) * 100);
 
@@ -268,23 +298,29 @@ function getCustomTypeChartData(data) {
         fontSize: 12,
       },
       formatter: (params) => {
-        let data = {
+        let formatData = {
           value: number.thousandFormat(params.data.custNum),
           unit: '人',
+          showPercent: params.data.showCustNumRate || '0%',
         };
-        if (params.name === '托管资产') {
+        let showParamsName = params.name;
+        if (params.name === NAME_TGZZC) {
+          showParamsName = `客户${params.name}`;
           const item = transformItemUnit(params.data.asset);
-          data = {
+          formatData = {
             value: item.newItem,
             unit: item.newUnit,
+            showPercent: params.data.showAssetRate || '0%',
           };
         }
-        return `${params.data.name} ${params.name}：${data.value}${data.unit}`;
+        return `
+          ${showText}${params.data.name}${showParamsName}：${formatData.value}${formatData.unit}，占比${formatData.showPercent}
+        `;
       }
     },
     xAxis: {
       type: 'category',
-      data: ['客户数', '托管资产'],
+      data: ['客户', NAME_TGZZC],
       axisTick: {
         show: false
       },
@@ -377,7 +413,7 @@ function getMaxCostRateChartData(data) {
   const xAxisLabel = ['-30', '-20', '-10', '0', '10', '20', '30'];
   let dataSource = [
     {
-      name: '盈亏比：(-∞,-30%)',
+      name: '盈亏比在-∞~-30%(不含)的',
       value: 0,
       filterValue: {
         minVal: null,
@@ -387,7 +423,7 @@ function getMaxCostRateChartData(data) {
       filterId: 'maxCostRate',
     },
     {
-      name: '盈亏比：[-30%, -20%)',
+      name: '盈亏比在-30%~-20%(不含)的',
       value: 0,
       filterValue: {
         minVal: '-30',
@@ -397,7 +433,7 @@ function getMaxCostRateChartData(data) {
       filterId: 'maxCostRate',
     },
     {
-      name: '盈亏比：[-20%, -10%)',
+      name: '盈亏比在-20%~-10%(不含)的',
       value: 0,
       filterValue: {
         minVal: '-20',
@@ -407,7 +443,7 @@ function getMaxCostRateChartData(data) {
       filterId: 'maxCostRate',
     },
     {
-      name: '盈亏比：[-10%, 0)',
+      name: '盈亏比在-10%~0(不含)的',
       value: 0,
       filterValue: {
         minVal: '-10',
@@ -417,7 +453,7 @@ function getMaxCostRateChartData(data) {
       filterId: 'maxCostRate',
     },
     {
-      name: '盈亏比：[0, 10%)',
+      name: '盈亏比在0~10%(不含)的',
       value: 0,
       filterValue: {
         minVal: '0',
@@ -427,7 +463,7 @@ function getMaxCostRateChartData(data) {
       filterId: 'maxCostRate',
     },
     {
-      name: '盈亏比：[10%, 20%)',
+      name: '盈亏比在10%~20%(不含)的',
       value: 0,
       filterValue: {
         minVal: '10',
@@ -437,7 +473,7 @@ function getMaxCostRateChartData(data) {
       filterId: 'maxCostRate',
     },
     {
-      name: '盈亏比：[20%, 30%)',
+      name: '盈亏比在20%~30%(不含)的',
       value: 0,
       filterValue: {
         minVal: '20',
@@ -447,7 +483,7 @@ function getMaxCostRateChartData(data) {
       filterId: 'maxCostRate',
     },
     {
-      name: '盈亏比：[30%, +∞)',
+      name: '盈亏比在30%~+∞(不含)的',
       value: 0,
       filterValue: {
         minVal: '30',
@@ -481,11 +517,11 @@ function getMaxCostRateChartData(data) {
         fontSize: 12,
       },
       formatter: (params) => {
-        const data = {
+        const formatData = {
           value: number.thousandFormat(params.data.value),
           unit: '人',
         };
-        return `${params.data.name} 客户数：${data.value}${data.unit}`;
+        return `${params.data.name}客户：${formatData.value}${formatData.unit}`;
       }
     },
     xAxis: [
@@ -542,7 +578,7 @@ function getPftAmtChartData(data) {
   ];
   let dataSource = [
     {
-      name: '盈亏幅度在[-∞, -100)万元',
+      name: '盈亏幅度在-∞~-100(不含)万元的',
       value: 0,
       filterValue: {
         minVal: null,
@@ -552,7 +588,7 @@ function getPftAmtChartData(data) {
       filterId: 'pftAmt',
     },
     {
-      name: '盈亏幅度在[-100, -50)万元',
+      name: '盈亏幅度在-100~-50(不含)万元的',
       value: 0,
       filterValue: {
         minVal: '-1000000',
@@ -562,7 +598,7 @@ function getPftAmtChartData(data) {
       filterId: 'pftAmt',
     },
     {
-      name: '盈亏幅度在[-50, -10)万元',
+      name: '盈亏幅度在-50~-10(不含)万元的',
       value: 0,
       filterValue: {
         minVal: '-500000',
@@ -572,7 +608,7 @@ function getPftAmtChartData(data) {
       filterId: 'pftAmt',
     },
     {
-      name: '盈亏幅度在[-10, -5)万元',
+      name: '盈亏幅度在-10~-5(不含)万元的',
       value: 0,
       filterValue: {
         minVal: '-100000',
@@ -582,7 +618,7 @@ function getPftAmtChartData(data) {
       filterId: 'pftAmt',
     },
     {
-      name: '盈亏幅度在[-5, -1)万元',
+      name: '盈亏幅度在-5~-1(不含)万元的',
       value: 0,
       filterValue: {
         minVal: '-50000',
@@ -592,7 +628,7 @@ function getPftAmtChartData(data) {
       filterId: 'pftAmt',
     },
     {
-      name: '盈亏幅度在[-1, 0)万元',
+      name: '盈亏幅度在-1~0(不含)万元的',
       value: 0,
       filterValue: {
         minVal: '-10000',
@@ -602,7 +638,7 @@ function getPftAmtChartData(data) {
       filterId: 'pftAmt',
     },
     {
-      name: '盈亏幅度在[0, 1)万元',
+      name: '盈亏幅度在0~1(不含)万元的',
       value: 0,
       filterValue: {
         minVal: '0',
@@ -612,7 +648,7 @@ function getPftAmtChartData(data) {
       filterId: 'pftAmt',
     },
     {
-      name: '盈亏幅度在[1, 5)万元',
+      name: '盈亏幅度在1~5(不含)万元的',
       value: 0,
       filterValue: {
         minVal: '10000',
@@ -622,7 +658,7 @@ function getPftAmtChartData(data) {
       filterId: 'pftAmt',
     },
     {
-      name: '盈亏幅度在[5, 10)万元',
+      name: '盈亏幅度在5~10(不含)万元的',
       value: 0,
       filterValue: {
         minVal: '50000',
@@ -632,7 +668,7 @@ function getPftAmtChartData(data) {
       filterId: 'pftAmt',
     },
     {
-      name: '盈亏幅度在[10, 50)万元',
+      name: '盈亏幅度在10~50(不含)万元的',
       value: 0,
       filterValue: {
         minVal: '100000',
@@ -642,7 +678,7 @@ function getPftAmtChartData(data) {
       filterId: 'pftAmt',
     },
     {
-      name: '盈亏幅度在[50, 100)万元',
+      name: '盈亏幅度在50~100(不含)万元的',
       value: 0,
       filterValue: {
         minVal: '500000',
@@ -652,7 +688,7 @@ function getPftAmtChartData(data) {
       filterId: 'pftAmt',
     },
     {
-      name: '盈亏幅度在[100, +∞)万元',
+      name: '盈亏幅度在100~∞(不含)万元的',
       value: 0,
       filterValue: {
         minVal: '1000000',
@@ -686,11 +722,11 @@ function getPftAmtChartData(data) {
         fontSize: 12,
       },
       formatter: (params) => {
-        const data = {
+        const formatData = {
           value: number.thousandFormat(params.data.value),
           unit: '人',
         };
-        return `${params.data.name} 客户数：${data.value}${data.unit}`;
+        return `${params.data.name}客户：${formatData.value}${formatData.unit}`;
       }
     },
     xAxis: [
@@ -828,10 +864,78 @@ function getHoldingChart(data) {
   return option;
 }
 
+// 业务开通
+function getOpenedAccountsChartData(data) {
+  const option = {
+    color: ['#49b6ff'],
+    grid: {
+      left: '10px',
+      right: '10px',
+      bottom: '1px',
+      top: '15px',
+      containLabel: false,
+    },
+    tooltip: {
+      position: 'top',
+      backgroundColor: 'rgba(2, 22, 55, 0.8)',
+      padding: 10,
+      textStyle: {
+        fontSize: 12,
+      },
+    },
+    xAxis: [
+      {
+        type: 'category',
+        data: _.map(data, item => item.name),
+        show: true,
+        axisLine: {
+          lineStyle: {
+            color: '#a8b6d4',
+            width: 1,
+          }
+        },
+        axisTick: {
+          alignWithLabel: true,
+          length: 0,
+        },
+        axisLabel: {
+          color: '#666',
+          align: 'center',
+          margin: 20,
+          rotate: 30,
+        },
+      }
+    ],
+    yAxis: [
+      {
+        type: 'value',
+        show: false,
+      }
+    ],
+    series: [{
+      data,
+      type: 'bar',
+      barWidth: 14,
+      label: {
+        normal: {
+          show: true,
+          position: 'top',
+          color: '#333',
+          fontSize: 12,
+        },
+      },
+    }],
+  };
+  return {
+    option,
+  };
+}
+
 export {
   getCustClassChartData,
   getCustomTypeChartData,
   getMaxCostRateChartData,
   getPftAmtChartData,
   getHoldingChart,
+  getOpenedAccountsChartData,
 };

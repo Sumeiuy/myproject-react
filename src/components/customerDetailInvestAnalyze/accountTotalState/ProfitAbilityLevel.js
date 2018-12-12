@@ -2,13 +2,14 @@
  * @Author: zhangjun
  * @Date: 2018-11-21 09:21:54
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-21 17:02:38
+ * @Last Modified time: 2018-12-11 13:16:30
  * @description 盈利能力等级
  */
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import classnames from 'classnames';
+import { data } from '../../../helper';
 import { profitAbilityLevelList } from '../config';
 
 import styles from './profitAbilityLevel.less';
@@ -23,7 +24,7 @@ export default function ProfitAbilityLevel(props) {
       [styles.itemProgress]: index === profitAbilityLevel,
     });
     return (
-      <div className={styles.steps}>
+      <div className={styles.steps} key={data.uuid()}>
         <div className={stepCls}>
           <div className={styles.itemTail} />
           <div className={styles.itemIcon} />
@@ -40,5 +41,9 @@ export default function ProfitAbilityLevel(props) {
 }
 
 ProfitAbilityLevel.propTypes = {
-  profitAbilityLevel: PropTypes.number.isRequired,
+  profitAbilityLevel: PropTypes.number,
+};
+
+ProfitAbilityLevel.defaultProps = {
+  profitAbilityLevel: 0,
 };

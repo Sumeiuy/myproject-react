@@ -1,8 +1,8 @@
 /*
  * @Author: zhangjun
  * @Date: 2018-11-27 16:21:53
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-04 13:22:57
+ * @Last Modified by: zuoguangzu
+ * @Last Modified time: 2018-12-10 10:26:42
  * @Description: 客户360-投资能力分析相关effect,mapStateToProps,mapDispatchToProps
  */
 import { connect } from 'dva';
@@ -25,6 +25,8 @@ const effects = {
   getProfitTrendReport: 'detailInvestAnalyze/getProfitTrendReport',
   // 获取brinson归因结果
   getAttributionAnalysis: 'detailInvestAnalyze/getAttributionAnalysis',
+  // 获取个体收益明细结果
+  getEachStockIncomeDetails: 'detailInvestAnalyze/getEachStockIncomeDetails',
   // 获取期末资产配置数据
   getEndTermAssetConfig: 'detailInvestAnalyze/getEndTermAssetConfig',
   // 获取资产配置变动走势
@@ -37,13 +39,15 @@ const mapStateToProps = state => ({
   // 投资账户特征
   investmentFeatureLabels: state.detailInvestAnalyze.investmentFeatureLabels,
   // 账户资产变动
-  assetChangeList: state.detailInvestAnalyze.assetChangeList,
+  assetChangeData: state.detailInvestAnalyze.assetChangeData,
   // 账户资产变动图表数据
   assetChangeReportData: state.detailInvestAnalyze.assetChangeReportData,
   // 账户收益走势图表数据
   profitTrendData: state.detailInvestAnalyze.profitTrendData,
   // brinson归因数据
   attributionData: state.detailInvestAnalyze.attributionData,
+  // 个体收益明细数据
+  incomeDetailData: state.detailInvestAnalyze.incomeDetailData,
   // 期末资产配置数据
   endTermAssetConfigData: state.detailInvestAnalyze.endTermAssetConfigData,
   // 资产配置变动走势数据
@@ -63,6 +67,8 @@ const mapDispatchToProps = {
   getProfitTrendReport: effect(effects.getProfitTrendReport, { forceFull: true }),
   // 获取brinson归因结果
   getAttributionAnalysis: effect(effects.getAttributionAnalysis, { forceFull: true }),
+  // 获取个体收益明细
+  getEachStockIncomeDetails: effect(effects.getEachStockIncomeDetails, { forceFull: true }),
   // 获取期末资产配置数据
   getEndTermAssetConfig: effect(effects.getEndTermAssetConfig, { forceFull: true }),
   // 获取资产配置变动走势

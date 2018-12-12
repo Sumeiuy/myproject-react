@@ -31,6 +31,9 @@ const exported = {
 
   // 是否打开本地缓存
   enableSessionStorage: false,
+
+  // url 前缀
+  URL_PREFIX: 'fspa',
 };
 
 export default exported;
@@ -52,4 +55,5 @@ export const {
   hbgxSummaryType,
   jxstSummaryType,
   enableSessionStorage,
+  URL_PREFIX,
 } = exported;

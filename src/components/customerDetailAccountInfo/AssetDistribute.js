@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-11 16:30:07
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-05 10:22:23
+ * @Last Modified time: 2018-12-11 10:11:53
  * @description 新版客户360详情下账户信息Tab下的资产分布组件
  */
 import React, { PureComponent } from 'react';
@@ -128,10 +128,12 @@ export default class AssetDistribute extends PureComponent {
   // 处理表格表头的配置项
   @autobind
   getIndexTableColumns() {
+    // 新需求，展示哪个指标，详情表格第一个列title就显示哪个指标文字
+    const { radarIndexName } = this.state;
     return [
       {
         width: '30%',
-        title: '资产',
+        title: radarIndexName,
         dataIndex: 'name',
         key: 'name',
         render: this.renderTableZichanColumn,
@@ -146,7 +148,7 @@ export default class AssetDistribute extends PureComponent {
       },
       {
         width: '15%',
-        title: '占比',
+        title: '持仓占比',
         dataIndex: 'percent',
         key: 'percent',
         align: 'right',
