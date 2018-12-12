@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-11-22 10:03:01
- * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-31 17:42:44
+ * @Last Modified by: maoquan@htsc.com
+ * @Last Modified time: 2018-12-12 13:25:47
  * @description 此文件用于存放与操作系统，生产/开发环境，浏览器，使用框架相关的公用方法
  */
 import bowser from 'bowser';
@@ -61,7 +61,7 @@ const env = {
     return {
       $app_version: constants.version,
       $os: env.getOS(),
-      $os_name: bowser.osname,
+      osname: bowser.osname, // 注意，非神策属性不要加$开头
       $os_version: getOsVersion(),
       $screen_width: window.screen.width,
       $screen_height: window.screen.height,
