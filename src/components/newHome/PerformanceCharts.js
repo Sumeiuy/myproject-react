@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-12-04 13:54:08
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-12-11 18:09:36
+ * @LastEditTime: 2018-12-12 21:18:05
  * @Description: 首页-投顾绩效-图表
  */
 
@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
 import {
   Row, Col, Progress,
 } from 'antd';
-// import { autobind } from 'core-decorators';
+import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import ChartContiner from './ChartContainer';
 import Icon from '../common/Icon';
@@ -31,14 +31,23 @@ import {
   getValueByResponse,
 } from './chartsConfig';
 import styles from './performanceCharts.less';
+import oldStyles from './performanceCharts_oldHome.less';
 
 export default class PerformanceCharts extends PureComponent {
   static propTypes = {
     indicators: PropTypes.object.isRequired,
+    isNewHome: PropTypes.bool,
+  };
+
+  static defaultProps = {
+    isNewHome: true,
   };
 
   // 重点指标
-  renderPointIndicator(indicators) {
+  @autobind
+  renderPointIndicator() {
+    const { indicators, isNewHome } = this.props;
+    const trueStyles = isNewHome ? styles : oldStyles;
     const pointIndicators = getValueByResponse(indicators, POINT_INDICATORS_CONFIG);
 
     const countList = _.filter(pointIndicators, ['isAsset', false]);
@@ -52,8 +61,8 @@ export default class PerformanceCharts extends PureComponent {
       : _.maxBy(assetList, 'value').value / 0.9; // 最大值的百分比认为0.9
 
     return (
-      <ChartContiner dataSource={{ title: '重点指标' }}>
-        <div className={styles.indicatorDetailWrap}>
+      <ChartContiner dataSource={{ title: '重点指标' }} isNewHome={isNewHome}>
+        <div className={trueStyles.indicatorDetailWrap}>
           {
             _.map(pointIndicators, (item) => {
               let percent;
@@ -65,16 +74,16 @@ export default class PerformanceCharts extends PureComponent {
                   : _.round(item.value * 100 / maxCount);
               }
               return (
-                <div className={styles.mainIndicatorItem} key={item.name}>
-                  <div className={styles.indicatorText}>
+                <div className={trueStyles.mainIndicatorItem} key={item.name}>
+                  <div className={trueStyles.indicatorText}>
                     <Tooltip title={item.description} placement="top">
                       {item.name}
                     </Tooltip>
-                    <span className={styles.indicatorValue}>
+                    <span className={trueStyles.indicatorValue}>
                       {item.formatedValue}
                     </span>
                   </div>
-                  <div className={styles.progress}>
+                  <div className={trueStyles.progress}>
                     <Progress
                       percent={percent}
                       showInfo={false}
@@ -92,25 +101,28 @@ export default class PerformanceCharts extends PureComponent {
   }
 
   // 客户及资产
-  renderCustomerAndAsset(indicators) {
+  @autobind
+  renderCustomerAndAsset() {
+    const { indicators, isNewHome } = this.props;
+    const trueStyles = isNewHome ? styles : oldStyles;
     const customerAndAssets = getValueByResponse(indicators, CUSTOMER_AND_ASSET_CONFIG);
     return (
-      <ChartContiner dataSource={{ title: '客户及资产' }}>
-        <div className={styles.customerAndAssetWrap}>
+      <ChartContiner dataSource={{ title: '客户及资产' }} isNewHome={isNewHome}>
+        <div className={trueStyles.customerAndAssetWrap}>
           {
             _.map(customerAndAssets, (item, index) => (
-              <div className={styles.detail} key={item.name}>
-                <div className={styles.value}>
+              <div className={trueStyles.detail} key={item.name}>
+                <div className={trueStyles.value}>
                   {item.formatedValue}
                 </div>
-                <div className={styles.name}>
+                <div className={trueStyles.name}>
                   <Tooltip title={item.description} placement="top">
                     {item.name}
                   </Tooltip>
                 </div>
                 {
                   index % 2 === 0
-                    ? <div className={styles.line} />
+                    ? <div className={trueStyles.line} />
                     : null
                 }
               </div>
@@ -122,44 +134,47 @@ export default class PerformanceCharts extends PureComponent {
   }
 
   // 金融产品
-  renderFinancialProduct(indicators) {
+  @autobind
+  renderFinancialProduct() {
+    const { indicators, isNewHome } = this.props;
+    const trueStyles = isNewHome ? styles : oldStyles;    
     const financialProducts = getValueByResponse(indicators, FINANCIAL_PRODUCT_CONFIG);
     const zdcxPrdt = _.find(financialProducts, { key: 'zdcxPrdt' }); // 重点创新产品
     const allPrdtBuyAmt = _.find(financialProducts, { key: 'allPrdtBuyAmt' }); // 销量总计
     const commonProducts = _.filter(financialProducts,
       product => product.key !== 'zdcxPrdt' && product.key !== 'allPrdtBuyAmt');
     return (
-      <ChartContiner dataSource={{ title: '金融产品' }}>
-        <div className={styles.financialProductWrap}>
-          <div className={styles.main}>
+      <ChartContiner dataSource={{ title: '金融产品' }} isNewHome={isNewHome}>
+        <div className={trueStyles.financialProductWrap}>
+          <div className={trueStyles.main}>
             <div>
-              <span className={styles.name}>
+              <span className={trueStyles.name}>
                 <Tooltip title={allPrdtBuyAmt.description} placement="top">{allPrdtBuyAmt.name}</Tooltip>
               </span>
-              <span className={styles.total}>
+              <span className={trueStyles.total}>
                 {allPrdtBuyAmt.formatedValue}
               </span>
             </div>
             {
               _.map(commonProducts, item => (
-                <div className={styles.product} key={item.key}>
-                  <span className={styles.name}>
+                <div className={trueStyles.product} key={item.key}>
+                  <span className={trueStyles.name}>
                     <Tooltip title={item.description} placement="top">
                       {item.name}
                     </Tooltip>
                   </span>
-                  <span className={styles.value}>
+                  <span className={trueStyles.value}>
                     {item.formatedValue}
                   </span>
                 </div>
               ))
             }
           </div>
-          <div className={styles.innovationProduct}>
-            <span className={styles.name}>
+          <div className={trueStyles.innovationProduct}>
+            <span className={trueStyles.name}>
               <Tooltip title={zdcxPrdt.description} placement="top">{zdcxPrdt.name}</Tooltip>
             </span>
-            <span className={styles.value}>
+            <span className={trueStyles.value}>
               {zdcxPrdt.formatedValue}
             </span>
           </div>
@@ -169,25 +184,32 @@ export default class PerformanceCharts extends PureComponent {
   }
 
   // 业务开通（户）
-  renderOpenedAccounts(indicators) {
+  @autobind
+  renderOpenedAccounts() {
+    const { indicators, isNewHome } = this.props;
+    const trueStyles = isNewHome ? styles : oldStyles;
+    const chartStyle = isNewHome ? {
+      height: '160px',
+      paddingTop: '15px',
+    } : {
+      height: '135px',
+      paddingTop: '10px',
+    };
     const openAccounts = getValueByResponse(indicators, OPEN_ACCOUNTS_CONFIG);
     const { option } = getOpenedAccountsChartData(openAccounts);
     return (
-      <ChartContiner dataSource={{ title: '业务开通（户）' }}>
-        <div className={styles.openAccountsWrap}>
+      <ChartContiner dataSource={{ title: '业务开通（户）' }} isNewHome={isNewHome}>
+        <div className={trueStyles.openAccountsWrap}>
           <IECharts
             option={option}
-            style={{
-              height: '160px',
-              paddingTop: '15px',
-            }}
+            style={chartStyle}
             resizable
           />
-          <div className={styles.labels}>
+          <div className={trueStyles.labels}>
             {
               _.map(openAccounts, item => (
                 <Tooltip title={item.description} placement="top" key={item.name}>
-                  <span className={styles.label}>
+                  <span className={trueStyles.label}>
                     {item.name}
                   </span>
                 </Tooltip>
@@ -200,31 +222,34 @@ export default class PerformanceCharts extends PureComponent {
   }
 
   // 净创收
-  renderNetIncome(indicators) {
+  @autobind
+  renderNetIncome() {
+    const { indicators, isNewHome } = this.props;
+    const trueStyles = isNewHome ? styles : oldStyles;
     const incomes = getValueByResponse(indicators, NET_INCOME_CONFIG);
     const max = _.every(incomes, { formatedValue: EMPTY_VALUE }) // 所有值都为空
       ? 1
       : _.maxBy(incomes, 'value').value / 0.9; // 最大值的百分比认为0.9
     return (
-      <ChartContiner dataSource={{ title: '净创收' }}>
-        <div className={styles.netIncomeWrap}>
+      <ChartContiner dataSource={{ title: '净创收' }} isNewHome={isNewHome}>
+        <div className={trueStyles.netIncomeWrap}>
           {
             _.map(incomes, (item) => {
               const percent = item.formatedValue === EMPTY_VALUE
                 ? 0
                 : _.round(item.value * 100 / max);
               return (
-                <div className={styles.incomeItem} key={item.name}>
-                  <div className={styles.incomeText}>
+                <div className={trueStyles.incomeItem} key={item.name}>
+                  <div className={trueStyles.incomeText}>
                     <Tooltip title={item.description} placement="top">{item.name}</Tooltip>
-                    <span className={styles.incomeValue}>
+                    <span className={trueStyles.incomeValue}>
                       {item.formatedValue}
                     </span>
                   </div>
-                  <div className={styles.progress}>
+                  <div className={trueStyles.progress}>
                     <Icon
                       type="xiangxia"
-                      className={styles.downIcon}
+                      className={trueStyles.downIcon}
                       style={{ left: `${percent}%` }}
                     />
                     <Progress
@@ -233,7 +258,7 @@ export default class PerformanceCharts extends PureComponent {
                     />
                     <Icon
                       type="xiangshang"
-                      className={styles.upIcon}
+                      className={trueStyles.upIcon}
                       style={{ left: `${percent}%` }}
                     />
                   </div>
@@ -247,21 +272,24 @@ export default class PerformanceCharts extends PureComponent {
   }
 
   // 服务指标
-  renderServiceIndicator(indicators) {
+  @autobind
+  renderServiceIndicator() {
+    const { indicators, isNewHome } = this.props;
+    const trueStyles = isNewHome ? styles : oldStyles;
     const serviceIndicators = getValueByResponse(indicators, SERVICE_INDICATOR_CONFIG);
     return (
-      <ChartContiner dataSource={{ title: '服务指标' }}>
-        <div className={styles.serviceIndicatorWrap}>
+      <ChartContiner dataSource={{ title: '服务指标' }} isNewHome={isNewHome}>
+        <div className={trueStyles.serviceIndicatorWrap}>
           {
             _.map(serviceIndicators, item => (
-              <div className={styles.serviceItem} key={item.name}>
-                <div className={styles.serviceText}>
+              <div className={trueStyles.serviceItem} key={item.name}>
+                <div className={trueStyles.serviceText}>
                   <Tooltip title={item.description} placement="top">{item.name}</Tooltip>
-                  <div className={styles.number}>
+                  <div className={trueStyles.number}>
                     {item.formatedValue}
                   </div>
                 </div>
-                <div className={styles.progress} color={item.color}>
+                <div className={trueStyles.progress} color={item.color}>
                   <Progress
                     percent={item.formatedValue === EMPTY_VALUE ? 0 : item.value}
                     showInfo={false}
@@ -280,35 +308,33 @@ export default class PerformanceCharts extends PureComponent {
   }
 
   render() {
-    const gutter = 18;
-    const {
-      indicators,
-    } = this.props;
+    const gutter = this.props.isNewHome ? 18 : 28;
+    const trueStyles = this.props.isNewHome ? styles : oldStyles;
     return (
-      <div className={styles.indexBox}>
-        <div className={styles.listItem}>
+      <div className={trueStyles.indexBox}>
+        <div className={trueStyles.listItem}>
           <Row gutter={gutter}>
             <Col span={8}>
-              {this.renderPointIndicator(indicators)}
+              {this.renderPointIndicator()}
             </Col>
             <Col span={8}>
-              {this.renderCustomerAndAsset(indicators)}
+              {this.renderCustomerAndAsset()}
             </Col>
             <Col span={8}>
-              {this.renderFinancialProduct(indicators)}
+              {this.renderFinancialProduct()}
             </Col>
           </Row>
         </div>
-        <div className={styles.listItem}>
+        <div className={trueStyles.listItem}>
           <Row gutter={gutter}>
             <Col span={8}>
-              {this.renderOpenedAccounts(indicators)}
+              {this.renderOpenedAccounts()}
             </Col>
             <Col span={8}>
-              {this.renderNetIncome(indicators)}
+              {this.renderNetIncome()}
             </Col>
             <Col span={8}>
-              {this.renderServiceIndicator(indicators)}
+              {this.renderServiceIndicator()}
             </Col>
           </Row>
         </div>

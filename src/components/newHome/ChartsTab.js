@@ -25,7 +25,6 @@ import AnalysisCharts from './AnalysisCharts';
 import PerformanceCharts from './PerformanceCharts';
 import TabController from './TabController';
 import logable from '../../decorators/logable';
-import IfWrap from '../common/biz/IfWrap';
 import styles from './chartsTab.less';
 
 const TabPane = Tabs.TabPane;
