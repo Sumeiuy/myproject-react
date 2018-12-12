@@ -1,9 +1,6 @@
 // see http://vuejs-templates.github.io/webpack for documentation.
 var path = require('path');
 var devEnv = require('./dev.env');
-// 后端服务器地址前缀，在`config.dev.mock`为`false`的情况下，
-// 以此前缀开头的请求全部转发至指定服务器`targetUrl`
-var prefix = devEnv.REMOVE_PREFIX === true ? '/mcrm/api' : '/fspa/mcrm/api';
 
 // UAT环境的开发转发环境地址
 var UAT_FORWARD_URL = 'http://168.61.8.82:5086';
@@ -11,6 +8,18 @@ var UAT_FORWARD_URL = 'http://168.61.8.82:5086';
 var SIT_FORWARD_URL = 'http://168.61.8.81:5087';
 // DOClever的接口mock地址
 var MOCK_FORWARD_URL = 'http://168.61.8.81:5090';
+// 后端本地联调接口地址
+var LOCAL_FORWARD_URL = '';
+
+function isDebugMode() {
+  if(process.argv[2] && process.argv[2].indexOf('DEBUG') > -1) {
+    return true;
+  }
+  return false;
+}
+
+// 本地与后端联调时，需要除去/fspa前缀
+var prefix = isDebugMode() ? '/mcrm/api' : '/fspa/mcrm/api';
 
 
 function generateProxy(proxyList) {
@@ -70,7 +79,9 @@ module.exports = {
         target: UAT_FORWARD_URL,
       },
       '/htsc-product-base',
-      { target: UAT_FORWARD_URL },
+      {
+        target: UAT_FORWARD_URL,
+      },
       '/jeip',
       { target: UAT_FORWARD_URL },
       '/yt/',
