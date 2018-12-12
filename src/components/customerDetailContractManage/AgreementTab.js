@@ -104,24 +104,8 @@ export default class AgreementTab extends PureComponent {
     type: 'ViewItem',
     payload: { name: '合同内容' },
   })
-  handleJumpAgreementReport(record) {
-    const {
-      empInfo: { empInfo = EMPTY_OBJECT },
-    } = this.props;
-    const { login = '' } = empInfo;
-    const {
-      name = '',
-      ptyId = '',
-    } = record;
-    const filterAgreement = _.find(AGREEMENT_LIST, o => o.name === name) || EMPTY_OBJECT;
-    const query = {
-      'iv-user': login,
-      menuId: filterAgreement.menuId || '',
-      pty_id: ptyId,
-    };
-    const url = `/acrmbi/login?${urlHelper.stringify(query)}`;
-    const w = window.open('about:blank');
-    w.location.href = url;
+  handleJumpAgreementReport() {
+    // 神策日志
   }
 
   @autobind
@@ -155,12 +139,41 @@ export default class AgreementTab extends PureComponent {
       return (
         <div className={styles.ellipsis}>
           <Tooltip title={text}>
-            <a onClick={() => this.handleJumpAgreementReport(record)}>{text}</a>
+            {this.renderContentLink(text, record)}
           </Tooltip>
         </div>
       );
     }
     return DEFAULT_TEXT;
+  }
+
+  @autobind
+  renderContentLink(text, record) {
+    const {
+      empInfo: { empInfo = EMPTY_OBJECT },
+    } = this.props;
+    const { login = '' } = empInfo;
+    const {
+      name = '',
+      ptyId = '',
+    } = record;
+    const filterAgreement = _.find(AGREEMENT_LIST, o => o.name === name) || EMPTY_OBJECT;
+    const query = {
+      'iv-user': login,
+      menuId: filterAgreement.menuId || '',
+      pty_id: ptyId,
+    };
+    const url = `/acrmbi/login?${urlHelper.stringify(query)}`;
+    return (
+      <a
+        href={url}
+        target="_blank"
+        rel="noreferrer noopener"
+        onClick={this.handleJumpAgreementReport}
+      >
+        {text}
+      </a>
+    );
   }
 
   render() {
