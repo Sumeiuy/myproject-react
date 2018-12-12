@@ -21,6 +21,8 @@ const tenMillion = 10000000;
 const yi = 100000000;
 // 十亿
 const billion = 100000000;
+// 千亿
+const tenBillion = 100000000000;
 // 万亿
 const trillion = 1000000000000;
 // 百分号
@@ -231,9 +233,9 @@ function formatByBorders({
   // 传入的数字
   num = 0,
   // 分隔边界数组
-  borders = [tenMillion],
+  borders = [tenMillion, tenBillion],
   // 单位常量数组，长度比borders的多1
-  units = ['万', '亿'],
+  units = ['万', '亿', '万亿'],
   // 是否格式化千分符
   isThousandFormat = true,
   // 小数部分长度
@@ -241,7 +243,7 @@ function formatByBorders({
   // 是否需要符号
   needMark = false,
   // 是否四舍五入
-  isRound = true,
+  isRound = false,
 }) {
   // 是否是数字
   let newNum = Number(num);

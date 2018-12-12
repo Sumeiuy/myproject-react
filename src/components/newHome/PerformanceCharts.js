@@ -137,7 +137,7 @@ export default class PerformanceCharts extends PureComponent {
   @autobind
   renderFinancialProduct() {
     const { indicators, isNewHome } = this.props;
-    const trueStyles = isNewHome ? styles : oldStyles;    
+    const trueStyles = isNewHome ? styles : oldStyles;
     const financialProducts = getValueByResponse(indicators, FINANCIAL_PRODUCT_CONFIG);
     const zdcxPrdt = _.find(financialProducts, { key: 'zdcxPrdt' }); // 重点创新产品
     const allPrdtBuyAmt = _.find(financialProducts, { key: 'allPrdtBuyAmt' }); // 销量总计
