@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-11-23 20:28:58
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-05 17:11:17
+ * @Last Modified time: 2018-12-11 16:09:08
  * @description 资产配置
  */
 import React, { PureComponent } from 'react';

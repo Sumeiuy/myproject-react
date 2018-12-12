@@ -4,14 +4,10 @@
 */
 
 import requestUtils from './request';
-import { fspPrefix } from '../config/constants';
+import { apiPrefix, fspPrefix } from '../config/constants';
 import { emp, url as urlHelper, encode } from '../helper';
 
 const { request, logRequest, fspRequest } = requestUtils;
-
-
-// 本地与后端联调时，需要除去/fspa前缀
-const prefix = window.IS_NODE_DEBUGGER ? '/mcrm/api' : '/fspa/mcrm/api';
 
 /**
  * api生成器
@@ -21,8 +17,8 @@ const prefix = window.IS_NODE_DEBUGGER ? '/mcrm/api' : '/fspa/mcrm/api';
 export default function createApi() {
   // 如果没有前缀，自动补上
   const padPrefix = (url) => {
-    if (url.indexOf(prefix) === -1) {
-      return prefix + url;
+    if (url.indexOf(apiPrefix) === -1) {
+      return apiPrefix + url;
     }
     return url;
   };

@@ -2,10 +2,10 @@
  * @Author: zhangjun
  * @Date: 2018-12-05 13:03:49
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-08 21:38:44
+ * @Last Modified time: 2018-12-11 15:33:29
  * @description 资产配置变动走势
  */
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
@@ -18,7 +18,7 @@ import { LARGE_CLASS_ASSET, ASSET_TREND_TIP } from './config';
 import logable from '../../../decorators/logable';
 import styles from './assetConfigTrend.less';
 
-export default class AssetConfigTrend extends PureComponent {
+export default class AssetConfigTrend extends Component {
   static propTypes = {
     location: PropTypes.object.isRequired,
     // 获取资产配置变动走势
@@ -61,6 +61,7 @@ export default class AssetConfigTrend extends PureComponent {
   getAssetTrendSummary() {
     const {
       assetConfigTrendData: {
+        assetConfigTrendChart,
         assetConfigTrendSummary,
       },
     } = this.props;
@@ -70,16 +71,30 @@ export default class AssetConfigTrend extends PureComponent {
         maxRateCategory,
         maxChangeCategory,
       } = assetConfigTrendSummary;
-      const assetRateText = `统计期内客户投资比例最高的是${maxRateCategory}，投资比例最低的是${minRateCategory}。`;
-      const assetChangeText = `统计期内${maxChangeCategory}资产持仓占比变化最大。`;
+      // 资产类别数组
+      const assetClassifyArray = _.map(assetConfigTrendChart, item => item.assetClassifyList);
+      // 资产类别名称数组
+      const classifyNameList = _.map(assetClassifyArray[0], item => item.classifyName);
+      const maxAssetRateText = `统计期内客户投资比例最高的是${maxRateCategory}`;
+      let assetRateText = maxAssetRateText;
+      let assetChangeText = '';
+      if (classifyNameList.length > 1) {
+        assetRateText = `${maxAssetRateText}，投资比例最低的是${minRateCategory}。`;
+        assetChangeText = `统计期内${maxChangeCategory}资产持仓占比变化最大。`;
+      }
       return (
         <div>
-          <p key={data.uuid()}>
+          <p>
             <span>{assetRateText}</span>
           </p>
-          <p key={data.uuid()}>
-            <span>{assetChangeText}</span>
-          </p>
+          {
+            <IfWrap isRender={!_.isEmpty(assetChangeText)}>
+              <p key={data.uuid()}>
+                <span>{assetChangeText}</span>
+              </p>
+            </IfWrap>
+          }
+
         </div>
       );
     }
@@ -120,7 +135,10 @@ export default class AssetConfigTrend extends PureComponent {
           classifyType={classifyType}
           onChange={this.handleClassifyTypeChange}
         />
-        <IfWrap isRender={!_.isEmpty(assetConfigTrendChart)}>
+        <IfWrap
+          isRender={!_.isEmpty(assetConfigTrendChart)}
+          isUsePlaceholderImage
+        >
           <div className={styles.configTrendContainer}>
             <AssetConfigTrendChart
               assetConfigTrendChart={assetConfigTrendChart}

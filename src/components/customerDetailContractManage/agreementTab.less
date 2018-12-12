@@ -1,0 +1,25 @@
+@import "../../css/util.less";
+.agreementTab {
+  padding: 12px 22px;
+  :global {
+    table {
+      table-layout: fixed;
+      width: 100%;
+      .ant-table-thead > tr > th, .ant-table-tbody > tr > td {
+        padding: 0 0 0 40px;
+      }
+      .ant-table-thead > tr > th:first-child,
+      .ant-table-tbody > tr > td:first-child {
+        padding-left: 16px;
+      }
+      td {
+        position: relative;
+        .one-line-ellipsis;
+      }
+    }
+  }
+  .ellipsis {
+    position: relative;
+    .one-line-ellipsis;
+  }
+}

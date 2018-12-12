@@ -2,8 +2,8 @@
  * @Author: zhangjun
  * @Date: 2018-11-19 15:39:12
  * @Last Modified time: 2018-11-23 20:37:55
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-08 17:15:58
+ * @Last Modified by: zuoguangzu
+ * @Last Modified time: 2018-12-10 10:26:56
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -46,6 +46,10 @@ export default class Home extends PureComponent {
     getAttributionAnalysis: PropTypes.func.isRequired,
     // brinson归因数据
     attributionData: PropTypes.object.isRequired,
+    // 获取收益分析明细
+    getEachStockIncomeDetails: PropTypes.func.isRequired,
+    // 个体收益明细数据
+    incomeDetailData: PropTypes.object.isRequired,
     // 获取期末资产配置数据
     getEndTermAssetConfig: PropTypes.func.isRequired,
     // 期末资产配置数据
@@ -110,6 +114,8 @@ export default class Home extends PureComponent {
       profitTrendData,
       getAttributionAnalysis,
       attributionData,
+      getEachStockIncomeDetails,
+      incomeDetailData,
       getEndTermAssetConfig,
       endTermAssetConfigData,
       getAssetConfigTrend,
@@ -147,6 +153,8 @@ export default class Home extends PureComponent {
               location={location}
               attributionData={attributionData}
               getAttributionAnalysis={getAttributionAnalysis}
+              getEachStockIncomeDetails={getEachStockIncomeDetails}
+              incomeDetailData={incomeDetailData}
             />
           </TabPane>
           <TabPane tab="风控能力分析" key="windControlAnalysis">
