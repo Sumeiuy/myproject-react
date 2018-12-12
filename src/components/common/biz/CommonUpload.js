@@ -15,7 +15,7 @@ import moment from 'moment';
 import _ from 'lodash';
 import { connect } from 'dva';
 import Button from '../Button';
-import { request, constants } from '../../../config';
+import { request } from '../../../config';
 import { emp } from '../../../helper';
 import styles from './commonUpload.less';
 import Icon from '../Icon';
@@ -311,7 +311,7 @@ export default class CommonUpload extends PureComponent {
                       }
                       <em>
                         <a
-                          href={`${constants.URL_PREFIX}${item.downloadURL}`}
+                          href={`${request.URL_PREFIX}${item.downloadURL}`}
                           onClick={this.handleDownloadClick}
                           download
                         >
