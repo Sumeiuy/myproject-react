@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 19:36:22
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-11 20:01:37
+ * @Last Modified time: 2018-12-12 13:32:26
  * @description 机构客户添加联系方式Modal
  */
 
@@ -115,7 +115,7 @@ export default class ContactWayModal extends PureComponent {
                 </ToolTip>
               );
             }
-            return (<div className={styles.textEllipse}>{value}</div>);
+            return (<div className={styles.textEllipse}>{origin}</div>);
           }
           return '';
         }
