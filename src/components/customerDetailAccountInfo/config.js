@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-11 18:37:20
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-10 14:53:53
+ * @Last Modified time: 2018-12-12 13:08:27
  * @description 新版客户360详情的账户信息Tab下页面的配置项
  */
 
@@ -74,20 +74,6 @@ export const CHART_SERIES_OPTIONS = {
 // 初始化查询指定指标的详情数据的key,默认为股票，其key=PA040000
 export const SPECIFIC_INITIAL_KEY = 'PA040000';
 export const SPECIFIC_INITIAL_NAME = '股票';
-
-// 资产分布雷达图必须显示的五个指标的IDs
-export const RADAR_MUST_DISPLAY_INDICATORS = [
-  // 股票
-  'PA040000',
-  // 现金
-  '99',
-  // 开放式基金
-  'PA050000',
-  // 债券
-  'PA030000',
-  // 理财产品
-  'PA070000',
-];
 
 // 账户信息下的账户概览、普通账户、信用账户、期权账户Tab显示配置
 export const ACCOUNT_INFO_TABS = {
