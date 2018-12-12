@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 19:10:24
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-11 16:33:01
+ * @Last Modified time: 2018-12-12 14:01:51
  * @description 个人客户添加其他信息
  */
 
@@ -66,7 +66,7 @@ export default class PerOtherContactForm extends PureComponent {
 
   // 校验号码
   @autobind
-  validateTellPhoneNumber(rule, value, callback) {
+  vakidateContactValue(rule, value, callback) {
     const contactWayCode = this.props.form.getFieldValue('contactWayCode');
     const newInput = _.trim(value);
     if (!_.isEmpty(contactWayCode) && !_.isEmpty(newInput)) {
@@ -156,8 +156,9 @@ export default class PerOtherContactForm extends PureComponent {
                   {getFieldDecorator('contactWayValue', {
                     rules: [
                       { required: true, message: '请输入号码' },
+                      { max: 60, message: '最多100个字符' },
                       { whitespace: true, message: '头尾不能有空格' },
-                      { validator: this.validateTellPhoneNumber },
+                      { validator: this.vakidateContactValue },
                     ],
                     initialValue: contactWayValue,
                   })(

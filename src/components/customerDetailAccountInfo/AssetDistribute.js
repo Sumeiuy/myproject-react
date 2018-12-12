@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-11 16:30:07
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-11 10:11:53
+ * @Last Modified time: 2018-12-12 12:23:42
  * @description 新版客户360详情下账户信息Tab下的资产分布组件
  */
 import React, { PureComponent } from 'react';
@@ -132,7 +132,7 @@ export default class AssetDistribute extends PureComponent {
     const { radarIndexName } = this.state;
     return [
       {
-        width: '30%',
+        width: '40%',
         title: radarIndexName,
         dataIndex: 'name',
         key: 'name',
@@ -147,7 +147,7 @@ export default class AssetDistribute extends PureComponent {
         render: this.renderTableValueColumn,
       },
       {
-        width: '15%',
+        width: '20%',
         title: '持仓占比',
         dataIndex: 'percent',
         key: 'percent',
@@ -155,8 +155,8 @@ export default class AssetDistribute extends PureComponent {
         render: this.renderTablePercentColumn,
       },
       {
-        width: '35%',
-        title: '收益    ',
+        width: '20%',
+        title: '收益    ', // 此处为了留空白在滚动条的时候也能跟下方的字垂直方向上对齐
         dataIndex: 'profit',
         key: 'profit',
         className: styles.profitCls,
@@ -168,7 +168,7 @@ export default class AssetDistribute extends PureComponent {
   // 获取雷达图的配置
   @autobind
   getRadarOption(radarData) {
-    // TODO 需要将雷达图的数据做一步过滤处理，处理出需要展示到雷达图上的数据
+    // 需要将雷达图的数据做一步过滤处理，处理出需要展示到雷达图上的数据,此处针对指标显示顺序也做了一步前置处理
     const filteredData = pickRadarDisplayData(radarData || []);
     // 1. 获取雷达图的指标名称及
     const indicators = _.map(filteredData, item => ({ name: item.name }));
