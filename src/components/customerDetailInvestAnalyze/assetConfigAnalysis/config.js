@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-12-04 11:09:01
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-11 14:15:17
+ * @Last Modified time: 2018-12-13 14:23:19
  */
 
 // 按大类资产分布
@@ -123,7 +123,7 @@ const CHART_LINE_OPTIONS = {
     axisLabel: {
       color: '#666',
       fontSize: 12,
-      interval: 30,
+      interval: 29,
     },
   },
   yAxis: {
