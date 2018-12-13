@@ -36,6 +36,7 @@ import {
   LabelModal,
 } from '../../components/customerPool/home';
 import RecommendModal from '../../components/recommend/RecommendModal';
+import PerformanceCharts from '../../components/newHome/PerformanceCharts';
 
 const TabPane = Tabs.TabPane;
 const EMPTY_LIST = [];
@@ -145,7 +146,6 @@ export default class Home extends PureComponent {
     managerIndicators: EMPTY_OBJECT,
     custRange: EMPTY_LIST,
     cycle: EMPTY_LIST,
-    collectCustRange: () => { },
     process: EMPTY_OBJECT,
     motTaskCount: 0,
     empInfo: EMPTY_OBJECT,
@@ -160,7 +160,6 @@ export default class Home extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      cycleSelect: '',
       createCustRange: [],
       expandAll: false,
       // 是否显示查看更多标签弹窗
@@ -198,6 +197,8 @@ export default class Home extends PureComponent {
     getInformation({ curPageNum: 1, pageSize: 18 });
     // 请求指标
     this.requstIndicator(this.props);
+    // 投顾绩效的时间筛选不同，拆分单独请求
+    this.requestPerformanceIndicators(this.props);
     // 根据岗位orgId生成对应的组织机构树
     this.handleCreateCustRange({
       custRange,
@@ -228,6 +229,14 @@ export default class Home extends PureComponent {
       // 请求指标数据
       this.requstIndicator(nextProps);
     }
+
+    // 时间或者组织机构树变化
+    // 重新请求投顾绩效数据
+    if (prevQuery.orgId !== nextQuery.orgId
+      || prevQuery.performanceCycleSelect !== nextQuery.performanceCycleSelect) {
+      // 请求指标数据
+      this.requestPerformanceIndicators(nextProps);
+    }
   }
 
   // 我的客户时custType=CUST_MANAGER，非我的客户时custType=ORG， custType用来传给后端
@@ -254,12 +263,9 @@ export default class Home extends PureComponent {
     begin, end, orgId, cycleSelect, custType
   }) {
     const {
-      getPerformanceIndicators,
       getManagerIndicators,
       getCustCount,
-      empInfo = {},
     } = this.props;
-    const { tgQyFlag = false } = empInfo.empInfo || {};
     const cycleDate = transformDateTypeToDate(cycleSelect);
     const param = {
       custType, // 客户范围类型
@@ -273,10 +279,6 @@ export default class Home extends PureComponent {
     getCustCount({ ...param });
     // 经营指标
     getManagerIndicators({ ...param, end, begin });
-    // 查看投顾绩效开关:empinfo返回的权限指标字段（tgQyFlag：bool）
-    if (tgQyFlag) {
-      getPerformanceIndicators({ ...param, end, begin });
-    }
   }
 
   @autobind
@@ -328,17 +330,60 @@ export default class Home extends PureComponent {
     this.getIndicators(tempObj);
   }
 
+  @autobind
+  requestPerformanceIndicators(props) {
+    const {
+      location: {
+        query: {
+          performanceCycleSelect, // 与cycleSelect区分，只针对投顾绩效
+          orgId,
+        },
+      },
+      empInfo = {},
+      getPerformanceIndicators,
+    } = props;
+    const { tgQyFlag = false } = empInfo.empInfo || {};
+
+    // 查看投顾绩效开关:empinfo返回的权限指标字段（tgQyFlag：bool）
+    if (tgQyFlag) {
+      const custType = this.getCustType(orgId);
+      let requsetOrgId;
+      if (orgId) {
+        requsetOrgId = orgId !== MAIN_MAGEGER_ID ? orgId : '';
+      } else if (this.hasIndexViewPermission) {
+        requsetOrgId = this.orgId;
+      }
+      const { performanceCycleSelect: selects } = optionsMap;
+      const currentSelect = _.find(selects, item => item.dateKey === performanceCycleSelect)
+        || selects[0];
+      const duration = time.getDurationString(currentSelect.dateKey);
+      const begin = duration.begin;
+      const end = duration.end;
+      getPerformanceIndicators({
+        custType, // 客户范围类型
+        orgId: requsetOrgId,
+        dateType: currentSelect.key,
+        begin,
+        end,
+        dateStart: moment(begin).format('YYYY-MM-DD'),
+        dateEnd: moment(end).endOf('month').format('YYYY-MM-DD'),
+      });
+    }
+  }
+
   // 此方法用来修改Duration 和 Org数据
   @autobind
   updateQueryState(params) {
     const { replace, location: { pathname, query } } = this.props;
-    const { cycleSelect, orgId } = params;
+    const { cycleSelect, performanceCycleSelect, orgId } = params;
     // 切换Duration和Orig
     const obj = {};
     if (orgId) {
       obj.orgId = orgId;
     } else if (cycleSelect) {
       obj.cycleSelect = cycleSelect;
+    } else if (performanceCycleSelect) {
+      obj.performanceCycleSelect = performanceCycleSelect;
     }
     replace({
       pathname,
@@ -429,9 +474,20 @@ export default class Home extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: '切换Tab：经营指标/投顾绩效' } })
   handleTabClick(param) {
-    const { switchTab } = this.props;
+    const {
+      switchTab,
+      replace,
+      location: { query },
+    } = this.props;
     // 发送日志
     switchTab({ param });
+    // 在URL上记录选择的图表tab
+    replace({
+      query: {
+        ...query,
+        activeKey: param,
+      }
+    });
   }
 
   // 打开/关闭 更多标签弹窗
@@ -459,6 +515,8 @@ export default class Home extends PureComponent {
       query: {
         orgId,
         cycleSelect,
+        activeKey,
+        performanceCycleSelect, // 绩效视图选择的时间选项
       }
     } = location;
     // curOrgId   客户范围回填
@@ -466,8 +524,22 @@ export default class Home extends PureComponent {
     // 有权限时默认取所在岗位的orgId
     // 无权限取 MAIN_MAGEGER_ID
     let curOrgId = this.orgId;
-    // curCycleSelect  时间周期，先从url中取值，url中没有值时，取时间周期第一个
-    const curCycleSelect = cycleSelect || (_.isArray(cycle) ? (cycle[0] || {}) : {}).key;
+
+    // selectCycle 下拉时间选择的选项，绩效视图和经营指标并不一样
+    let selectCycle;
+    let curCycleSelect;
+    let isPerformace = false;
+    if (activeKey === 'performance' || (!activeKey && !this.hasTkMampPermission)) {
+      selectCycle = optionsMap.performanceCycleSelect;
+      curCycleSelect = performanceCycleSelect
+        || (_.isArray(selectCycle) ? (selectCycle[0] || {}) : {}).dateKey;
+      isPerformace = true;
+    } else {
+      selectCycle = cycle;
+      // curCycleSelect  时间周期，先从url中取值，url中没有值时，取时间周期第一个
+      curCycleSelect = cycleSelect || (_.isArray(cycle) ? (cycle[0] || {}) : {}).key;
+    }
+
     if (orgId) {
       curOrgId = orgId;
     } else if (!this.hasIndexViewPermission) {
@@ -478,11 +550,12 @@ export default class Home extends PureComponent {
       replace,
       updateQueryState: this.updateQueryState,
       collectCustRange,
-      cycle,
+      cycle: selectCycle,
       expandAll,
       selectValue: curCycleSelect,
       location,
       orgId: curOrgId,
+      isPerformace,
     };
     return (<TabsExtra {...extraProps} />);
   }
@@ -514,6 +587,8 @@ export default class Home extends PureComponent {
     } = this.state;
     // 是否能看投顾绩效的标记
     const { tgQyFlag = false } = empInfo.empInfo || {};
+    const activeKey = location.query.activeKey
+      || (this.hasTkMampPermission ? 'manage' : 'performance');
 
     const labelModalProps = {
       location,
@@ -549,25 +624,30 @@ export default class Home extends PureComponent {
             />
             <Tabs
               tabBarExtraContent={this.renderTabsExtra()}
-              defaultActiveKey="manage"
+              defaultActiveKey={activeKey}
               onTabClick={this.handleTabClick}
             >
-              <TabPane tab="经营指标" key="manage">
-                <PerformanceIndicators
-                  empInfo={empInfo}
-                  push={push}
-                  custCount={custCount}
-                  indicators={managerIndicators}
-                  location={location}
-                  cycle={cycle}
-                  category="manager"
-                  authority={this.hasIndexViewPermission}
-                />
-              </TabPane>
+              {
+                permission.hasTkMampPermission()
+                  ? (
+                    <TabPane tab="经营指标" key="manage">
+                      <PerformanceIndicators
+                        empInfo={empInfo}
+                        push={push}
+                        custCount={custCount}
+                        indicators={managerIndicators}
+                        location={location}
+                        cycle={cycle}
+                        category="manager"
+                        authority={this.hasIndexViewPermission}
+                      />
+                    </TabPane>
+                  ) : null
+              }
               {
                 tgQyFlag ? (
                   <TabPane tab="投顾绩效" key="performance">
-                    <PerformanceIndicators
+                    {/* <PerformanceIndicators
                       empInfo={empInfo}
                       push={push}
                       indicators={performanceIndicators}
@@ -576,6 +656,10 @@ export default class Home extends PureComponent {
                       custCount={custCount}
                       category="performance"
                       authority={this.hasIndexViewPermission}
+                    /> */}
+                    <PerformanceCharts
+                      indicators={performanceIndicators}
+                      isNewHome={false}
                     />
                   </TabPane>
                 ) : (null)
