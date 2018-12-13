@@ -3,13 +3,12 @@
  * @Description: 客户360-客户属性-个人客户基本信息
  * @Date: 2018-11-07 14:33:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-12 21:17:19
+ * @Last Modified time: 2018-12-13 08:58:36
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { message } from 'antd';
 
 import InfoItem from '../../common/infoItem';
 import BasicEditorCell from '../common/BasiceEditorCell';
