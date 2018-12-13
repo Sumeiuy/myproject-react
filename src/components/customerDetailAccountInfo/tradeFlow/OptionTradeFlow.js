@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-12-07 17:14:27
  * @Last Modified by: liqianwen
- * @Last Modified time: 2018-12-13 09:52:32
+ * @Last Modified time: 2018-12-13 10:04:41
  * @description 期权账户交易流水
  */
 import React, { PureComponent } from 'react';
@@ -195,7 +195,7 @@ export default class OptionTradeFlow extends PureComponent {
   handleProductCodeSelect(current) {
     const { prdtCode, prdtName, prdtSortCode } = current.value;
     this.setState({
-      productCode: [prdtCode, prdtName, prdtSortCode]
+      productCode: [prdtCode, prdtName, prdtSortCode],
     }, this.queryOptionTradeFlow);
   }
 
