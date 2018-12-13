@@ -1,8 +1,8 @@
 /*
  * @Author: sunweibin
  * @Date: 2018-12-06 17:29:40
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-11 11:57:15
+ * @Last Modified by: liqianwen
+ * @Last Modified time: 2018-12-13 09:58:59
  * @description 交易流水中的普通账户历史交易Tab组件
  */
 import React, { PureComponent } from 'react';
@@ -155,10 +155,12 @@ export default class NormalTradeFlow extends PureComponent {
   @autobind
   queryStandardTradeFlow(pageNum = 1) {
     const query = _.omit(this.state, ['productCodeList']);
+    const { productCode } = query;
     this.props.queryStandardTradeFlow({
       ...query,
       pageSize: 10,
       pageNum,
+      productCode: productCode[0]
     });
   }
 
@@ -258,8 +260,7 @@ export default class NormalTradeFlow extends PureComponent {
     let displayName = `${prdtName}(${prdtSortCode})`;
     if (!prdtCode) {
       displayName = prdtName;
-    }
-    if (!prdtSortCode) {
+    } else if (!prdtSortCode) {
       displayName = `${prdtName}(${productCode[2]})`;
     }
     return <span key={prdtCode} title={prdtName}>{displayName}</span>;
