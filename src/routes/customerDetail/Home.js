@@ -323,7 +323,8 @@ export default class Home extends PureComponent {
             className={styles.tab}
             onChange={this.handleTabChange}
             animated={false}
-            tabBarGutter={40}
+            tabBarGutter={4}
+            type="card"
           >
             {this.renderTabPane(accountInfoTabPane, accountInfoTabPermission)}
             {this.renderTabPane(custPropertyTabPane, custPropertyTabPermission)}

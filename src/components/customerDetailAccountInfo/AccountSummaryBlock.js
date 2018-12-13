@@ -8,7 +8,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-
+import classnames from 'classnames';
 import { data } from '../../helper';
 import IFWrap from '../common/biz/IfWrap';
 import AccountSummaryCell from './IndicatorCell';
@@ -20,10 +20,15 @@ function AccountSummaryBlock(props) {
     title,
     summaryData,
     showDesc,
+    noBorder,
   } = props;
+  const summaryBlockCls = classnames({
+    [styles.summaryBlock]: true,
+    [styles.noBorder]: noBorder,
+  });
   return (
     <IFWrap isRender={!_.isEmpty(summaryData)}>
-      <div className={styles.summaryBlock}>
+      <div className={summaryBlockCls}>
         <div className={styles.header}>
           <div className={styles.title}>{title}</div>
         </div>
@@ -54,12 +59,14 @@ AccountSummaryBlock.propTypes = {
   summaryData: PropTypes.array,
   // 展示指标描述不
   showDesc: PropTypes.bool,
+  noBorder: PropTypes.bool,
 };
 
 AccountSummaryBlock.defaultProps = {
   onSettingClick: _.noop,
   summaryData: [],
   showDesc: true,
+  noBorder: false,
 };
 
 export default AccountSummaryBlock;

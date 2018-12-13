@@ -35,6 +35,7 @@ export default class TabsExtra extends PureComponent {
     iconType: PropTypes.string,
     exportExcel: PropTypes.func,
     exportOrgId: PropTypes.string,
+    isPerformace: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -55,16 +56,15 @@ export default class TabsExtra extends PureComponent {
     this.state = {
       begin: '',
       end: '',
-      isDown: false,
     };
   }
 
   componentWillReceiveProps(nextProps) {
     const { selectValue: prevSelectValue } = this.props;
-    const { selectValue: nextSelectValue } = nextProps;
+    const { selectValue: nextSelectValue, isPerformace } = nextProps;
 
     if (prevSelectValue !== nextSelectValue) {
-      const { begin, end } = this.getBeginAndEndTime(nextSelectValue);
+      const { begin, end } = this.getBeginAndEndTime(nextSelectValue, isPerformace);
       this.setState({
         begin,
         end,
@@ -73,10 +73,18 @@ export default class TabsExtra extends PureComponent {
   }
 
   @autobind
-  getBeginAndEndTime(value) {
+  getBeginAndEndTime(value, isPerformace) {
     const { historyTime, customerPoolTimeSelect } = optionsMap;
-    const currentSelect = _.find(historyTime, itemData => itemData.name === _.find(customerPoolTimeSelect, item => item.key === value).name) || {};
-    const nowDuration = time.getDurationString(currentSelect.key);
+    let nowDuration;
+    let currentSelect;
+    if (isPerformace) {
+      nowDuration = time.getDurationString(value);
+    } else {
+      currentSelect = _.find(historyTime,
+        itemData => itemData.name === _.find(customerPoolTimeSelect,
+          item => item.key === value).name) || {};
+      nowDuration = time.getDurationString(currentSelect.key);
+    }
     const begin = nowDuration.begin;
     const end = nowDuration.end;
     return {
@@ -94,16 +102,20 @@ export default class TabsExtra extends PureComponent {
     },
   })
   handleChange(value) {
-    const { begin, end } = this.getBeginAndEndTime(value);
-    const { updateQueryState } = this.props;
-    updateQueryState({
-      cycleSelect: value,
+    const { updateQueryState, isPerformace } = this.props;
+    const { begin, end } = this.getBeginAndEndTime(value, isPerformace);
+    const params = isPerformace ? {
       begin,
       end,
-    });
+      performanceCycleSelect: value,
+    } : {
+      begin,
+      end,
+      cycleSelect: value,
+    };
+    updateQueryState(params);
     // 记录下当前选中的timeSelect
     this.setState({
-      cycleSelect: value,
       begin,
       end,
     });
@@ -138,6 +150,7 @@ export default class TabsExtra extends PureComponent {
       isDown = false,
       iconType,
       exportExcel,
+      isPerformace,
     } = this.props;
     const { begin, end } = this.state;
     const urlParams = exportExcel();
@@ -190,7 +203,14 @@ export default class TabsExtra extends PureComponent {
                   value={selectValue}
                   onChange={this.handleChange}
                 >
-                  {_.map(cycle, item => <Option key={item.key} value={item.key}>{item.value}</Option>)}
+                  {_.map(cycle,
+                    (item) => {
+                      const option = !isPerformace
+                        ? <Option key={item.key} value={item.key}>{item.value}</Option>
+                        : <Option key={item.dateKey} value={item.dateKey}>{item.name}</Option>;
+                      return option;
+                    })
+                  }
                 </Select>
               </div>
             </div>
@@ -209,7 +229,7 @@ export default class TabsExtra extends PureComponent {
                         onClick={this.handleDownloadClick}
                         href={`${request.prefix}/excel/custlist/exportExcel?orgId=${urlParams.orgId}&missionName=${urlParams.missionName}&missionId=${urlParams.missionId}&serviceTips=${urlParams.serviceTips}&servicePolicy=${urlParams.servicePolicy}`}
                       >
-导出
+                      导出
                       </a>
                     </div>
                   </div>
