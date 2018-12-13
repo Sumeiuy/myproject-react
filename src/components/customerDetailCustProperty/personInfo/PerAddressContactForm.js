@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 19:02:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-13 10:09:12
+ * @Last Modified time: 2018-12-13 14:11:08
  * @description 添加个人客户地址信息联系方式的Form
  */
 import React, { PureComponent } from 'react';
@@ -107,7 +107,7 @@ export default class PerAddressContactForm extends PureComponent {
 
   @autobind
   @logable({
-    type: 'Click',
+    type: 'DropdownSelect',
     payload: {
       name: '地址类型',
       value: '$args[0]',
@@ -119,7 +119,7 @@ export default class PerAddressContactForm extends PureComponent {
 
   @autobind
   @logable({
-    type: 'Click',
+    type: 'DropdownSelect',
     payload: {
       name: '省/(直辖)市',
       value: '$args[0]',
@@ -136,7 +136,7 @@ export default class PerAddressContactForm extends PureComponent {
 
   @autobind
   @logable({
-    type: 'Click',
+    type: 'DropdownSelect',
     payload: {
       name: '城市',
       value: '$args[0]',
