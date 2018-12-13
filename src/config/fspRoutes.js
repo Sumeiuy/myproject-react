@@ -379,6 +379,12 @@ const fspRoutes = [
     action: 'loadInIframe',
     url: '',
   },
+  // 洗钱高风险客户业务审批申请
+  {
+    path: '/fsp/businessApplyment/appropriate/highrisk',
+    action: 'loadInIframe',
+    url: '',
+  },
 ];
 
 export default fspRoutes;
