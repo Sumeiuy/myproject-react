@@ -10,7 +10,7 @@ const config = {
   url: '/fspa/log/sa',
   interval: 1 * 60 * 1000,
   // 开启日志监控
-  enable: true,
+  enable: process.env.NODE_ENV === 'production',
   projectName: 'FSP_2',
   blacklist: [
     '@@DVA_LOADING/HIDE',

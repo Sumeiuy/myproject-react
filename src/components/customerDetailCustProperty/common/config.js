@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 19:41:38
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-11 19:40:49
+ * @Last Modified time: 2018-12-12 16:59:50
  * @description 机构客户联系方式配置项
  */
 // 机构客户电话信息表格columns
@@ -23,7 +23,7 @@ export const ORG_PHONE_COLUMNS = [
     key: 'name',
     dataIndex: 'name',
     title: '姓名',
-    width: 90,
+    width: 180,
   },
   {
     key: 'certificateType',
