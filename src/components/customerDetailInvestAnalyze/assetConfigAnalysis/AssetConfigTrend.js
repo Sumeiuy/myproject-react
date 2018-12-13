@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-12-05 13:03:49
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-12 13:37:16
+ * @Last Modified time: 2018-12-12 14:00:03
  * @description 资产配置变动走势
  */
 import React, { Component } from 'react';
@@ -81,19 +81,23 @@ export default class AssetConfigTrend extends Component {
       const minAssetRateText = !_.isEmpty(minRateCategory) ? `投资比例最低的是${minRateCategory}` : '';
       let assetRateText = '';
       let assetChangeText = '';
-      if (classifyNameList.length > 1) {
-        // 最大资产为空
+      if (_.size(classifyNameList) > 1) {
         if (_.isEmpty(maxRateCategory) && !_.isEmpty(minRateCategory)) {
+          // 最大资产为空,展示最小资产类别描述
           assetRateText = `${minAssetRateText}。`;
-        } else if (!_.isEmpty(maxRateCategory) && _.isEmpty(minRateCategory)) { // 最小资产为空
+        } else if (!_.isEmpty(maxRateCategory) && _.isEmpty(minRateCategory)) {
+          // 最小资产为空,展示最大资产类别描述
           assetRateText = `${maxAssetRateText}。`;
-        } else if (_.isEmpty(maxRateCategory) && _.isEmpty(minRateCategory)) { // 最大资产和最小资产为空
+        } else if (_.isEmpty(maxRateCategory) && _.isEmpty(minRateCategory)) {
+          // 最大资产和最小资产都为空，返回空字符串
           assetRateText = '';
         } else {
+          // 最大资产和最小资产都不为空
           assetRateText = `${maxAssetRateText}，${minAssetRateText}。`;
         }
+        // 占比变化最大类别描述
         assetChangeText = !_.isEmpty(maxChangeCategory) ? `统计期内${maxChangeCategory}资产持仓占比变化最大。` : '';
-      } else if (classifyNameList.length === 1) {
+      } else if (_.size(classifyNameList) === 1) {
         assetRateText = `${maxAssetRateText}。`;
       }
       return (
