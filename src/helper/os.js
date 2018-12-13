@@ -46,7 +46,7 @@ const os = {
    */
   log(...rest) {
     if (canUseConsoleFlag) {
-      console.log(rest);
+      console.log(rest); // eslint-disable-line no-console
     }
   },
   /**
