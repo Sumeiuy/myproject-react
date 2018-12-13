@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 19:36:22
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-13 15:42:39
+ * @Last Modified time: 2018-12-13 19:15:29
  * @description 机构客户添加联系方式Modal
  */
 
@@ -15,7 +15,7 @@ import _ from 'lodash';
 import confirm from '../../common/confirm_';
 import Table from './InfoTable';
 import IFNoData from './IfNoData';
-import logable from '../../../decorators/logable';
+import logable, { logPV } from '../../../decorators/logable';
 import Modal from '../../common/biz/CommonModal';
 import IfWrap from '../../common/biz/IfWrap';
 import ToolTip from '../../common/Tooltip';
@@ -121,6 +121,10 @@ export default class ContactWayModal extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'ButtonClick',
+    payload: { name: '删除联系方式确认框-确认' }
+  })
   delOrgContact(query) {
     const {
       location: {
@@ -134,39 +138,47 @@ export default class ContactWayModal extends PureComponent {
     }).then(this.refresh);
   }
 
+  @autobind
+  @logable({
+    type: 'ButtonClick',
+    payload: { name: '删除联系方式确认框-取消' }
+  })
+  delOrgContactCancel() {
+    // 日志专用
+  }
+
   // 删除联系方式的时候需要先弹框确认
   @autobind
   confirmBeforeDel(query) {
     confirm({
       content: '确定要删除该条联系方式吗？',
       onOk: () => this.delOrgContact(query),
+      onCancel: this.delOrgContactCancel,
     });
   }
 
   @autobind
   @logable({
     type: 'Click',
-    payload: { name: '关闭' }
+    payload: { name: '机构客户联系方式-关闭' }
   })
   handleContactWayClose() {
     this.props.onClose();
   }
 
   @autobind
-  @logable({
-    type: 'ButtonClick',
-    payload: {
-      name: '添加联系方式'
-    },
+  @logPV({
+    pathname: '/modal/cust360/custProperty/addOrgContactModal',
+    title: '客户属性-添加联系方式'
   })
   handleAddContactClick() {
     this.setState({ addContactModal: true });
   }
 
   @autobind
-  @logable({
-    type: 'Click',
-    payload: { name: '编辑机构客户电话信息' }
+  @logPV({
+    pathname: '/modal/cust360/custProperty/editOrgPhoneModal',
+    title: '客户属性-编辑机构客户电话信息'
   })
   handlePhoneEditClick(record) {
     this.setState({
@@ -177,9 +189,9 @@ export default class ContactWayModal extends PureComponent {
   }
 
   @autobind
-  @logable({
-    type: 'Click',
-    payload: { name: '删除机构客户电话信息' }
+  @logPV({
+    pathname: '/modal/cust360/custProperty/delOrgPhoneConfirm',
+    title: '客户属性-删除机构客户电话信息确认框'
   })
   handlePhoneDelClick(record) {
     this.confirmBeforeDel({
@@ -189,9 +201,9 @@ export default class ContactWayModal extends PureComponent {
   }
 
   @autobind
-  @logable({
-    type: 'Click',
-    payload: { name: '编辑机构客户地址信息' }
+  @logPV({
+    pathname: '/modal/cust360/custProperty/editOrgAddressModal',
+    title: '客户属性-编辑机构客户地址信息'
   })
   handleAddressEditClick(record) {
     this.setState({
@@ -202,9 +214,9 @@ export default class ContactWayModal extends PureComponent {
   }
 
   @autobind
-  @logable({
-    type: 'Click',
-    payload: { name: '删除机构客户地址信息' }
+  @logPV({
+    pathname: '/modal/cust360/custProperty/delOrgAddressConfirm',
+    title: '客户属性-删除机构客户地址信息确认框'
   })
   handleAddressDelClick(record) {
     this.confirmBeforeDel({
@@ -224,6 +236,13 @@ export default class ContactWayModal extends PureComponent {
 
   // 添加|编辑联系方式弹框点击确认按钮
   @autobind
+  @logable({
+    type: 'Submit',
+    payload: {
+      name: '新增或者修改联系方式',
+      vlaue: '$args[1]'
+    }
+  })
   handleAddOrEditModalOK(type, data) {
     if (type === 'phone') {
       // 新增|修改机构客户电话信息
@@ -235,10 +254,6 @@ export default class ContactWayModal extends PureComponent {
   }
 
   @autobind
-  @logable({
-    type: 'Click',
-    payload: { name: '关闭' }
-  })
   handleEditContactModalClose() {
     this.setState({ editContactModal: false });
   }
@@ -253,7 +268,7 @@ export default class ContactWayModal extends PureComponent {
           return DEFAULT_VALUE;
         }
         return (
-          <ToolTip placement="top">
+          <ToolTip placement="topLeft" title={text}>
             <div className={styles.textEllipse}>{text}</div>
           </ToolTip>
         );
@@ -282,7 +297,7 @@ export default class ContactWayModal extends PureComponent {
           return _.isEmpty(text.value)
             ? DEFAULT_VALUE
             : (
-              <ToolTip placement="top">
+              <ToolTip placement="topLeft" title={text.value}>
                 <div className={styles.textEllipse}>{text.value}</div>
               </ToolTip>
             );

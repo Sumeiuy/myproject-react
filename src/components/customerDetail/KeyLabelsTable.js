@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-16 15:53:07
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-30 17:59:15
+ * @Last Modified time: 2018-12-13 19:39:50
  * @description 重点标签更多中展示的表格
  */
 import React, { Component } from 'react';
@@ -11,6 +11,7 @@ import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import { Popover } from 'antd';
 
+import { logCommon } from '../../decorators/logable';
 import Pagination from '../common/Pagination';
 import Icon from '../common/Icon';
 
@@ -18,6 +19,7 @@ import styles from './keyLablesTable.less';
 
 export default class KeyLabelsTable extends Component {
   static propTypes = {
+    title: PropTypes.string.isRequired,
     labels: PropTypes.array,
     placeholder: PropTypes.string,
   }
@@ -56,6 +58,14 @@ export default class KeyLabelsTable extends Component {
   @autobind
   handlePageChange(current) {
     this.setState({ current });
+    const { title } = this.props;
+    logCommon({
+      type: 'Click',
+      payload: {
+        name: `${title}-切换页码`,
+        value: current,
+      }
+    });
   }
 
   // 渲染每一个label

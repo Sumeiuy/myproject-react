@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性-(普通机构, 产品机构)客户联系方式
  * @Date: 2018-11-07 14:33:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-11 12:04:02
+ * @Last Modified time: 2018-12-13 16:18:34
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -160,7 +160,7 @@ export default class ContactWay extends PureComponent {
   @autobind
   @logPV({
     pathname: '/modal/cust360PropertyAddOrgContactWayModal',
-    title: '客户联系方式'
+    title: ' 客户属性-联系方式-更多'
   })
   handleContactWayEditClick() {
     const {

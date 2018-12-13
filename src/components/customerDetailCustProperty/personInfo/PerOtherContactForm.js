@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 19:10:24
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-13 14:12:19
+ * @Last Modified time: 2018-12-13 19:08:58
  * @description 个人客户添加其他信息
  */
 
@@ -14,6 +14,7 @@ import {
   Row, Col, Select, Input, Form
 } from 'antd';
 
+import FormItemWrap from '../common/FormItem';
 import { regxp } from '../../../helper';
 import logable from '../../../decorators/logable';
 import { FORM_STYLE, SOURCE_CODE } from '../common/config';
@@ -73,6 +74,8 @@ export default class PerOtherContactForm extends PureComponent {
       // 如果选择的是电子邮件
       if (isEmail(contactWayCode) && !regxp.email.test(newInput)) {
         callback('电子邮件格式不正确');
+      } else if (_.size(newInput) > 60) {
+        callback('最大不超过60个字符');
       } else {
         callback();
       }
@@ -123,100 +126,71 @@ export default class PerOtherContactForm extends PureComponent {
 
     return (
       <div className={styles.addContactWrap}>
-        <Row type="flex" gutter={16} align="middle">
-          <Col span={12}>
-            <div className={styles.formItem}>
-              <div className={styles.itemLable}>主要：</div>
-              <div className={styles.valueArea}>
-                {/** 因为只能新增修改非主要信息，因此此处使用固定的值 */}
-                <FormItem>
-                  {getFieldDecorator('mainFlag', {
-                    initialValue: 'N',
-                  })(
-                    <Select
-                      disabled
-                      style={FORM_STYLE}
-                    >
-                      <Option value="N">N</Option>
-                    </Select>
-                  )
-                    }
-                </FormItem>
-              </div>
-            </div>
-          </Col>
-          <Col span={12}>
-            <div className={styles.formItem}>
-              <div className={styles.itemLable}>
-                <span className={styles.requried}>*</span>
-                号码：
-              </div>
-              <div className={styles.valueArea}>
-                <FormItem>
-                  {getFieldDecorator('contactWayValue', {
-                    rules: [
-                      { required: true, message: '请输入号码' },
-                      { max: 60, message: '最多不超过60个字符' },
-                      { whitespace: true, message: '头尾不能有空格' },
-                      { validator: this.vakidateContactValue },
-                    ],
-                    initialValue: contactWayValue,
-                  })(
-                    <Input style={FORM_STYLE} />,
-                  )}
-                </FormItem>
-              </div>
-            </div>
-          </Col>
-        </Row>
-        <Row type="flex" gutter={16} align="middle">
-          <Col span={12}>
-            <div className={styles.formItem}>
-              <div className={styles.itemLable}>
-                <span className={styles.requried}>*</span>
-                联系方式：
-              </div>
-              <div className={styles.valueArea}>
-                <FormItem>
-                  {getFieldDecorator('contactWayCode', {
-                    rules: [{ required: true, message: '请选择联系方式' }],
-                    initialValue: contactWayCode,
-                  })(
-                    <Select
-                      style={FORM_STYLE}
-                      onChange={this.handleContactSelectChange}
-                    >
-                      {this.renderContactTypeOption()}
-                    </Select>
-                  )}
-                </FormItem>
-              </div>
-            </div>
-          </Col>
-          <Col span={12}>
-            <div className={styles.formItem}>
-              <div className={styles.itemLable}>
-                <span className={styles.requried}>*</span>
-                来源：
-              </div>
-              <div className={styles.valueArea}>
-                <FormItem>
-                  {getFieldDecorator('sourceCode', {
-                    initialValue: sourceCode,
-                  })(
-                    <Select
-                      disabled
-                      style={FORM_STYLE}
-                    >
-                      {this.renderSourceOption()}
-                    </Select>
-                  )
-                }
-                </FormItem>
-              </div>
-            </div>
-          </Col>
-        </Row>
+        <div className={styles.formWrap}>
+          <div className={styles.leftForm}>
+            <FormItemWrap position="left" title="主要">
+              <FormItem>
+                {getFieldDecorator('mainFlag', {
+                  initialValue: 'N',
+                })(
+                  <Select
+                    disabled
+                    style={FORM_STYLE}
+                  >
+                    <Option value="N">N</Option>
+                  </Select>
+                )
+                  }
+              </FormItem>
+            </FormItemWrap>
+            <FormItemWrap position="left" title="联系方式" isRequired>
+              <FormItem>
+                {getFieldDecorator('contactWayCode', {
+                  rules: [{ required: true, message: '请选择联系方式' }],
+                  initialValue: contactWayCode,
+                })(
+                  <Select
+                    style={FORM_STYLE}
+                    onChange={this.handleContactSelectChange}
+                  >
+                    {this.renderContactTypeOption()}
+                  </Select>
+                )}
+              </FormItem>
+            </FormItemWrap>
+          </div>
+          <div className={styles.formSplitPer} />
+          <div className={styles.rightForm}>
+            <FormItemWrap position="left" title="号码" isRequired>
+              <FormItem>
+                {getFieldDecorator('contactWayValue', {
+                  rules: [
+                    { required: true, message: '请输入号码' },
+                    { validator: this.vakidateContactValue },
+                  ],
+                  initialValue: contactWayValue,
+                })(
+                  <Input style={FORM_STYLE} />,
+                )}
+              </FormItem>
+            </FormItemWrap>
+            <FormItemWrap position="left" title="来源" isRequired>
+              <FormItem>
+                {getFieldDecorator('sourceCode', {
+                  initialValue: sourceCode,
+                })(
+                  <Select
+                    disabled
+                    style={FORM_STYLE}
+                  >
+                    {this.renderSourceOption()}
+                  </Select>
+                )
+               }
+              </FormItem>
+            </FormItemWrap>
+          </div>
+        </div>
       </div>
     );
   }
