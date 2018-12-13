@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-12-06 09:32:56
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-12-12 11:15:33
+ * @LastEditTime: 2018-12-13 13:37:21
  * @Description: 图表相关的配置选项
  */
 
@@ -72,7 +72,7 @@ const CUSTOMER_AND_ASSET_CONFIG = [
     isAsset: true,
   },
   {
-    name: '存量客户新增日均资产',
+    name: '存量新增日均资产',
     key: 'clCustNewAvgAset',
     isAsset: true,
   },
