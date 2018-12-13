@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-12-06 17:29:40
  * @Last Modified by: liqianwen
- * @Last Modified time: 2018-12-13 09:52:51
+ * @Last Modified time: 2018-12-13 09:58:59
  * @description 交易流水中的普通账户历史交易Tab组件
  */
 import React, { PureComponent } from 'react';
@@ -209,8 +209,7 @@ export default class NormalTradeFlow extends PureComponent {
   handleProductCodeSelect(current) {
     const { prdtCode, prdtName, prdtSortCode } = current.value;
     this.setState({
-      productCode: prdtCode,
-      currentProductCode: [prdtCode, prdtName, prdtSortCode]
+      productCode: [prdtCode, prdtName, prdtSortCode],
     }, this.queryStandardTradeFlow);
   }
 
