@@ -1,0 +1,39 @@
+/*
+ * @Author: zhufeiyang
+ * @Date: 2018-11-15 13:20:28
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-12-10 11:06:50
+ * @description tab组件里面再次使用tab的时候，会发生tab样式覆盖的问题
+ * 所以在tab里面使用这个tab，这里的样式全部使用important
+ */
+
+.tab {
+  :global {
+    .ant-tabs-bar .ant-tabs-nav-container {
+      height: 36px !important;
+    }
+    .ant-tabs-bar {
+      margin-bottom: 0 !important;
+      padding-left: 10px !important;
+      border-bottom: 0 !important;
+    }
+    .ant-tabs-nav .ant-tabs-tab {
+      line-height: 36px !important;
+      height: 36px !important;
+      padding: 0 !important;
+      margin-right: 24px !important;
+      background: transparent !important;
+      font-size: 14px !important;
+      color: #333 !important;
+    }
+    .ant-tabs-tab-active.ant-tabs-tab {
+      color: #333 !important;
+      font-weight: bold !important;
+      background: #fff !important;
+    }
+    .ant-tabs-content > .ant-tabs-tabpane {
+      border: 1px solid #dfe4eb !important;
+      border-radius: 2px !important;
+    }
+  }
+}

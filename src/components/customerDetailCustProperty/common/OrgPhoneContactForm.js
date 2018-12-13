@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 20:29:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-11 16:32:55
+ * @Last Modified time: 2018-12-13 10:17:45
  * @description 添加机构客户电话信息Form
  */
 import React, { PureComponent } from 'react';
@@ -251,7 +251,10 @@ export default class OrgPhoneContactForm extends PureComponent {
                    getFieldDecorator(
                      'name',
                      {
-                       rules: [{ required: true, message: '请输入姓名' }],
+                       rules: [
+                         { required: true, message: '请输入姓名' },
+                         { max: 50, message: '最多不超过个字符' },
+                       ],
                        initialValue: name,
                      }
                    )(
@@ -423,7 +426,8 @@ export default class OrgPhoneContactForm extends PureComponent {
                     'emailValue',
                     {
                       rules: [
-                        { pattern: regxp.email, message: '电子邮件格式不正确' }
+                        { pattern: regxp.email, message: '电子邮件格式不正确' },
+                        { max: 50, message: '最多不超过50个字符' },
                       ],
                       initialValue: emailValue,
                     }

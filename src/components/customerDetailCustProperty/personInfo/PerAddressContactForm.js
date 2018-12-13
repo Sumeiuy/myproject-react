@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 19:02:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-11 16:32:53
+ * @Last Modified time: 2018-12-13 10:09:12
  * @description 添加个人客户地址信息联系方式的Form
  */
 import React, { PureComponent } from 'react';
@@ -256,6 +256,7 @@ export default class PerAddressContactForm extends PureComponent {
                   {getFieldDecorator('address', {
                     rules: [
                       { required: true, message: '请填写地址' },
+                      { max: 100, message: '最多不超过100个字符' },
                       { whitespace: true, message: '头尾不能有空格' },
                     ],
                     initialValue: address,
