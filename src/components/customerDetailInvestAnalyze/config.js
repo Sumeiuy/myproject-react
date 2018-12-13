@@ -1,8 +1,8 @@
 /*
  * @Author: zhangjun
  * @Date: 2018-11-20 14:30:09
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-11 20:21:46
+ * @Last Modified by: zuoguangzu
+ * @Last Modified time: 2018-12-12 09:28:51
  */
 
 import moment from 'moment';
@@ -198,6 +198,10 @@ const PROFIT_TREND_SUMMARY = '账户日收益率用于衡量账户当日的收�
 const PROFIT_TREND_COMPUTE_METHOD1 = '账户日收益率=账户当日收益/（账户前一日日资产+当日净流入），当日净流入为负，则取零计算。';
 const PROFIT_TREND_COMPUTE_METHOD2 = '账户累计收益率=账户区间收益/（账户前一日日资产+ 账户区间的最大成本），其中最大成本为历史累计净流入最大值；当日净流入为负，则取零计算。';
 
+const ACCUMULATED_PROFIT = '累计盈利额（元）';
+const STOCKPERIOD_UPDOWN = '股票期间涨跌';
+const SHAREHOLDING_YIELD = '持股收益率';
+
 export {
   endDateOfLastMonth,
   lastYearDataOfLastMonth,
@@ -217,6 +221,9 @@ export {
   SOLID_RECOVERY_TYPE,
   CURRENCY_TYPE,
   attributionTableColumns,
+  ACCUMULATED_PROFIT,
+  STOCKPERIOD_UPDOWN,
+  SHAREHOLDING_YIELD,
   ATTRIBUTION_INVEST_STYLE_LIST,
   ATTRIBUTION_INVEST_TITLE,
   SUMMARY,

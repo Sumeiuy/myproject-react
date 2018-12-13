@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-12-05 13:03:49
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-11 15:33:29
+ * @Last Modified time: 2018-12-12 14:00:03
  * @description 资产配置变动走势
  */
 import React, { Component } from 'react';
@@ -75,26 +75,43 @@ export default class AssetConfigTrend extends Component {
       const assetClassifyArray = _.map(assetConfigTrendChart, item => item.assetClassifyList);
       // 资产类别名称数组
       const classifyNameList = _.map(assetClassifyArray[0], item => item.classifyName);
-      const maxAssetRateText = `统计期内客户投资比例最高的是${maxRateCategory}`;
-      let assetRateText = maxAssetRateText;
+      // 最大资产类别描述
+      const maxAssetRateText = !_.isEmpty(maxRateCategory) ? `统计期内客户投资比例最高的是${maxRateCategory}` : '';
+      // 最小资产类别描述
+      const minAssetRateText = !_.isEmpty(minRateCategory) ? `投资比例最低的是${minRateCategory}` : '';
+      let assetRateText = '';
       let assetChangeText = '';
-      if (classifyNameList.length > 1) {
-        assetRateText = `${maxAssetRateText}，投资比例最低的是${minRateCategory}。`;
-        assetChangeText = `统计期内${maxChangeCategory}资产持仓占比变化最大。`;
+      if (_.size(classifyNameList) > 1) {
+        if (_.isEmpty(maxRateCategory) && !_.isEmpty(minRateCategory)) {
+          // 最大资产为空,展示最小资产类别描述
+          assetRateText = `${minAssetRateText}。`;
+        } else if (!_.isEmpty(maxRateCategory) && _.isEmpty(minRateCategory)) {
+          // 最小资产为空,展示最大资产类别描述
+          assetRateText = `${maxAssetRateText}。`;
+        } else if (_.isEmpty(maxRateCategory) && _.isEmpty(minRateCategory)) {
+          // 最大资产和最小资产都为空，返回空字符串
+          assetRateText = '';
+        } else {
+          // 最大资产和最小资产都不为空
+          assetRateText = `${maxAssetRateText}，${minAssetRateText}。`;
+        }
+        // 占比变化最大类别描述
+        assetChangeText = !_.isEmpty(maxChangeCategory) ? `统计期内${maxChangeCategory}资产持仓占比变化最大。` : '';
+      } else if (_.size(classifyNameList) === 1) {
+        assetRateText = `${maxAssetRateText}。`;
       }
       return (
         <div>
-          <p>
-            <span>{assetRateText}</span>
-          </p>
-          {
-            <IfWrap isRender={!_.isEmpty(assetChangeText)}>
-              <p key={data.uuid()}>
-                <span>{assetChangeText}</span>
-              </p>
-            </IfWrap>
-          }
-
+          <IfWrap isRender={!_.isEmpty(maxRateCategory) || !_.isEmpty(minRateCategory)}>
+            <p>
+              <span>{assetRateText}</span>
+            </p>
+          </IfWrap>
+          <IfWrap isRender={!_.isEmpty(assetChangeText)}>
+            <p key={data.uuid()}>
+              <span>{assetChangeText}</span>
+            </p>
+          </IfWrap>
         </div>
       );
     }

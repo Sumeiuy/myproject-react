@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-20 15:16:31
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-10 10:18:21
+ * @Last Modified time: 2018-12-13 10:55:08
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -10,7 +10,7 @@ import { autobind } from 'core-decorators';
 import Icon from '../common/Icon';
 import IfWrap from '../common/biz/IfWrap';
 import CommonModal from '../common/biz/CommonModal';
-import { logPV } from '../../decorators/logable';
+import logable, { logPV } from '../../decorators/logable';
 import styles from './infoTitle.less';
 
 export default class InfoTitle extends PureComponent {
@@ -41,13 +41,17 @@ export default class InfoTitle extends PureComponent {
 
   // 显示信息提示弹窗
   @autobind
-  @logPV({ pathname: '/modal/openInfoTip', title: '打开信息提示弹窗' })
+  @logPV({
+    pathname: '/modal/openInfoTip',
+    title: '$props.modalTitle',
+  })
   handleShowModal() {
     this.setState({ modalVisible: true });
   }
 
   // 关闭弹窗
   @autobind
+  @logable({ type: 'Click', payload: { name: '$props.modalTitle' } })
   handleCloseModal() {
     this.setState({ modalVisible: false });
   }

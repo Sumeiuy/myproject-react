@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 16:14:23
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-11 16:33:05
+ * @Last Modified time: 2018-12-13 10:08:36
  * @description 添加个人客户电话信息联系方式的Form
  */
 import React, { PureComponent } from 'react';
@@ -20,6 +20,8 @@ import {
   isCreateContact,
   isCellPhone,
   isLandline,
+  isTax,
+  isOtherContact,
 } from '../common/utils';
 import styles from '../contactForm.less';
 
@@ -67,6 +69,13 @@ export default class PerPhoneContactForm extends PureComponent {
     };
   }
 
+  // 测试办公电话、家庭电话是否符合要求，
+  // 目前新需求办公电话、家庭电话也要支持手机号码
+  @autobind
+  testLandLine(value) {
+    return regxp.cellPhone.test(value) || regxp.tellPhone.test(value);
+  }
+
   // 校验号码
   @autobind
   validateTellPhoneNumber(rule, value, callback) {
@@ -75,9 +84,14 @@ export default class PerPhoneContactForm extends PureComponent {
     if (!_.isEmpty(contactWayCode) && !_.isEmpty(newInput)) {
       // 如果选择的是手机号码
       if (isCellPhone(contactWayCode) && !regxp.cellPhone.test(newInput)) {
-        callback('手机号码格式部正确');
-      } else if (isLandline(contactWayCode) && !regxp.tellPhone.test(newInput)) {
-        callback('电话格式不正确');
+        callback('手机号码格式不正确');
+      } else if (isLandline(contactWayCode) && !this.testLandLine(newInput)) {
+        // 如果选择的是办公电话、家庭电话
+        callback('电话号码或者手机号码格式不正确');
+      } else if (isTax(contactWayCode) && !this.testLandLine(newInput)) {
+        callback('传真号码格式不正确');
+      } else if (isOtherContact(contactWayCode) && !_.size(newInput) <= 60) {
+        callback('其他联系方式号码最大不超过60个字符');
       } else {
         callback();
       }

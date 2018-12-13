@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 19:41:38
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-11 19:40:49
+ * @Last Modified time: 2018-12-13 10:03:07
  * @description 机构客户联系方式配置项
  */
 // 机构客户电话信息表格columns
@@ -23,7 +23,7 @@ export const ORG_PHONE_COLUMNS = [
     key: 'name',
     dataIndex: 'name',
     title: '姓名',
-    width: 90,
+    width: 180,
   },
   {
     key: 'certificateType',
@@ -171,4 +171,8 @@ export const FORMART_CODE = {
   officeline: '104120',
   // email
   email: '104124',
+  // 传真
+  tax: '104122',
+  // 其他联系方式
+  other: '104129',
 };

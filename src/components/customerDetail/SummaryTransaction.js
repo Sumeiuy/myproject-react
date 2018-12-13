@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-15 22:30:04
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-06 15:54:36
+ * @Last Modified time: 2018-12-12 17:43:59
  * @description 客户360详情交易数据展示模块
  */
 import React from 'react';
@@ -50,7 +50,7 @@ export default function SummaryTransaction(props, context) {
       <Cell title="产品日均保有" indicator={data.yearProdHold} />
       <Cell title="天天发" indicator={data.ttfMtkVal} />
       <Cell title="资金余额" indicator={data.cashAmt} />
-      <Cell title="归集率" indicator={data.gjlRate} />
+      <Cell title="归集率" indicator={data.gjlRate} valueType="percent" />
       <Cell
         title="股基佣金率"
         indicator={data.minFee}

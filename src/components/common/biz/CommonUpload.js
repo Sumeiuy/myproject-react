@@ -1,31 +1,9 @@
 /*
+ * @Description: 公共上传附件
  * @Author: LiuJianShu
  * @Date: 2017-09-22 15:02:49
  * @Last Modified by: zhangjun
  * @Last Modified time: 2018-11-15 11:03:53
- */
-/**
- * 常用说明
- * 参数             类型         说明
- * attaches         string      附件列表
- * attachment       boolean     上传附件必须的 ID
- * fileRemove       function    删除附件
- * 其他参数与 Antd.Modal 相同，具体见下方链接
- * https://ant.design/components/upload-cn/
- * 示例
- <CommonUpload
-   attaches: [{
-      creator: '002332',
-      attachId: '{6795CB98-B0CD-4CEC-8677-3B0B9298B209}',
-      name: '新建文本文档 (3).txt',
-      size: '0',
-      createTime: '2017/09/12 13:37:45',
-      downloadURL: '',
-      realDownloadURL: '',
-    }],
-    attachment: 'dkdjk-ieidop-kldlkd-bndnbjd',
-    fileRemove: this.fileRemove,
-  />
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -43,7 +21,6 @@ import styles from './commonUpload.less';
 import Icon from '../Icon';
 import logable from '../../../decorators/logable';
 
-// const EMPTY_OBJECT = {};
 const fetchDataFunction = (globalLoading, type) => query => ({
   type,
   payload: query || {},
@@ -334,7 +311,7 @@ export default class CommonUpload extends PureComponent {
                       }
                       <em>
                         <a
-                          href={item.downloadURL}
+                          href={`${request.URL_PREFIX}${item.downloadURL}`}
                           onClick={this.handleDownloadClick}
                           download
                         >

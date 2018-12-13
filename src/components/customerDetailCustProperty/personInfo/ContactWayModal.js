@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-26 13:58:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-11 18:41:03
+ * @Last Modified time: 2018-12-12 21:18:16
  * @description 联系方式弹框-个人客户联系方式修改
  */
 import React, { Component } from 'react';
@@ -11,6 +11,8 @@ import { autobind } from 'core-decorators';
 import { Button, Switch, message } from 'antd';
 import _ from 'lodash';
 
+import { data as dataHelper } from '../../../helper';
+import ToolTip from '../../common/Tooltip';
 import confirm from '../../common/confirm_';
 import Table from '../common/InfoTable';
 import IFNoData from '../common/IfNoData';
@@ -151,6 +153,44 @@ export default class ContactWayModal extends Component {
       custNature: 'per',
       ...query,
     }).then(this.refresh);
+  }
+
+  // 修改个人地址Columns
+  @autobind
+  updatePerAddressColumns(columns) {
+    return _.map(columns, (column) => {
+      const { dataIndex } = column;
+      if (dataIndex === 'address') {
+        // 修改个人地址信息
+        return this.updateWordColumn(column, 16);
+      }
+      if (dataIndex === 'city' || dataIndex === 'province') {
+        return this.updateWordColumn(column, 6);
+      }
+      return column;
+    });
+  }
+
+  // 修改个人地址信息Column
+  @autobind
+  updateWordColumn(column, length) {
+    return {
+      ...column,
+      render(text) {
+        if (!_.isEmpty(text)) {
+          const { isSubstr, value, origin } = dataHelper.dotdotdot(text || '', length);
+          if (isSubstr) {
+            return (
+              <ToolTip title={origin}>
+                <div className={styles.textEllipse}>{value}</div>
+              </ToolTip>
+            );
+          }
+          return (<div className={styles.textEllipse}>{origin}</div>);
+        }
+        return '';
+      },
+    };
   }
 
   @autobind
@@ -333,6 +373,8 @@ export default class ContactWayModal extends Component {
     const hasNoAddreesInfo = _.isEmpty(data.addressInfo);
     // 有无其他信息
     const hasNoOtherInfo = _.isEmpty(data.otherInfo);
+    // 修改个人客户地址的Column
+    const perAddressColumns = this.updatePerAddressColumns(ADDRESS_COLUMNS);
 
     return (
       <Modal
@@ -362,6 +404,7 @@ export default class ContactWayModal extends Component {
               <span className={styles.switchBox}>
                 请勿发短信
                 <Switch
+                  disabled={!isMainEmp}
                   className={styles.switch}
                   checked={noMessage}
                   size="small"
@@ -371,6 +414,7 @@ export default class ContactWayModal extends Component {
               <span className={styles.switchBox}>
                 请勿打电话
                 <Switch
+                  disabled={!isMainEmp}
                   className={styles.switch}
                   checked={noCall}
                   size="small"
@@ -395,7 +439,8 @@ export default class ContactWayModal extends Component {
             <div className={styles.tableInfo}>
               <IFNoData title="地址信息" isRender={hasNoAddreesInfo}>
                 <Table
-                  columns={ADDRESS_COLUMNS}
+                  className={styles.perAddressTable}
+                  columns={perAddressColumns}
                   dataSource={data.addressInfo}
                   isMainEmp={this.isMainEmp}
                   onEditClick={this.handleAddressEditClick}

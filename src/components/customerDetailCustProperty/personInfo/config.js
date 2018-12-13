@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-26 16:01:55
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-11 18:50:16
+ * @Last Modified time: 2018-12-12 13:57:24
  * @description 客户属性中的个人客户需要用的配置项
  */
 
@@ -47,12 +47,13 @@ export const ADDRESS_COLUMNS = [
     key: 'mainFlag',
     dataIndex: 'mainFlag',
     title: '主要',
-    width: 100,
+    width: 60,
   },
   {
     key: 'addressType',
     dataIndex: 'addressType',
     title: '地址类型',
+    width: 120,
   },
   {
     key: 'address',
@@ -63,26 +64,31 @@ export const ADDRESS_COLUMNS = [
     key: 'zipCode',
     dataIndex: 'zipCode',
     title: '邮编',
+    width: 80,
   },
   {
     key: 'country',
     dataIndex: 'country',
     title: '国家/地区',
+    width: 100,
   },
   {
     key: 'province',
     dataIndex: 'province',
     title: '省/(直辖)市',
+    width: 140,
   },
   {
     key: 'city',
     dataIndex: 'city',
     title: '城市',
+    width: 140,
   },
   {
     key: 'source',
     dataIndex: 'source',
     title: '来源',
+    width: 100,
   },
   {
     key: 'operate',

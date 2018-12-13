@@ -25,6 +25,7 @@ import {
   getMaxCostRateChartData,
   getPftAmtChartData,
   getHoldingChart,
+  NAME_TGZC,
 } from './utils';
 
 const chartTitles = [
@@ -574,7 +575,7 @@ export default class PerformanceIndicators extends PureComponent {
         </div>
         <div>
           {item.name}
-          客户托管总资产：
+          客户{NAME_TGZC}：
           {assetData.newItem}
           {assetData.newUnit}
           {showAssetLabel}
