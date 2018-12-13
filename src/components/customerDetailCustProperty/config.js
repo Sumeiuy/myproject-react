@@ -3,7 +3,7 @@
  * @Description: 客户360，客户属性tab相关配置
  * @Date: 2018-11-07 15:17:38
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-06 09:05:53
+ * @Last Modified time: 2018-12-13 14:51:03
  */
 
 import _ from 'lodash';
@@ -17,8 +17,9 @@ export const CUST_TYPE = {
   // 产品机构客户类型标识
   PRODUCT_CUST_TYPE: 'prod',
 };
-
+// 默认无数据的展示
 export const DEFAULT_VALUE = '--';
+// 默认隐私数据展示
 export const DEFAULT_PRIVATE_VALUE = '***';
 export const LINK_WAY_TYPE = {
   // 手机号码的标识

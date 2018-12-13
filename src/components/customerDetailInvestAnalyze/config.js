@@ -1,8 +1,8 @@
 /*
  * @Author: zhangjun
  * @Date: 2018-11-20 14:30:09
- * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-12-12 09:28:51
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-12-13 14:22:46
  */
 
 import moment from 'moment';
@@ -52,7 +52,7 @@ const profitAbilityLevelList = [
   {
     level: 2,
     levelName: '较强',
-    levelDesc: '客户在华泰同资产段中同期收益率排名前50%-80%（含80%）',
+    levelDesc: '客户在华泰同资产段中同期收益率排名前20%-50%（含50%）',
     levelClassName: 'levelStronger',
   },
   {
@@ -99,7 +99,7 @@ const chartOption = {
     axisLabel: {
       color: '#666',
       fontSize: 12,
-      interval: 30,
+      interval: 29,
     },
   },
   yAxis: {

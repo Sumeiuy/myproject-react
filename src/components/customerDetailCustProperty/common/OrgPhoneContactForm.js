@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 20:29:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-13 10:17:45
+ * @Last Modified time: 2018-12-13 14:10:49
  * @description 添加机构客户电话信息Form
  */
 import React, { PureComponent } from 'react';
@@ -145,7 +145,7 @@ export default class OrgPhoneContactForm extends PureComponent {
   // 职务下拉
   @autobind
   @logable({
-    type: 'Click',
+    type: 'DropdownSelect',
     payload: {
       name: '职务',
       value: '$args[0]',
@@ -158,7 +158,7 @@ export default class OrgPhoneContactForm extends PureComponent {
   // 联系人类型下拉
   @autobind
   @logable({
-    type: 'Click',
+    type: 'DropdownSelect',
     payload: {
       name: '联系人类型',
       value: '$args[0]',
@@ -358,7 +358,7 @@ export default class OrgPhoneContactForm extends PureComponent {
                   )(
                     <Select
                       style={FORM_STYLE}
-                      onChange={this.handleDutyChange}
+                      onChange={this.handleLinkManChange}
                     >
                       {this.renderLinkManOption()}
                     </Select>

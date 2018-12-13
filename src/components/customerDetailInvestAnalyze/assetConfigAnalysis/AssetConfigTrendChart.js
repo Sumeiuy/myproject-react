@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-12-05 13:30:11
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-11 22:43:40
+ * @Last Modified time: 2018-12-13 12:08:42
  * @description 资产配置变动走势chart图
  */
 import React, { Component } from 'react';
@@ -203,6 +203,7 @@ export default class AssetConfigTrendChart extends Component {
           <IECharts
             onReady={this.handleReady}
             option={option}
+            notMerge
             style={{
               height: '366px',
             }}

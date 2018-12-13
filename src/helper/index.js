@@ -1,8 +1,8 @@
 /*
  * @Author: WangJunJun
  * @Date: 2018-08-01 18:30:42
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-08-01 20:50:20
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-12-13 11:55:12
  */
 
 import check from './check';
@@ -24,6 +24,7 @@ import time from './time';
 import url from './url';
 import date from './date';
 import convert from './convert';
+import table from './table';
 
 function getIconType(name) {
   const fullName = name.split('.');
@@ -82,4 +83,5 @@ export {
   url,
   getIconType,
   date,
+  table,
 };
