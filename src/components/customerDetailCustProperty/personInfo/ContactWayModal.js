@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-26 13:58:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-12 13:57:14
+ * @Last Modified time: 2018-12-12 21:18:16
  * @description 联系方式弹框-个人客户联系方式修改
  */
 import React, { Component } from 'react';
@@ -404,6 +404,7 @@ export default class ContactWayModal extends Component {
               <span className={styles.switchBox}>
                 请勿发短信
                 <Switch
+                  disabled={!isMainEmp}
                   className={styles.switch}
                   checked={noMessage}
                   size="small"
@@ -413,6 +414,7 @@ export default class ContactWayModal extends Component {
               <span className={styles.switchBox}>
                 请勿打电话
                 <Switch
+                  disabled={!isMainEmp}
                   className={styles.switch}
                   checked={noCall}
                   size="small"

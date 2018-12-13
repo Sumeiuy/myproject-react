@@ -1,8 +1,8 @@
 /*
  * @Author: sunweibin
  * @Date: 2018-12-07 14:57:51
- * @Last Modified by: liqianwen
- * @Last Modified time: 2018-12-13 10:01:05
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-12-13 10:21:54
  * @description 交易流水信用账户历史记录
  */
 import React, { PureComponent } from 'react';
