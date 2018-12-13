@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 19:10:24
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-13 10:11:39
+ * @Last Modified time: 2018-12-13 14:12:19
  * @description 个人客户添加其他信息
  */
 
@@ -84,7 +84,7 @@ export default class PerOtherContactForm extends PureComponent {
 
   @autobind
   @logable({
-    type: 'Click',
+    type: 'DropdownSelect',
     payload: {
       name: '联系方式',
       value: '$args[0]',
