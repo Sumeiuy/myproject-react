@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-26 13:58:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-13 14:04:08
+ * @Last Modified time: 2018-12-13 14:52:31
  * @description 联系方式弹框-个人客户联系方式修改
  */
 import React, { Component } from 'react';
@@ -25,6 +25,7 @@ import {
   ADDRESS_COLUMNS,
   OTHER_COLUMNS,
 } from './config';
+import { DEFAULT_VALUE } from '../config';
 
 import styles from '../common/contactWayModal.less';
 
@@ -366,7 +367,7 @@ export default class ContactWayModal extends Component {
       ...column,
       render(text) {
         if (_.isEmpty(text)) {
-          return '--';
+          return DEFAULT_VALUE;
         }
         return (
           <ToolTip placement="top">
@@ -383,7 +384,7 @@ export default class ContactWayModal extends Component {
     return {
       ...column,
       render(text) {
-        return _.isEmpty(text) ? '--' : text;
+        return _.isEmpty(text) ? DEFAULT_VALUE : text;
       },
     };
   }

@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 19:36:22
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-13 14:07:29
+ * @Last Modified time: 2018-12-13 14:53:11
  * @description 机构客户添加联系方式Modal
  */
 
@@ -12,7 +12,6 @@ import { autobind } from 'core-decorators';
 import { Button } from 'antd';
 import _ from 'lodash';
 
-import { data as dataHelper } from '../../../helper';
 import confirm from '../../common/confirm_';
 import Table from './InfoTable';
 import IFNoData from './IfNoData';
@@ -26,6 +25,7 @@ import {
   ORG_PHONE_COLUMNS,
   ORG_ADDRESS_COLUMNS,
 } from './config';
+import { DEFAULT_VALUE } from '../config';
 
 import styles from './contactWayModal.less';
 
@@ -250,7 +250,7 @@ export default class ContactWayModal extends PureComponent {
       ...column,
       render(text) {
         if (_.isEmpty(text)) {
-          return '--';
+          return DEFAULT_VALUE;
         }
         return (
           <ToolTip placement="top">
@@ -267,7 +267,7 @@ export default class ContactWayModal extends PureComponent {
     return {
       ...column,
       render(text) {
-        return _.isEmpty(text) ? '--' : text;
+        return _.isEmpty(text) ? DEFAULT_VALUE : text;
       }
     };
   }
@@ -279,9 +279,9 @@ export default class ContactWayModal extends PureComponent {
       ...column,
       render(text) {
         if (!_.isEmpty(text) && _.hasIn(text, 'value')) {
-          return _.isEmpty(text.value) ? '--' : text.value;
+          return _.isEmpty(text.value) ? DEFAULT_VALUE : text.value;
         }
-        return '--';
+        return DEFAULT_VALUE;
       },
     };
   }
