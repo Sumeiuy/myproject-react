@@ -153,6 +153,9 @@ function getLogData(action) {
 }
 
 function sendAPILog(data) {
+  if (!enableLog) {
+    return Promise.resolve();
+  }
   return api.sendLog(`${url}?project=${projectName}`, data);
 }
 
@@ -174,7 +177,7 @@ function flushLog() {
 const throttledFlushLog = _.throttle(flushLog, interval);
 
 function sendLog(action) {
-  if (!isPass(action) || !enableLog) {
+  if (!isPass(action)) {
     return;
   }
   const data = getLogData(action);

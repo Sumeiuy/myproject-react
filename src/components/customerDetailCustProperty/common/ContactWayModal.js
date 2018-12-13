@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 19:36:22
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-11 20:01:37
+ * @Last Modified time: 2018-12-12 17:02:57
  * @description 机构客户添加联系方式Modal
  */
 
@@ -87,7 +87,7 @@ export default class ContactWayModal extends PureComponent {
       }
       if (dataIndex === 'name') {
         // 机构客户联系人支持最多展示8个字符
-        return this.updateWordColumn(column, 4);
+        return this.updateWordColumn(column, 8);
       }
       if (dataIndex === 'duty') {
         // 机构客户联系人支持最多展示8个字符
@@ -107,7 +107,7 @@ export default class ContactWayModal extends PureComponent {
         ...column,
         render(text) {
           if (!_.isEmpty(text) && _.hasIn(text, 'value')) {
-            const { isSubstr, value, origin } = dataHelper.dotdotdot(text.value || '', 13);
+            const { isSubstr, value, origin } = dataHelper.dotdotdot(text.value || '', 20);
             if (isSubstr) {
               return (
                 <ToolTip title={origin}>
@@ -115,7 +115,7 @@ export default class ContactWayModal extends PureComponent {
                 </ToolTip>
               );
             }
-            return (<div className={styles.textEllipse}>{value}</div>);
+            return (<div className={styles.textEllipse}>{origin}</div>);
           }
           return '';
         }

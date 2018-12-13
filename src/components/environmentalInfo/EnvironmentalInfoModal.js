@@ -1,8 +1,8 @@
 /*
  * @Author: zuoguangzu
  * @Date: 2018-10-29 13:17:52
- * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-31 16:31:29
+ * @Last Modified by: maoquan@htsc.com
+ * @Last Modified time: 2018-12-12 13:25:58
  */
 
 import React from 'react';
@@ -24,7 +24,7 @@ export default function EnvironmentalInfo(props) {
     $screen_height,
     $browser,
     $browser_version,
-    $os_name,
+    osname,
     $os_version,
   } = env.getEnv();
   return (
@@ -46,7 +46,7 @@ export default function EnvironmentalInfo(props) {
             <ul>
               <li>
                 <span>操作系统：</span>
-                <span>{$os_name}</span>
+                <span>{osname}</span>
               </li>
               <li>
                 <span>屏幕高度：</span>

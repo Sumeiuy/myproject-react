@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-12-19 11:01:47
- * @Last Modified by: zhangmei
- * @Last Modified time: 2018-11-14 14:46:16
+ * @Last Modified by: maoquan@htsc.com
+ * @Last Modified time: 2018-12-12 18:16:50
  * @description 用于神策日志统一记录的装饰器函数，用于需要记录日志的方法上
  */
 import _ from 'lodash';
@@ -159,16 +159,18 @@ function logPV({ pathname, title, payload = {} }) {
  *  所有日志均需包含name、path属性，path由系统自动处理，name需指定，标识不同组件
  * @returns {Function}
  */
-function logCommon({ type = 'Click', payload = {} }) {
+function logCommon({ type = 'Click', payload = {} }, context, ...args) {
   const fixedPayload = {
-    pathname: dva.getLastLocation(),
+    pathname: dva.getLastLocation,
     ...payload,
   };
   try {
     if (_.isString(type) && !_.isEmpty(type)) {
       dva.dispatch({
         type,
-        payload: convertToString(fixedPayload)
+        payload: convertToString(
+          replaceValue(fixedPayload, context, args),
+        ),
       });
     }
   } catch (e) {

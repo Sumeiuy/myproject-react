@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-12-06 09:32:56
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-12-11 18:09:55
+ * @LastEditTime: 2018-12-12 11:15:33
  * @Description: 图表相关的配置选项
  */
 
@@ -11,6 +11,7 @@ import { isNumberEmpty } from '../../helper/check';
 import {
   thousandFormat,
   formatByBorders,
+  toFixed,
 } from '../../helper/number';
 
 const EMPTY_VALUE = '--';
@@ -176,18 +177,21 @@ const SERVICE_INDICATOR_CONFIG = [
     key: 'motCompletePercent',
     isAsset: false,
     color: 'orange',
+    isPercent: true,
   },
   {
     name: '服务覆盖率',
     key: 'serviceCompPercent',
     isAsset: false,
     color: 'yellow',
+    isPercent: true,
   },
   {
     name: '归集率',
     key: 'shzNpRate',
     isAsset: false,
     color: 'red',
+    isPercent: true,
   },
 ];
 
@@ -195,15 +199,15 @@ const SERVICE_INDICATOR_CONFIG = [
 function getValueByResponse(indicators, configs) {
   return _.map(configs, (config) => {
     const indicatorValue = indicators[config.key];
-    const value = (indicatorValue && indicatorValue.value) || config.defaultValue; // 测试显示可以设定默认值
-    const unit = (indicatorValue && indicatorValue.unit) || '户';
+    const value = Number((indicatorValue && indicatorValue.value) || config.defaultValue);
+    const unit = (indicatorValue && indicatorValue.unit);
     let formatedValue;
     if (isNumberEmpty(value)) {
       formatedValue = EMPTY_VALUE;
+    } else if (config.isAsset) {
+      formatedValue = formatByBorders({ num: value });
     } else {
-      formatedValue = config.isAsset
-        ? formatByBorders({ num: value })
-        : `${thousandFormat(value)}${unit}`;
+      formatedValue = config.isPercent ? `${toFixed(value)}%` : `${thousandFormat(value)}${unit}`;
     }
     return {
       ...config,
