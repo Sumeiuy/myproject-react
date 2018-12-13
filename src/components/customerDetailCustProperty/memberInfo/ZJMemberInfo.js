@@ -10,14 +10,12 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import classnames from 'classnames';
 import Icon from '../../common/Icon';
 import InfoItem from '../../common/infoItem';
-import { DEFAULT_VALUE } from '../config';
+import { DEFAULT_VALUE, checkIsNeedTitle } from '../config';
 import { number } from '../../../helper';
 import styles from './zjMemberInfo.less';
-import {
-  checkIsNeedTitle,
-} from '../config';
 import logable, { logPV } from '../../../decorators/logable';
 import ZJMemeberInfoModal from './ZJMemberInfoModal';
 
@@ -33,6 +31,12 @@ export default class ZJMemberInfo extends PureComponent {
     dataSource: PropTypes.object.isRequired,
     // 获取紫金积分会员积分兑换流水
     queryZjPointExchangeFlow: PropTypes.func.isRequired,
+    // 最后一个元素不用设置border
+    noBorder: PropTypes.bool,
+  }
+
+  static defaultProps = {
+    noBorder: false,
   }
 
   constructor(props) {
@@ -95,7 +99,14 @@ export default class ZJMemberInfo extends PureComponent {
       data,
       dataSource,
       queryZjPointExchangeFlow,
+      noBorder,
     } = this.props;
+
+    const continerCls = classnames({
+      [styles.container]: true,
+      [styles.noBorder]: noBorder,
+    });
+
     return (
       <div className={styles.zjMemberInfoBox}>
         <div className={`${styles.title} clearfix`}>
@@ -113,7 +124,7 @@ export default class ZJMemberInfo extends PureComponent {
             />
           </span>
         </div>
-        <div className={styles.container}>
+        <div className={continerCls}>
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH_110}

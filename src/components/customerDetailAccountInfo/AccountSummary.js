@@ -21,7 +21,7 @@ export default function AccountSummary(props) {
       <AccountSummaryBlock title="权限开通" summaryData={data.permissionOpen} showDesc={false} />
       <AccountSummaryBlock title="资产/收益" summaryData={data.assetsRelative} />
       <AccountSummaryBlock title="交易/销售" summaryData={data.transactionRelative} />
-      <AccountSummaryBlock title="收入贡献" summaryData={data.incomeRelative} />
+      <AccountSummaryBlock title="收入贡献" summaryData={data.incomeRelative} noBorder />
     </div>
   );
 }
