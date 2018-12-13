@@ -83,7 +83,7 @@ export default class MemberInfo extends PureComponent {
       queryZjPointExchangeFlow,
     } = this.props;
     return (
-      <div>
+      <div style={{ paddingBottom: '6px' }}>
         <ZLMemberInfo
           location={location}
           data={zlUMemberInfo}
@@ -91,6 +91,7 @@ export default class MemberInfo extends PureComponent {
           queryZLUmemberLevelChangeRecords={queryZLUmemberLevelChangeRecords}
         />
         <ZJMemberInfo
+          noBorder
           location={location}
           data={zjPointMemberInfo}
           dataSource={zjPointExchangeFlow}

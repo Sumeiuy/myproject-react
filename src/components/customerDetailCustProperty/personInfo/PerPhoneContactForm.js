@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 16:14:23
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-12 11:03:04
+ * @Last Modified time: 2018-12-13 10:08:36
  * @description 添加个人客户电话信息联系方式的Form
  */
 import React, { PureComponent } from 'react';
@@ -20,6 +20,8 @@ import {
   isCreateContact,
   isCellPhone,
   isLandline,
+  isTax,
+  isOtherContact,
 } from '../common/utils';
 import styles from '../contactForm.less';
 
@@ -85,7 +87,11 @@ export default class PerPhoneContactForm extends PureComponent {
         callback('手机号码格式不正确');
       } else if (isLandline(contactWayCode) && !this.testLandLine(newInput)) {
         // 如果选择的是办公电话、家庭电话
-        callback('电话或者手机号码格式不正确');
+        callback('电话号码或者手机号码格式不正确');
+      } else if (isTax(contactWayCode) && !this.testLandLine(newInput)) {
+        callback('传真号码格式不正确');
+      } else if (isOtherContact(contactWayCode) && !_.size(newInput) <= 60) {
+        callback('其他联系方式号码最大不超过60个字符');
       } else {
         callback();
       }

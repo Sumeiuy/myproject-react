@@ -5,11 +5,14 @@
  */
 
 .zjMemberInfoBox {
-  padding-top: 12px;
+  padding: 12px 20px 0;
   .container {
     padding: 6px 14px 14px;
     margin: 0 auto;
     border-bottom: 1px solid #f2f3f8;
+    &.noBorder {
+      border-bottom: 0;
+    }
   }
   .infoItemBox {
     display: inline-block;
@@ -23,7 +26,6 @@
   }
   .title {
     margin-bottom: 4px;
-    padding-left: 20px;
     .colorBlock {
       background: #108ee9;
       width: 3px;
@@ -39,7 +41,6 @@
     }
     .iconButton {
       float: right;
-      margin-right: 30px;
       font-size: 14px;
       color: #108ee9;
       cursor: pointer;

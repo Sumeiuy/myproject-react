@@ -9,7 +9,7 @@ import _ from 'lodash';
 import { transformItemUnit } from '../chartRealTime/FixNumber';
 import { number } from '../../helper';
 
-const NAME_TGZZC = '托管总资产';
+const NAME_TGZC = '托管资产';
 // 计算除数并转换成百分比显示
 function calcPercent(x = 0, y = 0) {
   let result = 0;
@@ -98,7 +98,7 @@ function getCustClassChartData(data) {
           unit: '人',
         };
         let showParamsName = params.name;
-        if (params.name === NAME_TGZZC) {
+        if (params.name === NAME_TGZC) {
           showParamsName = `客户${params.name}`;
           const item = transformItemUnit(params.data.asset);
           formatData = {
@@ -111,7 +111,7 @@ function getCustClassChartData(data) {
     },
     xAxis: {
       type: 'category',
-      data: ['客户', NAME_TGZZC],
+      data: ['客户', NAME_TGZC],
       axisTick: {
         show: false
       },
@@ -304,7 +304,7 @@ function getCustomTypeChartData(data) {
           showPercent: params.data.showCustNumRate || '0%',
         };
         let showParamsName = params.name;
-        if (params.name === NAME_TGZZC) {
+        if (params.name === NAME_TGZC) {
           showParamsName = `客户${params.name}`;
           const item = transformItemUnit(params.data.asset);
           formatData = {
@@ -320,7 +320,7 @@ function getCustomTypeChartData(data) {
     },
     xAxis: {
       type: 'category',
-      data: ['客户', NAME_TGZZC],
+      data: ['客户', NAME_TGZC],
       axisTick: {
         show: false
       },
@@ -939,4 +939,5 @@ export {
   getPftAmtChartData,
   getHoldingChart,
   getOpenedAccountsChartData,
+  NAME_TGZC,
 };
