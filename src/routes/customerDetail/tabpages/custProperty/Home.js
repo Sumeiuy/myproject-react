@@ -9,12 +9,12 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { Tabs } from 'antd';
 import PersonInfo from '../../../../components/customerDetailCustProperty/personInfo';
 import OrganizationInfo from '../../../../components/customerDetailCustProperty/organizationInfo';
 import ProductInfo from '../../../../components/customerDetailCustProperty/productInfo';
 import MemberInfo from '../../../../components/customerDetailCustProperty/memberInfo';
 import FinanceInfo from '../../../../components/customerDetailCustProperty/financeInfo';
+import Tabs from '../../../../components/common/innerTab';
 import {
   CUST_TYPE,
   custPropertyTabMapData,
@@ -348,26 +348,22 @@ export default class CustProperty extends PureComponent {
         <div className={styles.custInfoBox}>
           {this.renderCustInfo()}
         </div>
-        <div className={styles.tabBox}>
-          <Tabs
-            className={styles.tab}
-            activeKey={custPropertyTabKey}
-            animated={false}
-            tabBarGutter={2}
-            onChange={
-              activeKey => this.handleTabChange(activeKey, custPropertyTabMapData[activeKey])
-            }
-          >
-            {this.renderTabPane(financeInfoTabPane, custPropertyInfoPermission)}
-            {this.renderTabPane(memberInfoTabPane, custPropertyInfoPermission)}
-            {/* <TabPane tab="合作业务" key={COOPERATION_KEY}>
-            </TabPane>
-            <TabPane tab="营销与服务" key={MARKETING_KEY}>
-            </TabPane> */}
-            {/* <TabPane tab="关系信息" key={RELATION_INFO_KEY}>
-            </TabPane> */}
-          </Tabs>
-        </div>
+        <Tabs
+          activeKey={custPropertyTabKey}
+          animated={false}
+          onChange={
+            activeKey => this.handleTabChange(activeKey, custPropertyTabMapData[activeKey])
+          }
+        >
+          {this.renderTabPane(financeInfoTabPane, custPropertyInfoPermission)}
+          {this.renderTabPane(memberInfoTabPane, custPropertyInfoPermission)}
+          {/* <TabPane tab="合作业务" key={COOPERATION_KEY}>
+          </TabPane>
+          <TabPane tab="营销与服务" key={MARKETING_KEY}>
+          </TabPane> */}
+          {/* <TabPane tab="关系信息" key={RELATION_INFO_KEY}>
+          </TabPane> */}
+        </Tabs>
       </div>
     );
   }

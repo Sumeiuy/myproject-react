@@ -8,9 +8,9 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { Tabs } from 'antd';
 
 import AccountTotalState from '../../../../components/customerDetailInvestAnalyze/accountTotalState/AccountTotalState';
+import Tabs from '../../../../components/common/innerTab';
 import AssetConfigAnalysis from '../../../../components/customerDetailInvestAnalyze/assetConfigAnalysis/AssetConfigAnalysis';
 import ProfitAttributionAnalysis from '../../../../components/customerDetailInvestAnalyze/profitAttributionAnalysis/ProfitAttributionAnalysis';
 import WindControlAnalysis from '../../../../components/customerDetailInvestAnalyze/windControlAnalysis/WindControlAnalysis';
@@ -117,7 +117,7 @@ export default class Home extends PureComponent {
     } = this.props;
     return (
       <div className={styles.investmentAbilityAnalysis}>
-        <Tabs type="card" onChange={this.handleChangeTab}>
+        <Tabs onChange={this.handleChangeTab}>
           <TabPane tab="账户总体情况" key="accountTotalState">
             <AccountTotalState
               location={location}

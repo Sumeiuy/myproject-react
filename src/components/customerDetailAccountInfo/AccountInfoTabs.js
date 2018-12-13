@@ -7,12 +7,12 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Tabs } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
 import AccountSummary from './AccountSummary';
 import AccountDetail from './AccountDetail';
+import Tabs from '../common/innerTab';
 import { ACCOUNT_INFO_TABS } from './config';
 import { logCommon } from '../../decorators/logable';
 
@@ -183,7 +183,7 @@ export default class AccountInfoTabs extends PureComponent {
 
     return (
       <div className={styles.tabsContainer}>
-        <Tabs type="card" onChange={this.handleTabChange} activeKey={activeTabKey}>
+        <Tabs onChange={this.handleTabChange} activeKey={activeTabKey}>
           <TabPane tab="账户概览" key="accountSummary">
             <div className={styles.tabPaneWrap}>
               <AccountSummary data={accountSummary} />
