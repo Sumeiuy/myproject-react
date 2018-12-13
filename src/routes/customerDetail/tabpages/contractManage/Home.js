@@ -10,11 +10,11 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { connect } from 'dva';
-import { Tabs } from 'antd';
 
 import { dva } from '../../../../helper';
 import withRouter from '../../../../decorators/withRouter';
 import { logCommon } from '../../../../decorators/logable';
+import Tabs from '../../../../components/common/innerTab';
 import ProtocolTab from '../../../../components/customerDetailContractManage/ProtocolTab';
 import ContractTab from '../../../../components/customerDetailContractManage/ContractTab';
 import AgreementTab from '../../../../components/customerDetailContractManage/AgreementTab';
@@ -200,7 +200,7 @@ export default class ContractManage extends PureComponent {
     } = this.props;
     return (
       <div className={styles.wrapper}>
-        <Tabs type="card" onChange={this.handleTabChange} activeKey={activeTabKey}>
+        <Tabs onChange={this.handleTabChange} activeKey={activeTabKey}>
           <TabPane tab="协议" key="protocol">
             <div className={styles.tabPaneWrap}>
               <ProtocolTab

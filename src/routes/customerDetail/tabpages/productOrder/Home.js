@@ -10,9 +10,9 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'dva';
 import { autobind } from 'core-decorators';
-import { Tabs } from 'antd';
 import logable from '../../../../decorators/logable';
 import { generateEffect as effect } from '../../../../helper/dva';
+import Tabs from '../../../../components/common/innerTab';
 import ProductOrderFlow from '../../../../components/customerDetailProductOrder/ProductOrderFlow';
 import TradeOrderFlow from '../../../../components/customerDetailProductOrder/TradeOrderFlow';
 import ServiceOrder from '../../../../components/customerDetailProductOrder/ServiceOrder';
@@ -210,7 +210,6 @@ export default class ProductOrder extends PureComponent {
     return (
       <div className={styles.productOrderContainer}>
         <Tabs
-          type="card"
           onChange={this.handleTabChange}
           activeKey={activeKey}
         >
