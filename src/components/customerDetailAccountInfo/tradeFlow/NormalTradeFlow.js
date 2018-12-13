@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-12-06 17:29:40
  * @Last Modified by: liqianwen
- * @Last Modified time: 2018-12-13 09:58:59
+ * @Last Modified time: 2018-12-13 14:22:46
  * @description 交易流水中的普通账户历史交易Tab组件
  */
 import React, { PureComponent } from 'react';
@@ -222,7 +222,7 @@ export default class NormalTradeFlow extends PureComponent {
       value: '$args[0]',
     },
   })
-  handleAllProductMenuSelect(current) {
+  handleFilterTree(current) {
     const allProductMenu = current.join(',');
     this.setState({
       allProductMenu,
