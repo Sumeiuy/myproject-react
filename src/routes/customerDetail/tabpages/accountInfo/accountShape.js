@@ -99,6 +99,8 @@ const accountPropTypes = {
   capitalChangeFlowRes: PropTypes.object.isRequired,
   // 账户变动
   accountChangeRes: PropTypes.object.isRequired,
+  // 主服务经理权限
+  isMainEmpPermission: PropTypes.bool.isRequired,
 };
 
 export default accountPropTypes;

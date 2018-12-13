@@ -243,6 +243,7 @@ export default class Home extends PureComponent {
       capitalChangeFlowRes,
       queryAccountChange,
       accountChangeRes,
+      isMainEmpPermission,
     } = this.props;
 
     const { compareCode, time } = this.state;
@@ -272,6 +273,7 @@ export default class Home extends PureComponent {
             creditTradeFlowRes={creditTradeFlowRes}
             optionTradeFlowRes={optionTradeFlowRes}
             capitalChangeFlowRes={capitalChangeFlowRes}
+            isMainEmpPermission={isMainEmpPermission}
           />
         </div>
         {/* 中间资产分布和收益走势区域 */}
