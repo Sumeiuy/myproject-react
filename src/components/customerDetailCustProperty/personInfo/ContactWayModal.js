@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-26 13:58:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-13 14:52:31
+ * @Last Modified time: 2018-12-13 19:15:42
  * @description 联系方式弹框-个人客户联系方式修改
  */
 import React, { Component } from 'react';
@@ -15,7 +15,7 @@ import ToolTip from '../../common/Tooltip';
 import confirm from '../../common/confirm_';
 import Table from '../common/InfoTable';
 import IFNoData from '../common/IfNoData';
-import logable from '../../../decorators/logable';
+import logable, { logPV } from '../../../decorators/logable';
 import Modal from '../../common/biz/CommonModal';
 import IfWrap from '../../common/biz/IfWrap';
 import AddContactWayModal from './AddContactModal';
@@ -182,11 +182,16 @@ export default class ContactWayModal extends Component {
     confirm({
       content: '确定要删除该条联系方式吗？',
       onOk: () => this.delPerContact(query),
+      onCancel: this.delPerContactCancel,
     });
   }
 
   // 删除个人客户的联系方式
   @autobind
+  @logable({
+    type: 'ButtonClick',
+    payload: { name: '删除联系方式-确定' }
+  })
   delPerContact(query) {
     const {
       location: {
@@ -199,6 +204,16 @@ export default class ContactWayModal extends Component {
       ...query,
     }).then(this.refresh);
   }
+
+  @autobind
+  @logable({
+    type: 'ButtonClick',
+    payload: { name: '删除联系方式确认框-取消' }
+  })
+  delPerContactCancel() {
+    // 日志专用
+  }
+
 
   @autobind
   @logable({
@@ -227,27 +242,25 @@ export default class ContactWayModal extends Component {
   @autobind
   @logable({
     type: 'Click',
-    payload: { name: '关闭' }
+    payload: { name: '个人客户联系方式-关闭' }
   })
   handleContactWayClose() {
     this.props.onClose();
   }
 
   @autobind
-  @logable({
-    type: 'ButtonClick',
-    payload: {
-      name: '添加联系方式'
-    },
+  @logPV({
+    pathname: '/modal/cust360/custProperty/addPerContactModal',
+    title: '客户属性-添加联系方式'
   })
   handleAddContactClick() {
     this.setState({ addContactModal: true });
   }
 
   @autobind
-  @logable({
-    type: 'Click',
-    payload: { name: '编辑个人客户电话信息' }
+  @logPV({
+    pathname: '/modal/cust360/custProperty/editPerContact',
+    title: '编辑个人客户联系方式电话信息'
   })
   handlePhoneEditClick(record) {
     this.setState({
@@ -258,9 +271,9 @@ export default class ContactWayModal extends Component {
   }
 
   @autobind
-  @logable({
-    type: 'Click',
-    payload: { name: '删除个人客户电话信息' }
+  @logPV({
+    pathname: '/modal/cust360/custProperty/delPerContactConfirm',
+    title: '删除个人客户电话信息确认框'
   })
   handlePhoneDelClick(record) {
     this.confirmBeforeDel({
@@ -272,9 +285,9 @@ export default class ContactWayModal extends Component {
   }
 
   @autobind
-  @logable({
-    type: 'Click',
-    payload: { name: '编辑个人客户地址信息' }
+  @logPV({
+    pathname: '/modal/cust360/custProperty/editPerContact',
+    title: '编辑个人客户联系方式地址信息'
   })
   handleAddressEditClick(record) {
     this.setState({
@@ -285,9 +298,9 @@ export default class ContactWayModal extends Component {
   }
 
   @autobind
-  @logable({
-    type: 'Click',
-    payload: { name: '删除个人客户地址信息' }
+  @logPV({
+    pathname: '/modal/cust360/custProperty/delPerContact',
+    title: '删除个人客户联系方式地址信息'
   })
   handleAddressDelClick(record) {
     this.confirmBeforeDel({
@@ -297,9 +310,9 @@ export default class ContactWayModal extends Component {
   }
 
   @autobind
-  @logable({
-    type: 'Click',
-    payload: { name: '编辑个人客户其他信息' }
+  @logPV({
+    pathname: '/modal/cust360/custProperty/editPerContact',
+    title: '编辑个人客户联系方式其他信息'
   })
   handleOtherEditClick(record) {
     this.setState({
@@ -310,9 +323,9 @@ export default class ContactWayModal extends Component {
   }
 
   @autobind
-  @logable({
-    type: 'Click',
-    payload: { name: '删除个人客户其他信息' }
+  @logPV({
+    pathname: '/modal/cust360/custProperty/delPerContact',
+    title: '删除个人客户联系方式其他信息'
   })
   handleOtherDelClick(record) {
     this.confirmBeforeDel({
@@ -324,25 +337,24 @@ export default class ContactWayModal extends Component {
   }
 
   @autobind
-  @logable({
-    type: 'Click',
-    payload: { name: '关闭' }
-  })
   handleAddContactModalClose() {
     this.setState({ addContactModal: false });
   }
 
   @autobind
-  @logable({
-    type: 'Click',
-    payload: { name: '关闭' }
-  })
   handleEditContactModalClose() {
     this.setState({ editContactModal: false });
   }
 
   // 编辑联系方式弹框、新增联系方式弹框点击确认
   @autobind
+  @logable({
+    type: 'Submit',
+    payload: {
+      name: '新增或者修改联系方式',
+      value: '$args[1]',
+    }
+  })
   handleAddOrEditMoalOK(type, data) {
     if (type === 'phone') {
       // 新增|修改电话信息
@@ -370,7 +382,7 @@ export default class ContactWayModal extends Component {
           return DEFAULT_VALUE;
         }
         return (
-          <ToolTip placement="top">
+          <ToolTip placement="topLeft" title={text}>
             <div className={styles.textEllipse}>{text}</div>
           </ToolTip>
         );

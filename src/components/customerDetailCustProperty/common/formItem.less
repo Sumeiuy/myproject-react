@@ -1,0 +1,51 @@
+.formItem {
+  display: flex;
+  margin-bottom: 20px;
+
+  .itemLable {
+    flex: 0 0 auto;
+    height: 30px;
+    line-height: 30px;
+    font-size: 14px;
+    color: #666;
+    text-align: right;
+
+    &.width76 {
+      width: 76px;
+    }
+    &.width90 {
+      width: 90px;
+    }
+
+    .requried {
+      color: #f00;
+    }
+  }
+
+  .valueArea {
+    flex: 1 1 auto;
+    height: 30px;
+
+    :global {
+      .ant-select-arrow:before {
+        content: "\E606" !important;
+      }
+      .ant-select-disabled .ant-select-selection {
+        border: 1px solid #ccc;
+        background-color: #eee;
+
+        .ant-select-selection-selected-value {
+          color: #999;
+        }
+        .ant-select-arrow {
+          color: #ccc;
+        }
+      }
+      .ant-input-disabled {
+        border: 1px solid #ccc;
+        background-color: #eee;
+        color: #999;
+      }
+    }
+  }
+}

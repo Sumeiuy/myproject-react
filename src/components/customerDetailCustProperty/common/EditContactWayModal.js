@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-28 10:55:01
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-11 10:44:28
+ * @Last Modified time: 2018-12-13 16:42:26
  * @description 客户属性中个人客户|机构客户的电话信息、地址信息、其他信息的编辑弹框
  */
 import React, { PureComponent } from 'react';
@@ -198,7 +198,7 @@ export default class EditContactWayModal extends PureComponent {
   @autobind
   @logable({
     type: 'Click',
-    payload: { name: '关闭' }
+    payload: { name: '编辑联系方式-关闭' }
   })
   handleEditModalClose() {
     this.props.onClose();
@@ -207,16 +207,16 @@ export default class EditContactWayModal extends PureComponent {
   @autobind
   @logable({
     type: 'ButtonClick',
-    payload: { name: '取消' }
+    payload: { name: '编辑联系方式-取消' }
   })
-  handleCloseModal() {
+  handleModalCancelButton() {
     this.props.onClose();
   }
 
   @autobind
   @logable({
     type: 'ButtonClick',
-    payload: { name: '确认' }
+    payload: { name: '编辑联系方式-确认' }
   })
   handleModalOK() {
     const { custNature, contactType } = this.props;
@@ -340,7 +340,7 @@ export default class EditContactWayModal extends PureComponent {
 
     // Modal的底部按钮
     const footBtns = [
-      <Button onClick={this.handleCloseModal}>取消</Button>,
+      <Button onClick={this.handleModalCancelButton}>取消</Button>,
       <Button type="primary" onClick={this.handleModalOK}>确认</Button>,
     ];
     const editForm = this.renderEditForm();

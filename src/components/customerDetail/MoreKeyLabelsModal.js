@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-16 15:22:07
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-16 18:32:05
+ * @Last Modified time: 2018-12-13 19:40:08
  * @description 更多重点标签弹出层
  */
 import React, { Component } from 'react';
@@ -13,10 +13,16 @@ import _ from 'lodash';
 
 import Modal from '../common/biz/CommonModal';
 import KeyLabelsTable from './KeyLabelsTable';
+import { logCommon } from '../../decorators/logable';
 
 import styles from './moreKeyLabelModal.less';
 
 const TabPane = Tabs.TabPane;
+
+const TABS = {
+  definedLabels: '自定义标签',
+  bigdataLabels: '大数据标签',
+};
 
 export default class MoreKeyLabelsModal extends Component {
   static propTypes = {
@@ -29,7 +35,7 @@ export default class MoreKeyLabelsModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      // 切换标签Tab,默认展示大数据标签
+      // 切换标签Tab,默认展示自定义标签
       activeTabKey: 'definedLabels',
     };
   }
@@ -38,6 +44,10 @@ export default class MoreKeyLabelsModal extends Component {
   @autobind
   handleTabChange(activeTabKey) {
     this.setState({ activeTabKey });
+    logCommon({
+      type: 'Click',
+      payload: { name: TABS[activeTabKey] },
+    });
   }
 
   render() {
@@ -65,12 +75,14 @@ export default class MoreKeyLabelsModal extends Component {
           >
             <TabPane tab="自定义标签" key="definedLabels">
               <KeyLabelsTable
+                title="自定义标签"
                 labels={definedLabels}
                 placeholder="还没有为该客户设置自定义标签"
               />
             </TabPane>
             <TabPane tab="大数据标签" key="bigdataLabels">
               <KeyLabelsTable
+                title="大数据标签"
                 labels={bigDataLabels}
                 placeholder="该客户暂无大数据标签"
               />

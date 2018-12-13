@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 20:29:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-13 14:10:49
+ * @Last Modified time: 2018-12-13 19:02:24
  * @description 添加机构客户电话信息Form
  */
 import React, { PureComponent } from 'react';
@@ -13,6 +13,7 @@ import {
   Row, Col, Select, Input, Form
 } from 'antd';
 
+import FormItemWrap from './FormItem';
 import { regxp } from '../../../helper';
 import logable from '../../../decorators/logable';
 import { isCreateContact } from './utils';
@@ -217,37 +218,98 @@ export default class OrgPhoneContactForm extends PureComponent {
 
     return (
       <div className={styles.addContactWrap}>
-        <Row type="flex" gutter={16} align="middle">
-          <Col span={12}>
-            <div className={styles.formItem}>
-              <div className={styles.itemLable}>主要：</div>
-              <div className={styles.valueArea}>
-                {/** 因为只能新增修改非主要信息，因此此处使用固定的值 */}
-                <FormItem>
-                  {getFieldDecorator('mainFlag', {
-                    initialValue: 'N',
-                  })(
-                    <Select
-                      disabled
-                      style={FORM_STYLE}
-                    >
-                      <Option value="N">N</Option>
-                    </Select>
-                  )
-                 }
-                </FormItem>
-              </div>
-            </div>
-          </Col>
-          <Col span={12}>
-            <div className={styles.formItem}>
-              <div className={styles.itemLable}>
-                <span className={styles.requried}>*</span>
-                姓名：
-              </div>
-              <div className={styles.valueArea}>
-                <FormItem>
+        <div className={styles.formWrap}>
+          <div className={styles.leftForm}>
+            <FormItemWrap title="主要" position="left">
+              <FormItem>
+                {getFieldDecorator('mainFlag', {
+                  initialValue: 'N',
+                })(
+                  <Select
+                    disabled
+                    style={FORM_STYLE}
+                  >
+                    <Option value="N">N</Option>
+                  </Select>
+                )
+                }
+              </FormItem>
+            </FormItemWrap>
+            <FormItemWrap title="证件类型" position="left">
+              <FormItem>
+                {getFieldDecorator(
+                  'cretificateType',
                   {
+                    initialValue: cretificateType,
+                  }
+                )(
+                  <Select
+                    disabled
+                    style={FORM_STYLE}
+                  >
+                    {this.renderCretificateOption()}
+                  </Select>
+                )
+                }
+              </FormItem>
+            </FormItemWrap>
+            <FormItemWrap title="职务" position="left">
+              <FormItem>
+                {getFieldDecorator(
+                  'dutyCode',
+                  {
+                    initialValue: dutyCode,
+                  }
+                )(
+                  <Select
+                    style={FORM_STYLE}
+                    onChange={this.handleDutyChange}
+                  >
+                    {this.renderDutyOption()}
+                  </Select>
+                )
+                }
+              </FormItem>
+            </FormItemWrap>
+            <FormItemWrap title="手机号码" position="left">
+              <FormItem>
+                {getFieldDecorator(
+                  'mobileValue',
+                  {
+                    rules: [
+                      { pattern: regxp.cellPhone, message: '手机号码格式不正确' }
+                    ],
+                    initialValue: mobileValue,
+                  }
+                )(
+                  <Input style={FORM_STYLE} />
+                )
+                }
+              </FormItem>
+            </FormItemWrap>
+            <FormItemWrap title="电子邮件" position="left">
+              <FormItem>
+                {getFieldDecorator(
+                  'emailValue',
+                  {
+                    rules: [
+                      { pattern: regxp.email, message: '电子邮件格式不正确' },
+                      { max: 50, message: '最多不超过50个字符' },
+                    ],
+                    initialValue: emailValue,
+                  }
+                )(
+                  <Input style={FORM_STYLE} />
+                )
+                }
+              </FormItem>
+            </FormItemWrap>
+          </div>
+          <div className={styles.formSplitOrg} />
+          <div className={styles.rightForm}>
+            <FormItemWrap title="姓名" position="right" isRequired>
+              <FormItem>
+                {
                    getFieldDecorator(
                      'name',
                      {
@@ -261,205 +323,73 @@ export default class OrgPhoneContactForm extends PureComponent {
                      <Input style={FORM_STYLE} />
                    )
                  }
-                </FormItem>
-              </div>
-            </div>
-          </Col>
-        </Row>
-        <Row type="flex" gutter={16} align="middle">
-          <Col span={12}>
-            <div className={styles.formItem}>
-              <div className={styles.itemLable}>
-                证件类型：
-              </div>
-              <div className={styles.valueArea}>
-                <FormItem>
+              </FormItem>
+            </FormItemWrap>
+            <FormItemWrap title="证件号码" position="right" isRequired>
+              <FormItem>
+                {getFieldDecorator(
+                  'cretificateNumber',
                   {
-                  getFieldDecorator(
-                    'cretificateType',
-                    {
-                      initialValue: cretificateType,
-                    }
-                  )(
-                    <Select
-                      disabled
-                      style={FORM_STYLE}
-                    >
-                      {this.renderCretificateOption()}
-                    </Select>
-                  )
-                }
-                </FormItem>
-              </div>
-            </div>
-          </Col>
-          <Col span={12}>
-            <div className={styles.formItem}>
-              <div className={styles.itemLable}>
-                证件号码：
-              </div>
-              <div className={styles.valueArea}>
-                <FormItem>
-                  {
-                  getFieldDecorator(
-                    'cretificateNumber',
-                    {
-                      initialValue: cretificateNumber,
-                    }
-                  )(
-                    <Input disabled style={FORM_STYLE} />
-                  )
-                }
-                </FormItem>
-              </div>
-            </div>
-          </Col>
-        </Row>
-        <Row type="flex" gutter={16} align="middle">
-          <Col span={12}>
-            <div className={styles.formItem}>
-              <div className={styles.itemLable}>职务：</div>
-              <div className={styles.valueArea}>
-                <FormItem>
-                  {
-                    getFieldDecorator(
-                      'dutyCode',
-                      {
-                        initialValue: dutyCode,
-                      }
-                    )(
-                      <Select
-                        style={FORM_STYLE}
-                        onChange={this.handleDutyChange}
-                      >
-                        {this.renderDutyOption()}
-                      </Select>
-                    )
+                    initialValue: cretificateNumber,
                   }
-                </FormItem>
-              </div>
-            </div>
-          </Col>
-          <Col span={12}>
-            <div className={styles.formItem}>
-              <div className={styles.itemLable}>
-                <span className={styles.requried}>*</span>
-                联系人类型：
-              </div>
-              <div className={styles.valueArea}>
-                <FormItem>
-                  {
-                  getFieldDecorator(
-                    'contacterTypeCode',
-                    {
-                      rules: [{ required: true, message: '请选择联系人类型' }],
-                      initialValue: contacterTypeCode,
-                    }
-                  )(
-                    <Select
-                      style={FORM_STYLE}
-                      onChange={this.handleLinkManChange}
-                    >
-                      {this.renderLinkManOption()}
-                    </Select>
-                  )
+                )(
+                  <Input disabled style={FORM_STYLE} />
+                )
                 }
-                </FormItem>
-              </div>
-            </div>
-          </Col>
-        </Row>
-        <Row type="flex" gutter={16} align="middle">
-          <Col span={12}>
-            <div className={styles.formItem}>
-              <div className={styles.itemLable}>手机号码：</div>
-              <div className={styles.valueArea}>
-                <FormItem>
+              </FormItem>
+            </FormItemWrap>
+            <FormItemWrap title="联系人类型" position="right" isRequired>
+              <FormItem>
+                {getFieldDecorator(
+                  'contacterTypeCode',
                   {
-                  getFieldDecorator(
-                    'mobileValue',
-                    {
-                      rules: [
-                        { pattern: regxp.cellPhone, message: '手机号码格式不正确' }
-                      ],
-                      initialValue: mobileValue,
-                    }
-                  )(
-                    <Input style={FORM_STYLE} />
-                  )
-                }
-                </FormItem>
-              </div>
-            </div>
-          </Col>
-          <Col span={12}>
-            <div className={styles.formItem}>
-              <div className={styles.itemLable}>固定电话：</div>
-              <div className={styles.valueArea}>
-                <FormItem>
-                  {
-                  getFieldDecorator(
-                    'landlineValue',
-                    {
-                      rules: [
-                        { pattern: regxp.tellPhone, message: '固定电话号码格式不正确' }
-                      ],
-                      initialValue: landlineValue,
-                    }
-                  )(
-                    <Input style={FORM_STYLE} />
-                  )
-                }
-                </FormItem>
-              </div>
-            </div>
-          </Col>
-        </Row>
-        <Row type="flex" gutter={16} align="middle">
-          <Col span={12}>
-            <div className={styles.formItem}>
-              <div className={styles.itemLable}>电子邮件：</div>
-              <div className={styles.valueArea}>
-                <FormItem>
-                  {
-                  getFieldDecorator(
-                    'emailValue',
-                    {
-                      rules: [
-                        { pattern: regxp.email, message: '电子邮件格式不正确' },
-                        { max: 50, message: '最多不超过50个字符' },
-                      ],
-                      initialValue: emailValue,
-                    }
-                  )(
-                    <Input style={FORM_STYLE} />
-                  )
-                }
-                </FormItem>
-              </div>
-            </div>
-          </Col>
-          <Col span={12}>
-            <div className={styles.formItem}>
-              <div className={styles.itemLable}>来源：</div>
-              <div className={styles.valueArea}>
-                <FormItem>
-                  {getFieldDecorator('sourceCode', {
-                    initialValue: sourceCode,
-                  })(
-                    <Select
-                      disabled
-                      style={FORM_STYLE}
-                    >
-                      {this.renderSourceOption()}
-                    </Select>
-                  )
+                    rules: [{ required: true, message: '请选择联系人类型' }],
+                    initialValue: contacterTypeCode,
                   }
-                </FormItem>
-              </div>
-            </div>
-          </Col>
-        </Row>
+                )(
+                  <Select
+                    style={FORM_STYLE}
+                    onChange={this.handleLinkManChange}
+                  >
+                    {this.renderLinkManOption()}
+                  </Select>
+                )
+                }
+              </FormItem>
+            </FormItemWrap>
+            <FormItemWrap title="固定电话" position="right">
+              <FormItem>
+                {getFieldDecorator(
+                  'landlineValue',
+                  {
+                    rules: [
+                      { pattern: regxp.tellPhone, message: '固定电话号码格式不正确' }
+                    ],
+                    initialValue: landlineValue,
+                  }
+                )(
+                  <Input style={FORM_STYLE} />
+                )
+                }
+              </FormItem>
+            </FormItemWrap>
+            <FormItemWrap title="来源" position="right">
+              <FormItem>
+                {getFieldDecorator('sourceCode', {
+                  initialValue: sourceCode,
+                })(
+                  <Select
+                    disabled
+                    style={FORM_STYLE}
+                  >
+                    {this.renderSourceOption()}
+                  </Select>
+                )
+                }
+              </FormItem>
+            </FormItemWrap>
+          </div>
+        </div>
       </div>
     );
   }

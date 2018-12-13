@@ -2,11 +2,11 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 13:52:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-30 17:16:06
+ * @Last Modified time: 2018-12-13 16:39:40
  * @description 添加机构客户联系方式的Modal
  */
 
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { Tabs, Button } from 'antd';
@@ -29,7 +29,7 @@ import styles from './addOrgContactWayModal.less';
 
 const TabPane = Tabs.TabPane;
 
-export default class AddContactModal extends Component {
+export default class AddContactModal extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
     // 关闭弹框
@@ -67,12 +67,24 @@ export default class AddContactModal extends Component {
 
   @autobind
   @logable({
+    type: 'ButtonClick',
+    payload: {
+      name: '添加机构联系方式-取消',
+    },
+  })
+  handleModalCancelButton() {
+    this.props.onClose();
+  }
+
+  @autobind
+  @logable({
     type: 'Click',
     payload: {
-      name: '关闭',
+      name: '添加机构联系方式-关闭',
     },
   })
   handleCloseModal() {
+    // 纯粹是为了记录弹框右上角关闭图标的点击
     this.props.onClose();
   }
 
@@ -159,9 +171,9 @@ export default class AddContactModal extends Component {
 
   @autobind
   @logable({
-    type: 'Click',
+    type: 'ButtonClick',
     payload: {
-      name: '确认',
+      name: '添加机构客户联系方式-确认',
     },
   })
   handleModalOK() {
@@ -208,8 +220,8 @@ export default class AddContactModal extends Component {
     } = this.state;
     // Modal的底部按钮
     const footBtns = [
-      <Button key="orgContactAddCancel" onClick={this.handleCloseModal}>取消</Button>,
-      <Button key="orgContactAddOK" type="primary" onClick={this.handleModalOK}>确认</Button>,
+      <Button key="orgContactAddCancel" onClick={this.handleModalCancelButton}>取消</Button>,
+      <Button key="orgContactAddOK" type="primary" onClick={this.handleModalOK}>确定</Button>,
     ];
 
     return (

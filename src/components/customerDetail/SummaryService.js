@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-15 20:43:07
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-07 10:27:52
+ * @Last Modified time: 2018-12-13 19:27:53
  * @description 客户360详情左侧服务记录信息
  */
 import React from 'react';
@@ -12,6 +12,7 @@ import _ from 'lodash';
 import { TAB_POSITION_TOP } from './config';
 
 import styles from './summaryService.less';
+import { logCommon } from '../../decorators/logable';
 
 export default function SummaryService(props) {
   const {
@@ -56,12 +57,20 @@ export default function SummaryService(props) {
     navToTabPane({
       activeTabKey: 'serviceRecord',
     });
+    logCommon({
+      type: 'Click',
+      payload: { name: '最近一次服务-详情' }
+    });
   };
 
   // 定位到业务办理
   const handleOpendServiceDetailClick = () => {
     navToTabPane({
       activeTabKey: 'businessProcessing',
+    });
+    logCommon({
+      type: 'Click',
+      payload: { name: '可开通业务-详情' }
     });
   };
 
