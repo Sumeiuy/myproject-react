@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 19:36:22
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-13 14:53:11
+ * @Last Modified time: 2018-12-13 15:42:39
  * @description 机构客户添加联系方式Modal
  */
 
@@ -279,7 +279,13 @@ export default class ContactWayModal extends PureComponent {
       ...column,
       render(text) {
         if (!_.isEmpty(text) && _.hasIn(text, 'value')) {
-          return _.isEmpty(text.value) ? DEFAULT_VALUE : text.value;
+          return _.isEmpty(text.value)
+            ? DEFAULT_VALUE
+            : (
+              <ToolTip placement="top">
+                <div className={styles.textEllipse}>{text.value}</div>
+              </ToolTip>
+            );
         }
         return DEFAULT_VALUE;
       },

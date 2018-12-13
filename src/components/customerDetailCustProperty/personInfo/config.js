@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-26 16:01:55
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-13 13:56:17
+ * @Last Modified time: 2018-12-13 15:37:37
  * @description 客户属性中的个人客户需要用的配置项
  */
 
@@ -19,12 +19,14 @@ export const PHONE_COLUMNS = [
     dataIndex: 'contactWay',
     title: '联系方式',
     width: 56,
+    needEllipse: true,
   },
   {
     key: 'phoneNumber',
     dataIndex: 'phoneNumber',
     title: '号码',
     width: 97,
+    needEllipse: true,
   },
   {
     key: 'source',
@@ -38,6 +40,7 @@ export const PHONE_COLUMNS = [
     dataIndex: 'modifyTime',
     title: '更新时间',
     width: 138,
+    needEllipse: true,
   },
   {
     key: 'operate',
@@ -121,6 +124,7 @@ export const OTHER_COLUMNS = [
     dataIndex: 'contactWay',
     title: '联系方式',
     width: 56,
+    needEllipse: true,
   },
   {
     key: 'contactText',

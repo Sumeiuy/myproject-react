@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 19:41:38
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-13 13:48:25
+ * @Last Modified time: 2018-12-13 15:39:32
  * @description 机构客户联系方式配置项
  */
 // 机构客户电话信息表格columns
@@ -32,12 +32,14 @@ export const ORG_PHONE_COLUMNS = [
     dataIndex: 'certificateType',
     title: '证件类型',
     width: 126,
+    needEllipse: true,
   },
   {
     key: 'cretificateNo',
     dataIndex: 'cretificateNo',
     title: '证件号码',
     width: 148,
+    needEllipse: true,
   },
   {
     key: 'duty',
@@ -51,18 +53,21 @@ export const ORG_PHONE_COLUMNS = [
     dataIndex: 'mobile',
     title: '手机号码',
     width: 91,
+    needEllipse: true,
   },
   {
     key: 'landline',
     dataIndex: 'landline',
     title: '固定电话',
     width: 105,
+    needEllipse: true,
   },
   {
     key: 'email',
     dataIndex: 'email',
     title: '电子邮件',
     width: 120,
+    needEllipse: true,
   },
   {
     key: 'operate',
@@ -84,42 +89,49 @@ export const ORG_ADDRESS_COLUMNS = [
     dataIndex: 'addressType',
     title: '地址类型',
     width: 56,
+    needEllipse: true,
   },
   {
     key: 'address',
     dataIndex: 'address',
     title: '地址',
     width: 264,
+    needEllipse: true,
   },
   {
     key: 'zipCode',
     dataIndex: 'zipCode',
     title: '邮编',
     width: 50,
+    needEllipse: true,
   },
   {
     key: 'country',
     dataIndex: 'country',
     title: '国家/地区',
     width: 63,
+    needEllipse: true,
   },
   {
     key: 'province',
     dataIndex: 'province',
     title: '省/(直辖)市',
     width: 98,
+    needEllipse: true,
   },
   {
     key: 'city',
     dataIndex: 'city',
     title: '城市',
     width: 56,
+    needEllipse: true,
   },
   {
     key: 'source',
     dataIndex: 'source',
     title: '来源',
     width: 72,
+    needEllipse: true,
   },
   {
     key: 'operate',
