@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-12-07 17:14:27
  * @Last Modified by: liqianwen
- * @Last Modified time: 2018-12-12 20:36:26
+ * @Last Modified time: 2018-12-13 09:52:32
  * @description 期权账户交易流水
  */
 import React, { PureComponent } from 'react';
@@ -52,9 +52,7 @@ export default class OptionTradeFlow extends PureComponent {
       startDate,
       endDate,
       // 产品代码
-      productCode: '',
-      // 产品代码当前回填值
-      currentProductCode: [],
+      productCode: ['', '', ''],
       // 产品代码下拉框选项列表
       productCodeList: [],
     };
@@ -71,7 +69,7 @@ export default class OptionTradeFlow extends PureComponent {
   // 修改产品下拉选项
   @autobind
   getOptionItemValue({ value: { prdtCode, prdtName, prdtSortCode } }) {
-    this.renderOption(prdtCode, prdtName, prdtSortCode);
+    return this.renderOption(prdtCode, prdtName, prdtSortCode);
   }
 
   // 获取信用账户交易流水的Column配置
@@ -158,11 +156,13 @@ export default class OptionTradeFlow extends PureComponent {
   // 查询期权账户交易流水
   @autobind
   queryOptionTradeFlow(pageNum = 1) {
-    const query = _.omit(this.state, ['productCodeList', 'currentProductCode']);
+    const query = _.omit(this.state, ['productCodeList']);
+    const { productCode } = query;
     this.props.queryOptionTradeFlow({
       ...query,
       pageSize: 10,
       pageNum,
+      productCode: productCode[0],
     });
   }
 
@@ -195,8 +195,7 @@ export default class OptionTradeFlow extends PureComponent {
   handleProductCodeSelect(current) {
     const { prdtCode, prdtName, prdtSortCode } = current.value;
     this.setState({
-      productCode: prdtCode,
-      currentProductCode: [prdtCode, prdtName, prdtSortCode]
+      productCode: [prdtCode, prdtName, prdtSortCode]
     }, this.queryOptionTradeFlow);
   }
 
@@ -227,15 +226,12 @@ export default class OptionTradeFlow extends PureComponent {
 
   @autobind
   renderOption(prdtCode, prdtName, prdtSortCode) {
-    const { currentProductCode } = this.state;
+    const { productCode } = this.state;
     let displayName = `${prdtName}(${prdtSortCode})`;
     if (!prdtCode) {
       displayName = prdtName;
-      return <span key={prdtCode} title={prdtName}>{displayName}</span>;
-    }
-    if (!prdtSortCode) {
-      displayName = `${prdtName}(${currentProductCode[2]})`;
-      return <span key={prdtCode} title={prdtName}>{displayName}</span>;
+    } else if (!prdtSortCode) {
+      displayName = `${prdtName}(${productCode[2]})`;
     }
     return <span key={prdtCode} title={prdtName}>{displayName}</span>;
   }
@@ -244,7 +240,7 @@ export default class OptionTradeFlow extends PureComponent {
     const {
       startDate,
       endDate,
-      currentProductCode,
+      productCode,
       productCodeList,
     } = this.state;
 
@@ -283,7 +279,7 @@ export default class OptionTradeFlow extends PureComponent {
               needItemObj
               useLabelInValue
               data={productCodeList}
-              value={currentProductCode}
+              value={productCode}
               onInputChange={this.handleProductCodeSearch}
               onChange={this.handleProductCodeSelect}
               getOptionItemValue={this.getOptionItemValue}

@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-12-06 17:29:40
  * @Last Modified by: liqianwen
- * @Last Modified time: 2018-12-12 20:36:24
+ * @Last Modified time: 2018-12-13 09:52:51
  * @description 交易流水中的普通账户历史交易Tab组件
  */
 import React, { PureComponent } from 'react';
@@ -57,9 +57,7 @@ export default class NormalTradeFlow extends PureComponent {
       // 业务类型
       bussinessType: '',
       // 产品代码
-      productCode: '',
-      // 产品代码当前回填值
-      currentProductCode: [],
+      productCode: ['', '', ''],
       // 全产品目录
       allProductMenu: '',
       // 产品代码下来框选项
@@ -107,7 +105,7 @@ export default class NormalTradeFlow extends PureComponent {
   // 修改产品下拉选项
   @autobind
   getOptionItemValue({ value: { prdtCode, prdtName, prdtSortCode } }) {
-    this.renderOption(prdtCode, prdtName, prdtSortCode);
+    return this.renderOption(prdtCode, prdtName, prdtSortCode);
   }
 
   // 修改纯文本展示，超过length部分...并且悬浮显示全部信息
@@ -156,11 +154,13 @@ export default class NormalTradeFlow extends PureComponent {
   // 查询普通账户交易流水
   @autobind
   queryStandardTradeFlow(pageNum = 1) {
-    const query = _.omit(this.state, ['productCodeList', 'currentProductCode']);
+    const query = _.omit(this.state, ['productCodeList']);
+    const { productCode } = query;
     this.props.queryStandardTradeFlow({
       ...query,
       pageSize: 10,
       pageNum,
+      productCode: productCode[0]
     });
   }
 
@@ -257,15 +257,12 @@ export default class NormalTradeFlow extends PureComponent {
 
   @autobind
   renderOption(prdtCode, prdtName, prdtSortCode) {
-    const { currentProductCode } = this.state;
+    const { productCode } = this.state;
     let displayName = `${prdtName}(${prdtSortCode})`;
     if (!prdtCode) {
       displayName = prdtName;
-      return <span key={prdtCode} title={prdtName}>{displayName}</span>;
-    }
-    if (!prdtSortCode) {
-      displayName = `${prdtName}(${currentProductCode[2]})`;
-      return <span key={prdtCode} title={prdtName}>{displayName}</span>;
+    } else if (!prdtSortCode) {
+      displayName = `${prdtName}(${productCode[2]})`;
     }
     return <span key={prdtCode} title={prdtName}>{displayName}</span>;
   }
@@ -275,7 +272,7 @@ export default class NormalTradeFlow extends PureComponent {
       startDate,
       endDate,
       bussinessType,
-      currentProductCode,
+      productCode,
       productCodeList,
     } = this.state;
 
@@ -326,7 +323,7 @@ export default class NormalTradeFlow extends PureComponent {
               showSearch
               useLabelInValue
               data={productCodeList}
-              value={currentProductCode}
+              value={productCode}
               onInputChange={this.handleProductCodeSearch}
               onChange={this.handleProductCodeSelect}
               getOptionItemValue={this.getOptionItemValue}
