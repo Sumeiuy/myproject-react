@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 19:41:38
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-13 10:03:07
+ * @Last Modified time: 2018-12-13 13:48:25
  * @description 机构客户联系方式配置项
  */
 // 机构客户电话信息表格columns
@@ -11,60 +11,64 @@ export const ORG_PHONE_COLUMNS = [
     key: 'mainFlag',
     dataIndex: 'mainFlag',
     title: '主要',
-    width: 60,
+    width: 28,
   },
   {
     key: 'contractType',
     dataIndex: 'contractType',
     title: '联系人类型',
-    width: 160,
+    width: 112,
+    needEllipse: true,
   },
   {
     key: 'name',
     dataIndex: 'name',
     title: '姓名',
-    width: 180,
+    width: 42,
+    needEllipse: true,
   },
   {
     key: 'certificateType',
     dataIndex: 'certificateType',
     title: '证件类型',
-    width: 140,
+    width: 126,
   },
   {
     key: 'cretificateNo',
     dataIndex: 'cretificateNo',
     title: '证件号码',
-    width: 180,
+    width: 148,
   },
   {
     key: 'duty',
     dataIndex: 'duty',
     title: '职务',
-    width: 120,
+    width: 70,
+    needEllipse: true,
   },
   {
     key: 'mobile',
     dataIndex: 'mobile',
     title: '手机号码',
-    width: 130,
+    width: 91,
   },
   {
     key: 'landline',
     dataIndex: 'landline',
     title: '固定电话',
-    width: 140,
+    width: 105,
   },
   {
     key: 'email',
     dataIndex: 'email',
     title: '电子邮件',
+    width: 120,
   },
   {
     key: 'operate',
     dataIndex: 'operate',
     title: '操作',
-    width: 70,
+    width: 42,
   },
 ];
 // 机构客户地址信息表格columns
@@ -73,48 +77,55 @@ export const ORG_ADDRESS_COLUMNS = [
     key: 'mainFlag',
     dataIndex: 'mainFlag',
     title: '主要',
-    width: 80,
+    width: 28,
   },
   {
     key: 'addressType',
     dataIndex: 'addressType',
     title: '地址类型',
+    width: 56,
   },
   {
     key: 'address',
     dataIndex: 'address',
     title: '地址',
+    width: 264,
   },
   {
     key: 'zipCode',
     dataIndex: 'zipCode',
     title: '邮编',
+    width: 50,
   },
   {
     key: 'country',
     dataIndex: 'country',
     title: '国家/地区',
+    width: 63,
   },
   {
     key: 'province',
     dataIndex: 'province',
     title: '省/(直辖)市',
+    width: 98,
   },
   {
     key: 'city',
     dataIndex: 'city',
     title: '城市',
+    width: 56,
   },
   {
     key: 'source',
     dataIndex: 'source',
     title: '来源',
+    width: 72,
   },
   {
     key: 'operate',
     dataIndex: 'operate',
     title: '操作',
-    width: 70,
+    width: 42,
   },
 ];
 // 个人客户|机构客户添加联系方式的Tabs

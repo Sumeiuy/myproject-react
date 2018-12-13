@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-20 14:30:09
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-13 12:12:41
+ * @Last Modified time: 2018-12-13 14:22:46
  */
 
 import moment from 'moment';
@@ -99,7 +99,7 @@ const chartOption = {
     axisLabel: {
       color: '#666',
       fontSize: 12,
-      interval: 30,
+      interval: 29,
     },
   },
   yAxis: {
