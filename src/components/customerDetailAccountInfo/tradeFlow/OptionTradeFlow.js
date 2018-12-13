@@ -1,8 +1,8 @@
 /*
  * @Author: sunweibin
  * @Date: 2018-12-07 17:14:27
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-11 11:57:04
+ * @Last Modified by: liqianwen
+ * @Last Modified time: 2018-12-13 10:04:41
  * @description 期权账户交易流水
  */
 import React, { PureComponent } from 'react';
@@ -157,10 +157,12 @@ export default class OptionTradeFlow extends PureComponent {
   @autobind
   queryOptionTradeFlow(pageNum = 1) {
     const query = _.omit(this.state, ['productCodeList']);
+    const { productCode } = query;
     this.props.queryOptionTradeFlow({
       ...query,
       pageSize: 10,
       pageNum,
+      productCode: productCode[0],
     });
   }
 
@@ -228,8 +230,7 @@ export default class OptionTradeFlow extends PureComponent {
     let displayName = `${prdtName}(${prdtSortCode})`;
     if (!prdtCode) {
       displayName = prdtName;
-    }
-    if (!prdtSortCode) {
+    } else if (!prdtSortCode) {
       displayName = `${prdtName}(${productCode[2]})`;
     }
     return <span key={prdtCode} title={prdtName}>{displayName}</span>;

@@ -1,8 +1,8 @@
 /*
  * @Author: sunweibin
  * @Date: 2018-12-07 14:57:51
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-11 17:05:09
+ * @Last Modified by: liqianwen
+ * @Last Modified time: 2018-12-13 10:01:05
  * @description 交易流水信用账户历史记录
  */
 import React, { PureComponent } from 'react';
@@ -151,10 +151,12 @@ export default class CreditTradeFlow extends PureComponent {
   @autobind
   queryCreditTradeFlow(pageNum = 1) {
     const query = _.omit(this.state, ['productCodeList']);
+    const { productCode } = query;
     this.props.queryCreditTradeFlow({
       ...query,
       pageSize: 10,
       pageNum,
+      productCode: productCode[0]
     });
   }
 
@@ -237,8 +239,7 @@ export default class CreditTradeFlow extends PureComponent {
     let displayName = `${prdtName}(${prdtSortCode})`;
     if (!prdtCode) {
       displayName = prdtName;
-    }
-    if (!prdtSortCode) {
+    } else if (!prdtSortCode) {
       displayName = `${prdtName}(${productCode[2]})`;
     }
     return <span key={prdtCode} title={prdtName}>{displayName}</span>;
