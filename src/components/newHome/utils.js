@@ -916,6 +916,7 @@ function getOpenedAccountsChartData(data) {
       data,
       type: 'bar',
       barWidth: 14,
+      cursor: 'default',
       label: {
         normal: {
           show: true,
