@@ -10,6 +10,7 @@
   "rules": {
     "semi": [2],
     "no-console": [2],
+    "jsx-a11y/no-noninteractive-tabindex": [0],
     "no-debugger": [2],
     "no-unused-vars": [1],
     "react/jsx-one-expression-per-line": [0],

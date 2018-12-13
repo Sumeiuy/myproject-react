@@ -1,9 +1,9 @@
 import React from 'react';
 import { Breadcrumb, Button } from 'antd';
+import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { sessionStore } from '../../config';
 import { logCommon } from '../../decorators/logable';
-import { linkTo } from '../../utils';
 import styles from './breadcrumb.less';
 
 function setJspTabCache(param) {
@@ -42,7 +42,7 @@ export default function CustDetailBreadcrumb(props) {
     logCommon({
       type: 'NavClick',
       payload: {
-        name: '面包屑',
+        name: '点击面包屑客户360跳转到客户列表',
         value: url,
       },
     });
@@ -63,7 +63,7 @@ export default function CustDetailBreadcrumb(props) {
     logCommon({
       type: 'NavClick',
       payload: {
-        name: '客户360切换回旧版',
+        name: '点击面包屑切换回客户360旧版',
         value: state.url,
       },
     });
@@ -85,3 +85,12 @@ export default function CustDetailBreadcrumb(props) {
     </div>
   );
 }
+
+CustDetailBreadcrumb.propTypes = {
+  state: PropTypes.object,
+  push: PropTypes.func.isRequired,
+};
+
+CustDetailBreadcrumb.defaultProps = {
+  state: {},
+};

@@ -26,6 +26,8 @@ const config = {
     EVENT_PROFILE_ACTION,
     // 路由变化
     /LOCATION_CHANGE/,
+    // 导航点击,
+    'NavClick',
     // 按钮点击
     'ButtonClick',
     // 下拉选择

@@ -12,6 +12,7 @@ import { Menu, Dropdown, Icon } from 'antd';
 import _ from 'lodash';
 import styles from './tabMenu.less';
 import MoreTab from './MoreTab';
+import logable from '../../../src/decorators/logable';
 /* import commonConfig from './config'; */
 import { fixExternUrl } from '../utils/tab';
 
@@ -92,8 +93,8 @@ export default class TabMenu extends PureComponent {
   }
 
   @autobind
-  isActiveMenu(path, menuItem, level, exact = false) {
-/*     const { activeKey, currentMenuId } = this.props;
+  isActiveMenu(/* path, menuItem, level, exact = false */) {
+  /*     const { activeKey, currentMenuId } = this.props;
     if (activeKey === currentMenuId) { // 一定不是下拉菜单导航，不需要找高亮
       return false;
     }
@@ -119,14 +120,22 @@ export default class TabMenu extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'NavClick',
+    payload: {
+      name: '点击主导航跳转',
+      value: '$args[0].path',
+    }
+  })
   handleLinkClick(menuItem) {
     const { push, path } = this.props;
     if (menuItem.action === 'loadExternSystemPage') {
       const externUrl = fixExternUrl(menuItem.url);
       window.open(externUrl, '_blank');
     } else if (menuItem.path !== path) {
-      const state =
-        !_.isEmpty(menuItem.state) ? menuItem.state : { url: menuItem && menuItem.url };
+      const state = !_.isEmpty(menuItem.state)
+        ? menuItem.state
+        : { url: menuItem && menuItem.url };
 
       push({
         pathname: menuItem.path,
@@ -234,14 +243,17 @@ export default class TabMenu extends PureComponent {
             {menu.name}
           </div>
           {
-            closeable ?
-              <span
-                id={menu.id === activeKey ? 'activeTabPane' : null}
-                className={styles.close}
-                onClick={() => this.remove(menu.id)}
-              >
-                <Icon type="close" />
-              </span> : null
+            closeable
+              ? (
+                <span
+                  id={menu.id === activeKey ? 'activeTabPane' : null}
+                  className={styles.close}
+                  onClick={() => this.remove(menu.id)}
+                >
+                  <Icon type="close" />
+                </span>
+              )
+              : null
           }
         </div>
       </div>
@@ -250,7 +262,13 @@ export default class TabMenu extends PureComponent {
 
   @autobind
   renderMoreTab() {
-    const { onRemove, onChange, activeKey, moreMenuObject, path } = this.props;
+    const {
+      onRemove,
+      onChange,
+      activeKey,
+      moreMenuObject,
+      path,
+    } = this.props;
     return (
       <div className={styles.moreTab}>
         <MoreTab
@@ -274,7 +292,8 @@ export default class TabMenu extends PureComponent {
           mainArray.map((menu) => {
             if (menu.children && !_.isEmpty(menu.children)) {
               return this.renderDropdownMenu(menu);
-            } else if (menu.pid === 'ROOT') {
+            }
+            if (menu.pid === 'ROOT') {
               return this.renderLinkMenu(menu, false);
             }
             return this.renderLinkMenu(menu, true);

@@ -19,20 +19,22 @@ import styles from './breadcrumb.less';
 function getFinalBreadcrumbRoutes(location, breadcrumbRoutes, routerHistory) {
   // 对于某些页面不使用公共的面包屑
   const { pathname } = location;
-  const notUseGlobalBreadcrumb = _.some(tabNotUseGlobalBreadcrumb, path => pathname.indexOf(path) > -1);
+  const notUseGlobalBreadcrumb = _.some(
+    tabNotUseGlobalBreadcrumb, path => pathname.indexOf(path) > -1
+  );
   const breadcrumbItem = _.find(locationNeedBreadcrumb, item => item.path === location.pathname);
 
   let newBreadcrumbRoutes = [
     ...breadcrumbRoutes,
   ];
 
-  if(breadcrumbItem) {
+  if (breadcrumbItem) {
     newBreadcrumbRoutes = getAllBreadcrumbItem(breadcrumbItem);
   }
 
   newBreadcrumbRoutes = _.map(newBreadcrumbRoutes, (item) => {
     const matchHistoryItem = _.find(routerHistory, record => record.pathname === item.path);
-    if(matchHistoryItem) {
+    if (matchHistoryItem) {
       return {
         ...item,
         query: matchHistoryItem.query,
@@ -41,7 +43,7 @@ function getFinalBreadcrumbRoutes(location, breadcrumbRoutes, routerHistory) {
     return item;
   });
 
-  return notUseGlobalBreadcrumb ? []: newBreadcrumbRoutes;
+  return notUseGlobalBreadcrumb ? [] : newBreadcrumbRoutes;
 }
 
 export default class Breadcrumb extends PureComponent {
@@ -56,22 +58,22 @@ export default class Breadcrumb extends PureComponent {
 
   @autobind
   handleBreadcrumbItemClick(breadcrumbItem, canClick) {
-    if(canClick) {
+    if (canClick) {
       logCommon({
         type: 'NavClick',
         payload: {
-          name: '面包屑',
+          name: '点击面包屑跳转',
           value: breadcrumbItem.path,
           url: breadcrumbItem.path,
         },
       });
       // 客户管理菜单上有权限判断, 必须设置?source=leftMenu
-      const currentQuery =
-        _.isEmpty(breadcrumbItem.query) ? { source: 'leftMenu' } : breadcrumbItem.query;
+      const currentQuery = _.isEmpty(breadcrumbItem.query)
+        ? { source: 'leftMenu' } : breadcrumbItem.query;
 
       this.props.push({
         pathname: breadcrumbItem.path,
-        query: breadcrumbItem.path === '/customerPool/list' ? currentQuery: breadcrumbItem.query,
+        query: breadcrumbItem.path === '/customerPool/list' ? currentQuery : breadcrumbItem.query,
       });
     }
   }
@@ -86,8 +88,7 @@ export default class Breadcrumb extends PureComponent {
       },
     });
     const jspState = sessionStore.get('jspState');
-    const locationState = this.props.location.state;
-    let currentState = jspState && jspState.url ? jspState : locationState;
+    const currentState = jspState && jspState.url ? jspState : this.props.location.state;
     this.props.push({
       pathname: '/fsp/customerCenter/customer360',
       state: currentState,
@@ -111,10 +112,12 @@ export default class Breadcrumb extends PureComponent {
         <span
           className={styles.breadcrumbName}
           onClick={() => this.handleBreadcrumbItemClick(breadcrumbItem, canClick)}
-        >{breadcrumbItem.name}</span>
+        >
+          {breadcrumbItem.name}
+        </span>
         {
-          (index < (breadcrumbItemCount - 1) || shouldrenderDivider) ?
-          <span className={styles.breadcrumbDivide}>/</span> : null
+          (index < (breadcrumbItemCount - 1) || shouldrenderDivider)
+            ? <span className={styles.breadcrumbDivide}>/</span> : null
         }
       </div>
     );
@@ -127,30 +130,35 @@ export default class Breadcrumb extends PureComponent {
       routerHistory,
     } = this.props;
 
-    const finalBreadcrumbRoutes =
-      getFinalBreadcrumbRoutes(location, breadcrumbRoutes, routerHistory);
+    const finalBreadcrumbRoutes = getFinalBreadcrumbRoutes(
+      location, breadcrumbRoutes, routerHistory
+    );
 
     const breadcrumbItemCount = finalBreadcrumbRoutes.length;
 
     return (
-      !_.isEmpty(finalBreadcrumbRoutes) ?
-      <div className={styles.breadcrumbContainer}>
-        <div className={styles.breadcrumb}>
-          {
-            _.map(
-              finalBreadcrumbRoutes,
-              (item, index) => this.renderBreadcrumbItem(item, index, breadcrumbItemCount))
-          }
-        </div>
-        {
-          location.pathname === '/fsp/customerPool/list/customerDetail' ?
-            <div className={styles.actionBtn}>
-              <Button ghost type="primary" onClick={this.handleBtnClick}>
-                切回新版
-              </Button>
-            </div> : null
-        }
-      </div> : null
+      !_.isEmpty(finalBreadcrumbRoutes)
+        ? (
+          <div className={styles.breadcrumbContainer}>
+            <div className={styles.breadcrumb}>
+              {
+                _.map(
+                  finalBreadcrumbRoutes,
+                  (item, index) => this.renderBreadcrumbItem(item, index, breadcrumbItemCount)
+                )
+              }
+            </div>
+            {
+              location.pathname === '/fsp/customerPool/list/customerDetail'
+                ? (
+                  <div className={styles.actionBtn}>
+                    <Button ghost type="primary" onClick={this.handleBtnClick}>
+                      切回新版
+                    </Button>
+                  </div>
+                ) : null
+            }
+          </div>) : null
     );
   }
 }

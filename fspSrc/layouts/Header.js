@@ -9,7 +9,13 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'dva';
-import { Menu, Dropdown, Input, Modal, Button } from 'antd';
+import {
+  Menu,
+  Dropdown,
+  Input,
+  Modal,
+  Button
+} from 'antd';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import className from 'classnames';
@@ -70,9 +76,9 @@ export default class Header extends PureComponent {
     hotPossibleWdsList: PropTypes.array,
     searchHistoryVal: PropTypes.string,
   }
+
   static defaultProps = {
     secondaryMenu: [],
-    empInfo: {},
     onSearch: _.noop,
     onSwitchRsp: _.noop,
     hotPossibleWdsList: [],
@@ -109,10 +115,10 @@ export default class Header extends PureComponent {
   }
 
   getCurrentId(menu) {
-    if(menu.name === '问题反馈') {
+    if (menu.name === '问题反馈') {
       return NEW_HOME_INTRO_TENTH_SEEP_IDNAME;
     }
-    if(menu.name === '常用工具') {
+    if (menu.name === '常用工具') {
       return NEW_HOME_INTRO_ELEVENTH_SEEP_IDNAME;
     }
     return '';
@@ -147,21 +153,21 @@ export default class Header extends PureComponent {
   }
 
   preTreatment(secondaryMenu) {
-    const filterMenu =  _.filter(secondaryMenu,
-      menu =>
-        menu.name === '移动版'
+    const filterMenu = _.filter(secondaryMenu,
+      menu => menu.name === '移动版'
         || (!_.isEmpty(menu.children))
         || (!!menu.path));
 
     let feedbackMenu = _.find(filterMenu, menu => menu.name === '问题反馈') || {};
 
-    if(_.find(feedbackMenu.children, menu => menu.name === '反馈管理')) {
+    if (_.find(feedbackMenu.children, menu => menu.name === '反馈管理')) {
       feedbackMenu = _.filter(feedbackMenu.children, menu => menu.name !== '反馈记录');
-      return _.map(filterMenu, menu => {
-        if(menu.name === '问题反馈') {
-          menu.children = feedbackMenu;
+      return _.map(filterMenu, (menu) => {
+        const newMenu = menu;
+        if (menu.name === '问题反馈') {
+          newMenu.children = feedbackMenu;
         }
-        return menu;
+        return newMenu;
       });
     }
     return filterMenu;
@@ -202,7 +208,7 @@ export default class Header extends PureComponent {
       });
       window.open(externUrl, '_blank');
     } else if (menuItem.action === 'loadInModal') {
-      if(menuItem.name === '我要反馈') {
+      if (menuItem.name === '我要反馈') {
         this.handleFeedbackClick();
       }
       this.handleShowDialog(menuItem);
@@ -295,8 +301,7 @@ export default class Header extends PureComponent {
     api
       .postFspData(`/isExistCp?stockCode=${this.state.stockCode}`,
         {},
-        { isFullUrl: true },
-      )
+        { isFullUrl: true })
       .then((data) => {
         if (data === 'true') {
           this.setState({
@@ -350,8 +355,8 @@ export default class Header extends PureComponent {
                   <span id={this.getCurrentId(menu)}>{menu.name}</span>
                 </span>
                 {
-                  (index !== fixSecondaryMenu.length - 1) ?
-                    <span className={styles.splitLine} /> : null
+                  (index !== fixSecondaryMenu.length - 1)
+                    ? <span className={styles.splitLine} /> : null
                 }
               </div>
             </Dropdown>
@@ -364,8 +369,9 @@ export default class Header extends PureComponent {
               <span>{menu.name}</span>
             </span>
             {
-              (index !== fixSecondaryMenu.length - 1) ?
-                <span className={styles.splitLine} /> : null
+              (index !== fixSecondaryMenu.length - 1)
+                ? <span className={styles.splitLine} />
+                : null
             }
           </div>
         );
@@ -463,18 +469,18 @@ export default class Header extends PureComponent {
           </div>
           <div className={styles.headerContent}>
             {
-              !_.isEmpty(secondaryMenu) ?
-                this.renderSecondaryMenu(secondaryMenu) : null
+              !_.isEmpty(secondaryMenu) ? this.renderSecondaryMenu(secondaryMenu) : null
             }
             {
-              (!_.isEmpty(empRspList)) ?
-                (<EmpRsp
-                  empRspList={empRspList}
-                  empCurrentPosition={empCurrentPosition}
-                  empInfo={empInfo}
-                  onSwitchRsp={this.handleSwitchRsp}
-                />) :
-                null
+              (!_.isEmpty(empRspList))
+                ? (
+                  <EmpRsp
+                    empRspList={empRspList}
+                    empCurrentPosition={empCurrentPosition}
+                    empInfo={empInfo}
+                    onSwitchRsp={this.handleSwitchRsp}
+                  />
+                ) : null
             }
           </div>
         </div>

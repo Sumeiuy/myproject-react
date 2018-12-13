@@ -50,7 +50,6 @@ const chartTitles = [
     title: '持仓分布'
   }
 ];
-
 // 资产分布的数据源
 let totAsetData = [
   {
@@ -104,7 +103,6 @@ let totAsetData = [
     },
   },
 ];
-
 // 持仓分布的数据源
 const positionDistribution = [
   {
