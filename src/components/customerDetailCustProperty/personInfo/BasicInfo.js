@@ -3,13 +3,14 @@
  * @Description: 客户360-客户属性-个人客户基本信息
  * @Date: 2018-11-07 14:33:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-13 08:58:36
+ * @Last Modified time: 2018-12-13 09:24:37
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
+import { regxp } from '../../../helper';
 import InfoItem from '../../common/infoItem';
 import BasicEditorCell from '../common/BasiceEditorCell';
 import {
@@ -100,10 +101,10 @@ export default class BasicInfo extends PureComponent {
         msg: '数据不能为空',
       };
     }
-    if (!/^\d*$/.test(value)) {
+    if (!regxp.integer.test(value)) {
       return {
         validate: false,
-        msg: '子女数量必须是数字',
+        msg: '子女数量必须是整数',
       };
     }
     return {

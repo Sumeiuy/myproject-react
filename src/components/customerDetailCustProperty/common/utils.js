@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-26 17:13:06
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-11 17:50:31
+ * @Last Modified time: 2018-12-13 10:05:11
  * @description 辅助函数
  */
 import _ from 'lodash';
@@ -55,6 +55,14 @@ export function isCellPhone(code) {
 // 判断是否固定电话
 export function isLandline(code) {
   return FORMART_CODE.officeline === code || FORMART_CODE.homeline === code;
+}
+// 是否传真
+export function isTax(code) {
+  return FORMART_CODE.tax === code;
+}
+// 是否其他联系方式
+export function isOtherContact(code) {
+  return FORMART_CODE.other === code;
 }
 // 判断是否Email
 export function isEmail(code) {
