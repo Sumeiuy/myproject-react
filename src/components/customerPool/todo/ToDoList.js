@@ -16,7 +16,7 @@ import { openRctTab } from '../../../utils';
 import logable from '../../../decorators/logable';
 import emptyImg from './img/empty.png';
 import { linkTypeList } from './config';
-import { url as urlHelper } from '../../../helper';
+import { url as urlHelper, emp } from '../../../helper';
 
 import styles from './toDoList.less';
 
@@ -141,11 +141,10 @@ export default class ToDoList extends PureComponent {
       sourceFlag = '',
       stepName = '',
       applyId,
-      originator,
     } = record;
     const targetData = {
       requestId: applyId,
-      empId: originator,
+      empId: emp.getId(),
     };
     const linkTypeItem = _.find(linkTypeList, item => item.type === sourceFlag);
     if (stepName === '驳回修改') {
