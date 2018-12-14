@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-05 13:31:51
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-11 16:39:26
+ * @Last Modified time: 2018-12-14 16:02:20
  * @description 新版客户360详情的历史持仓的弹出层
  */
 import React, { PureComponent } from 'react';
@@ -16,7 +16,7 @@ import _ from 'lodash';
 import cx from 'classnames';
 
 import ToolTip from '../common/Tooltip';
-import { data, number } from '../../helper';
+import { data, number, table as tableHelper } from '../../helper';
 import { jumpToProductDetailPage } from '../../utils/productCenter';
 import logable, { logCommon } from '../../decorators/logable';
 import PlaceHolderImage from '../common/placeholderImage';
@@ -77,6 +77,12 @@ export default class HistoryHoldingModal extends PureComponent {
       // 期权历史持仓的查询日期，初十日期T-1日
       optionQueryDate: defaultDeteString,
     };
+    // 证券历史持仓Column
+    this.stockColumns = this.getStockTableColumns(STOCK_HISTORY_HOLDING_COLUMNS);
+    // 产品历史持仓Column
+    this.productColumns = this.getProductTableColumns(PRODUCT_HISTORY_HOLDING_COLUMNS);
+    // 期权历史持仓Column
+    this.optionColumn = this.getOptionTableColumns(OPTION_HISTORY_HOLDING_COLUMNS);
   }
 
   componentDidMount() {
@@ -181,24 +187,22 @@ export default class HistoryHoldingModal extends PureComponent {
 
   // 修改证券历史持仓中，文本列渲染
   @autobind
-  updateTableWordsColumn(column, length) {
+  updateTableWordsColumn(column) {
     return {
       ...column,
       render(text, record) {
-        if (_.isNull(text)) {
-          return '-';
-        }
         if (record.flag) {
           // 表示空数据
           return '';
         }
-        const { isSubstr, value, origin } = data.dotdotdot(text, length);
-        if (isSubstr) {
-          return (
-            <ToolTip title={origin}>{value}</ToolTip>
-          );
+        if (_.isEmpty(text)) {
+          return '--';
         }
-        return origin;
+        return (
+          <ToolTip title={text} placement="topLeft">
+            <div className={styles.textEllipse}>{text}</div>
+          </ToolTip>
+        );
       },
     };
   }
@@ -206,16 +210,21 @@ export default class HistoryHoldingModal extends PureComponent {
   // 修改数据金额所在的column
   @autobind
   updateMoneyColumn(column) {
-    const { isNumber = false, isAmount = false, ...restColumn } = column;
+    const {
+      isNumber = false,
+      isAmount = false,
+      ...restColumn
+    } = column;
+
     return {
       ...restColumn,
       render(text, record) {
-        if (_.isNull(text)) {
-          return '-';
-        }
         if (record.flag) {
           // 表示空数据
           return '';
+        }
+        if (_.isEmpty(text)) {
+          return '--';
         }
         // 比如可用数量，不需要保留两位小数
         if (isAmount) {
@@ -258,25 +267,19 @@ export default class HistoryHoldingModal extends PureComponent {
           // 表示空数据
           return '';
         }
+        if (_.isEmpty(text)) {
+          return '--';
+        }
         // 因为证券历史持仓明细下点击名称，代码可以跳转到个股咨询页面，并且只有在股票的情况下才能跳转
         const isStock = this.judgeItemIsStockByTypeCode(record.typeCode || '');
         const nameCls = cx({ [styles.clickAble]: isStock });
-        const { isSubstr, value, origin } = data.dotdotdot(text, 6);
-        if (isSubstr) {
-          return (
-            <ToolTip title={origin}>
-              <div className={styles.nameCell}>
-                <span className={nameCls}>{value}</span>
-                {record.creditFlag ? (<span className={styles.rongIcon}>融</span>) : null }
-              </div>
-            </ToolTip>
-          );
-        }
         return (
-          <div className={styles.nameCell}>
-            <span className={nameCls}>{origin}</span>
-            {record.creditFlag ? (<span className={styles.rongIcon}>融</span>) : null }
-          </div>
+          <ToolTip title={text}>
+            <div className={`${styles.nameCell} ${styles.textEllipse}`}>
+              {record.creditFlag ? (<span className={styles.rongIcon}>融</span>) : null }
+              <span className={nameCls}>{text}</span>
+            </div>
+          </ToolTip>
         );
       },
       onCell: (record) => {
@@ -302,20 +305,20 @@ export default class HistoryHoldingModal extends PureComponent {
           // 表示空数据
           return '';
         }
+        if (_.isEmpty(text)) {
+          return '--';
+        }
         // 因为证券历史持仓明细下点击名称，代码可以跳转到个股咨询页面，并且只有在股票的情况下才能跳转
         const isStock = this.judgeItemIsStockByTypeCode(record.typeCode || '');
         const nameCls = cx({
           [styles.clickAble]: isStock,
+          [styles.textEllipse]: true,
         });
-        const { isSubstr, value, origin } = data.dotdotdot(text, 6);
-        if (isSubstr) {
-          return (
-            <ToolTip title={origin}>
-              <span className={nameCls}>{value}</span>
-            </ToolTip>
-          );
-        }
-        return (<span className={nameCls}>{text}</span>);
+        return (
+          <ToolTip title={text} placement="topLeft">
+            <div className={nameCls}>{text}</div>
+          </ToolTip>
+        );
       },
       onCell: (record) => {
         // 因为证券历史持仓明细下点击名称，代码可以跳转到个股咨询页面，并且只有在股票的情况下才能跳转
@@ -333,7 +336,6 @@ export default class HistoryHoldingModal extends PureComponent {
   // 产品历史持仓项点击名称和代码列，需要跳转到产品详情页面中去
   @autobind
   updateProductNameAndCodeColumn(column) {
-    const { dataIndex } = column;
     return {
       ...column,
       render: (text, record) => {
@@ -341,21 +343,14 @@ export default class HistoryHoldingModal extends PureComponent {
           // 表示空数据
           return '';
         }
-        let dotResult = null;
-        if (dataIndex === 'name') {
-          dotResult = data.dotdotdot(text, 15);
-        } else if (dataIndex === 'code') {
-          dotResult = data.dotdotdot(text, 8);
+        if (_.isEmpty(text)) {
+          return '--';
         }
-        const { isSubstr, value, origin } = dotResult;
-        if (isSubstr) {
-          return (
-            <ToolTip title={origin}>
-              <span className={styles.clickAble}>{value}</span>
-            </ToolTip>
-          );
-        }
-        return (<span className={styles.clickAble}>{text}</span>);
+        return (
+          <ToolTip title={text} placement="topLeft">
+            <div className={`${styles.clickAble} ${styles.textEllipse}`}>{text}</div>
+          </ToolTip>
+        );
       },
       onCell: record => ({
         onClick: () => this.hanleProductCellClick(record),
@@ -366,8 +361,14 @@ export default class HistoryHoldingModal extends PureComponent {
   // 修改证券历史持仓明细表格中各个column的显示
   @autobind
   getStockTableColumns(columns) {
-    return _.map(columns, (column) => {
-      const { dataIndex, isNumber = false, isAmount = false } = column;
+    const newColumns = _.map(columns, (column) => {
+      const {
+        needEllipse = false,
+        dataIndex,
+        isNumber = false,
+        isAmount = false,
+      } = column;
+
       if (isNumber || isAmount) {
         // 针对数字金额类的column添加数字处理render
         return this.updateMoneyColumn(column);
@@ -384,23 +385,24 @@ export default class HistoryHoldingModal extends PureComponent {
         // 如果是股票的名称或者代码,需要能够跳转到个股咨询页面
         return this.updateStockCodeColumn(column);
       }
-      if (dataIndex === 'type') {
-        // 类型
-        return this.updateTableWordsColumn(column, 4);
-      }
-      if (dataIndex === 'industry') {
-        // 行业
-        return this.updateTableWordsColumn(column, 6);
+      if (needEllipse) {
+        return this.updateTableWordsColumn(column);
       }
       return column;
     });
+    return tableHelper.padColumnForUI(newColumns, { width: 20 });
   }
 
   // 修改产品历史持仓的Table的column
   @autobind
   getProductTableColumns(columns) {
-    return _.map(columns, (column) => {
-      const { dataIndex, isNumber = false, isAmount = false } = column;
+    const newColumns = _.map(columns, (column) => {
+      const {
+        dataIndex,
+        isNumber = false,
+        isAmount = false,
+        needEllipse = false,
+      } = column;
       if (isNumber || isAmount) {
         // 针对数字金额类的column添加数字处理render
         return this.updateMoneyColumn(column);
@@ -413,27 +415,24 @@ export default class HistoryHoldingModal extends PureComponent {
         // 产品历史持仓点击名称或者代码列的时候，需要跳转到产品中心的产品详情页面
         return this.updateProductNameAndCodeColumn(column);
       }
-      if (dataIndex === 'firstType') {
-        // 产品大类
+      if (needEllipse) {
         return this.updateTableWordsColumn(column, 7);
-      }
-      if (dataIndex === 'secondType') {
-        // 产品二级分类
-        return this.updateTableWordsColumn(column, 8);
-      }
-      if (dataIndex === 'dividendWay') {
-        // 分红方式
-        return this.updateTableWordsColumn(column, 5);
       }
       return column;
     });
+    return tableHelper.padColumnForUI(newColumns, { width: 20 });
   }
 
   // 修改期权历史持仓的Table的column
   @autobind
   getOptionTableColumns(columns) {
-    return _.map(columns, (column) => {
-      const { dataIndex, isNumber = false, isAmount = false } = column;
+    const newColumns = _.map(columns, (column) => {
+      const {
+        needEllipse = false,
+        dataIndex,
+        isNumber = false,
+        isAmount = false,
+      } = column;
       // 针对数字金额类的column添加数字处理render
       if (isNumber || isAmount) {
         return this.updateMoneyColumn(column);
@@ -442,25 +441,13 @@ export default class HistoryHoldingModal extends PureComponent {
         // 针对比率类型column添加百分比处理render
         return this.updateRateColumn(column);
       }
-      if (dataIndex === 'type' || dataIndex === 'rightsHoldingType') {
-        // 期权产品大类、证券持仓类别
-        return this.updateTableWordsColumn(column, 4);
-      }
-      if (dataIndex === 'stockKind') {
-        // 证券类别
-        return this.updateTableWordsColumn(column, 9);
-      }
-      if (
-        dataIndex === 'optionName'
-        || dataIndex === 'optionKind'
-        || dataIndex === 'optionCode'
-        || dataIndex === 'stockCode'
-      ) {
+      if (needEllipse) {
         // 期权产品名称、期权种类、期权代码、证券代码
-        return this.updateTableWordsColumn(column, 8);
+        return this.updateTableWordsColumn(column);
       }
       return column;
     });
+    return tableHelper.padColumnForUI(newColumns, { width: 20 });
   }
 
   // 将接口返回的分页器数据转换成分页器组件的props
@@ -635,8 +622,6 @@ export default class HistoryHoldingModal extends PureComponent {
     const hasNoStockData = _.isEmpty(stockHistoryHolding.list);
     // 补足证券历史持仓数据
     const stockData = data.padEmptyDataForList(stockHistoryHolding.list);
-    // 修改证券历史持仓Table 的 columns
-    const stockColumns = this.getStockTableColumns(STOCK_HISTORY_HOLDING_COLUMNS);
     // 获取证券历史持仓表格的分页器信息
     const stockPage = this.getPage(stockHistoryHolding.page);
     // 判断产品历史持仓有数据没有
@@ -703,7 +688,7 @@ export default class HistoryHoldingModal extends PureComponent {
                           <Table
                             pagination={false}
                             dataSource={stockData}
-                            columns={stockColumns}
+                            columns={this.stockColumns}
                             className={styles.historyHoldingTable}
                             scroll={STOCK_HISTORY_HOLDING_TABLE_SCROLL}
                           />

@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-11 18:37:20
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-12 13:08:27
+ * @Last Modified time: 2018-12-14 15:52:18
  * @description 新版客户360详情的账户信息Tab下页面的配置项
  */
 
@@ -99,9 +99,9 @@ export const TRADE_FLOW_TABS = {
 };
 
 // 历史持仓的表格的滚动props
-export const STOCK_HISTORY_HOLDING_TABLE_SCROLL = { x: 1900 };
-export const PRODUCT_HISTORY_HOLDING_TABLE_SCROLL = { x: 2000 };
-export const OPTION_HISTORY_HOLDING_TABLE_SCROLL = { x: 2200 };
+export const STOCK_HISTORY_HOLDING_TABLE_SCROLL = { x: 1295 };
+export const PRODUCT_HISTORY_HOLDING_TABLE_SCROLL = { x: 1525 };
+export const OPTION_HISTORY_HOLDING_TABLE_SCROLL = { x: 17102 };
 
 // 交易流水三个表格的滚动props
 export const STANDARD_TRADE_FLOW_TABLE_SCROLL = { x: 2100 };
@@ -111,31 +111,35 @@ export const OPTION_TRADE_FLOW_TABLE_SCROLL = { x: 2500 };
 // 证券历史持仓表格显示的columns
 export const STOCK_HISTORY_HOLDING_COLUMNS = [
   {
-    width: 100,
     key: 'type',
     dataIndex: 'type',
     title: '类型',
+    width: 56,
+    needEllipse: true,
   },
   {
-    width: 140,
     key: 'industry',
     dataIndex: 'industry',
     title: '所属行业',
+    width: 84,
+    needEllipse: true,
   },
   {
     key: 'name',
     dataIndex: 'name',
     title: '名称',
-    width: 160,
+    width: 112,
+    needEllipse: true,
   },
   {
-    width: 80,
     key: 'code',
     dataIndex: 'code',
     title: '代码',
+    width: 50,
+    needEllipse: true,
   },
   {
-    width: 160,
+    width: 81,
     key: 'usableAmount',
     dataIndex: 'usableAmount',
     title: '可用数量',
@@ -143,7 +147,7 @@ export const STOCK_HISTORY_HOLDING_COLUMNS = [
     isAmount: true,
   },
   {
-    width: 160,
+    width: 56,
     key: 'freezeAmount',
     dataIndex: 'freezeAmount',
     title: '冻结数量',
@@ -151,7 +155,7 @@ export const STOCK_HISTORY_HOLDING_COLUMNS = [
     isAmount: true,
   },
   {
-    width: 160,
+    width: 73,
     key: 'costPrice',
     dataIndex: 'costPrice',
     title: '成本价(元)',
@@ -159,7 +163,7 @@ export const STOCK_HISTORY_HOLDING_COLUMNS = [
     isNumber: true,
   },
   {
-    width: 160,
+    width: 65,
     key: 'marketPrice',
     dataIndex: 'marketPrice',
     title: '市价(元)',
@@ -167,7 +171,7 @@ export const STOCK_HISTORY_HOLDING_COLUMNS = [
     isNumber: true,
   },
   {
-    width: 160,
+    width: 121,
     key: 'marketValue',
     dataIndex: 'marketValue',
     title: '市值(元)',
@@ -175,7 +179,7 @@ export const STOCK_HISTORY_HOLDING_COLUMNS = [
     isNumber: true,
   },
   {
-    width: 200,
+    width: 127,
     key: 'profit',
     dataIndex: 'profit',
     title: '账面盈利(元)',
@@ -183,69 +187,76 @@ export const STOCK_HISTORY_HOLDING_COLUMNS = [
     isNumber: true,
   },
   {
-    width: 140,
     key: 'holdPercent',
     dataIndex: 'holdPercent',
     title: '持仓占比',
     align: 'right',
+    width: 56,
+    needEllipse: true,
   },
   {
-    width: 120,
     key: 'holdDate',
     dataIndex: 'holdDate',
     title: '持仓时间',
+    width: 78,
+    needEllipse: true,
   },
   {
-    width: 120,
     key: 'sharesNature',
     dataIndex: 'sharesNature',
     title: '股份性质',
+    width: 56,
+    needEllipse: true,
   },
 ];
 
 // 产品历史持仓表格显示的columns
 export const PRODUCT_HISTORY_HOLDING_COLUMNS = [
   {
-    width: 140,
     title: '产品大类',
     key: 'firstType',
     dataIndex: 'firstType',
+    width: 98,
+    needEllipse: true,
   },
   {
-    width: 150,
     title: '产品二级类别',
     key: 'secondType',
     dataIndex: 'secondType',
+    width: 117,
+    needEllipse: true,
   },
   {
     title: '名称',
     key: 'name',
     dataIndex: 'name',
-    width: 240,
+    width: 210,
+    needEllipse: true,
   },
   {
-    width: 90,
     title: '产品代码',
     key: 'code',
     dataIndex: 'code',
+    width: 66,
+    needEllipse: true,
   },
   {
-    width: 160,
     title: '可用份额',
     key: 'usableShare',
     dataIndex: 'usableShare',
     align: 'right',
     isAmount: true,
+    width: 101,
   },
   {
-    width: 180,
     title: '净值/7日年化收益率',
     key: 'yearRate',
     dataIndex: 'yearRate',
     align: 'right',
+    width: 128,
   },
   {
-    width: 180,
+    width: 98,
     title: '成本(元)',
     key: 'costPrice',
     dataIndex: 'costPrice',
@@ -253,7 +264,7 @@ export const PRODUCT_HISTORY_HOLDING_COLUMNS = [
     isNumber: true,
   },
   {
-    width: 180,
+    width: 121,
     title: '市值(元)',
     key: 'marketValue',
     dataIndex: 'marketValue',
@@ -261,7 +272,7 @@ export const PRODUCT_HISTORY_HOLDING_COLUMNS = [
     isNumber: true,
   },
   {
-    width: 180,
+    width: 121,
     title: '累计收益(元)',
     key: 'totalProfit',
     dataIndex: 'totalProfit',
@@ -269,72 +280,80 @@ export const PRODUCT_HISTORY_HOLDING_COLUMNS = [
     isNumber: true,
   },
   {
-    width: 160,
     title: '分红方式',
     key: 'dividendWay',
     dataIndex: 'dividendWay',
+    width: 70,
+    needEllipse: true,
   },
   {
-    width: 140,
     title: '持仓时间',
     key: 'holdDate',
     dataIndex: 'holdDate',
+    width: 78,
   },
   {
-    width: 120,
     title: '持仓占比',
     key: 'holdPercent',
     dataIndex: 'holdPercent',
     align: 'right',
+    width: 57,
   },
 ];
 
 // 期权历史持仓表格显示的columns
 export const OPTION_HISTORY_HOLDING_COLUMNS = [
   {
-    width: 100,
+    width: 56,
     title: '类别',
     key: 'type',
     dataIndex: 'type',
+    needEllipse: true,
   },
   {
-    width: 150,
+    width: 117,
     title: '期权名称',
     key: 'optionName',
     dataIndex: 'optionName',
+    needEllipse: true,
   },
   {
-    width: 90,
+    width: 66,
     title: '期权代码',
     key: 'optionCode',
     dataIndex: 'optionCode',
+    needEllipse: true,
   },
   {
-    width: 150,
+    width: 112,
     title: '期权种类',
     key: 'optionKind',
     dataIndex: 'optionKind',
+    needEllipse: true,
   },
   {
-    width: 90,
+    width: 66,
     title: '证劵代码',
     key: 'stockCode',
     dataIndex: 'stockCode',
+    needEllipse: true,
   },
   {
-    width: 160,
+    width: 112,
     title: '证券类别',
     key: 'stockKind',
     dataIndex: 'stockKind',
+    needEllipse: true,
   },
   {
-    width: 100,
+    width: 84,
     title: '权益持仓类别',
     key: 'rightsHoldingType',
     dataIndex: 'rightsHoldingType',
+    needEllipse: true,
   },
   {
-    width: 180,
+    width: 81,
     title: '可用数量',
     key: 'usableAmount',
     dataIndex: 'usableAmount',
@@ -342,7 +361,7 @@ export const OPTION_HISTORY_HOLDING_COLUMNS = [
     isAmount: true,
   },
   {
-    width: 180,
+    width: 101,
     title: '成本价(元)',
     key: 'costPrice',
     dataIndex: 'costPrice',
@@ -350,7 +369,7 @@ export const OPTION_HISTORY_HOLDING_COLUMNS = [
     isNumber: true,
   },
   {
-    width: 180,
+    width: 121,
     title: '最新价(元)',
     key: 'newestPrice',
     dataIndex: 'newestPrice',
@@ -358,7 +377,7 @@ export const OPTION_HISTORY_HOLDING_COLUMNS = [
     isNumber: true,
   },
   {
-    width: 180,
+    width: 121,
     title: '市值(元)',
     key: 'marketValue',
     dataIndex: 'marketValue',
@@ -366,7 +385,7 @@ export const OPTION_HISTORY_HOLDING_COLUMNS = [
     isNumber: true,
   },
   {
-    width: 180,
+    width: 121,
     title: '账面盈利(元)',
     key: 'profit',
     dataIndex: 'profit',
@@ -374,19 +393,19 @@ export const OPTION_HISTORY_HOLDING_COLUMNS = [
     isNumber: true,
   },
   {
-    width: 140,
+    width: 78,
     title: '持仓时间',
     key: 'holdDate',
     dataIndex: 'holdDate',
   },
   {
-    width: 140,
+    width: 78,
     title: '到期日期',
     key: 'holdEndDate',
     dataIndex: 'holdEndDate',
   },
   {
-    width: 120,
+    width: 78,
     title: '持仓占比',
     key: 'holdPercent',
     dataIndex: 'holdPercent',
