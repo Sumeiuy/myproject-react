@@ -2,13 +2,14 @@
  * @Author: sunweibin
  * @Date: 2018-10-15 22:30:04
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-12 17:43:59
+ * @Last Modified time: 2018-12-14 10:56:38
  * @description 客户360详情交易数据展示模块
  */
 import React from 'react';
 import PropTypes from 'prop-types';
 
 import Cell from './Cell';
+import { logCommon } from '../../decorators/logable';
 import styles from './summaryTransaction.less';
 
 export default function SummaryTransaction(props, context) {
@@ -23,6 +24,10 @@ export default function SummaryTransaction(props, context) {
       state: {
         url,
       }
+    });
+    logCommon({
+      type: 'Click',
+      payload: { name: '股基佣金率-详情' }
     });
   };
 

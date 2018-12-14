@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 19:10:24
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-13 19:08:58
+ * @Last Modified time: 2018-12-14 12:08:03
  * @description 个人客户添加其他信息
  */
 
@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import {
-  Row, Col, Select, Input, Form
+  Select, Input, Form
 } from 'antd';
 
 import FormItemWrap from '../common/FormItem';
@@ -128,7 +128,7 @@ export default class PerOtherContactForm extends PureComponent {
       <div className={styles.addContactWrap}>
         <div className={styles.formWrap}>
           <div className={styles.leftForm}>
-            <FormItemWrap position="left" title="主要">
+            <FormItemWrap title="主要">
               <FormItem>
                 {getFieldDecorator('mainFlag', {
                   initialValue: 'N',
@@ -143,7 +143,7 @@ export default class PerOtherContactForm extends PureComponent {
                   }
               </FormItem>
             </FormItemWrap>
-            <FormItemWrap position="left" title="联系方式" isRequired>
+            <FormItemWrap title="联系方式" isRequired>
               <FormItem>
                 {getFieldDecorator('contactWayCode', {
                   rules: [{ required: true, message: '请选择联系方式' }],
@@ -159,9 +159,9 @@ export default class PerOtherContactForm extends PureComponent {
               </FormItem>
             </FormItemWrap>
           </div>
-          <div className={styles.formSplitPer} />
+          <div className={styles.formSplit} />
           <div className={styles.rightForm}>
-            <FormItemWrap position="left" title="号码" isRequired>
+            <FormItemWrap title="号码" isRequired>
               <FormItem>
                 {getFieldDecorator('contactWayValue', {
                   rules: [
@@ -174,7 +174,7 @@ export default class PerOtherContactForm extends PureComponent {
                 )}
               </FormItem>
             </FormItemWrap>
-            <FormItemWrap position="left" title="来源" isRequired>
+            <FormItemWrap title="来源" isRequired>
               <FormItem>
                 {getFieldDecorator('sourceCode', {
                   initialValue: sourceCode,

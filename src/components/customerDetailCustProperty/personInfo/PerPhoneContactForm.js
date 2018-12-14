@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 16:14:23
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-13 19:01:57
+ * @Last Modified time: 2018-12-14 11:41:51
  * @description 添加个人客户电话信息联系方式的Form
  */
 import React, { PureComponent } from 'react';
@@ -145,7 +145,7 @@ export default class PerPhoneContactForm extends PureComponent {
       <div className={styles.addContactWrap}>
         <div className={styles.formWrap}>
           <div className={styles.leftForm}>
-            <FormItemWrap title="主要" position="left">
+            <FormItemWrap title="主要">
               <FormItem>
                 {getFieldDecorator('mainFlag', {
                   initialValue: 'N',
@@ -160,7 +160,7 @@ export default class PerPhoneContactForm extends PureComponent {
                 }
               </FormItem>
             </FormItemWrap>
-            <FormItemWrap title="来源" position="left" isRequired>
+            <FormItemWrap title="来源" isRequired>
               <FormItem>
                 {getFieldDecorator('sourceCode', {
                   initialValue: sourceCode,
@@ -176,9 +176,9 @@ export default class PerPhoneContactForm extends PureComponent {
               </FormItem>
             </FormItemWrap>
           </div>
-          <div className={styles.formSplitPer} />
+          <div className={styles.formSplit} />
           <div className={styles.rightForm}>
-            <FormItemWrap isRequired title="号码" position="right">
+            <FormItemWrap isRequired title="号码">
               <FormItem>
                 {getFieldDecorator('tellphoneNumber', {
                   rules: [
@@ -192,7 +192,7 @@ export default class PerPhoneContactForm extends PureComponent {
                 )}
               </FormItem>
             </FormItemWrap>
-            <FormItemWrap isRequired title="联系方式" position="right">
+            <FormItemWrap isRequired title="联系方式">
               <FormItem>
                 {getFieldDecorator('contactWayCode', {
                   rules: [{ required: true, message: '请选择联系方式' }],

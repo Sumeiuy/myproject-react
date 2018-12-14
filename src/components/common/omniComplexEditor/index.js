@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-19 11:11:19
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-13 20:53:06
+ * @Last Modified time: 2018-12-14 10:34:52
  * @description 多功能复合编辑框
  */
 
@@ -16,7 +16,7 @@ import {
 import _ from 'lodash';
 
 import styles from './index.less';
-import logable from '../../../decorators/logable';
+import logable, { logCommon } from '../../../decorators/logable';
 
 const FormItem = Form.Item;
 const create = Form.create;
@@ -195,10 +195,6 @@ export default class OmniComplexEditor extends PureComponent {
 
   // 点击确认按钮
   @autobind
-  @logable({
-    type: 'Click',
-    payload: { name: '确认' },
-  })
   handleEditorConfirmClick(e) {
     const { editorId, form } = this.props;
     const newValue = form.getFieldValue(editorId);
@@ -216,6 +212,10 @@ export default class OmniComplexEditor extends PureComponent {
     e.stopPropagation();
     // 阻止原生事件传播
     e.nativeEvent.stopImmediatePropagation();
+    logCommon({
+      type: 'Click',
+      payload: { name: `${this.props.editorName}-确认` }
+    });
   }
 
   // 当提交编辑后的操作
@@ -231,10 +231,6 @@ export default class OmniComplexEditor extends PureComponent {
   }
 
   @autobind
-  @logable({
-    type: 'Click',
-    payload: { name: '取消' },
-  })
   handleEditorCancelClick(e) {
     const { form } = this.props;
     form.resetFields();
@@ -243,21 +239,25 @@ export default class OmniComplexEditor extends PureComponent {
     e.stopPropagation();
     // 阻止原生事件传播
     e.nativeEvent.stopImmediatePropagation();
+    logCommon({
+      type: 'Click',
+      payload: { name: `${this.props.editorName}-取消` }
+    });
   }
 
   // 当点击编辑内容区域的时候，在编辑状态下的时候
   // 如果此时是Select，因为Select的下拉框的展开收缩的行为，变成了人为来控制，
   // 所以需要给内容编辑区域注册点击事件，来再次控制收缩/展开行为
   @autobind
-  @logable({
-    type: 'Click',
-    payload: { name: '收缩/展示下拉框' },
-  })
   handleEditorContentClick() {
     const { selectState, editing } = this.state;
     if (this.isSelectMode() && editing) {
       this.setState({ selectState: !selectState });
     }
+    logCommon({
+      type: 'Click',
+      payload: { name: `${this.props.editorName}-收缩/展示下拉框` }
+    });
   }
 
   // 进入编辑状态
@@ -286,10 +286,6 @@ export default class OmniComplexEditor extends PureComponent {
   }
 
   @autobind
-  @logable({
-    type: 'Click',
-    payload: { name: '编辑图标' },
-  })
   handleEditWrapperClick(e) {
     const { form, editorId, editable } = this.props;
     if (!editable) {
@@ -304,6 +300,10 @@ export default class OmniComplexEditor extends PureComponent {
     e.stopPropagation();
     // 阻止原生事件传播
     e.nativeEvent.stopImmediatePropagation();
+    logCommon({
+      type: 'Click',
+      payload: { name: `${this.props.editorName}-编辑图标` }
+    });
   }
 
   // 获取编辑器实际使用的表单元素
