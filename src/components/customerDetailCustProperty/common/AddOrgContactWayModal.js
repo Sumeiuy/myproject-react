@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 13:52:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-13 16:39:40
+ * @Last Modified time: 2018-12-14 11:42:07
  * @description 添加机构客户联系方式的Modal
  */
 
@@ -193,7 +193,7 @@ export default class AddContactModal extends PureComponent {
     logCommon({
       type: 'Click',
       payload: {
-        name: ADD_CONTACT_TABS[activeTabKey]
+        name: `添加客户联系方式-${ADD_CONTACT_TABS[activeTabKey]}`,
       }
     });
   }

@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 20:29:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-13 19:02:24
+ * @Last Modified time: 2018-12-14 12:07:48
  * @description 添加机构客户电话信息Form
  */
 import React, { PureComponent } from 'react';
@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import {
-  Row, Col, Select, Input, Form
+  Select, Input, Form
 } from 'antd';
 
 import FormItemWrap from './FormItem';
@@ -220,7 +220,7 @@ export default class OrgPhoneContactForm extends PureComponent {
       <div className={styles.addContactWrap}>
         <div className={styles.formWrap}>
           <div className={styles.leftForm}>
-            <FormItemWrap title="主要" position="left">
+            <FormItemWrap title="主要">
               <FormItem>
                 {getFieldDecorator('mainFlag', {
                   initialValue: 'N',
@@ -235,7 +235,7 @@ export default class OrgPhoneContactForm extends PureComponent {
                 }
               </FormItem>
             </FormItemWrap>
-            <FormItemWrap title="证件类型" position="left">
+            <FormItemWrap title="证件类型">
               <FormItem>
                 {getFieldDecorator(
                   'cretificateType',
@@ -253,7 +253,7 @@ export default class OrgPhoneContactForm extends PureComponent {
                 }
               </FormItem>
             </FormItemWrap>
-            <FormItemWrap title="职务" position="left">
+            <FormItemWrap title="职务">
               <FormItem>
                 {getFieldDecorator(
                   'dutyCode',
@@ -271,7 +271,7 @@ export default class OrgPhoneContactForm extends PureComponent {
                 }
               </FormItem>
             </FormItemWrap>
-            <FormItemWrap title="手机号码" position="left">
+            <FormItemWrap title="手机号码">
               <FormItem>
                 {getFieldDecorator(
                   'mobileValue',
@@ -287,7 +287,7 @@ export default class OrgPhoneContactForm extends PureComponent {
                 }
               </FormItem>
             </FormItemWrap>
-            <FormItemWrap title="电子邮件" position="left">
+            <FormItemWrap title="电子邮件">
               <FormItem>
                 {getFieldDecorator(
                   'emailValue',
@@ -305,9 +305,9 @@ export default class OrgPhoneContactForm extends PureComponent {
               </FormItem>
             </FormItemWrap>
           </div>
-          <div className={styles.formSplitOrg} />
+          <div className={styles.formSplit} />
           <div className={styles.rightForm}>
-            <FormItemWrap title="姓名" position="right" isRequired>
+            <FormItemWrap title="姓名" isRequired>
               <FormItem>
                 {
                    getFieldDecorator(
@@ -325,7 +325,7 @@ export default class OrgPhoneContactForm extends PureComponent {
                  }
               </FormItem>
             </FormItemWrap>
-            <FormItemWrap title="证件号码" position="right" isRequired>
+            <FormItemWrap title="证件号码" isRequired>
               <FormItem>
                 {getFieldDecorator(
                   'cretificateNumber',
@@ -338,7 +338,7 @@ export default class OrgPhoneContactForm extends PureComponent {
                 }
               </FormItem>
             </FormItemWrap>
-            <FormItemWrap title="联系人类型" position="right" isRequired>
+            <FormItemWrap title="联系人类型" isRequired>
               <FormItem>
                 {getFieldDecorator(
                   'contacterTypeCode',
@@ -357,7 +357,7 @@ export default class OrgPhoneContactForm extends PureComponent {
                 }
               </FormItem>
             </FormItemWrap>
-            <FormItemWrap title="固定电话" position="right">
+            <FormItemWrap title="固定电话">
               <FormItem>
                 {getFieldDecorator(
                   'landlineValue',
@@ -373,7 +373,7 @@ export default class OrgPhoneContactForm extends PureComponent {
                 }
               </FormItem>
             </FormItemWrap>
-            <FormItemWrap title="来源" position="right">
+            <FormItemWrap title="来源">
               <FormItem>
                 {getFieldDecorator('sourceCode', {
                   initialValue: sourceCode,

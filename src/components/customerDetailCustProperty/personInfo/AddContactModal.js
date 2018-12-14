@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 13:52:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-13 17:05:35
+ * @Last Modified time: 2018-12-14 10:31:15
  * @description 添加联系方式的Modal
  */
 
@@ -214,7 +214,7 @@ export default class AddContactModal extends PureComponent {
     logCommon({
       type: 'Click',
       payload: {
-        name: ADD_CONTACT_TABS[activeTabKey],
+        name: `添加联系方式-${ADD_CONTACT_TABS[activeTabKey]}`,
       }
     });
   }

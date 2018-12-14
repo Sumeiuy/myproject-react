@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 19:02:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-13 19:02:08
+ * @Last Modified time: 2018-12-14 12:07:57
  * @description 添加个人客户地址信息联系方式的Form
  */
 import React, { PureComponent } from 'react';
@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import {
-  Row, Col, Select, Input, Form
+  Select, Input, Form
 } from 'antd';
 
 import FormItemWrap from '../common/FormItem';
@@ -196,7 +196,7 @@ export default class PerAddressContactForm extends PureComponent {
       <div className={styles.addContactWrap}>
         <div className={styles.formWrap}>
           <div className={styles.leftForm}>
-            <FormItemWrap title="主要" position="left">
+            <FormItemWrap title="主要">
               <FormItem>
                 {getFieldDecorator('mainFlag', {
                   initialValue: 'N',
@@ -211,7 +211,7 @@ export default class PerAddressContactForm extends PureComponent {
               }
               </FormItem>
             </FormItemWrap>
-            <FormItemWrap title="地址" position="left" isRequired>
+            <FormItemWrap title="地址" isRequired>
               <FormItem>
                 {getFieldDecorator('address', {
                   rules: [
@@ -225,7 +225,7 @@ export default class PerAddressContactForm extends PureComponent {
                 )}
               </FormItem>
             </FormItemWrap>
-            <FormItemWrap title="国家/地区" position="left">
+            <FormItemWrap title="国家/地区">
               <FormItem>
                 {getFieldDecorator('country', {
                   initialValue: country,
@@ -234,7 +234,7 @@ export default class PerAddressContactForm extends PureComponent {
                 )}
               </FormItem>
             </FormItemWrap>
-            <FormItemWrap title="城市" position="left" isRequired>
+            <FormItemWrap title="城市" isRequired>
               <FormItem>
                 {getFieldDecorator(
                   'cityCode',
@@ -254,9 +254,9 @@ export default class PerAddressContactForm extends PureComponent {
               </FormItem>
             </FormItemWrap>
           </div>
-          <div className={styles.formSplitPer} />
+          <div className={styles.formSplit} />
           <div className={styles.rightForm}>
-            <FormItemWrap title="地址类型" position="right">
+            <FormItemWrap title="地址类型">
               <FormItem>
                 {getFieldDecorator(
                   'addressTypeCode',
@@ -275,7 +275,7 @@ export default class PerAddressContactForm extends PureComponent {
                 }
               </FormItem>
             </FormItemWrap>
-            <FormItemWrap title="邮政编码" position="right" isRequired>
+            <FormItemWrap title="邮政编码" isRequired>
               <FormItem>
                 {getFieldDecorator('zipCode', {
                   rules: [
@@ -289,7 +289,7 @@ export default class PerAddressContactForm extends PureComponent {
                 )}
               </FormItem>
             </FormItemWrap>
-            <FormItemWrap title="省/(直辖)市" position="right" isRequired>
+            <FormItemWrap title="省/(直辖)市" isRequired>
               <FormItem>
                 {getFieldDecorator(
                   'provinceCode',
@@ -308,7 +308,7 @@ export default class PerAddressContactForm extends PureComponent {
               }
               </FormItem>
             </FormItemWrap>
-            <FormItemWrap title="来源" position="right" isRequired>
+            <FormItemWrap title="来源" isRequired>
               <FormItem>
                 {getFieldDecorator('sourceCode', {
                   initialValue: sourceCode,

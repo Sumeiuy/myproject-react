@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-11 16:30:07
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-12 12:23:42
+ * @Last Modified time: 2018-12-14 12:07:16
  * @description 新版客户360详情下账户信息Tab下的资产分布组件
  */
 import React, { PureComponent } from 'react';
@@ -76,6 +76,7 @@ export default class AssetDistribute extends PureComponent {
     if (specificIndexData !== prevData) {
       // 如果发现指标详情数据变化了，则修改展开的指标key
       return {
+        prevData: specificIndexData,
         assetDetailExpandKeys: _.map(specificIndexData, item => item.key),
       };
     }
@@ -334,7 +335,7 @@ export default class AssetDistribute extends PureComponent {
       <div className={styles.zichanCell}>
         <div className={styles.zichanText}>
           {
-            isCreditProduct ? (<span className={styles.icon}>融</span>) : null
+            !isCreditProduct ? (<span className={styles.icon}>融</span>) : null
           }
           <span className={styles.value} title={value}>{value}</span>
         </div>
