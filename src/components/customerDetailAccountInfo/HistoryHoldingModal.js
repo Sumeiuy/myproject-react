@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-05 13:31:51
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-14 16:02:20
+ * @Last Modified time: 2018-12-14 16:34:16
  * @description 新版客户360详情的历史持仓的弹出层
  */
 import React, { PureComponent } from 'react';
@@ -82,7 +82,7 @@ export default class HistoryHoldingModal extends PureComponent {
     // 产品历史持仓Column
     this.productColumns = this.getProductTableColumns(PRODUCT_HISTORY_HOLDING_COLUMNS);
     // 期权历史持仓Column
-    this.optionColumn = this.getOptionTableColumns(OPTION_HISTORY_HOLDING_COLUMNS);
+    this.optionColumns = this.getOptionTableColumns(OPTION_HISTORY_HOLDING_COLUMNS);
   }
 
   componentDidMount() {
@@ -628,16 +628,12 @@ export default class HistoryHoldingModal extends PureComponent {
     const hasNoProductData = _.isEmpty(productHistoryHolding.list);
     // 补足产品历史持仓数据
     const productData = data.padEmptyDataForList(productHistoryHolding.list);
-    // 修改产品持仓Table的 columns
-    const productColumns = this.getProductTableColumns(PRODUCT_HISTORY_HOLDING_COLUMNS);
     // 获取产品历史持仓的分页器数据
     const productPage = this.getPage(productHistoryHolding.page);
     // 判断期权历史持仓有数据没有
     const hasNoOptionData = _.isEmpty(optionHistoryHolding.list);
     // 补足期权历史持仓数据
     const optionData = data.padEmptyDataForList(optionHistoryHolding.list);
-    // 修改期权历史持仓的columns
-    const optionColumns = this.getOptionTableColumns(OPTION_HISTORY_HOLDING_COLUMNS);
     // 获取期权历史持仓的分页器数据
     const optionPage = this.getPage(optionHistoryHolding.page);
     // 弹出层的自定义关闭按钮
@@ -722,7 +718,7 @@ export default class HistoryHoldingModal extends PureComponent {
                             <Table
                               pagination={false}
                               dataSource={productData}
-                              columns={productColumns}
+                              columns={this.productColumns}
                               className={styles.historyHoldingTable}
                               scroll={PRODUCT_HISTORY_HOLDING_TABLE_SCROLL}
                             />
@@ -756,7 +752,7 @@ export default class HistoryHoldingModal extends PureComponent {
                           <Table
                             pagination={false}
                             dataSource={optionData}
-                            columns={optionColumns}
+                            columns={this.optionColumns}
                             className={styles.historyHoldingTable}
                             scroll={OPTION_HISTORY_HOLDING_TABLE_SCROLL}
                           />
