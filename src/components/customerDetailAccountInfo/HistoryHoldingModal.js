@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-05 13:31:51
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-14 21:48:03
+ * @Last Modified time: 2018-12-14 22:32:00
  * @description 新版客户360详情的历史持仓的弹出层
  */
 import React, { PureComponent } from 'react';
@@ -195,7 +195,7 @@ export default class HistoryHoldingModal extends PureComponent {
           // 表示空数据
           return '';
         }
-        if (_.isEmpty(text)) {
+        if (!text) {
           return '--';
         }
         return (
@@ -274,6 +274,7 @@ export default class HistoryHoldingModal extends PureComponent {
         const isStock = this.judgeItemIsStockByTypeCode(record.typeCode || '');
         const nameCls = cx({
           [styles.clickAble]: isStock,
+          [styles.textEllipse]: true,
         });
         const { accountTypeRadio } = this.state;
         // 如果是信用证券历史持仓，则不展示融字图标
@@ -422,7 +423,7 @@ export default class HistoryHoldingModal extends PureComponent {
         return this.updateProductNameAndCodeColumn(column);
       }
       if (needEllipse) {
-        return this.updateTableWordsColumn(column, 7);
+        return this.updateTableWordsColumn(column);
       }
       return column;
     });
@@ -520,6 +521,9 @@ export default class HistoryHoldingModal extends PureComponent {
     },
   })
   handleStockDateChange(date) {
+    if (_.isEmpty(date)) {
+      return;
+    }
     const stockQueryDate = date.format(DATE_FORMATE_API);
     // 切换证券历史持仓的查询日期,
     const { accountTypeRadio } = this.state;
