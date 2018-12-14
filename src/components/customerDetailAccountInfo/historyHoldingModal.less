@@ -30,27 +30,23 @@
 
       .historyHoldingTable {
         :global {
+          .ant-table {
+            table-layout: fixed;
+          }
           .ant-table-tbody > tr > td {
             height: 38px;
-            padding: 10px 0 10px 20px;
+            padding: 10px 0;
             white-space: nowrap;
             line-height: 18px;
             font-size: 14px;
             color: #333;
-
-            &:last-child {
-              padding-right: 20px;
-            }
           }
           .ant-table-thead > tr > th {
-            padding: 10px 0 10px 20px;
+            padding: 10px 0;
             white-space: nowrap;
             font-size: 14px;
             font-weight: bold;
             color: #666;
-            &:last-child {
-              padding-right: 20px;
-            }
           }
         }
 
@@ -91,4 +87,10 @@
       user-select: none;
     }
   }
+}
+
+.textEllipse {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-12-13 10:53:47
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-13 12:12:01
+ * @Last Modified time: 2018-12-14 13:35:43
  * @description 针对表格里面的一些处理的辅助函数
  */
 import _ from 'lodash';
@@ -11,7 +11,7 @@ const table = {
   /**
    * 按照当前最新的UI规范以及他们的要求添加空白列
    */
-  padColumnForUI(columns) {
+  padColumnForUI(columns, padEmptyColumnProp = {}) {
     const tableFirst20pxEmptyColumn = {
       key: 'tableFirst20pxEmptyColumn',
       dataIndex: 'tableFirst20pxEmptyColumn',
@@ -35,6 +35,7 @@ const table = {
           newColumns.push({
             key: `tableEmptyColumn${index}`,
             dataIndex: `tableEmptyColumn${index}`,
+            ...padEmptyColumnProp,
           });
         }
         if (index === len - 1) {

@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 19:02:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-14 12:07:35
+ * @Last Modified time: 2018-12-14 15:16:12
  * @description 添加机构客户地址信息联系方式的Form
  */
 import React, { PureComponent } from 'react';
@@ -220,7 +220,10 @@ export default class OrgAddressContactForm extends PureComponent {
             <FormItemWrap title="地址" isRequired>
               <FormItem>
                 {getFieldDecorator('address', {
-                  rules: [{ required: true, message: '请填写地址' }],
+                  rules: [
+                    { required: true, message: '请填写地址' },
+                    { max: 100, message: '最大不超过100个字符' },
+                  ],
                   initialValue: address,
                 })(
                   <Input style={FORM_STYLE} />,
