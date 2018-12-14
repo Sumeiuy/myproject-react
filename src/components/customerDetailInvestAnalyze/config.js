@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-20 14:30:09
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-13 14:22:46
+ * @Last Modified time: 2018-12-13 21:27:57
  */
 
 import moment from 'moment';
@@ -119,6 +119,7 @@ const chartOption = {
     axisLabel: {
       color: '#666',
       fontSize: 12,
+      margin: 20,
     },
   },
   smooth: true,
