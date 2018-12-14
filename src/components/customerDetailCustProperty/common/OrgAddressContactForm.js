@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 19:02:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-14 15:16:12
+ * @Last Modified time: 2018-12-14 17:33:20
  * @description 添加机构客户地址信息联系方式的Form
  */
 import React, { PureComponent } from 'react';
@@ -101,7 +101,7 @@ export default class OrgAddressContactForm extends PureComponent {
   saveCity({ addrDictList }) {
     if (_.isEmpty(addrDictList)) {
       this.setState({
-        cityList: [{ key: '', value: '请选择' }],
+        cityList: [{ key: '', value: '--请选择--' }],
       });
     } else {
       this.setState({ cityList: addrDictList });
@@ -132,10 +132,17 @@ export default class OrgAddressContactForm extends PureComponent {
   handleProvinceChange(provinceCode) {
     // 切换省份后需要清空城市下拉，并且查询一把城市下拉
     this.props.form.setFieldsValue({ cityCode: '' });
-    // 城市联动
-    this.context.queryProvinceCity({
-      provCd: provinceCode,
-    }).then(this.saveCity);
+    if (!_.isEmpty(provinceCode)) {
+      // 城市联动
+      this.context.queryProvinceCity({
+        provCd: provinceCode,
+      }).then(this.saveCity);
+    } else {
+      // 因为查询省份和城市是同一个接口，
+      // 如果传provCd为空则返回省份的列表，如果有值则返回城市的列表
+      // 因此在切换省份为空的时候，需要将城市的设置为空
+      this.saveCity([]);
+    }
   }
 
   @autobind
@@ -245,7 +252,7 @@ export default class OrgAddressContactForm extends PureComponent {
                   getFieldDecorator(
                     'cityCode',
                     {
-                      rules: [{ required: true, message: '城市' }],
+                      rules: [{ required: true, message: '请选择城市' }],
                       initialValue: cityCode,
                     }
                   )(
@@ -299,6 +306,7 @@ export default class OrgAddressContactForm extends PureComponent {
                 {getFieldDecorator(
                   'provinceCode',
                   {
+                    rules: [{ required: true, message: '请选择省/(直辖)市' }],
                     initialValue: provinceCode,
                   }
                 )(

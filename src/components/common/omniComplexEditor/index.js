@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-19 11:11:19
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-14 10:34:52
+ * @Last Modified time: 2018-12-14 17:19:41
  * @description 多功能复合编辑框
  */
 
@@ -253,11 +253,12 @@ export default class OmniComplexEditor extends PureComponent {
     const { selectState, editing } = this.state;
     if (this.isSelectMode() && editing) {
       this.setState({ selectState: !selectState });
+      // 只有在下拉框的情况下才需要记录日志
+      logCommon({
+        type: 'Click',
+        payload: { name: `${this.props.editorName}-收缩/展示下拉框` }
+      });
     }
-    logCommon({
-      type: 'Click',
-      payload: { name: `${this.props.editorName}-收缩/展示下拉框` }
-    });
   }
 
   // 进入编辑状态
