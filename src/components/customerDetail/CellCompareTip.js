@@ -2,14 +2,14 @@
  * @Author: sunweibin
  * @Date: 2018-12-05 14:15:02
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-05 15:42:17
+ * @Last Modified time: 2018-12-13 19:32:01
  * @description 概要信息与去年同期比的提示信息组件
  */
 import React from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
-// import { Popover } from 'antd';
 
+import { logCommon } from '../../decorators/logable';
 import Tooltip from '../common/Tooltip';
 import Icon from '../common/Icon';
 import { getRateTip } from './utils';
@@ -22,8 +22,16 @@ function CellCompareTip(props) {
       value = 0,
       lastValue = 0,
     },
+    indicatorName,
     valueType,
   } = props;
+
+  function logClick() {
+    logCommon({
+      type: 'Click',
+      payload: { name: `${indicatorName}指标-提示图标` }
+    });
+  }
 
   const { isAsc, rateText, tip } = getRateTip(lastValue, value, valueType === 'money');
   const ascCls = cx({
@@ -43,7 +51,7 @@ function CellCompareTip(props) {
           placement="top"
           content={tip}
         >
-          <Icon className={styles.tishi} type="tishi" />
+          <Icon className={styles.tishi} type="tishi" onClick={logClick} />
         </Tooltip>
       </span>
     </span>
@@ -55,6 +63,8 @@ CellCompareTip.propTypes = {
   indicator: PropTypes.object.isRequired,
   // 指标值类型
   valueType: PropTypes.string.isRequired,
+  // 指标名称
+  indicatorName: PropTypes.string.isRequired,
 };
 
 export default CellCompareTip;

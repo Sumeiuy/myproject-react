@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-16 09:15:12
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-23 13:15:03
+ * @Last Modified time: 2018-12-13 19:34:21
  * @description 新版客户360详情重点标签区域
  */
 import React, { PureComponent } from 'react';
@@ -16,6 +16,7 @@ import CustLabel from './CustLabel';
 import MoreLabelModal from './MoreKeyLabelsModal';
 
 import styles from './summaryLabels.less';
+import logable, { logPV } from '../../decorators/logable';
 
 export default class SummaryLabels extends PureComponent {
   static propTypes = {
@@ -43,6 +44,10 @@ export default class SummaryLabels extends PureComponent {
 
   // 打开更多重点标签弹出层
   @autobind
+  @logPV({
+    pathname: '/modal/cust360/custDetail/moreLablesModal',
+    title: '重点标签-更多',
+  })
   handleMoreLabelClick() {
     this.setState({ moreLabelsModal: true });
     // 打开更多标签的弹出层，查询更多的标签
@@ -52,6 +57,12 @@ export default class SummaryLabels extends PureComponent {
 
   // 关闭更多重点标签弹出层
   @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '客户匹配标签-关闭'
+    }
+  })
   handleMoreLabelModalClose() {
     this.setState({ moreLabelsModal: false });
   }

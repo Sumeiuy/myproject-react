@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-19 11:11:19
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-11 15:50:06
+ * @Last Modified time: 2018-12-13 20:53:06
  * @description 多功能复合编辑框
  */
 
@@ -89,11 +89,11 @@ export default class OmniComplexEditor extends PureComponent {
   static getDerivedStateFromProps(nextProps, prevState) {
     const { displayValue, value } = nextProps;
     const { prevValue } = prevState;
-    if (!_.isEqual(value, prevValue)) {
+    if (!_.isEqual(nextProps, prevValue)) {
       // 一般情况如果props中的value值变化了则需要相应的变化state
       // 判断传入的值是否是无值的情况，因为无值的情况是使用'--'表示
       return {
-        prevValue: value,
+        prevValue: nextProps,
         originalValue: displayValue,
         editorValue: value,
         loading: false,
@@ -109,7 +109,7 @@ export default class OmniComplexEditor extends PureComponent {
     this.state = {
       loading: false,
       // 保存原始的props
-      prevValue: value,
+      prevValue: props,
       // 原始值
       originalValue: displayValue,
       // 用户修改的值
@@ -212,6 +212,7 @@ export default class OmniComplexEditor extends PureComponent {
       // 未通过校验
       this.setState({ validateResult: checkResult });
     }
+    // 阻止React合成事件传播
     e.stopPropagation();
     // 阻止原生事件传播
     e.nativeEvent.stopImmediatePropagation();

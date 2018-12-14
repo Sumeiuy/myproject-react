@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-26 13:58:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-12 21:18:16
+ * @Last Modified time: 2018-12-13 19:15:42
  * @description 联系方式弹框-个人客户联系方式修改
  */
 import React, { Component } from 'react';
@@ -11,12 +11,11 @@ import { autobind } from 'core-decorators';
 import { Button, Switch, message } from 'antd';
 import _ from 'lodash';
 
-import { data as dataHelper } from '../../../helper';
 import ToolTip from '../../common/Tooltip';
 import confirm from '../../common/confirm_';
 import Table from '../common/InfoTable';
 import IFNoData from '../common/IfNoData';
-import logable from '../../../decorators/logable';
+import logable, { logPV } from '../../../decorators/logable';
 import Modal from '../../common/biz/CommonModal';
 import IfWrap from '../../common/biz/IfWrap';
 import AddContactWayModal from './AddContactModal';
@@ -26,6 +25,7 @@ import {
   ADDRESS_COLUMNS,
   OTHER_COLUMNS,
 } from './config';
+import { DEFAULT_VALUE } from '../config';
 
 import styles from '../common/contactWayModal.less';
 
@@ -88,6 +88,51 @@ export default class ContactWayModal extends Component {
     };
     // 判断是否是主服务经理
     this.isMainEmp = _.get(context.custBasic, 'isMainEmp');
+    // 个人客户的电话信息column
+    this.perPhoneColumns = this.getPerPhoneColumns(PHONE_COLUMNS);
+    // 个人客户的地址信息Colum
+    this.perAddressColumns = this.getPerAddressColumns(ADDRESS_COLUMNS);
+    // 个人客户的其他信息Column
+    this.perOtherColumns = this.getPerOtherColumns(OTHER_COLUMNS);
+  }
+
+  // 获取个人客户电话信息的Columns
+  @autobind
+  getPerPhoneColumns(columns) {
+    return _.map(columns, (column) => {
+      const { needEllipse = false, ...restColumn } = column;
+      if (needEllipse) {
+        // 来源
+        return this.renderWordEllipseColumn(restColumn);
+      }
+      return this.renderEmptyColumn(restColumn);
+    });
+  }
+
+  // 获取个人客户地址信息的Columns
+  @autobind
+  getPerAddressColumns(columns) {
+    return _.map(columns, (column) => {
+      const { needEllipse = false, ...restColumn } = column;
+      if (needEllipse) {
+        // 来源 |省/(直辖)市|城市|地址
+        return this.renderWordEllipseColumn(restColumn);
+      }
+      return this.renderEmptyColumn(restColumn);
+    });
+  }
+
+  // 获取个人客户地址信息的Columns
+  @autobind
+  getPerOtherColumns(columns) {
+    return _.map(columns, (column) => {
+      const { needEllipse = false, ...restColumn } = column;
+      if (needEllipse) {
+        // 来源 |省/(直辖)市|城市|地址
+        return this.renderWordEllipseColumn(column);
+      }
+      return this.renderEmptyColumn(restColumn);
+    });
   }
 
   // 刷新数据
@@ -137,11 +182,16 @@ export default class ContactWayModal extends Component {
     confirm({
       content: '确定要删除该条联系方式吗？',
       onOk: () => this.delPerContact(query),
+      onCancel: this.delPerContactCancel,
     });
   }
 
   // 删除个人客户的联系方式
   @autobind
+  @logable({
+    type: 'ButtonClick',
+    payload: { name: '删除联系方式-确定' }
+  })
   delPerContact(query) {
     const {
       location: {
@@ -155,43 +205,15 @@ export default class ContactWayModal extends Component {
     }).then(this.refresh);
   }
 
-  // 修改个人地址Columns
   @autobind
-  updatePerAddressColumns(columns) {
-    return _.map(columns, (column) => {
-      const { dataIndex } = column;
-      if (dataIndex === 'address') {
-        // 修改个人地址信息
-        return this.updateWordColumn(column, 16);
-      }
-      if (dataIndex === 'city' || dataIndex === 'province') {
-        return this.updateWordColumn(column, 6);
-      }
-      return column;
-    });
+  @logable({
+    type: 'ButtonClick',
+    payload: { name: '删除联系方式确认框-取消' }
+  })
+  delPerContactCancel() {
+    // 日志专用
   }
 
-  // 修改个人地址信息Column
-  @autobind
-  updateWordColumn(column, length) {
-    return {
-      ...column,
-      render(text) {
-        if (!_.isEmpty(text)) {
-          const { isSubstr, value, origin } = dataHelper.dotdotdot(text || '', length);
-          if (isSubstr) {
-            return (
-              <ToolTip title={origin}>
-                <div className={styles.textEllipse}>{value}</div>
-              </ToolTip>
-            );
-          }
-          return (<div className={styles.textEllipse}>{origin}</div>);
-        }
-        return '';
-      },
-    };
-  }
 
   @autobind
   @logable({
@@ -220,27 +242,25 @@ export default class ContactWayModal extends Component {
   @autobind
   @logable({
     type: 'Click',
-    payload: { name: '关闭' }
+    payload: { name: '个人客户联系方式-关闭' }
   })
   handleContactWayClose() {
     this.props.onClose();
   }
 
   @autobind
-  @logable({
-    type: 'ButtonClick',
-    payload: {
-      name: '添加联系方式'
-    },
+  @logPV({
+    pathname: '/modal/cust360/custProperty/addPerContactModal',
+    title: '客户属性-添加联系方式'
   })
   handleAddContactClick() {
     this.setState({ addContactModal: true });
   }
 
   @autobind
-  @logable({
-    type: 'Click',
-    payload: { name: '编辑个人客户电话信息' }
+  @logPV({
+    pathname: '/modal/cust360/custProperty/editPerContact',
+    title: '编辑个人客户联系方式电话信息'
   })
   handlePhoneEditClick(record) {
     this.setState({
@@ -251,9 +271,9 @@ export default class ContactWayModal extends Component {
   }
 
   @autobind
-  @logable({
-    type: 'Click',
-    payload: { name: '删除个人客户电话信息' }
+  @logPV({
+    pathname: '/modal/cust360/custProperty/delPerContactConfirm',
+    title: '删除个人客户电话信息确认框'
   })
   handlePhoneDelClick(record) {
     this.confirmBeforeDel({
@@ -265,9 +285,9 @@ export default class ContactWayModal extends Component {
   }
 
   @autobind
-  @logable({
-    type: 'Click',
-    payload: { name: '编辑个人客户地址信息' }
+  @logPV({
+    pathname: '/modal/cust360/custProperty/editPerContact',
+    title: '编辑个人客户联系方式地址信息'
   })
   handleAddressEditClick(record) {
     this.setState({
@@ -278,9 +298,9 @@ export default class ContactWayModal extends Component {
   }
 
   @autobind
-  @logable({
-    type: 'Click',
-    payload: { name: '删除个人客户地址信息' }
+  @logPV({
+    pathname: '/modal/cust360/custProperty/delPerContact',
+    title: '删除个人客户联系方式地址信息'
   })
   handleAddressDelClick(record) {
     this.confirmBeforeDel({
@@ -290,9 +310,9 @@ export default class ContactWayModal extends Component {
   }
 
   @autobind
-  @logable({
-    type: 'Click',
-    payload: { name: '编辑个人客户其他信息' }
+  @logPV({
+    pathname: '/modal/cust360/custProperty/editPerContact',
+    title: '编辑个人客户联系方式其他信息'
   })
   handleOtherEditClick(record) {
     this.setState({
@@ -303,9 +323,9 @@ export default class ContactWayModal extends Component {
   }
 
   @autobind
-  @logable({
-    type: 'Click',
-    payload: { name: '删除个人客户其他信息' }
+  @logPV({
+    pathname: '/modal/cust360/custProperty/delPerContact',
+    title: '删除个人客户联系方式其他信息'
   })
   handleOtherDelClick(record) {
     this.confirmBeforeDel({
@@ -317,25 +337,24 @@ export default class ContactWayModal extends Component {
   }
 
   @autobind
-  @logable({
-    type: 'Click',
-    payload: { name: '关闭' }
-  })
   handleAddContactModalClose() {
     this.setState({ addContactModal: false });
   }
 
   @autobind
-  @logable({
-    type: 'Click',
-    payload: { name: '关闭' }
-  })
   handleEditContactModalClose() {
     this.setState({ editContactModal: false });
   }
 
   // 编辑联系方式弹框、新增联系方式弹框点击确认
   @autobind
+  @logable({
+    type: 'Submit',
+    payload: {
+      name: '新增或者修改联系方式',
+      value: '$args[1]',
+    }
+  })
   handleAddOrEditMoalOK(type, data) {
     if (type === 'phone') {
       // 新增|修改电话信息
@@ -351,6 +370,35 @@ export default class ContactWayModal extends Component {
       addContactModal: false,
       editContactModal: false,
     });
+  }
+
+  // 修改表格中可能需要省略号的列的展示
+  @autobind
+  renderWordEllipseColumn(column) {
+    return {
+      ...column,
+      render(text) {
+        if (_.isEmpty(text)) {
+          return DEFAULT_VALUE;
+        }
+        return (
+          <ToolTip placement="topLeft" title={text}>
+            <div className={styles.textEllipse}>{text}</div>
+          </ToolTip>
+        );
+      },
+    };
+  }
+
+  // 修改表格中空白列的展示
+  @autobind
+  renderEmptyColumn(column) {
+    return {
+      ...column,
+      render(text) {
+        return _.isEmpty(text) ? DEFAULT_VALUE : text;
+      },
+    };
   }
 
   render() {
@@ -373,8 +421,6 @@ export default class ContactWayModal extends Component {
     const hasNoAddreesInfo = _.isEmpty(data.addressInfo);
     // 有无其他信息
     const hasNoOtherInfo = _.isEmpty(data.otherInfo);
-    // 修改个人客户地址的Column
-    const perAddressColumns = this.updatePerAddressColumns(ADDRESS_COLUMNS);
 
     return (
       <Modal
@@ -425,7 +471,7 @@ export default class ContactWayModal extends Component {
             <div className={styles.tableInfo}>
               <IFNoData title="电话信息" isRender={hasNoPhoneInfo}>
                 <Table
-                  columns={PHONE_COLUMNS}
+                  columns={this.perPhoneColumns}
                   dataSource={data.tellphoneInfo}
                   isMainEmp={this.isMainEmp}
                   onEditClick={this.handlePhoneEditClick}
@@ -439,8 +485,7 @@ export default class ContactWayModal extends Component {
             <div className={styles.tableInfo}>
               <IFNoData title="地址信息" isRender={hasNoAddreesInfo}>
                 <Table
-                  className={styles.perAddressTable}
-                  columns={perAddressColumns}
+                  columns={this.perAddressColumns}
                   dataSource={data.addressInfo}
                   isMainEmp={this.isMainEmp}
                   onEditClick={this.handleAddressEditClick}
@@ -454,7 +499,7 @@ export default class ContactWayModal extends Component {
             <div className={styles.tableInfo}>
               <IFNoData title="其他信息" isRender={hasNoOtherInfo}>
                 <Table
-                  columns={OTHER_COLUMNS}
+                  columns={this.perOtherColumns}
                   dataSource={data.otherInfo}
                   isMainEmp={this.isMainEmp}
                   onEditClick={this.handleOtherEditClick}

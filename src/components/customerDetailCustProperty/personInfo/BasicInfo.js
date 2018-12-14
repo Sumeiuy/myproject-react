@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性-个人客户基本信息
  * @Date: 2018-11-07 14:33:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-13 09:24:37
+ * @Last Modified time: 2018-12-13 22:48:34
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -95,16 +95,17 @@ export default class BasicInfo extends PureComponent {
   // 校验子女数量必须是数字
   @autobind
   checkChildNumValue(value) {
-    if (_.isEmpty(value) && !_.isNumber(value)) {
+    const newValue = _.trim(value);
+    if (_.isEmpty(newValue) && !_.isNumber(newValue)) {
       return {
         validate: false,
         msg: '数据不能为空',
       };
     }
-    if (!regxp.integer.test(value)) {
+    if (!regxp.integer.test(newValue)) {
       return {
         validate: false,
-        msg: '子女数量必须是整数',
+        msg: '子女数量必须是正整数或者零',
       };
     }
     return {
@@ -271,7 +272,7 @@ export default class BasicInfo extends PureComponent {
                 : (
                   <BasicEditorCell
                     label="婚姻状况"
-                    editorId="person_children_num"
+                    editorId="marray_status"
                     mode="select"
                     width={INFO_ITEM_WITDH_110}
                     className={styles.infoItem}

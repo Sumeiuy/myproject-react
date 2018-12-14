@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 13:52:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-04 17:11:32
+ * @Last Modified time: 2018-12-13 17:05:35
  * @description 添加联系方式的Modal
  */
 
@@ -86,7 +86,16 @@ export default class AddContactModal extends PureComponent {
   @autobind
   @logable({
     type: 'ButtonClick',
-    payload: { name: '取消' },
+    payload: { name: '添加个人客户联系方式-取消' },
+  })
+  handleModalCancelButton() {
+    this.props.onClose();
+  }
+
+  @autobind
+  @logable({
+    type: 'Click',
+    payload: { name: '添加个人客户联系方式-关闭' },
   })
   handleCloseModal() {
     this.props.onClose();
@@ -181,9 +190,9 @@ export default class AddContactModal extends PureComponent {
 
   @autobind
   @logable({
-    type: 'Click',
+    type: 'ButtonClick',
     payload: {
-      name: '确认',
+      name: '添加个人客户联系方式-确认',
     },
   })
   handleModalOK() {
@@ -234,7 +243,7 @@ export default class AddContactModal extends PureComponent {
     } = this.state;
     // Modal的底部按钮
     const footBtns = [
-      <Button key="perContactAddCancel" onClick={this.handleCloseModal}>取消</Button>,
+      <Button key="perContactAddCancel" onClick={this.handleModalCancelButton}>取消</Button>,
       <Button key="perContactAddOK" type="primary" onClick={this.handleModalOK}>确认</Button>,
     ];
 

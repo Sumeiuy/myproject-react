@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-12-05 14:04:02
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-11 11:55:03
+ * @Last Modified time: 2018-12-13 19:31:42
  * @description 新版的概要信息展示组件
  */
 import React from 'react';
@@ -93,6 +93,7 @@ export default function Cell(props) {
         <span>{content}</span>
         <IFWrap isRender={showCompareTip}>
           <CellCompareTip
+            indicatorName={title}
             indicator={indicator}
             valueType={valueType}
           />

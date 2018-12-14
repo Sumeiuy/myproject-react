@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 19:02:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-13 10:09:12
+ * @Last Modified time: 2018-12-13 19:02:08
  * @description 添加个人客户地址信息联系方式的Form
  */
 import React, { PureComponent } from 'react';
@@ -13,6 +13,7 @@ import {
   Row, Col, Select, Input, Form
 } from 'antd';
 
+import FormItemWrap from '../common/FormItem';
 import { regxp } from '../../../helper';
 import logable from '../../../decorators/logable';
 import { FORM_STYLE, SOURCE_CODE } from '../common/config';
@@ -107,7 +108,7 @@ export default class PerAddressContactForm extends PureComponent {
 
   @autobind
   @logable({
-    type: 'Click',
+    type: 'DropdownSelect',
     payload: {
       name: '地址类型',
       value: '$args[0]',
@@ -119,7 +120,7 @@ export default class PerAddressContactForm extends PureComponent {
 
   @autobind
   @logable({
-    type: 'Click',
+    type: 'DropdownSelect',
     payload: {
       name: '省/(直辖)市',
       value: '$args[0]',
@@ -136,7 +137,7 @@ export default class PerAddressContactForm extends PureComponent {
 
   @autobind
   @logable({
-    type: 'Click',
+    type: 'DropdownSelect',
     payload: {
       name: '城市',
       value: '$args[0]',
@@ -193,200 +194,137 @@ export default class PerAddressContactForm extends PureComponent {
 
     return (
       <div className={styles.addContactWrap}>
-        <Row type="flex" gutter={16} align="middle">
-          <Col span={12}>
-            <div className={styles.formItem}>
-              <div className={styles.itemLable}>主要：</div>
-              <div className={styles.valueArea}>
-                {/** 因为只能新增修改非主要信息，因此此处使用固定的值 */}
-                <FormItem>
-                  {getFieldDecorator('mainFlag', {
-                    initialValue: 'N',
-                  })(
-                    <Select
-                      disabled
-                      style={FORM_STYLE}
-                    >
-                      <Option value="N">N</Option>
-                    </Select>
-                  )
+        <div className={styles.formWrap}>
+          <div className={styles.leftForm}>
+            <FormItemWrap title="主要" position="left">
+              <FormItem>
+                {getFieldDecorator('mainFlag', {
+                  initialValue: 'N',
+                })(
+                  <Select
+                    disabled
+                    style={FORM_STYLE}
+                  >
+                    <Option value="N">N</Option>
+                  </Select>
+                )
+              }
+              </FormItem>
+            </FormItemWrap>
+            <FormItemWrap title="地址" position="left" isRequired>
+              <FormItem>
+                {getFieldDecorator('address', {
+                  rules: [
+                    { required: true, message: '请填写地址' },
+                    { max: 100, message: '最多不超过100个字符' },
+                    { whitespace: true, message: '头尾不能有空格' },
+                  ],
+                  initialValue: address,
+                })(
+                  <Input style={FORM_STYLE} />,
+                )}
+              </FormItem>
+            </FormItemWrap>
+            <FormItemWrap title="国家/地区" position="left">
+              <FormItem>
+                {getFieldDecorator('country', {
+                  initialValue: country,
+                })(
+                  <Input style={FORM_STYLE} disabled />
+                )}
+              </FormItem>
+            </FormItemWrap>
+            <FormItemWrap title="城市" position="left" isRequired>
+              <FormItem>
+                {getFieldDecorator(
+                  'cityCode',
+                  {
+                    rules: [{ required: true, message: '城市' }],
+                    initialValue: cityCode,
+                  }
+                )(
+                  <Select
+                    style={FORM_STYLE}
+                    onChange={this.handleCityChange}
+                  >
+                    {this.renderCityOption()}
+                  </Select>
+                )
                 }
-                </FormItem>
-              </div>
-            </div>
-          </Col>
-          <Col span={12}>
-            <div className={styles.formItem}>
-              <div className={styles.itemLable}>
-                <span className={styles.requried}>*</span>
-                地址类型：
-              </div>
-              <div className={styles.valueArea}>
-                <FormItem>
+              </FormItem>
+            </FormItemWrap>
+          </div>
+          <div className={styles.formSplitPer} />
+          <div className={styles.rightForm}>
+            <FormItemWrap title="地址类型" position="right">
+              <FormItem>
+                {getFieldDecorator(
+                  'addressTypeCode',
                   {
-                    getFieldDecorator(
-                      'addressTypeCode',
-                      {
-                        rules: [{ required: true, message: '请选择地址类型' }],
-                        initialValue: addressTypeCode,
-                      }
-                    )(
-                      <Select
-                        style={FORM_STYLE}
-                        onChange={this.handleAddresTypeChange}
-                      >
-                        {this.renderAddressTypeOption()}
-                      </Select>
-                    )
+                    rules: [{ required: true, message: '请选择地址类型' }],
+                    initialValue: addressTypeCode,
                   }
-                </FormItem>
-              </div>
-            </div>
-          </Col>
-        </Row>
-        <Row type="flex" gutter={16} align="middle">
-          <Col span={12}>
-            <div className={styles.formItem}>
-              <div className={styles.itemLable}>
-                <span className={styles.requried}>*</span>
-                地址：
-              </div>
-              <div className={styles.valueArea}>
-                <FormItem>
-                  {getFieldDecorator('address', {
-                    rules: [
-                      { required: true, message: '请填写地址' },
-                      { max: 100, message: '最多不超过100个字符' },
-                      { whitespace: true, message: '头尾不能有空格' },
-                    ],
-                    initialValue: address,
-                  })(
-                    <Input style={FORM_STYLE} />,
-                  )}
-                </FormItem>
-              </div>
-            </div>
-          </Col>
-          <Col span={12}>
-            <div className={styles.formItem}>
-              <div className={styles.itemLable}>
-                <span className={styles.requried}>*</span>
-                邮政编码：
-              </div>
-              <div className={styles.valueArea}>
-                <FormItem>
-                  {getFieldDecorator('zipCode', {
-                    rules: [
-                      { required: true, message: '请填写邮政编码' },
-                      { pattern: regxp.zipCode, message: '邮政编码格式不正确' },
-                      { whitespace: true, message: '头尾不能有空格' },
-                    ],
-                    initialValue: zipCode,
-                  })(
-                    <Input style={FORM_STYLE} />,
-                  )}
-                </FormItem>
-              </div>
-            </div>
-          </Col>
-        </Row>
-        <Row type="flex" gutter={16} align="middle">
-          <Col span={12}>
-            <div className={styles.formItem}>
-              <div className={styles.itemLable}>国家/地区：</div>
-              <div className={styles.valueArea}>
-                <FormItem>
-                  {getFieldDecorator('country', {
-                    initialValue: country,
-                  })(
-                    <Input style={FORM_STYLE} disabled />
-                  )}
-                </FormItem>
-              </div>
-            </div>
-          </Col>
-          <Col span={12}>
-            <div className={styles.formItem}>
-              <div className={styles.itemLable}>
-                <span className={styles.requried}>*</span>
-                省/(直辖)市：
-              </div>
-              <div className={styles.valueArea}>
-                <FormItem>
-                  {
-                    getFieldDecorator(
-                      'provinceCode',
-                      {
-                        rules: [{ required: true, message: '请选择省/(直辖)市' }],
-                        initialValue: provinceCode,
-                      }
-                    )(
-                      <Select
-                        style={FORM_STYLE}
-                        onChange={this.handleProvinceChange}
-                      >
-                        {this.renderProvinceOption()}
-                      </Select>
-                    )
-                  }
-                </FormItem>
-              </div>
-            </div>
-          </Col>
-        </Row>
-        <Row type="flex" gutter={16} align="middle">
-          <Col span={12}>
-            <div className={styles.formItem}>
-              <div className={styles.itemLable}>
-                <span className={styles.requried}>*</span>
-                城市：
-              </div>
-              <div className={styles.valueArea}>
-                <FormItem>
-                  {
-                    getFieldDecorator(
-                      'cityCode',
-                      {
-                        rules: [{ required: true, message: '城市' }],
-                        initialValue: cityCode,
-                      }
-                    )(
-                      <Select
-                        style={FORM_STYLE}
-                        onChange={this.handleCityChange}
-                      >
-                        {this.renderCityOption()}
-                      </Select>
-                    )
-                  }
-                </FormItem>
-              </div>
-            </div>
-          </Col>
-          <Col span={12}>
-            <div className={styles.formItem}>
-              <div className={styles.itemLable}>
-                <span className={styles.requried}>*</span>
-                来源：
-              </div>
-              <div className={styles.valueArea}>
-                <FormItem>
-                  {getFieldDecorator('sourceCode', {
-                    initialValue: sourceCode,
-                  })(
-                    <Select
-                      disabled
-                      style={FORM_STYLE}
-                    >
-                      {this.renderSourceOption()}
-                    </Select>
-                  )
+                )(
+                  <Select
+                    style={FORM_STYLE}
+                    onChange={this.handleAddresTypeChange}
+                  >
+                    {this.renderAddressTypeOption()}
+                  </Select>
+                )
                 }
-                </FormItem>
-              </div>
-            </div>
-          </Col>
-        </Row>
+              </FormItem>
+            </FormItemWrap>
+            <FormItemWrap title="邮政编码" position="right" isRequired>
+              <FormItem>
+                {getFieldDecorator('zipCode', {
+                  rules: [
+                    { required: true, message: '请填写邮政编码' },
+                    { pattern: regxp.zipCode, message: '邮政编码格式不正确' },
+                    { whitespace: true, message: '头尾不能有空格' },
+                  ],
+                  initialValue: zipCode,
+                })(
+                  <Input style={FORM_STYLE} />,
+                )}
+              </FormItem>
+            </FormItemWrap>
+            <FormItemWrap title="省/(直辖)市" position="right" isRequired>
+              <FormItem>
+                {getFieldDecorator(
+                  'provinceCode',
+                  {
+                    rules: [{ required: true, message: '请选择省/(直辖)市' }],
+                    initialValue: provinceCode,
+                  }
+                )(
+                  <Select
+                    style={FORM_STYLE}
+                    onChange={this.handleProvinceChange}
+                  >
+                    {this.renderProvinceOption()}
+                  </Select>
+                )
+              }
+              </FormItem>
+            </FormItemWrap>
+            <FormItemWrap title="来源" position="right" isRequired>
+              <FormItem>
+                {getFieldDecorator('sourceCode', {
+                  initialValue: sourceCode,
+                })(
+                  <Select
+                    disabled
+                    style={FORM_STYLE}
+                  >
+                    {this.renderSourceOption()}
+                  </Select>
+                )
+                }
+              </FormItem>
+            </FormItemWrap>
+          </div>
+        </div>
       </div>
     );
   }

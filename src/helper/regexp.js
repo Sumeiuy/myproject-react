@@ -2,14 +2,14 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 10:16:02
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-13 09:18:37
+ * @Last Modified time: 2018-12-13 20:55:45
  * @description 此处存放通用的正则表达式
  */
 const regexp = {
   /**
    * 是否是数字,包含零的正整数
    */
-  integer: /^0$|^[1-9](\d*)?/g,
+  integer: /^0$|^[1-9]\d*?$/,
   /**
    * 中文字符的正则表达式
    */

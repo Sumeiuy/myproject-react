@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 19:36:22
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-12 17:02:57
+ * @Last Modified time: 2018-12-13 19:15:29
  * @description 机构客户添加联系方式Modal
  */
 
@@ -12,11 +12,10 @@ import { autobind } from 'core-decorators';
 import { Button } from 'antd';
 import _ from 'lodash';
 
-import { data as dataHelper } from '../../../helper';
 import confirm from '../../common/confirm_';
 import Table from './InfoTable';
 import IFNoData from './IfNoData';
-import logable from '../../../decorators/logable';
+import logable, { logPV } from '../../../decorators/logable';
 import Modal from '../../common/biz/CommonModal';
 import IfWrap from '../../common/biz/IfWrap';
 import ToolTip from '../../common/Tooltip';
@@ -26,6 +25,7 @@ import {
   ORG_PHONE_COLUMNS,
   ORG_ADDRESS_COLUMNS,
 } from './config';
+import { DEFAULT_VALUE } from '../config';
 
 import styles from './contactWayModal.less';
 
@@ -66,6 +66,10 @@ export default class ContactWayModal extends PureComponent {
     };
     // 判断是否是主服务经理
     this.isMainEmp = _.get(context.custBasic, 'isMainEmp');
+    // 机构客户的电话信息Column
+    this.orgPhoneColumns = this.getOrgPhoneColumns(ORG_PHONE_COLUMNS);
+    // 机构客户的地址信息Column
+    this.orgAddressColumns = this.getOrgAddressColumn(ORG_ADDRESS_COLUMNS);
   }
 
   // 修改机构客户的电话信息的Columns
@@ -73,83 +77,33 @@ export default class ContactWayModal extends PureComponent {
   getOrgPhoneColumns(columns) {
     return _.map(columns, (column) => {
       // 机构客户的手机信息、固定电话、电子邮件传递过来的数据是一个对象，我们展示他的value
-      const { dataIndex } = column;
+      const { needEllipse = false, ...restColumn } = column;
+      const { dataIndex } = restColumn;
       if (
         dataIndex === 'mobile'
         || dataIndex === 'landline'
         || dataIndex === 'email'
       ) {
-        return this.updateContactValueColumn(column);
+        return this.renderPhoneNumberColumn(restColumn);
       }
-      if (dataIndex === 'contractType') {
-        // 机构客户联系人支持最多展示8个字符
-        return this.updateWordColumn(column, 7);
+      if (needEllipse) {
+        // 机构客户联系人|姓名|职务
+        return this.renderWordEllipseColumn(restColumn);
       }
-      if (dataIndex === 'name') {
-        // 机构客户联系人支持最多展示8个字符
-        return this.updateWordColumn(column, 8);
-      }
-      if (dataIndex === 'duty') {
-        // 机构客户联系人支持最多展示8个字符
-        return this.updateWordColumn(column, 5);
-      }
-      return column;
+      return this.renderEmptyColumn(restColumn);
     });
   }
 
-  // 机构客户的手机信息、固定电话、电子邮件传递过来的数据是一个对象，我们展示他的value
+  // 修改机构客户的地址信息的Columns
   @autobind
-  updateContactValueColumn(column) {
-    const { dataIndex } = column;
-    if (dataIndex === 'email') {
-      // 如果是email,则需要超长部分点点点
-      return {
-        ...column,
-        render(text) {
-          if (!_.isEmpty(text) && _.hasIn(text, 'value')) {
-            const { isSubstr, value, origin } = dataHelper.dotdotdot(text.value || '', 20);
-            if (isSubstr) {
-              return (
-                <ToolTip title={origin}>
-                  <div className={styles.textEllipse}>{value}</div>
-                </ToolTip>
-              );
-            }
-            return (<div className={styles.textEllipse}>{origin}</div>);
-          }
-          return '';
-        }
-      };
-    }
-    return {
-      ...column,
-      render(text) {
-        if (!_.isEmpty(text) && _.hasIn(text, 'value')) {
-          return text.value || '';
-        }
-        return '';
-      },
-    };
-  }
-
-  // 修改纯文本展示，超过length部分...并且悬浮显示全部信息
-  @autobind
-  updateWordColumn(column, length) {
-    return {
-      ...column,
-      render(text) {
-        if (_.isEmpty(text)) {
-          return '';
-        }
-        const { isSubstr, value, origin } = dataHelper.dotdotdot(text, length);
-        if (isSubstr) {
-          return (
-            <ToolTip title={origin}>{value}</ToolTip>
-          );
-        }
-        return origin;
-      },
-    };
+  getOrgAddressColumn(columns) {
+    return _.map(columns, (column) => {
+      const { needEllipse = false, ...restColumn } = column;
+      if (needEllipse) {
+        return this.renderWordEllipseColumn(restColumn);
+      }
+      return this.renderEmptyColumn(restColumn);
+    });
   }
 
   // 刷新数据
@@ -167,6 +121,10 @@ export default class ContactWayModal extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'ButtonClick',
+    payload: { name: '删除联系方式确认框-确认' }
+  })
   delOrgContact(query) {
     const {
       location: {
@@ -180,39 +138,47 @@ export default class ContactWayModal extends PureComponent {
     }).then(this.refresh);
   }
 
+  @autobind
+  @logable({
+    type: 'ButtonClick',
+    payload: { name: '删除联系方式确认框-取消' }
+  })
+  delOrgContactCancel() {
+    // 日志专用
+  }
+
   // 删除联系方式的时候需要先弹框确认
   @autobind
   confirmBeforeDel(query) {
     confirm({
       content: '确定要删除该条联系方式吗？',
       onOk: () => this.delOrgContact(query),
+      onCancel: this.delOrgContactCancel,
     });
   }
 
   @autobind
   @logable({
     type: 'Click',
-    payload: { name: '关闭' }
+    payload: { name: '机构客户联系方式-关闭' }
   })
   handleContactWayClose() {
     this.props.onClose();
   }
 
   @autobind
-  @logable({
-    type: 'ButtonClick',
-    payload: {
-      name: '添加联系方式'
-    },
+  @logPV({
+    pathname: '/modal/cust360/custProperty/addOrgContactModal',
+    title: '客户属性-添加联系方式'
   })
   handleAddContactClick() {
     this.setState({ addContactModal: true });
   }
 
   @autobind
-  @logable({
-    type: 'Click',
-    payload: { name: '编辑机构客户电话信息' }
+  @logPV({
+    pathname: '/modal/cust360/custProperty/editOrgPhoneModal',
+    title: '客户属性-编辑机构客户电话信息'
   })
   handlePhoneEditClick(record) {
     this.setState({
@@ -223,9 +189,9 @@ export default class ContactWayModal extends PureComponent {
   }
 
   @autobind
-  @logable({
-    type: 'Click',
-    payload: { name: '删除机构客户电话信息' }
+  @logPV({
+    pathname: '/modal/cust360/custProperty/delOrgPhoneConfirm',
+    title: '客户属性-删除机构客户电话信息确认框'
   })
   handlePhoneDelClick(record) {
     this.confirmBeforeDel({
@@ -235,9 +201,9 @@ export default class ContactWayModal extends PureComponent {
   }
 
   @autobind
-  @logable({
-    type: 'Click',
-    payload: { name: '编辑机构客户地址信息' }
+  @logPV({
+    pathname: '/modal/cust360/custProperty/editOrgAddressModal',
+    title: '客户属性-编辑机构客户地址信息'
   })
   handleAddressEditClick(record) {
     this.setState({
@@ -248,9 +214,9 @@ export default class ContactWayModal extends PureComponent {
   }
 
   @autobind
-  @logable({
-    type: 'Click',
-    payload: { name: '删除机构客户地址信息' }
+  @logPV({
+    pathname: '/modal/cust360/custProperty/delOrgAddressConfirm',
+    title: '客户属性-删除机构客户地址信息确认框'
   })
   handleAddressDelClick(record) {
     this.confirmBeforeDel({
@@ -270,6 +236,13 @@ export default class ContactWayModal extends PureComponent {
 
   // 添加|编辑联系方式弹框点击确认按钮
   @autobind
+  @logable({
+    type: 'Submit',
+    payload: {
+      name: '新增或者修改联系方式',
+      vlaue: '$args[1]'
+    }
+  })
   handleAddOrEditModalOK(type, data) {
     if (type === 'phone') {
       // 新增|修改机构客户电话信息
@@ -281,12 +254,57 @@ export default class ContactWayModal extends PureComponent {
   }
 
   @autobind
-  @logable({
-    type: 'Click',
-    payload: { name: '关闭' }
-  })
   handleEditContactModalClose() {
     this.setState({ editContactModal: false });
+  }
+
+  // 修改表格中可能需要省略号的列的展示
+  @autobind
+  renderWordEllipseColumn(column) {
+    return {
+      ...column,
+      render(text) {
+        if (_.isEmpty(text)) {
+          return DEFAULT_VALUE;
+        }
+        return (
+          <ToolTip placement="topLeft" title={text}>
+            <div className={styles.textEllipse}>{text}</div>
+          </ToolTip>
+        );
+      }
+    };
+  }
+
+  // 修改表格中空白列的展示
+  @autobind
+  renderEmptyColumn(column) {
+    return {
+      ...column,
+      render(text) {
+        return _.isEmpty(text) ? DEFAULT_VALUE : text;
+      }
+    };
+  }
+
+  // 机构客户的手机信息、固定电话、电子邮件传递过来的数据是一个对象，我们展示他的value
+  @autobind
+  renderPhoneNumberColumn(column) {
+    return {
+      ...column,
+      render(text) {
+        if (!_.isEmpty(text) && _.hasIn(text, 'value')) {
+          return _.isEmpty(text.value)
+            ? DEFAULT_VALUE
+            : (
+              <ToolTip placement="topLeft" title={text.value}>
+                <div className={styles.textEllipse}>{text.value}</div>
+              </ToolTip>
+            );
+        }
+        return DEFAULT_VALUE;
+      },
+    };
   }
 
   render() {
@@ -302,7 +320,6 @@ export default class ContactWayModal extends PureComponent {
     const hasNoPhoneInfo = _.isEmpty(data.tellphoneInfo);
     // 有无地址信息
     const hasNoAddreesInfo = _.isEmpty(data.addressInfo);
-    const orgPhoneColumns = this.getOrgPhoneColumns(ORG_PHONE_COLUMNS);
 
     return (
       <Modal
@@ -332,7 +349,7 @@ export default class ContactWayModal extends PureComponent {
               <IFNoData title="电话信息" isRender={hasNoPhoneInfo}>
                 <Table
                   className={styles.orgPhoneTable}
-                  columns={orgPhoneColumns}
+                  columns={this.orgPhoneColumns}
                   dataSource={data.tellphoneInfo}
                   isMainEmp={this.isMainEmp}
                   onEditClick={this.handlePhoneEditClick}
@@ -346,7 +363,7 @@ export default class ContactWayModal extends PureComponent {
             <div className={styles.tableInfo}>
               <IFNoData title="地址信息" isRender={hasNoAddreesInfo}>
                 <Table
-                  columns={ORG_ADDRESS_COLUMNS}
+                  columns={this.orgAddressColumns}
                   dataSource={data.addressInfo}
                   isMainEmp={this.isMainEmp}
                   onEditClick={this.handleAddressEditClick}

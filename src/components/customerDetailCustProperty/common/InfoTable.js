@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-26 16:44:23
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-11 19:56:16
+ * @Last Modified time: 2018-12-13 11:52:28
  * @description 联系方式使用的Table
  */
 import React from 'react';
@@ -10,6 +10,7 @@ import PropTypes from 'prop-types';
 import { Table } from 'antd';
 import _ from 'lodash';
 
+import { table } from '../../../helper';
 import Icon from '../../common/Icon';
 import { isFromNoSupportUpdateSource } from './utils';
 
@@ -29,7 +30,12 @@ function InfoTable(props) {
   if (!isMainEmp) {
     columns = _.filter(columns, item => item.dataIndex !== 'operate');
   }
-  const newColumns = _.map(columns, (column) => {
+  // 因为由于当前的UI规范，以及他们想要的他们以为的间距效果，所以当获取到实际的列的时候
+  // @sunweibin 我这边做的处理是
+  // 1. 每个表格列头尾各加宽度为20px的column
+  // 2. 然后每一列间添加一个自适应宽度的空白列
+  const uiColumns = table.padColumnForUI(columns);
+  const newColumns = _.map(uiColumns, (column) => {
     const { dataIndex } = column;
     if (dataIndex === 'operate') {
       return {
