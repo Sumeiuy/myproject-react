@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-11 18:37:20
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-14 15:52:18
+ * @Last Modified time: 2018-12-14 22:34:32
  * @description 新版客户360详情的账户信息Tab下页面的配置项
  */
 
@@ -101,7 +101,7 @@ export const TRADE_FLOW_TABS = {
 // 历史持仓的表格的滚动props
 export const STOCK_HISTORY_HOLDING_TABLE_SCROLL = { x: 1295 };
 export const PRODUCT_HISTORY_HOLDING_TABLE_SCROLL = { x: 1525 };
-export const OPTION_HISTORY_HOLDING_TABLE_SCROLL = { x: 17102 };
+export const OPTION_HISTORY_HOLDING_TABLE_SCROLL = { x: 1712 };
 
 // 交易流水三个表格的滚动props
 export const STANDARD_TRADE_FLOW_TABLE_SCROLL = { x: 2100 };
@@ -291,6 +291,7 @@ export const PRODUCT_HISTORY_HOLDING_COLUMNS = [
     key: 'holdDate',
     dataIndex: 'holdDate',
     width: 78,
+    needEllipse: true,
   },
   {
     title: '持仓占比',
@@ -397,12 +398,14 @@ export const OPTION_HISTORY_HOLDING_COLUMNS = [
     title: '持仓时间',
     key: 'holdDate',
     dataIndex: 'holdDate',
+    needEllipse: true,
   },
   {
     width: 78,
     title: '到期日期',
     key: 'holdEndDate',
     dataIndex: 'holdEndDate',
+    needEllipse: true,
   },
   {
     width: 78,
