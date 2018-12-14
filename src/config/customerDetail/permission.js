@@ -65,8 +65,8 @@ export default function getCustomerDetailPermission(empInfo = {}) {
   const customerProfileTabPermission = basicInfoPermission;
   // 投资能力分析tab-权限判定
   const investAnalyzeTabPermission = basicInfoPermission;
-  // 信息编辑权限
-  const infoEditPermission = empInfo.isMainEmp;
+  // 主服务经理权限
+  const mainEmpPermission = empInfo.isMainEmp;
   return {
     basicInfoPermission,
     custPropertyInfoPermission,
@@ -80,7 +80,7 @@ export default function getCustomerDetailPermission(empInfo = {}) {
     productOrderTabPermission,
     discountCouponTabPermission,
     customerProfileTabPermission,
-    infoEditPermission,
+    mainEmpPermission,
     investAnalyzeTabPermission,
   };
 }

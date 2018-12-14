@@ -80,7 +80,7 @@ export default class ServiceLogList extends PureComponent {
           getCeFileList({ attachment: uuid });
         }
       } else {
-        console.error('没有找到对应的服务记录');
+        console.error('没有找到对应的服务记录'); // eslint-disable-line
       }
       this.setState({
         activeKey: key,
@@ -249,6 +249,8 @@ export default class ServiceLogList extends PureComponent {
     return (
       <div className={styles.serviceLogList}>
         <IfTableWrap
+          effect="customerPool/getServiceLog"
+          height="300px"
           isRender={!_.isEmpty(serviceLogList)}
           text="暂无服务记录"
         >

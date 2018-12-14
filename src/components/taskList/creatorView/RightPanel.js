@@ -19,7 +19,7 @@ import Icon from '../../common/Icon';
 import Button from '../../common/Button';
 import Table from '../../common/commonTable';
 import GroupModal from '../../customerPool/groupManage/CustomerGroupUpdateModal';
-import { linkTo } from '../../../utils';
+import { linkToNewPath } from '../../../utils';
 import { RETURN_TASK_FROM_TASKLIST } from '../../../config/createTaskEntry';
 import pageConfig from '../pageConfig';
 import { STATE_REJECT_CODE } from '../../../routes/taskList/config';
@@ -112,7 +112,6 @@ export default class RightPanel extends PureComponent {
    */
   @autobind
   handlePageChange(nextPage, currentPageSize) {
-    console.log(nextPage, currentPageSize);
     const { fileNames } = this.state;
     const { onPreview } = this.props;
     this.setState({
@@ -134,7 +133,6 @@ export default class RightPanel extends PureComponent {
    */
   @autobind
   handleShowSizeChange(currentPageNum, changedPageSize) {
-    console.log(currentPageNum, changedPageSize);
     const { fileNames } = this.state;
     const { onPreview } = this.props;
     this.setState({
@@ -183,7 +181,7 @@ export default class RightPanel extends PureComponent {
         id: 'FSP_MOT_SELFBUILT_TASK',
         title: '任务管理',
       };
-      linkTo({
+      linkToNewPath({
         routerAction: push,
         url: `/customerPool/createTaskFromTaskRejection2?source=${RETURN_TASK_FROM_TASKLIST}&flowId=${flowId}`,
         param,
@@ -339,7 +337,9 @@ export default class RightPanel extends PureComponent {
       scrollX,
     } : null;
     const scrollY = (INITIAL_PAGE_SIZE * COLUMN_HEIGHT);
-    const dataSource = this.addIdToDataSource(this.renderDataSource(columns, _.drop(priviewCustFileData.custInfos)));
+    const dataSource = this.addIdToDataSource(
+      this.renderDataSource(columns, _.drop(priviewCustFileData.custInfos))
+    );
     const titleColumn = this.renderColumnTitle(columns);
     const custNum = tagetCustModel.custNum || '--';
 

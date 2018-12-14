@@ -58,6 +58,8 @@ export default class AccountInfoHeader extends PureComponent {
     optionTradeFlowRes: PropTypes.object.isRequired,
     // 资金变动交易流水
     capitalChangeFlowRes: PropTypes.object.isRequired,
+    // 主服务经理权限
+    isMainEmpPermission: PropTypes.bool.isRequired,
   }
 
   static contextTypes = {
@@ -192,6 +194,7 @@ export default class AccountInfoHeader extends PureComponent {
       creditTradeFlowRes,
       optionTradeFlowRes,
       capitalChangeFlowRes,
+      isMainEmpPermission,
     } = this.props;
 
     return (
@@ -206,9 +209,17 @@ export default class AccountInfoHeader extends PureComponent {
           <Button className={styles.accountHeader} onClick={this.handleTradeFlowModalOpen}>
             交易流水
           </Button>
-          <Button className={styles.accountHeader} onClick={this.handleLinkToAssetAllocation}>
-            资产配置
-          </Button>
+          {
+            isMainEmpPermission
+              ? (
+                <Button
+                  className={styles.accountHeader}
+                  onClick={this.handleLinkToAssetAllocation}
+                >
+                  资产配置
+                </Button>
+              ) : null
+          }
         </div>
         <IfWrap isRender={historyHoldModalVisible}>
           <HistoryHoldingModal

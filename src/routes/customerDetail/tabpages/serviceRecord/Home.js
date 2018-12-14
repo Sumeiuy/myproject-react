@@ -443,7 +443,12 @@ export default class ServiceLog extends PureComponent {
               filesList={filesList}
             />
           </div>
-          <div className={styles.listFooter}>
+          <div
+            className={classnames({
+              [styles.listFooter]: true,
+              [styles.hidden]: _.isEmpty(serviceLogList),
+            })}
+          >
             <span
               className={classnames({
                 [styles.btn]: true,
@@ -463,9 +468,7 @@ export default class ServiceLog extends PureComponent {
                 [styles.hidden]: !isLastServiceLog,
               })}
             >
-              <span className={styles.divider} />
-已经是最后一条了
-              <span className={styles.divider} />
+              <span className={styles.divider} />已经是最后一条了<span className={styles.divider} />
             </div>
           </div>
           <div />

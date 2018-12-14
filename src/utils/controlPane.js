@@ -194,6 +194,7 @@ function dispatchTabPane(options) {
       query, // query对象
       shoudlRemove = false,
       shouldStay = false,
+      notSaveMenuPath = false,
       editPane = {},
       addPanes = [], // 可选参数, 要打开的tabpane的key标识与显示名称以及关联路径，支持同时打开多个
       removePanes = [], // 可选参数， 数组元素为key值，string类型，需要移除的tabpane，支持同时移除多个
@@ -209,9 +210,9 @@ function dispatchTabPane(options) {
     // 处理jsp页面调用的closeTab在新版框架下的兼容问题
     if (routerAction === 'FSPRemove') {
       if (id) {
-        window.removeTabpane && window.removeTabpane(id);
+        return window.removeTabpane && window.removeTabpane(id);
       }
-      return;
+      return null;
     }
 
     // 当仅需要移除当前tab时，调用
@@ -224,7 +225,7 @@ function dispatchTabPane(options) {
       } else {
         warning(false, '请确认是在react框架下执行该操作，tabpane上的关闭按钮没有找到!');
       }
-      return;
+      return null;
     }
 
     // 兼容url的两种写法，字符串url， 以及pathname+query+state对, 这两种方式是为了支持原生push方法的两种调用。
@@ -239,6 +240,7 @@ function dispatchTabPane(options) {
           activeTabKey,
           shoudlRemove,
           shouldStay,
+          notSaveMenuPath,
           ...state,
         },
       });
@@ -246,6 +248,8 @@ function dispatchTabPane(options) {
       routerAction(url);
     }
   }
+
+  return null;
 }
 
 // 打开并跳转到新的reactTab，原tab保留
@@ -297,6 +301,18 @@ function linkTo(options) {
     ...options,
     editPane,
     shouldStay: true,
+  });
+}
+
+// 当前页面内的链接跳转，但是不保存菜单path
+function linkToNewPath(options) {
+  const { name } = options;
+  const editPane = { name };
+  dispatchTabPane({
+    ...options,
+    editPane,
+    shouldStay: true,
+    notSaveMenuPath: true,
   });
 }
 
@@ -390,6 +406,7 @@ const exported = {
   closeFspTab,
   navToTab,
   linkTo,
+  linkToNewPath,
   navTo,
   removeTab,
   saveTabUrl,
@@ -407,6 +424,7 @@ export {
   closeTabForEB,
   navToTab,
   linkTo,
+  linkToNewPath,
   navTo,
   removeTab,
   saveTabUrl,
