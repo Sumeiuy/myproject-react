@@ -17,9 +17,8 @@ import Icon from '../../../src/components/common/Icon';
 import styles from './empRp.less';
 
 export default class EmpRp extends PureComponent {
-
   static propTypes = {
-    empRspList: PropTypes.array.isRequired,
+    empPostnList: PropTypes.array.isRequired,
     empCurrentPosition: PropTypes.string.isRequired,
     empInfo: PropTypes.object.isRequired,
     onSwitchRsp: PropTypes.func,
@@ -38,8 +37,8 @@ export default class EmpRp extends PureComponent {
   // 切换岗位后展示新的岗位名称
   @autobind
   changeRsp(key) {
-    const { empRspList, onSwitchRsp } = this.props;
-    const empRsp = this.findEmpResp(empRspList, key);
+    const { empPostnList, onSwitchRsp } = this.props;
+    const empRsp = this.findEmpResp(empPostnList, key);
     // 取出需要传递给后端的参数
     const param = {
       pstnId: empRsp.postnId,
@@ -65,9 +64,10 @@ export default class EmpRp extends PureComponent {
     return (
       <Menu style={{ width: '150px' }} onClick={this.handleRspChange}>
         {
-          list.map(item => (<Menu.Item key={item.postnId}>
-            <span className={styles.empRspItem} title={item.postnName}>{item.postnName}</span>
-          </Menu.Item>))
+          list.map(item => (
+            <Menu.Item key={item.postnId}>
+              <span className={styles.empRspItem} title={item.postnName}>{item.postnName}</span>
+            </Menu.Item>))
         }
         <Menu.Divider />
         <Menu.Item key="userCenter">
@@ -81,14 +81,14 @@ export default class EmpRp extends PureComponent {
   }
 
   render() {
-    const { empRspList, empInfo, empCurrentPosition } = this.props;
+    const { empPostnList, empInfo, empCurrentPosition } = this.props;
     let emp = {};
-    const post = this.findEmpResp(empRspList, empCurrentPosition);
+    const post = this.findEmpResp(empPostnList, empCurrentPosition) || empPostnList[0];
     emp = {
       name: empInfo.empName,
       postName: post.postnName,
     };
-    const empRspMenu = this.createMenu(empRspList);
+    const empRspMenu = this.createMenu(empPostnList);
     return (
       <Dropdown overlay={empRspMenu}>
         <dl className={styles.position}>

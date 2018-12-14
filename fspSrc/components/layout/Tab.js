@@ -49,7 +49,8 @@ export default class Tab extends PureComponent {
       addPanes = [],
       removePanes = [],
       shouldRemove,
-      shouldStay,
+      shouldStay, // 是否留在当前页面
+      notSaveMenuPath, // 是否更改菜单path
       editPane,
     } = state || {};
 
@@ -94,7 +95,7 @@ export default class Tab extends PureComponent {
         };
       }
 
-      const { panes, currentMenuId } = getStayPanes(location, prevState);
+      const { panes, currentMenuId } = getStayPanes(location, prevState, notSaveMenuPath);
 
       const newRouterHistory = getNewRouterHistory({ pathname, query, routerHistory });
       // 保存tab菜单信息

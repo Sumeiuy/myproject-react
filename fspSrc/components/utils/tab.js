@@ -21,8 +21,8 @@ function traverseMenus(menus, callback, level = 1) {
       isFoundMenu = true;
       return false;
     }
-    return menu.children && !_.isEmpty(menu.children) ?
-      traverseMenus(menu.children, callback, level + 1) : true;
+    return menu.children && !_.isEmpty(menu.children)
+      ? traverseMenus(menu.children, callback, level + 1) : true;
   });
 
   return level === 1 ? newMenus : !isFoundMenu;
@@ -32,10 +32,9 @@ function getCurrentMenuPath(pathname, level) {
   const pathArray = pathname && pathname.split('/');
   if (pathArray) {
     if (pathArray[1] === 'fsp') {
-      return '/' + pathArray.slice(2, level + 2).join('/');
-    } else {
-      return pathArray.slice(0, level + 1).join('/');
+      return `/${pathArray.slice(2, level + 2).join('/')}`;
     }
+    return pathArray.slice(0, level + 1).join('/');
   }
   return '';
 }
@@ -56,7 +55,8 @@ function fixExternUrl(url) {
 function getFinalPanes(panes, addPanes = [], removePanes = []) {
   const filterPanes = panes.filter(pane => !_.find(removePanes, key => key === pane.id));
   const paneArray = filterPanes.filter(
-    pane => !_.find(addPanes, tabPane => tabPane.id === pane.id));
+    pane => !_.find(addPanes, tabPane => tabPane.id === pane.id)
+  );
   // 注意下面是有序的
   return [
     ...paneArray,
@@ -84,9 +84,9 @@ function splitPanesArray(panes, menuWidth) {
 // 获取本地缓存的tab菜单
 function getLocalPanes(href) {
   if (enableSessionStorage) {
-    return sessionStore.get('href') === href ?
-      sessionStore.get('panes') :
-      [];
+    return sessionStore.get('href') === href
+      ? sessionStore.get('panes')
+      : [];
   }
   return [];
 }
@@ -97,7 +97,9 @@ function tureAndstore(item, callback) {
   }
 }
 // 用来本地缓存tab信息的方法函数
-function storeTabInfo({ activeKey, panes, href, currentMenuId }) {
+function storeTabInfo({
+  activeKey, panes, href, currentMenuId
+}) {
   if (enableSessionStorage) {
     tureAndstore(activeKey, sessionStore.set.bind(sessionStore, 'activeKey'));
     tureAndstore(panes, sessionStore.set.bind(sessionStore, 'panes'));
@@ -226,7 +228,7 @@ function getPanesFromMenu(location, fixPanes, currentMenuId) {
   let isFoundCurrentPane = false;
   let newActiveKey = '';
   let newCurrentMenuId = currentMenuId;
-  let newBreadcrumbRoutes = [];
+  const newBreadcrumbRoutes = [];
 
   if (pathname === '/') {
     return {
@@ -374,9 +376,9 @@ function preTreatment(primaryMenu) {
   let fixMenu = _.filter(primaryMenu, menu => menu.path || !_.isEmpty(menu.children));
   // 顶级菜单下，如果只有一个级次菜单，并且这个次级菜单没有孩子link，隐藏顶级菜单
   fixMenu = _.filter(fixMenu, menu => !(
-    menu.children.length === 1 &&
-    menu.children[0].type !== 'link' &&
-    _.isEmpty(menu.children[0].children)));
+    menu.children.length === 1
+      && menu.children[0].type !== 'link'
+      && _.isEmpty(menu.children[0].children)));
 
   return traverseMenus(fixMenu, (pane, i, array) => {
     // 找到当前path对应的pane进行修正
@@ -393,9 +395,15 @@ function preTreatment(primaryMenu) {
 }
 
 // 如果设置了shouldStay标志，表示为页面内部跳转，使用这个修正pane
-function getStayPanes(location, prevState) {
+function getStayPanes(location, prevState, notSaveMenuPath = false) {
   const { pathname, query, state } = location;
   const { panes, activeKey, currentMenuId } = prevState;
+  if (notSaveMenuPath) {
+    return {
+      panes,
+      currentMenuId,
+    };
+  }
   const newPanes = [...panes];
   traverseMenus(newPanes, (pane, i, array) => {
     // 找到当前path对应的pane进行修正
@@ -411,32 +419,26 @@ function getStayPanes(location, prevState) {
     }
     return false;
   });
-  const finalPanes = _.map(panes, (pane) => {
-    const needEditPane = pane;
-    // 如果提供了editPanes，使用这里的pane修正
-    if (pane.id === activeKey) {
-      needEditPane.path = pathname;
-      needEditPane.query = query;
-      return needEditPane;
-    }
-    return pane;
-  });
 
   return {
-    panes: finalPanes,
+    panes: newPanes,
     currentMenuId,
   };
 }
 
 function getPanesWithPathname(location, shouldRemove, editPane = {}, prevState) {
-  const { panes = [], activeKey = '', currentMenuId} = prevState || {};
+  const { panes = [], activeKey = '', currentMenuId } = prevState || {};
 
   // 如果设置了shouldRemove, 则从当前的panes数组中移除对应的pane
   // 这种情况主要是用来处理跳转到新的tab页面，并关闭当前tab页面的情况
   const fixPanes = shouldRemove ? _.filter(panes, pane => pane.id !== activeKey) : [...panes];
 
-  const { newPanes, newActiveKey, newCurrentMenuId, newBreadcrumbRoutes } =
-    getPanes(location, fixPanes, editPane, currentMenuId);
+  const {
+    newPanes,
+    newActiveKey,
+    newCurrentMenuId,
+    newBreadcrumbRoutes,
+  } = getPanes(location, fixPanes, editPane, currentMenuId);
 
   return {
     panes: newPanes,

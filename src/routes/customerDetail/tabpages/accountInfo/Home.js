@@ -7,6 +7,7 @@
 
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
+import moment from 'moment';
 import _ from 'lodash';
 
 import { time as timeHelper } from '../../../../helper';
@@ -101,13 +102,15 @@ export default class Home extends PureComponent {
   @autobind
   getProfitRateInfo(options) {
     const { location: { query }, queryProfitRateInfo } = this.props;
+    // 结束时间取前一天
+    const endDate = moment().subtract(1, 'days').format('YYYYMMDD');
     // 初始化时传递下面的参数发送请求
     if (options.initial) {
       queryProfitRateInfo({
         custId: query && query.custId,
         indexCode: '000300',
         startDate: timeHelper.transformTime('month').startDate,
-        endDate: timeHelper.transformTime('month').endDate,
+        endDate,
         withCustPofit: true,
       });
     } else { // 用户点击触发请求传递参数
@@ -115,7 +118,7 @@ export default class Home extends PureComponent {
         custId: query && query.custId,
         indexCode: options.indexCode,
         startDate: timeHelper.transformTime(options.time).startDate,
-        endDate: timeHelper.transformTime(options.time).endDate,
+        endDate,
         withCustPofit: options.withCustPofit,
       });
     }

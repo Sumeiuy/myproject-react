@@ -65,7 +65,7 @@ export default class Header extends PureComponent {
     secondaryMenu: PropTypes.array,
     empInfo: PropTypes.object.isRequired,
     // 用户岗位列表
-    empRspList: PropTypes.array.isRequired,
+    empPostnList: PropTypes.array.isRequired,
     empCurrentPosition: PropTypes.string.isRequired,
     onSearch: PropTypes.func,
     onSwitchRsp: PropTypes.func,
@@ -380,7 +380,7 @@ export default class Header extends PureComponent {
 
   render() {
     const {
-      empRspList,
+      empPostnList,
       empInfo,
       secondaryMenu,
       empCurrentPosition,
@@ -472,10 +472,10 @@ export default class Header extends PureComponent {
               !_.isEmpty(secondaryMenu) ? this.renderSecondaryMenu(secondaryMenu) : null
             }
             {
-              (!_.isEmpty(empRspList))
+              (!_.isEmpty(empPostnList))
                 ? (
                   <EmpRsp
-                    empRspList={empRspList}
+                    empPostnList={empPostnList}
                     empCurrentPosition={empCurrentPosition}
                     empInfo={empInfo}
                     onSwitchRsp={this.handleSwitchRsp}

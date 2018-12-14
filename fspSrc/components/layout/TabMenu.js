@@ -133,10 +133,11 @@ export default class TabMenu extends PureComponent {
       const externUrl = fixExternUrl(menuItem.url);
       window.open(externUrl, '_blank');
     } else if (menuItem.path !== path) {
-      const state = !_.isEmpty(menuItem.state)
-        ? menuItem.state
-        : { url: menuItem && menuItem.url };
-
+      let state = { url: menuItem && menuItem.url };
+      if (!_.isEmpty(menuItem.state)) {
+        const { url, param, query } = menuItem.state;
+        state = { url, param, query };
+      }
       push({
         pathname: menuItem.path,
         query: menuItem.query,
