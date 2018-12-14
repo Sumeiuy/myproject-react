@@ -1,8 +1,8 @@
 /**
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-07 11:47:09
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-12-14 15:16:29
  */
 
 import React, { PureComponent } from 'react';
@@ -22,7 +22,6 @@ import ServiceRecord from './tabpages/serviceRecord/Home';
 import DiscountCoupon from './tabpages/discountCoupon/connectedHome';
 import { logCommon } from '../../decorators/logable';
 import ProductOrder from './tabpages/productOrder/Home';
-import InvestAnalyze from './tabpages/investAnalyze/connectedHome';
 import ContractManage from './tabpages/contractManage/Home';
 import CustProfit from './tabpages/custProfit/Home';
 import {
@@ -225,7 +224,6 @@ export default class Home extends PureComponent {
       contractManagementTabPermission,
       productOrderTabPermission,
       discountCouponTabPermission,
-      investAnalyzeTabPermission,
       isMainEmpPermission,
     } = getCustomerDetailPermission(customerBasicInfo || {});
 
@@ -244,14 +242,6 @@ export default class Home extends PureComponent {
           location={location}
           custPropertyInfoPermission={custPropertyInfoPermission}
           custPropertyPrivateInfoPermission={custPropertyPrivateInfoPermission}
-        />
-      </TabPane>
-    );
-
-    const investAnalyzeTabPane = (
-      <TabPane tab="投资能力分析" key={INVEST_ANALYZE_TAB_KEY}>
-        <InvestAnalyze
-          location={location}
         />
       </TabPane>
     );
@@ -332,7 +322,6 @@ export default class Home extends PureComponent {
           >
             {this.renderTabPane(accountInfoTabPane, accountInfoTabPermission)}
             {this.renderTabPane(custPropertyTabPane, custPropertyTabPermission)}
-            {this.renderTabPane(investAnalyzeTabPane, investAnalyzeTabPermission)}
             {this.renderTabPane(businessHandTabPane, businessHandTabPermission)}
             {this.renderTabPane(serviceRecordTabPane, serviceRecordTabPermission)}
             {this.renderTabPane(serviceRelationshipTabPane, serviceRelationshipTabPermission)}
