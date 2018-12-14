@@ -12,6 +12,7 @@ import PropTypes from 'prop-types';
 import BasicInfo from './BasicInfo';
 import ContactWay from '../common/ContactWay';
 import IfWrap from '../../common/biz/IfWrap';
+import styles from './organizationInfo.less';
 
 export default class OrganizationInfo extends PureComponent {
   static propTypes = {
@@ -50,7 +51,7 @@ export default class OrganizationInfo extends PureComponent {
       addresses,
     } = data;
     return (
-      <div>
+      <div className={styles.organizationInfoBox}>
         <BasicInfo
           data={data}
           hasDuty={hasDuty}
