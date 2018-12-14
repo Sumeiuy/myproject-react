@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性-个人客户基本信息
  * @Date: 2018-11-07 14:33:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-13 20:33:58
+ * @Last Modified time: 2018-12-13 22:48:34
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -105,7 +105,7 @@ export default class BasicInfo extends PureComponent {
     if (!regxp.integer.test(newValue)) {
       return {
         validate: false,
-        msg: '子女数量必须是整数',
+        msg: '子女数量必须是正整数或者零',
       };
     }
     return {
