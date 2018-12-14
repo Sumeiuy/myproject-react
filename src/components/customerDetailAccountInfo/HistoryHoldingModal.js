@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-05 13:31:51
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-14 16:34:16
+ * @Last Modified time: 2018-12-14 17:00:55
  * @description 新版客户360详情的历史持仓的弹出层
  */
 import React, { PureComponent } from 'react';
@@ -272,11 +272,17 @@ export default class HistoryHoldingModal extends PureComponent {
         }
         // 因为证券历史持仓明细下点击名称，代码可以跳转到个股咨询页面，并且只有在股票的情况下才能跳转
         const isStock = this.judgeItemIsStockByTypeCode(record.typeCode || '');
-        const nameCls = cx({ [styles.clickAble]: isStock });
+        const nameCls = cx({
+          [styles.clickAble]: isStock,
+        });
+        const { accountTypeRadio } = this.state;
+        // 如果是信用证券历史持仓，则不展示融字图标
+        const showRongIcon = accountTypeRadio !== 'credit' && record.creditFlag;
+
         return (
           <ToolTip title={text}>
             <div className={`${styles.nameCell} ${styles.textEllipse}`}>
-              {record.creditFlag ? (<span className={styles.rongIcon}>融</span>) : null }
+              {showRongIcon ? (<span className={styles.rongIcon}>融</span>) : null }
               <span className={nameCls}>{text}</span>
             </div>
           </ToolTip>
