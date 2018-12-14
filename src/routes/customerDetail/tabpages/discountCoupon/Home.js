@@ -292,7 +292,6 @@ export default class DiscountCoupon extends PureComponent {
                 dataSource={list}
                 rowKey="ticketId"
                 columns={this.getTitleList()}
-                scroll={{ x: '1024px' }}
               />
             </IfTableWrap>
           </div>

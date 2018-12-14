@@ -62,7 +62,7 @@ module.exports = {
       { target: UAT_FORWARD_URL },
       '/fspa/mcrm/api',
       {
-        target: isDebugMode() ? LOCAL_FORWARD_URL: UAT_FORWARD_URL,
+        target: isDebugMode() ? LOCAL_FORWARD_URL: SIT_FORWARD_URL,
         pathRewrite: isDebugMode() ? { '^/fspa': '' } : null,
       },
       '/fspa/log',

@@ -12,6 +12,7 @@ import PropTypes from 'prop-types';
 import BasicInfo from './BasicInfo';
 import ContactWay from './ContactWay';
 import IfWrap from '../../common/biz/IfWrap';
+import styles from './personInfo.less';
 
 export default class PersonInfo extends PureComponent {
   static propTypes = {
@@ -60,7 +61,7 @@ export default class PersonInfo extends PureComponent {
       noCall,
     } = data;
     return (
-      <div>
+      <div className={styles.personInfoBox}>
         <BasicInfo
           location={location}
           data={data}
