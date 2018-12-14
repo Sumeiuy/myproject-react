@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-12-04 11:09:01
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-13 14:23:19
+ * @Last Modified time: 2018-12-14 10:49:53
  */
 
 // 按大类资产分布
@@ -23,6 +23,7 @@ const ASSET_CLASSIFY_LIST = [
 
 // 雷达图配置项
 const CHART_RADAR_OPTIONS = {
+  radius: '70%',
   name: {
     textStyle: {
       color: '#108ee9',
@@ -44,7 +45,7 @@ const CHART_RADAR_OPTIONS = {
       },
     },
   },
-  nameGap: 0,
+  nameGap: 8,
   splitNumber: 3,
   splitArea: {
     areaStyle: { // 分隔区域的样式设置。
@@ -143,6 +144,7 @@ const CHART_LINE_OPTIONS = {
     axisLabel: {
       color: '#666',
       fontSize: 12,
+      margin: 20,
     },
   },
   smooth: true,
