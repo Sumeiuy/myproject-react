@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-12-04 14:16:41
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-11 13:27:50
+ * @Last Modified time: 2018-12-14 10:48:01
  * @description 期末资产配置雷达图
  */
 import React, { PureComponent } from 'react';
@@ -77,20 +77,20 @@ export default class EndTermAssetChart extends PureComponent {
     const option = this.getChartOption();
     return (
       <div className={styles.endTermAssetChart}>
-        <IECharts
-          option={option}
-          style={{
-            height: '240px',
-          }}
-          resizable
-        />
+        <div className={styles.radarChart}>
+          <IECharts
+            option={option}
+            style={{ height: '240px' }}
+            resizable
+          />
+        </div>
         <div className={styles.assetExplain}>
-          <p>
+          <p className={styles.totalAsset}>
             总资产
             <span>{totalAsset}</span>
             万元
           </p>
-          <p>
+          <p className={styles.totalliability}>
             负债
             <span>{liabilities}</span>
             万元

@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-25 11:31:40
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-12-11 22:43:08
+ * @Last Modified time: 2018-12-14 10:38:55
  * @description 账户收益走势图表
  */
 import React, { PureComponent } from 'react';
@@ -112,7 +112,7 @@ export default class ProfitTrendChart extends PureComponent {
         hs300CumulativeRate,
       }
     } = this.props;
-    let summaryText = `统计期内客，客户该账户累计收益率为${accountCumulativeRate}%，基准（沪深300指数）同期收益率为${hs300CumulativeRate}%，`;
+    let summaryText = `统计期内，客户该账户累计收益率为${accountCumulativeRate}%，基准（沪深300指数）同期收益率为${hs300CumulativeRate}%，`;
     if (_.isNumber(accountCumulativeRate)
       && _.isNumber(hs300CumulativeRate)
       && accountCumulativeRate < hs300CumulativeRate
