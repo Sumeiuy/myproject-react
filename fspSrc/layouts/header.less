@@ -1,10 +1,10 @@
 @import "../../src/css/variable.less";
+@import "../../src/css/util.less";
+
 .fspHeaderContainer {
   background: linear-gradient(-1deg, #02132a 0%, #003864 100%);
   .fspHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    .clearfix();
     width: 100%;
     position: relative;
     height: 58px;
@@ -12,13 +12,29 @@
     max-width: 1536px;
     margin: 0 auto;
     background: linear-gradient(-1deg, #02132a 0%, #003864 100%);
-    .search {
-      flex: 1 1 auto;
-      min-width: 540px;
-      max-width: 648px;
-      margin: 0 62px 0 42px;
+    .lego {
+      float: left;
+      height: 100%;
+      line-height: 58px;
+    }
+    .searchContainer {
+      width: 100%;
+      height: 100%;
+      line-height: 58px;
+      .search {
+        min-width: 540px;
+        max-width: 648px;
+        margin: 0 auto;
+        box-sizing: content-box;
+        padding-right: 20%;
+        width: 40%;
+      }
     }
     .headerContent {
+      position: absolute;
+      right: 16px;
+      top: 0;
+      height: 58px;
       display: flex;
       justify-content: flex-end;
       align-items: center;
