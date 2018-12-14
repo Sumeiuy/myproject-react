@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-27 19:02:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-14 12:07:57
+ * @Last Modified time: 2018-12-14 17:16:51
  * @description 添加个人客户地址信息联系方式的Form
  */
 import React, { PureComponent } from 'react';
@@ -103,7 +103,13 @@ export default class PerAddressContactForm extends PureComponent {
   // 保存城市联动的数据
   @autobind
   saveCity({ addrDictList }) {
-    this.setState({ cityList: addrDictList });
+    if (_.isEmpty(addrDictList)) {
+      this.setState({
+        cityList: [{ key: '', value: '--请选择--' }],
+      });
+    } else {
+      this.setState({ cityList: addrDictList });
+    }
   }
 
   @autobind
