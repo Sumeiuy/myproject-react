@@ -8,6 +8,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { TreeSelect } from 'antd';
 import { autobind } from 'core-decorators';
+import _ from 'lodash';
 
 import mouseWheel from '../../common/mouseWheel';
 import { constants } from '../../../config';
@@ -61,7 +62,7 @@ function findOrgNameByOrgId(orgId) {
 @mouseWheel({ eventDom: '.ant-select-dropdown' })
 export default class CustRange extends PureComponent {
   static propTypes = {
-    collectData: PropTypes.func.isRequired,
+    collectData: PropTypes.func,
     updateQueryState: PropTypes.func.isRequired,
     custRange: PropTypes.array.isRequired,
     expandAll: PropTypes.bool,
@@ -76,10 +77,10 @@ export default class CustRange extends PureComponent {
   }
 
   static defaultProps = {
+    collectData: _.noop,
     expandAll: false,
     orgId: null,
     defaultFirst: false,
-    width: 200,
     dropdownWidth: 200,
     selectBoxStyle: {},
     isDown: false,
