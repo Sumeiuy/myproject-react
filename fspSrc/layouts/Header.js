@@ -454,18 +454,20 @@ export default class Header extends PureComponent {
               <span>产品代码不能为空</span>
             </div>
           </Modal>
-          <div><Logo /></div>
-          <div className={styles.search}>
-            <Search
-              orgId={this.orgId}
-              queryHotPossibleWds={this.queryHotPossibleWds}
-              queryHotWdsData={hotPossibleWdsList}
-              push={push}
-              searchHistoryVal={searchHistoryVal}
-              saveSearchVal={this.handleSaveSearchVal}
-              location={location}
-              isOnlySearchable
-            />
+          <div className={styles.lego}><Logo /></div>
+          <div className={styles.searchContainer}>
+            <div className={styles.search}>
+              <Search
+                orgId={this.orgId}
+                queryHotPossibleWds={this.queryHotPossibleWds}
+                queryHotWdsData={hotPossibleWdsList}
+                push={push}
+                searchHistoryVal={searchHistoryVal}
+                saveSearchVal={this.handleSaveSearchVal}
+                location={location}
+                isOnlySearchable
+              />
+            </div>
           </div>
           <div className={styles.headerContent}>
             {
