@@ -226,11 +226,15 @@ export default class Home extends PureComponent {
       productOrderTabPermission,
       discountCouponTabPermission,
       investAnalyzeTabPermission,
+      isMainEmpPermission,
     } = getCustomerDetailPermission(customerBasicInfo || {});
 
     const accountInfoTabPane = (
       <TabPane tab="账户信息" key={ACCOUNT_INFO_TAB_KEY}>
-        <AccountInfo location={location} />
+        <AccountInfo
+          location={location}
+          isMainEmpPermission={isMainEmpPermission}
+        />
       </TabPane>
     );
 

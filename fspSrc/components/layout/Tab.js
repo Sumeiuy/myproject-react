@@ -26,7 +26,7 @@ import {
   splitPanesArray,
   getLocalPanes,
   getNewRouterHistory,
- } from '../utils/tab';
+} from '../utils/tab';
 
 @withRouter
 export default class Tab extends PureComponent {
@@ -49,15 +49,16 @@ export default class Tab extends PureComponent {
       addPanes = [],
       removePanes = [],
       shouldRemove,
-      shouldStay,
+      shouldStay, // 是否留在当前页面
+      notSaveMenuPath, // 是否更改菜单path
       editPane,
     } = state || {};
 
     const { routerHistory } = prevState;
 
     // 路由是否发生变化
-    const isUrlChange =
-      (pathname !== prevState.location.pathname) || (!_.isEqual(query, prevState.location.query));
+    const isUrlChange = (pathname !== prevState.location.pathname)
+      || (!_.isEqual(query, prevState.location.query));
 
     if (isUrlChange) {
       // 不是页面内跳转，而是菜单跳转
@@ -73,8 +74,7 @@ export default class Tab extends PureComponent {
         const currentMenuId = paneObj.currentMenuId;
         const breadcrumbRoutes = paneObj.breadcrumbRoutes;
         // 更新路由历史记录
-        const newRouterHistory =
-          getNewRouterHistory({ pathname, query, routerHistory });
+        const newRouterHistory = getNewRouterHistory({ pathname, query, routerHistory });
         // 保存tab菜单信息
         storeTabInfo({
           activeKey: finalActiveKey,
@@ -86,19 +86,18 @@ export default class Tab extends PureComponent {
         });
 
         return {
-          panes, //最终渲染的菜单信息
+          panes, // 最终渲染的菜单信息
           activeKey: finalActiveKey, // 最终高亮的顶级菜单
           currentMenuId, // 最终高亮的叶节点菜单
           location, // 当前的路由信息
-          breadcrumbRoutes, //当前路由对应的面包屑
+          breadcrumbRoutes, // 当前路由对应的面包屑
           routerHistory: newRouterHistory, // 历史记录
         };
       }
 
-      const { panes, currentMenuId } = getStayPanes(location, prevState);
+      const { panes, currentMenuId } = getStayPanes(location, prevState, notSaveMenuPath);
 
-      const newRouterHistory =
-        getNewRouterHistory({ pathname, query, routerHistory });
+      const newRouterHistory = getNewRouterHistory({ pathname, query, routerHistory });
       // 保存tab菜单信息
       storeTabInfo({
         panes,
@@ -203,8 +202,8 @@ export default class Tab extends PureComponent {
     const { activeKey, panes } = this.state;
     const index = _.findIndex(panes, pane => pane.id === targetKey);
     if (activeKey === targetKey) { // 如果移除的是当前的tabKey
-      return shouldBackToPrevPage ?
-        this.navToOtherTabForFsp(panes, pathname, push)
+      return shouldBackToPrevPage
+        ? this.navToOtherTabForFsp(panes, pathname, push)
         : this.navToOtherTab(panes, targetKey, index, push);
     }
     const changePanes = _.filter(panes, item => item.id !== targetKey);

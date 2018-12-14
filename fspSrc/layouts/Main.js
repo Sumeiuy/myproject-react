@@ -27,7 +27,7 @@ import Header from './Header';
 import Footer from './Footer';
 import Tab from '../components/layout/Tab';
 import FSPUnwrap from '../components/layout/FSPUnwrap';
-import { constants } from '../../src/config';
+import { constants, fspRoutes } from '../../src/config';
 import ConnectedCreateServiceRecord from '../../src/components/customerPool/list/createServiceRecord/ConnectedCreateServiceRecord';
 import ConnectedSignCustomerLabel from '../../src/components/customerPool/list/modal/ConnectedSignCustomerLabel';
 
@@ -41,7 +41,6 @@ import api from '../../src/api';
 import NewHomeLoading from './NewHomeLoading';
 import FSPComponent from '../routes/fspPage/FSPComponent';
 import { getRoutes } from '../../src/utils/router';
-import { fspRoutes } from '../../src/config';
 import logable, { logCommon } from '../../src/decorators/logable';
 
 import styles from './main.less';
@@ -152,15 +151,17 @@ export default class Main extends PureComponent {
   }
 
   componentDidMount() {
-    this.wheelEventArray.forEach(eventType =>
-      document.documentElement.addEventListener(eventType, this.handleMousewheel));
+    this.wheelEventArray.forEach(
+      eventType => document.documentElement.addEventListener(eventType, this.handleMousewheel)
+    );
     this.props.getEmpInfoAndMenu();
     this.props.getCustomerScope(); // 加载客户池客户范围
   }
 
   componentWillUnmount() {
-    this.wheelEventArray.forEach(eventType =>
-      document.documentElement.removeEventListener(eventType, this.handleMousewheel));
+    this.wheelEventArray.forEach(
+      eventType => document.documentElement.removeEventListener(eventType, this.handleMousewheel)
+    );
   }
 
   getCustomerDetailSearch(location) {
@@ -242,29 +243,31 @@ export default class Main extends PureComponent {
   // 处理外部系统跳入
   @autobind
   handleOutSystemJumpIn(value) {
-    return (<Route
-      path={`${value}(.*)`}
-      exact
-      component={({ location }) => {
-        let pathname = location.pathname.slice(value.length - 1);
-        if (value === FSP_JUMP_STRING) {
-          pathname = findRoute(pathname).path || '';
-        }
-        logCommon({
-          type: 'JumpIn',
-          payload: {
-            name: '外部系统跳入',
-            path: pathname,
-          },
-        });
-        return (<Redirect
-          to={{
-            ...location,
-            pathname,
-          }}
-        />);
-      }}
-    />);
+    return (
+      <Route
+        path={`${value}(.*)`}
+        exact
+        component={({ location }) => {
+          let pathname = location.pathname.slice(value.length - 1);
+          if (value === FSP_JUMP_STRING) {
+            pathname = findRoute(pathname).path || '';
+          }
+          logCommon({
+            type: 'JumpIn',
+            payload: {
+              name: '外部系统跳入',
+              path: pathname,
+            },
+          });
+          return (
+            <Redirect
+              to={{
+                ...location,
+                pathname,
+              }}
+            />);
+        }}
+      />);
   }
 
   renderRoutes() {
@@ -359,74 +362,75 @@ export default class Main extends PureComponent {
 
     return (
       <LocaleProvider locale={zhCN}>
-        <ContextProvider {...this.props} >
+        <ContextProvider {...this.props}>
           <IEWarningModal />
           <Helmet>
             <link rel="icon" href={constants.logoSrc} type="image/x-icon" />
           </Helmet>
           <ErrorBoundary location={location}>
             {
-              this.isMenuExists(menus) && !_.isEmpty(empInfo) ?
-                <div id="react-layout" className={styles.layout}>
-                  <div className={backToTopCls} onClick={this.handleBackToTopClick} />
-                  <Header
-                    push={push}
-                    location={location}
-                    secondaryMenu={menus.secondaryMenu}
-                    empInfo={empInfo}
-                    empRspList={empPostnList}
-                    empCurrentPosition={empCurrentPosition}
-                    onSwitchRsp={this.handleHeaderSwitchRsp}
-                    onIsolationWallModalShow={this.handleIsolationWallModalShow}
-                  />
-                  <div className={styles.main}>
-                    <Tab
-                      location={location}
+              this.isMenuExists(menus) && !_.isEmpty(empInfo)
+                ? (
+                  <div id="react-layout" className={styles.layout}>
+                    <div className={backToTopCls} onClick={this.handleBackToTopClick} />
+                    <Header
                       push={push}
-                      primaryMenu={menus.primaryMenu}
-                    />
-                    <FSPUnwrap
-                      path={location.pathname}
-                      loading={loading}
-                      loadingForceFull={loadingForceFull}
-                    >
-                      <div id="react-content" className={styles.content}>
-                        {
-                          (!_.isEmpty(interfaceState) &&
-                            !interfaceState[effects.dictionary] &&
-                            !interfaceState[effects.customerScope]) ?
-                            this.renderRoutes() :
-                            <div />
-                        }
-                      </div>
-                      <Footer />
-                    </FSPUnwrap>
-                    <ConnectedCreateServiceRecord
-                      handleCloseClick={handleCloseClick}
-                      loading={interfaceState[effects.addServeRecord]}
-                      key={serviceRecordInfo.id}
-                      dict={dict}
+                      location={location}
+                      secondaryMenu={menus.secondaryMenu}
                       empInfo={empInfo}
-                      addServeRecord={addServeRecord}
-                      currentCommonServiceRecord={currentCommonServiceRecord}
-                      onToggleServiceRecordModal={toggleServiceRecordModal}
-                      custUuid={custUuid}
-                      ceFileDelete={ceFileDelete}
-                      taskFeedbackList={motSelfBuiltFeedbackList}
-                      serviceRecordInfo={serviceRecordInfo}
-                      isPhoneCall={isPhoneCall}
+                      empPostnList={empPostnList}
+                      empCurrentPosition={empCurrentPosition}
+                      onSwitchRsp={this.handleHeaderSwitchRsp}
+                      onIsolationWallModalShow={this.handleIsolationWallModalShow}
                     />
-                    <ConnectedSignCustomerLabel />
-                    <PhoneWrapper
-                      motSelfBuiltFeedbackList={motSelfBuiltFeedbackList}
-                      getMotCustfeedBackDict={getMotCustfeedBackDict}
-                      currentCommonServiceRecord={currentCommonServiceRecord}
-                      addServeRecord={addServeRecord}
-                      addCallRecord={addCallRecord}
-                      toggleServiceRecordModal={toggleServiceRecordModal}
-                    />
-                  </div>
-                </div> : <NewHomeLoading />
+                    <div className={styles.main}>
+                      <Tab
+                        location={location}
+                        push={push}
+                        primaryMenu={menus.primaryMenu}
+                      />
+                      <FSPUnwrap
+                        path={location.pathname}
+                        loading={loading}
+                        loadingForceFull={loadingForceFull}
+                      >
+                        <div id="react-content" className={styles.content}>
+                          {
+                            (!_.isEmpty(interfaceState)
+                              && !interfaceState[effects.dictionary]
+                              && !interfaceState[effects.customerScope])
+                              ? this.renderRoutes() : <div />
+                          }
+                        </div>
+                        <Footer />
+                      </FSPUnwrap>
+                      <ConnectedCreateServiceRecord
+                        handleCloseClick={handleCloseClick}
+                        loading={interfaceState[effects.addServeRecord]}
+                        key={serviceRecordInfo.id}
+                        dict={dict}
+                        empInfo={empInfo}
+                        addServeRecord={addServeRecord}
+                        currentCommonServiceRecord={currentCommonServiceRecord}
+                        onToggleServiceRecordModal={toggleServiceRecordModal}
+                        custUuid={custUuid}
+                        ceFileDelete={ceFileDelete}
+                        taskFeedbackList={motSelfBuiltFeedbackList}
+                        serviceRecordInfo={serviceRecordInfo}
+                        isPhoneCall={isPhoneCall}
+                      />
+                      <ConnectedSignCustomerLabel />
+                      <PhoneWrapper
+                        motSelfBuiltFeedbackList={motSelfBuiltFeedbackList}
+                        getMotCustfeedBackDict={getMotCustfeedBackDict}
+                        currentCommonServiceRecord={currentCommonServiceRecord}
+                        addServeRecord={addServeRecord}
+                        addCallRecord={addCallRecord}
+                        toggleServiceRecordModal={toggleServiceRecordModal}
+                      />
+                    </div>
+                  </div>)
+                : <NewHomeLoading />
             }
           </ErrorBoundary>
         </ContextProvider>

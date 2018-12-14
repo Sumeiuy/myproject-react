@@ -12,6 +12,7 @@ import {
   navToTab,
   navTo,
   linkTo,
+  linkToNewPath,
   saveTabUrl,
   openFspIframeTab,
 } from './controlPane';
@@ -35,6 +36,7 @@ const exported = {
   navToTab,
   navTo,
   linkTo,
+  linkToNewPath,
   saveTabUrl,
   openFspIframeTab,
 };
@@ -56,6 +58,7 @@ export {
   navToTab,
   navTo,
   linkTo,
+  linkToNewPath,
   saveTabUrl,
   openFspIframeTab,
 };

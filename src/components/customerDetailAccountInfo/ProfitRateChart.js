@@ -190,7 +190,7 @@ export default class ProfitRateChart extends Component {
             <span className={styles.compareCode} />
             <span className={styles.codeController}>
               <SingleFilter
-                filterName="对比指标"
+                filterName="对比指数"
                 data={codeList}
                 value={compareCode}
                 onChange={onCompareCodeChange}

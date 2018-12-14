@@ -84,7 +84,7 @@ export default class MoreKeyLabelsModal extends Component {
               <KeyLabelsTable
                 title="大数据标签"
                 labels={bigDataLabels}
-                placeholder="该客户暂无大数据标签"
+                placeholder="该客户暂无匹配的大数据标签"
               />
             </TabPane>
           </Tabs>

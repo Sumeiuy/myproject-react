@@ -11,7 +11,7 @@ import _ from 'lodash';
 import styles from './createTaskSuccess.less';
 import imgSrc from './img/createTask_success.png';
 import { env } from '../../../helper';
-import { navTo, openRctTab, saveTabUrl } from '../../../utils';
+import { navTo, linkToNewPath, saveTabUrl } from '../../../utils';
 import Button from '../../common/Button';
 import RestoreScrollTop from '../../../decorators/restoreScrollTop';
 import logable from '../../../decorators/logable';
@@ -138,12 +138,12 @@ export default class CreateTaskSuccess extends PureComponent {
       id: 'FSP_MOT_SELFBUILT_TASK',
       title: '任务管理',
     };
-    openRctTab({
+
+    linkToNewPath({
       routerAction: push,
       url: '/taskCenter/taskList',
       param,
       pathname: '/taskCenter/taskList',
-      query: {},
     });
   }
 
