@@ -2,7 +2,7 @@
  * @Author: yuanhaojie
  * @Date: 2018-12-04 13:54:08
  * @LastEditors: yuanhaojie
- * @LastEditTime: 2018-12-12 21:18:05
+ * @LastEditTime: 2018-12-14 16:08:50
  * @Description: 首页-投顾绩效-图表
  */
 
@@ -147,7 +147,7 @@ export default class PerformanceCharts extends PureComponent {
       <ChartContiner dataSource={{ title: '金融产品' }} isNewHome={isNewHome}>
         <div className={trueStyles.financialProductWrap}>
           <div className={trueStyles.main}>
-            <div>
+            <div className={trueStyles.all}>
               <span className={trueStyles.name}>
                 <Tooltip title={allPrdtBuyAmt.description} placement="top">{allPrdtBuyAmt.name}</Tooltip>
               </span>
