@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-05 13:31:51
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-12-14 17:00:55
+ * @Last Modified time: 2018-12-14 21:48:03
  * @description 新版客户360详情的历史持仓的弹出层
  */
 import React, { PureComponent } from 'react';
@@ -223,7 +223,7 @@ export default class HistoryHoldingModal extends PureComponent {
           // 表示空数据
           return '';
         }
-        if (_.isEmpty(text)) {
+        if (_.isNull(text)) {
           return '--';
         }
         // 比如可用数量，不需要保留两位小数
