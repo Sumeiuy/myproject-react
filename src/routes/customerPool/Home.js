@@ -529,7 +529,7 @@ export default class Home extends PureComponent {
     let selectCycle;
     let curCycleSelect;
     let isPerformace = false;
-    if (activeKey === 'performance' || (!activeKey && !this.hasTkMampPermission)) {
+    if (activeKey === 'performance') {
       selectCycle = optionsMap.performanceCycleSelect;
       curCycleSelect = performanceCycleSelect
         || (_.isArray(selectCycle) ? (selectCycle[0] || {}) : {}).dateKey;
