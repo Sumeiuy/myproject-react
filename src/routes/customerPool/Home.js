@@ -627,23 +627,18 @@ export default class Home extends PureComponent {
               defaultActiveKey={activeKey}
               onTabClick={this.handleTabClick}
             >
-              {
-                permission.hasTkMampPermission()
-                  ? (
-                    <TabPane tab="经营指标" key="manage">
-                      <PerformanceIndicators
-                        empInfo={empInfo}
-                        push={push}
-                        custCount={custCount}
-                        indicators={managerIndicators}
-                        location={location}
-                        cycle={cycle}
-                        category="manager"
-                        authority={this.hasIndexViewPermission}
-                      />
-                    </TabPane>
-                  ) : null
-              }
+              <TabPane tab="经营指标" key="manage">
+                <PerformanceIndicators
+                  empInfo={empInfo}
+                  push={push}
+                  custCount={custCount}
+                  indicators={managerIndicators}
+                  location={location}
+                  cycle={cycle}
+                  category="manager"
+                  authority={this.hasIndexViewPermission}
+                />
+              </TabPane>
               {
                 tgQyFlag ? (
                   <TabPane tab="投顾绩效" key="performance">
