@@ -642,7 +642,7 @@ export default class Home extends PureComponent {
               {
                 tgQyFlag ? (
                   <TabPane tab="投顾绩效" key="performance">
-                    {/* <PerformanceIndicators
+                    <PerformanceIndicators
                       empInfo={empInfo}
                       push={push}
                       indicators={performanceIndicators}
@@ -651,11 +651,11 @@ export default class Home extends PureComponent {
                       custCount={custCount}
                       category="performance"
                       authority={this.hasIndexViewPermission}
-                    /> */}
-                    <PerformanceCharts
+                    />
+                    {/* <PerformanceCharts
                       indicators={performanceIndicators}
                       isNewHome={false}
-                    />
+                    /> */}
                   </TabPane>
                 ) : (null)
               }
